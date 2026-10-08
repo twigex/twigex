@@ -197,7 +197,6 @@
     "files.about.build_date": "Құрастыру күні:",
     "files.about.edition": "Басылым:",
     "files.about.enterprise": "Enterprise",
-    "files.about.enterprise_commit": "Enterprise ревизиясы:",
     "files.delete_dialog.title": "Файлды жою",
     "files.delete_dialog.confirm_delete": "<strong> {text} </strong> шынымен жойғыңыз келе ме?",
     "files.rename_dialog.title": "Файл атын өзгерту",

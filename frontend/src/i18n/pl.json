@@ -197,7 +197,6 @@
     "files.about.build_date": "Data kompilacji:",
     "files.about.edition": "Wydanie:",
     "files.about.enterprise": "Enterprise",
-    "files.about.enterprise_commit": "Rewizja Enterprise:",
     "files.delete_dialog.title": "Usuń plik",
     "files.delete_dialog.confirm_delete": "Czy na pewno chcesz usunąć <strong> {text} </strong> ?",
     "files.rename_dialog.title": "Zmień nazwę pliku",

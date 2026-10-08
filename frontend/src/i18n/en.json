@@ -197,7 +197,6 @@
     "files.about.build_date": "Build Date:",
     "files.about.edition": "Edition:",
     "files.about.enterprise": "Enterprise",
-    "files.about.enterprise_commit": "Enterprise commit:",
     "files.delete_dialog.title": "Delete file",
     "files.delete_dialog.confirm_delete": "Are you sure you want to delete <strong> {text} </strong> ?",
     "files.rename_dialog.title": "Rename file",
