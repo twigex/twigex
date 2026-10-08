@@ -45,7 +45,7 @@
         "@deck.gl/core": "^8.9.36",
         "@deck.gl/layers": "^8.9.36",
         "@deck.gl/mapbox": "^8.9.36",
-        "@floating-ui/vue": "^1.1.6",
+        "@floating-ui/vue": "^2.0.1",
         "@headlessui/vue": "^1.7.16",
         "@heroicons/vue": "^2.0.18",
         "@tailwindcss/aspect-ratio": "^0.4.2",
