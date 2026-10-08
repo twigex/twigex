@@ -1,0 +1,1926 @@
+[
+  {
+    "id": "activity.get_file_activity.not_found",
+    "translation": "Сұралған файл әрекеті табылмады."
+  },
+  {
+    "id": "user.not_found",
+    "translation": "Көрсетілген пайдаланушы жоқ немесе оны алу мүмкін болмады."
+  },
+  {
+    "id": "user.seat_limit",
+    "translation": "Жоспарыңыздың пайдаланушы шегіне жеттіңіз. Пайдаланушыны өшіріңіз немесе жоспарды жаңартыңыз."
+  },
+  {
+    "id": "session.invalid",
+    "translation": "Сеанс жарамсыз."
+  },
+  {
+    "id": "session.expired",
+    "translation": "Сеансыңыздың мерзімі аяқталды. Қайта кіріңіз."
+  },
+  {
+    "id": "session.delete_failed",
+    "translation": "Шығу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "session.not_authorized",
+    "translation": "Бұл әрекетті орындауға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "auth.login_failed",
+    "translation": "Кіру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "auth.logout_failed",
+    "translation": "Шығу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "auth.oauth_unavailable",
+    "translation": "OAuth арқылы кіру ағымдағы тарифіңізде қолжетімді емес."
+  },
+  {
+    "id": "auth.oauth_provider_disabled",
+    "translation": "Бұл OAuth провайдері қосылмаған."
+  },
+  {
+    "id": "auth.oauth_failed",
+    "translation": "OAuth арқылы кіру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "auth.invalid_credentials",
+    "translation": "Жарамды электрондық пошта немесе пайдаланушы аты және/немесе құпия сөзді енгізіңіз."
+  },
+  {
+    "id": "auth.mfa_token_invalid",
+    "translation": "Берілген MFA токені жарамсыз."
+  },
+  {
+    "id": "auth.mfa_validation_failed",
+    "translation": "MFA токенін тексеру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "auth.ldap_failed",
+    "translation": "Жарамды электрондық пошта немесе пайдаланушы аты және/немесе құпия сөзді енгізіңіз."
+  },
+  {
+    "id": "auth.ldap_unavailable",
+    "translation": "Бұл серверде LDAP аутентификациясы қолжетімді емес."
+  },
+  {
+    "id": "auth.user_deactivated",
+    "translation": "Жарамды электрондық пошта немесе пайдаланушы аты және/немесе құпия сөзді енгізіңіз."
+  },
+  {
+    "id": "auth.rate_limited",
+    "translation": "Кіру әрекеттері тым көп. Сәл күтіп, қайталап көріңіз."
+  },
+  {
+    "id": "auth.no_methods_enabled",
+    "translation": "Кемінде бір кіру әдісі қосылуы тиіс."
+  },
+  {
+    "id": "ldap.dial_failed",
+    "translation": "LDAP серверіне қосылу мүмкін болмады. Сервер URL мекенжайын тексеріңіз."
+  },
+  {
+    "id": "ldap.bind_failed",
+    "translation": "LDAP байланысы сәтсіз аяқталды. Bind DN мен құпия сөзді тексеріңіз."
+  },
+  {
+    "id": "ldap.ca_cert_invalid",
+    "translation": "CA сертификатын оқу мүмкін болмады. Сертификатты PEM пішімінде көрсетіңіз."
+  },
+  {
+    "id": "ldap.sync_already_running",
+    "translation": "Синхрондау әлдеқашан орындалып жатыр."
+  },
+  {
+    "id": "ldap.sync_enqueue_failed",
+    "translation": "Синхрондауды бастау мүмкін болмады."
+  },
+  {
+    "id": "ldap.invalid_sync_interval",
+    "translation": "Синхрондау аралығы 5 пен 1440 минут аралығында болуы керек."
+  },
+  {
+    "id": "ldap.invalid_sync_deactivate_percent",
+    "translation": "Өшіру шектеуі 1 мен 100 пайыз аралығында болуы керек."
+  },
+  {
+    "id": "ldap.invalid_timeout",
+    "translation": "Қосылым күту уақыты 1 мен 120 секунд аралығында болуы керек."
+  },
+  {
+    "id": "ldap.invalid_connection_security",
+    "translation": "LDAP қосылым қауіпсіздігі жарамсыз. 'none', 'tls' немесе 'starttls' мәнін қолданыңыз немесе сервер URL схемасына сәйкес болу үшін бос қалдырыңыз."
+  },
+  {
+    "id": "oidc.invalid_input",
+    "translation": "Провайдердің міндетті өрістері жоқ."
+  },
+  {
+    "id": "oidc.not_found",
+    "translation": "Провайдер табылмады."
+  },
+  {
+    "id": "oidc.retrieval_failed",
+    "translation": "OIDC провайдерлерін алу сәтсіз аяқталды."
+  },
+  {
+    "id": "oidc.create_failed",
+    "translation": "OIDC провайдерін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "oidc.update_failed",
+    "translation": "OIDC провайдерін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "oidc.delete_failed",
+    "translation": "OIDC провайдерін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.not_found",
+    "translation": "Сұралған арна табылмады."
+  },
+  {
+    "id": "channel.retrieval_failed",
+    "translation": "Арналарды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.invalid_type",
+    "translation": "Көрсетілген арна түрі жарамсыз."
+  },
+  {
+    "id": "channel.already_exists",
+    "translation": "Бұл пайдаланушылар арасында тікелей хабарлама арнасы бұрыннан бар."
+  },
+  {
+    "id": "channel.create_failed",
+    "translation": "Арна жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.update_failed",
+    "translation": "Арнаны жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.forbidden",
+    "translation": "Бұл әрекетті орындауға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "channel.not_member",
+    "translation": "Сіз бұл арнаның мүшесі емессіз."
+  },
+  {
+    "id": "channel.already_member",
+    "translation": "Сіз бұл арнаның мүшесісіз."
+  },
+  {
+    "id": "channel.not_public",
+    "translation": "Бұл арна жария емес және оған тікелей қосылу мүмкін емес."
+  },
+  {
+    "id": "channel.direct_remove_forbidden",
+    "translation": "Пайдаланушыларды тікелей хабарлама арнасынан жою мүмкін емес."
+  },
+  {
+    "id": "channel.direct_update_forbidden",
+    "translation": "Тікелей хабарламаның атауын өзгертуге немесе сипаттама қосуға болмайды."
+  },
+  {
+    "id": "channel.role_requires_direct_member",
+    "translation": "Бұл пайдаланушыны арна әкімшісі етпес бұрын оны арнаға қосыңыз."
+  },
+  {
+    "id": "channel.join_failed",
+    "translation": "Арнаға қосылу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.member_add_failed",
+    "translation": "Пайдаланушыларды арнаға қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.member_remove_failed",
+    "translation": "Пайдаланушыны арнадан жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.leave_failed",
+    "translation": "Арнадан шығу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.role_change_failed",
+    "translation": "Пайдаланушы рөлін өзгерту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.read_failed",
+    "translation": "Арна жазбаларын оқылды деп белгілеу сәтсіз аяқталды."
+  },
+  {
+    "id": "channel.video_participants_failed",
+    "translation": "Бейне қоңырау қатысушыларын алу сәтсіз аяқталды."
+  },
+  {
+    "id": "channel.video_token_failed",
+    "translation": "Бейне токенін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.guest_link_failed",
+    "translation": "Қонақ сілтемелерін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.guest_link_no_recipients",
+    "translation": "Кемінде бір жарамды электрондық пошта мекенжайын көрсетіңіз."
+  },
+  {
+    "id": "channel.guest_link_invalid",
+    "translation": "Бұл шақыру сілтемесі жарамсыз."
+  },
+  {
+    "id": "channel.guest_link_expired",
+    "translation": "Бұл шақыру сілтемесінің мерзімі аяқталды."
+  },
+  {
+    "id": "channel.guest_name_required",
+    "translation": "Қосылмас бұрын атыңызды енгізіңіз."
+  },
+  {
+    "id": "channel.meeting_failed",
+    "translation": "Кездесуде бірдеңе дұрыс болмады. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.meeting_create_failed",
+    "translation": "Кездесуді жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.meeting_update_failed",
+    "translation": "Кездесуді жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.meeting_past_time",
+    "translation": "Болашақтағы уақытты таңдаңыз."
+  },
+  {
+    "id": "channel.not_direct",
+    "translation": "Қоңырауларды тек тікелей хабарламада бастауға болады."
+  },
+  {
+    "id": "channel.direct_invite_forbidden",
+    "translation": "Тікелей қоңырауға адамдарды шақыра алмайсыз."
+  },
+  {
+    "id": "channel.meeting_not_found",
+    "translation": "Сұралған кездесу табылмады."
+  },
+  {
+    "id": "channel.meeting_ended",
+    "translation": "Бұл кездесу аяқталды."
+  },
+  {
+    "id": "meeting_group.no_groups",
+    "translation": "Шақыру үшін кемінде бір топты таңдаңыз."
+  },
+  {
+    "id": "meeting_group.list_failed",
+    "translation": "Кездесу топтарын жүктеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "meeting_group.add_failed",
+    "translation": "Топтарды кездесуге шақыру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "meeting_group.update_failed",
+    "translation": "Кездесу топтарын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.meeting_not_started",
+    "translation": "Бұл кездесу әлі басталған жоқ."
+  },
+  {
+    "id": "channel.meeting_already_started",
+    "translation": "Бұл кездесу басталып қойды — оны болдырмаудың орнына аяқтаңыз."
+  },
+  {
+    "id": "channel.meeting_host_only",
+    "translation": "Бұл әрекетті тек кездесу ұйымдастырушысы орындай алады."
+  },
+  {
+    "id": "channel.meeting_host_invalid",
+    "translation": "Таңдалған пайдаланушыны ұйымдастырушы етуге болмайды."
+  },
+  {
+    "id": "channel.meeting_not_invited",
+    "translation": "Сіз бұл кездесуге шақырылмағансыз."
+  },
+  {
+    "id": "channel.meeting_password_invalid",
+    "translation": "Кездесу құпия сөзі қате."
+  },
+  {
+    "id": "channel.file_upload_failed",
+    "translation": "Файлды арнаға жүктеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.file_too_large",
+    "translation": "Файл өлшемі 100МБ шегінен асып кетті."
+  },
+  {
+    "id": "channel.attachment_not_found",
+    "translation": "Сұралған файл тіркемесі табылмады."
+  },
+  {
+    "id": "channel.attachment_forbidden",
+    "translation": "Бұл тіркемеге кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "channel.gif_failed",
+    "translation": "GIF файлдарын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.gif_disabled",
+    "translation": "GIF файлдары өшірілген."
+  },
+  {
+    "id": "post.not_found",
+    "translation": "Сұралған жазба табылмады."
+  },
+  {
+    "id": "post.retrieval_failed",
+    "translation": "Жазбаларды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "post.create_failed",
+    "translation": "Жазба жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "post.update_failed",
+    "translation": "Жазбаны жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "post.delete_failed",
+    "translation": "Жазбаны жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "post.forbidden",
+    "translation": "Бұл жазбаға осы әрекетті орындауға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "post.invalid_reply",
+    "translation": "Жауап берілетін жазба жарамсыз немесе басқа арнаға тиесілі."
+  },
+  {
+    "id": "post.too_long",
+    "translation": "Хабарламаңыз тым ұзын. Оны қысқартып, қайтадан көріңіз."
+  },
+  {
+    "id": "post.invalid_reaction",
+    "translation": "Бұл реакция жарамды эмодзи емес."
+  },
+  {
+    "id": "post.attachment_failed",
+    "translation": "Файл тіркемелерін өңдеу сәтсіз аяқталды."
+  },
+  {
+    "id": "post.reaction_create_failed",
+    "translation": "Реакция қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "post.reaction_delete_failed",
+    "translation": "Реакцияны жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "post.forward_failed",
+    "translation": "Жазбаны қайта жіберу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "connection.retrieval_failed",
+    "translation": "Қосылымдарды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "connection.create_failed",
+    "translation": "Қосылым жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "connection.update_failed",
+    "translation": "Қосылымды жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "connection.delete_failed",
+    "translation": "Қосылымды жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "connection.forbidden",
+    "translation": "Қосылымдарды басқаруға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "connection.not_found",
+    "translation": "Сұралған қосылым табылмады."
+  },
+  {
+    "id": "connection.ssl_mode_unsupported",
+    "translation": "Бұл шифрлау режимі танылмады. Көрсетілген тексеру деңгейлерінің бірін таңдаңыз."
+  },
+  {
+    "id": "connection.verification_failed",
+    "translation": "Дерекқор қосылымын тексеру сәтсіз аяқталды. Тіркелгі деректеріңізді тексеріңіз."
+  },
+  {
+    "id": "connection.verification.credentials",
+    "translation": "Дерекқор пайдаланушы атын немесе құпия сөзді қабылдамады. Екеуін тексеріп, қайта көріңіз."
+  },
+  {
+    "id": "connection.verification.database",
+    "translation": "Сервер қолжетімді, бірақ онда мұндай атаумен дерекқор жоқ."
+  },
+  {
+    "id": "connection.verification.certificate",
+    "translation": "Сервер сертификатын тексеру мүмкін болмады. CA сертификатының серверге сәйкестігін тексеріңіз."
+  },
+  {
+    "id": "connection.verification.hostname",
+    "translation": "Сертификат осы хост атауын қамтымайды. Сертификатта көрсетілген атауды пайдаланыңыз немесе Тексеруді Сертификат мәніне қойыңыз."
+  },
+  {
+    "id": "connection.verification.ca_cert",
+    "translation": "CA сертификатын оқу мүмкін болмады. Толық сертификатты PEM пішімінде қойыңыз."
+  },
+  {
+    "id": "connection.verification.unreachable",
+    "translation": "Серверге қосылу мүмкін болмады. Хост пен портты, сондай-ақ сервердің Twigex-тен қосылымдарды қабылдайтынын тексеріңіз."
+  },
+  {
+    "id": "chart.retrieval_failed",
+    "translation": "Диаграммаларды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "chart.create_failed",
+    "translation": "Диаграмма жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "chart.update_failed",
+    "translation": "Диаграмманы жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "chart.delete_failed",
+    "translation": "Диаграмманы жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "chart.forbidden",
+    "translation": "Бұл диаграммаға кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "dashboard.retrieval_failed",
+    "translation": "Бақылау тақталарын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "dashboard.create_failed",
+    "translation": "Бақылау тақтасын жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "dashboard.update_failed",
+    "translation": "Бақылау тақтасын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "dashboard.delete_failed",
+    "translation": "Бақылау тақтасын жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "dashboard.forbidden",
+    "translation": "Бұл бақылау тақтасына кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "dashboard.workspace_mismatch",
+    "translation": "Бақылау тақтасы көрсетілген жұмыс кеңістігіне тиесілі емес."
+  },
+  {
+    "id": "dashboard.filter_not_found",
+    "translation": "Сұралған бақылау тақтасының сүзгісі табылмады."
+  },
+  {
+    "id": "dashboard.filter_add_failed",
+    "translation": "Бақылау тақтасына сүзгі қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "dashboard.filter_update_failed",
+    "translation": "Бақылау тақтасының сүзгісін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "dashboard.filter_delete_failed",
+    "translation": "Бақылау тақтасының сүзгісін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "dashboard.chart_update_failed",
+    "translation": "Бақылау тақтасының диаграммаларын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "role.not_found",
+    "translation": "Сұралған рөл табылмады."
+  },
+  {
+    "id": "role.retrieval_failed",
+    "translation": "Рөлдерді алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "role.create_failed",
+    "translation": "Рөл жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "role.update_failed",
+    "translation": "Рөлді жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "role.delete_failed",
+    "translation": "Рөлді жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "permission.forbidden",
+    "translation": "Бұл әрекетті орындауға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "role.name_invalid",
+    "translation": "Рөл атауында тек кіші әріптер, сандар, астын сызу және дефис болуы мүмкін."
+  },
+  {
+    "id": "role.forbidden",
+    "translation": "Рөлдерді басқаруға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "role.name_required",
+    "translation": "Рөл атауы қажет."
+  },
+  {
+    "id": "role.name_taken",
+    "translation": "Бұл атаумен рөл бұрыннан бар."
+  },
+  {
+    "id": "role.cannot_delete_builtin",
+    "translation": "Кірістірілген рөлдерді жою мүмкін емес."
+  },
+  {
+    "id": "role.check_failed",
+    "translation": "Рөл атауының қолжетімділігін тексеру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "datamodel.forbidden",
+    "translation": "Деректер модельдерін басқаруға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "datamodel.invalid_model",
+    "translation": "Деректер моделі жарамсыз. Атауын, кестесін және өрістерін тексеріңіз."
+  },
+  {
+    "id": "datamodel.name_taken",
+    "translation": "Осы атаумен деректер моделі бұрыннан бар. Басқа атау таңдаңыз."
+  },
+  {
+    "id": "datamodel.delete_has_dependents",
+    "translation": "Бұл кубты жою мүмкін емес, өйткені басқа кубтар немесе көріністер әлі де оған тәуелді."
+  },
+  {
+    "id": "datamodel.file_create_failed",
+    "translation": "Деректер моделі файлын жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "datamodel.file_read_failed",
+    "translation": "Деректер моделі файлын оқу сәтсіз аяқталды."
+  },
+  {
+    "id": "datamodel.file_write_failed",
+    "translation": "Деректер моделі файлын сақтау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "datamodel.file_delete_failed",
+    "translation": "Деректер моделі файлын жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "datamodel.generate_failed",
+    "translation": "Деректер моделі файлдарын жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.forbidden",
+    "translation": "Бұл файлға кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "file.not_found",
+    "translation": "Сұралған файл табылмады."
+  },
+  {
+    "id": "file.retrieval_failed",
+    "translation": "Файлдарды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.create_failed",
+    "translation": "Файл жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.delete_failed",
+    "translation": "Файлды жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.restore_failed",
+    "translation": "Файлды қалпына келтіру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.move_failed",
+    "translation": "Файлды жылжыту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.locked",
+    "translation": "Бұл файл уақытша бұғатталған және қазір өзгертілмейді."
+  },
+  {
+    "id": "file.rename_failed",
+    "translation": "Файлдың атын өзгерту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.archive_failed",
+    "translation": "Файлды мұрағаттау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.no_space",
+    "translation": "Сіз сақтау шегіне жеттіңіз. Орын босатып, қайталап көріңіз."
+  },
+  {
+    "id": "file.metadata_create_failed",
+    "translation": "Файл метадеректерін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.metadata_retrieval_failed",
+    "translation": "Файл метадеректерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.metadata_add_failed",
+    "translation": "Файлға метадеректер қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.metadata_update_failed",
+    "translation": "Файл метадеректерін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.metadata_edit_failed",
+    "translation": "Файл метадеректерін өңдеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.share_failed",
+    "translation": "Файлды бөлісу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.unshare_failed",
+    "translation": "Файл бөлісуін тоқтату сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.share_forbidden",
+    "translation": "Бұл файлды бөлісуге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "file.share_below_inherited",
+    "translation": "Ата-аналық қалтадан мұраланған деңгейден төмен қатынас беру мүмкін емес."
+  },
+  {
+    "id": "file.share_user_deactivated",
+    "translation": "Бұл пайдаланушы өшірілген және онымен бөлісу мүмкін емес."
+  },
+  {
+    "id": "file.permissions_update_failed",
+    "translation": "Бөлісу рұқсаттарын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.metadata_delete_failed",
+    "translation": "Файл метадеректерін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "file.unknown_type",
+    "translation": "Көрсетілген файл түріне қолдау көрсетілмейді."
+  },
+  {
+    "id": "link.no_access",
+    "translation": "Ортақ сілтеме кемінде көруге, жүктеп алуға немесе жүктеп салуға рұқсат беруі керек."
+  },
+  {
+    "id": "link.upload_requires_folder",
+    "translation": "Жүктеп салу сілтемелерін тек қалталар үшін жасауға болады."
+  },
+  {
+    "id": "link.create_failed",
+    "translation": "Ортақ сілтеме жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "link.update_failed",
+    "translation": "Ортақ сілтемені жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "link.delete_failed",
+    "translation": "Ортақ сілтемені жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "link.not_found",
+    "translation": "Ортақ сілтеме табылмады."
+  },
+  {
+    "id": "link.forbidden",
+    "translation": "Бұл ортақ сілтемені өзгертуге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "link.retrieval_failed",
+    "translation": "Ортақ сілтемені ашу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "link.expired",
+    "translation": "Бұл ортақ сілтеменің мерзімі бітті."
+  },
+  {
+    "id": "link.password_required",
+    "translation": "Бұл ортақ сілтеме құпия сөзді қажет етеді."
+  },
+  {
+    "id": "link.password_invalid",
+    "translation": "Құпия сөз қате."
+  },
+  {
+    "id": "link.auth_failed",
+    "translation": "Ортақ сілтемені ашу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "link.download_forbidden",
+    "translation": "Бұл ортақ сілтеме үшін жүктеп алуға рұқсат етілмеген."
+  },
+  {
+    "id": "link.download_limit",
+    "translation": "Бұл ортақ сілтеме жүктеу шектеуіне жетті."
+  },
+  {
+    "id": "link.rate_limited",
+    "translation": "Тым көп әрекет. Сәл күтіп, қайталап көріңіз."
+  },
+  {
+    "id": "link.view_forbidden",
+    "translation": "Бұл ортақ сілтеме осы файлды көруге рұқсат бермейді."
+  },
+  {
+    "id": "office.readonly",
+    "translation": "Бұл құжат тек оқуға арналған."
+  },
+  {
+    "id": "link.upload_forbidden",
+    "translation": "Бұл ортақ сілтеме жүктеп салуға рұқсат бермейді."
+  },
+  {
+    "id": "link.upload_failed",
+    "translation": "Жүктеп салу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "upload.too_large",
+    "translation": "Файл жүктеп салу үшін тым үлкен."
+  },
+  {
+    "id": "upload.missing_destination",
+    "translation": "Жүктеп салу орны қажет."
+  },
+  {
+    "id": "upload.missing_name",
+    "translation": "Файл атауы қажет."
+  },
+  {
+    "id": "upload.invalid_size",
+    "translation": "Файл өлшемі жарамсыз."
+  },
+  {
+    "id": "upload.start_failed",
+    "translation": "Жүктеп салу сеансын бастау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "upload.not_found",
+    "translation": "Жүктеп салу сеансы табылмады."
+  },
+  {
+    "id": "upload.forbidden",
+    "translation": "Бұл жүктеп салу сеансына кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "upload.expired",
+    "translation": "Бұл жүктеп салу сеансының мерзімі аяқталды. Жаңа жүктеп салуды бастаңыз."
+  },
+  {
+    "id": "upload.conflict",
+    "translation": "Бұл жүктеп салу сеансы жүктеп салуға болатын күйде емес."
+  },
+  {
+    "id": "upload.incomplete",
+    "translation": "Жүктеп салу әлі аяқталған жоқ. Барлық бөліктерді жүктеп салуды аяқтаңыз."
+  },
+  {
+    "id": "upload.chunk_failed",
+    "translation": "Файл бөлігін жүктеп салу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "upload.finalize_failed",
+    "translation": "Жүктеп салуды аяқтау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "upload.abort_failed",
+    "translation": "Жүктеп салу сеансын тоқтату сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "upload.invalid_action",
+    "translation": "Көрсетілген жүктеп салу әрекеті жарамсыз."
+  },
+  {
+    "id": "storage.not_available",
+    "translation": "Сақтау бэкенді қолжетімді емес. Кейінірек қайталап көріңіз."
+  },
+  {
+    "id": "storage.license_required",
+    "translation": "Сақтауды басқару үшін жарамды лицензия қажет."
+  },
+  {
+    "id": "groups.license_required",
+    "translation": "Топтар ақылы жоспарды қажет етеді."
+  },
+  {
+    "id": "storage.not_found",
+    "translation": "Сұралған сақтау табылмады."
+  },
+  {
+    "id": "storage.get_failed",
+    "translation": "Сақтауды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.get_all_failed",
+    "translation": "Сақтау тізімін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.create_failed",
+    "translation": "Сақтауды жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.update_failed",
+    "translation": "Сақтауды жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.delete_failed",
+    "translation": "Сақтауды жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.set_primary_failed",
+    "translation": "Негізгі сақтауды орнату сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.encrypt_failed",
+    "translation": "Сақтау тіркелгі деректерін шифрлау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.update_directory_failed",
+    "translation": "Сақтау каталогын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.drive_create_failed",
+    "translation": "Сақтау дискісін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "storage.drive_delete_failed",
+    "translation": "Сақтау дискісін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "job.not_found",
+    "translation": "Сұралған тапсырма табылмады."
+  },
+  {
+    "id": "job.retrieval_failed",
+    "translation": "Тапсырмаларды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "job.cancel_failed",
+    "translation": "Тапсырманы болдырмау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "job.cancel_invalid_status",
+    "translation": "Тек күтудегі немесе орындалып жатқан тапсырмаларды болдырмауға болады."
+  },
+  {
+    "id": "job.acknowledge_failed",
+    "translation": "Тапсырманы растау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "license.verify_failed",
+    "translation": "Лицензияны тексеру сәтсіз аяқталды. Лицензия файлының жарамдылығын тексеріңіз."
+  },
+  {
+    "id": "license.expired",
+    "translation": "Бұл лицензияның мерзімі өткен. Оны қолдансаңыз, ағымдағы лицензия ауыстырылар еді, сондықтан ол қолданылмады."
+  },
+  {
+    "id": "license.seats_exceeded",
+    "translation": "Бұл лицензия қазіргі белсенді пайдаланушылардан азын қамтиды. Алдымен пайдаланушыларды өшіріңіз немесе орындары көбірек лицензияны пайдаланыңыз."
+  },
+  {
+    "id": "license.save_failed",
+    "translation": "Лицензияны сақтау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "license.remove_failed",
+    "translation": "Белсенді лицензияны жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "notification.retrieval_failed",
+    "translation": "Хабарландыруларды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "license.feature_unavailable",
+    "translation": "Бұл мүмкіндік ағымдағы жоспарыңызда қолжетімді емес."
+  },
+  {
+    "id": "notification.not_found",
+    "translation": "Сұралған хабарландыру табылмады."
+  },
+  {
+    "id": "notification.forbidden",
+    "translation": "Бұл хабарландыруға кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "notification.read_failed",
+    "translation": "Хабарландыруды оқылды деп белгілеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "notification.delete_failed",
+    "translation": "Хабарландыруды жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "office.not_available",
+    "translation": "Office редакторы қолжетімді емес. Кейінірек қайталап көріңіз."
+  },
+  {
+    "id": "office.open_failed",
+    "translation": "Файлды Office редакторында ашу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "office.save_failed",
+    "translation": "Файлды сақтау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "office.token_invalid",
+    "translation": "Office қатынау токені жарамсыз немесе мерзімі аяқталған."
+  },
+  {
+    "id": "collimato.workspace_user_failed",
+    "translation": "Жұмыс кеңістігінің пайдаланушысын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.roles_failed",
+    "translation": "Жұмыс кеңістігінің рөлдерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.permission_denied",
+    "translation": "Бұл деректерге кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "collimato.data_security_unavailable",
+    "translation": "Бұл серверде деректерге қол жеткізу ережелерін қолдану мүмкін емес. Әкімшіге хабарласыңыз."
+  },
+  {
+    "id": "collimato.workspace_limit",
+    "translation": "Сіздің жоспарыңызға бір жұмыс кеңістігі кіреді. Көбірек жасау үшін жаңартыңыз."
+  },
+  {
+    "id": "collimato.custom_roles_unavailable",
+    "translation": "Теңшелетін рөлдер ақылы жоспарды қажет етеді. Кірістірілген рөлдер қолжетімді болып қалады."
+  },
+  {
+    "id": "collimato.retrieval_failed",
+    "translation": "Жұмыс кеңістіктерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.not_found",
+    "translation": "Сұралған жұмыс кеңістігі табылмады."
+  },
+  {
+    "id": "collimato.forbidden",
+    "translation": "Бұл жұмыс кеңістігіне кіруге рұқсатыңыз жоқ."
+  },
+  {
+    "id": "collimato.create_failed",
+    "translation": "Жұмыс кеңістігін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.delete_failed",
+    "translation": "Жұмыс кеңістігін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.member_add_failed",
+    "translation": "Жұмыс кеңістігіне пайдаланушыларды қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.member_remove_failed",
+    "translation": "Жұмыс кеңістігінен пайдаланушыны жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.member_not_found",
+    "translation": "Сіз бұл жұмыс кеңістігінің мүшесі емессіз."
+  },
+  {
+    "id": "collimato.users_retrieval_failed",
+    "translation": "Жұмыс кеңістігінің пайдаланушыларын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.roles_update_failed",
+    "translation": "Пайдаланушы рөлдерін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.finish_failed",
+    "translation": "Жұмыс кеңістігін орнатуды аяқтау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.query_failed",
+    "translation": "Деректерге сұрау салу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.request_failed",
+    "translation": "Аналитика жүйесімен байланыс сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.no_groups",
+    "translation": "Ешқандай топ берілмеді."
+  },
+  {
+    "id": "collimato.no_roles",
+    "translation": "Топқа кемінде бір рөл тағайындалуы керек."
+  },
+  {
+    "id": "collimato.role_not_found",
+    "translation": "Таңдалған рөлдердің бірі немесе бірнешеуі бұл жұмыс кеңістігінде жоқ."
+  },
+  {
+    "id": "collimato.groups_retrieval_failed",
+    "translation": "Жұмыс кеңістігінің топтарын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.group_add_failed",
+    "translation": "Жұмыс кеңістігіне топтарды қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.group_remove_failed",
+    "translation": "Жұмыс кеңістігінен топты жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "collimato.group_roles_update_failed",
+    "translation": "Топтың рөлдерін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "settings.env_locked",
+    "translation": "Бұл параметрлер орта айнымалыларымен басқарылады және мұнда өзгертілмейді."
+  },
+  {
+    "id": "settings.update_failed",
+    "translation": "Параметрлерді жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "settings.encrypt_failed",
+    "translation": "Параметрлерді сақтау мүмкін болмады. Шифрлау қатесі орын алды."
+  },
+  {
+    "id": "settings.email_test_failed",
+    "translation": "Электрондық пошта сервері қосылымын тексеру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "settings.retrieval_failed",
+    "translation": "Параметрлерді алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.retrieval_failed",
+    "translation": "Пайдаланушыны алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.search_failed",
+    "translation": "Пайдаланушыларды іздеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.create_failed",
+    "translation": "Пайдаланушыны жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.update_failed",
+    "translation": "Пайдаланушыны жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.deactivate_failed",
+    "translation": "Пайдаланушыны өшіру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.email_required",
+    "translation": "Электрондық пошта қажет."
+  },
+  {
+    "id": "user.username_required",
+    "translation": "Пайдаланушы аты қажет."
+  },
+  {
+    "id": "user.username_managed_externally",
+    "translation": "Бұл пайдаланушы атын каталог басқарады және оны осы жерде өзгерту мүмкін емес."
+  },
+  {
+    "id": "user.username_invalid",
+    "translation": "Пайдаланушы атында тек кіші әріптер, сандар, нүктелер, сызықшалар және астыңғы сызықтар болуы мүмкін және ол әріптен немесе саннан басталуы керек."
+  },
+  {
+    "id": "user.username_reserved",
+    "translation": "Бұл пайдаланушы аты сақталған және қолданылмайды."
+  },
+  {
+    "id": "user.storage_limit_invalid",
+    "translation": "Сақтау шегі нөл немесе одан көп болуы керек. Нөл шексіз дегенді білдіреді."
+  },
+  {
+    "id": "user.username_taken",
+    "translation": "Бұл пайдаланушы аты бос емес."
+  },
+  {
+    "id": "user.email_taken",
+    "translation": "Бұл электрондық пошта мекенжайы қолданыста."
+  },
+  {
+    "id": "user.name_required",
+    "translation": "Аты қажет."
+  },
+  {
+    "id": "user.lastname_required",
+    "translation": "Тегі қажет."
+  },
+  {
+    "id": "user.role_required",
+    "translation": "Рөл қажет."
+  },
+  {
+    "id": "user.password_required",
+    "translation": "Құпия сөз қажет."
+  },
+  {
+    "id": "user.password_mismatch",
+    "translation": "Құпия сөздер сәйкес келмейді."
+  },
+  {
+    "id": "user.password_incorrect",
+    "translation": "Ағымдағы құпия сөз дұрыс емес."
+  },
+  {
+    "id": "user.password_too_short",
+    "translation": "Құпия сөз тым қысқа."
+  },
+  {
+    "id": "user.password_missing_case",
+    "translation": "Құпия сөзде бас және кіші әріптер болуы керек."
+  },
+  {
+    "id": "user.password_missing_number",
+    "translation": "Құпия сөзде кемінде бір сан болуы керек."
+  },
+  {
+    "id": "user.password_missing_special",
+    "translation": "Құпия сөзде кемінде бір арнайы таңба болуы керек."
+  },
+  {
+    "id": "user.photo_upload_failed",
+    "translation": "Фотосуретті жүктеп салу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.photo_not_found",
+    "translation": "Пайдаланушының фотосуреті табылмады."
+  },
+  {
+    "id": "user.photo_delete_failed",
+    "translation": "Фотосуретті жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.photo_serve_failed",
+    "translation": "Пайдаланушының фотосуретін беру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.mfa_generate_failed",
+    "translation": "MFA QR кодын жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.mfa_enable_failed",
+    "translation": "MFA қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.mfa_disable_failed",
+    "translation": "MFA өшіру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.status_failed",
+    "translation": "Пайдаланушы күйін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.preferences_failed",
+    "translation": "Пайдаланушы параметрлерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.timezone_update_failed",
+    "translation": "Уақыт белдеуін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "user.password_reset_failed",
+    "translation": "Құпия сөзді қалпына келтіру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "request.invalid",
+    "translation": "Сұрау жарамсыз немесе бұрмаланған."
+  },
+  {
+    "id": "workspace.forbidden",
+    "translation": "Бұл әрекетті орындауға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "workspace.roles_license_required",
+    "translation": "Жұмыс кеңістігі рөлдерін басқару ақылы жоспарды қажет етеді."
+  },
+  {
+    "id": "workspace.task_create_failed",
+    "translation": "Тапсырманы жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Тіркемені алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.role_retrieval_failed",
+    "translation": "Рөлдерді алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.role_update_failed",
+    "translation": "Рөлді жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.role_create_failed",
+    "translation": "Рөлді жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.role_delete_failed",
+    "translation": "Рөлді жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.member_retrieval_failed",
+    "translation": "Жұмыс кеңістігінің мүшесін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.member_not_found",
+    "translation": "Сіз бұл жұмыс кеңістігінің мүшесі емессіз."
+  },
+  {
+    "id": "workspace.member_role_update_failed",
+    "translation": "Мүше рөлін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.attachment_not_found",
+    "translation": "Тіркеме табылмады."
+  },
+  {
+    "id": "workspace.table_name_empty",
+    "translation": "Кесте атауы бос болмауы керек."
+  },
+  {
+    "id": "workspace.item_not_found",
+    "translation": "Элемент табылмады."
+  },
+  {
+    "id": "workspace.role_in_use",
+    "translation": "Бұл рөл бір немесе бірнеше мүшеге тағайындалғандықтан жойылмайды."
+  },
+  {
+    "id": "workspace.role_delete_default_forbidden",
+    "translation": "Әдепкі рөлдерді жоюға болмайды."
+  },
+  {
+    "id": "workspace.status_index_retrieval_failed",
+    "translation": "Күй индексін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.tasks_retrieval_failed",
+    "translation": "Жұмыс кеңістігінің тапсырмаларын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.assigned_tasks_retrieval_failed",
+    "translation": "Тағайындалған тапсырмаларды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.view_update_failed",
+    "translation": "Көріністі жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.view_access_failed",
+    "translation": "Көріністі ашу мүмкін болмады. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.view_shares_get_failed",
+    "translation": "Көріністі бөлісу параметрлерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.view_shares_set_failed",
+    "translation": "Көріністі бөлісу параметрлерін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.folder_update_failed",
+    "translation": "Жұмыс кеңістігі қалтасын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.folder_delete_failed",
+    "translation": "Жұмыс кеңістігі қалтасын жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.linking_tables_failed",
+    "translation": "Қай кестелер осыған байланысқанын тексеру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.folder_has_tables",
+    "translation": "Бұл қалтаны жою мүмкін емес: онда кестелер бар, ал сізде кестелерді жоюға рұқсат жоқ."
+  },
+  {
+    "id": "workspace.folder_not_found",
+    "translation": "Қалта табылмады."
+  },
+  {
+    "id": "workspace.move_item_invalid",
+    "translation": "Тек кестені немесе қалтаны жылжытуға болады."
+  },
+  {
+    "id": "workspace.move_item_not_found",
+    "translation": "Элемент немесе мақсатты қалта табылмады."
+  },
+  {
+    "id": "workspace.folder_move_into_itself",
+    "translation": "Қалтаны өзінің ішіне немесе ішкі қалтасына жылжыту мүмкін емес."
+  },
+  {
+    "id": "workspace.move_item_failed",
+    "translation": "Элементті жылжыту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.member_delete_failed",
+    "translation": "Жұмыс кеңістігі мүшесін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.view_create_failed",
+    "translation": "Көріністі жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.view_already_exists",
+    "translation": "Осы атаумен көрініс бұрыннан бар."
+  },
+  {
+    "id": "workspace.single_select_update_failed",
+    "translation": "Опция атауын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_update_failed",
+    "translation": "Тапсырманы жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_name_empty",
+    "translation": "Тапсырма атауы бос болмауы керек."
+  },
+  {
+    "id": "workspace.task_dates_reversed",
+    "translation": "Басталу күні орындалу мерзімінен кеш болмауы керек."
+  },
+  {
+    "id": "workspace.task_update_protected",
+    "translation": "Бұл күй опциясының атауын өзгерту мүмкін емес."
+  },
+  {
+    "id": "workspace.relationship_not_found",
+    "translation": "Бұл өріс үшін сәйкес байланыс табылмады."
+  },
+  {
+    "id": "workspace.linked_table_not_found",
+    "translation": "Байланыстырылған кесте табылмады."
+  },
+  {
+    "id": "workspace.field_value_already_exists",
+    "translation": "Осы атаумен өріс мәні бұрыннан бар."
+  },
+  {
+    "id": "workspace.field_value_add_failed",
+    "translation": "Өріс мәнін қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.linked_task_data_failed",
+    "translation": "Байланыстырылған тапсырма деректерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.item_retrieval_failed",
+    "translation": "Элементті алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.table_update_failed",
+    "translation": "Кестені жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.workspace_update_failed",
+    "translation": "Жұмыс кеңістігін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.filter_update_failed",
+    "translation": "Сүзгіні жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.filter_not_found",
+    "translation": "Сүзгі табылмады."
+  },
+  {
+    "id": "workspace.filter_delete_failed",
+    "translation": "Сүзгіні жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.filter_save_failed",
+    "translation": "Сүзгіні сақтау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_link_invalid_id",
+    "translation": "Тапсырма сілтемесіндегі элемент идентификаторы жарамсыз."
+  },
+  {
+    "id": "workspace.filter_active_update_failed",
+    "translation": "Сүзгі күйін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.filtered_table_data_failed",
+    "translation": "Сүзгіленген кесте деректерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_link_update_failed",
+    "translation": "Тапсырма сілтемесін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.display_name_update_failed",
+    "translation": "Көрсетілетін атауды жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.view_or_field_not_found",
+    "translation": "Көрініс немесе өріс табылмады."
+  },
+  {
+    "id": "workspace.task_main_view_failed",
+    "translation": "Негізгі көріністі алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_name_failed",
+    "translation": "Тапсырма атауын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_status_name_failed",
+    "translation": "Күй атауын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.grid_view_create_failed",
+    "translation": "Кесте көрінісін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.column_width_update_failed",
+    "translation": "Баған енін жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.column_not_found",
+    "translation": "Көріністе баған табылмады."
+  },
+  {
+    "id": "workspace.grid_headers_update_failed",
+    "translation": "Кесте тақырыптарын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.member_to_task_add_failed",
+    "translation": "Мүшені тапсырмаға қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.folder_add_failed",
+    "translation": "Жұмыс кеңістігі қалтасын қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.single_field_delete_failed",
+    "translation": "Өрісті жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.table_field_delete_failed",
+    "translation": "Кесте өрісін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.table_view_delete_failed",
+    "translation": "Кесте көрінісін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_delete_failed",
+    "translation": "Тапсырманы жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.table_delete_failed",
+    "translation": "Кестені жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.current_user_retrieval_failed",
+    "translation": "Жұмыс кеңістігі пайдаланушысын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.attachment_delete_failed",
+    "translation": "Тіркемені жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Тіркемені алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.grid_sort_save_failed",
+    "translation": "Сұрыптау параметрлерін сақтау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.delete_failed",
+    "translation": "Жұмыс кеңістігін жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.membership_check_failed",
+    "translation": "Жұмыс кеңістігіне мүшелікті тексеру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.field_name_empty",
+    "translation": "Өріс атауын енгізіңіз."
+  },
+  {
+    "id": "workspace.field_type_invalid",
+    "translation": "Өріс түрі жарамсыз."
+  },
+  {
+    "id": "workspace.link_table_id_empty",
+    "translation": "Байланыс өрістері үшін байланыстырылған кесте идентификаторы қажет."
+  },
+  {
+    "id": "workspace.field_name_second_invalid",
+    "translation": "Екі бағытты байланыстар үшін екінші өріс атауы қажет."
+  },
+  {
+    "id": "workspace.table_field_create_failed",
+    "translation": "Кесте өрісін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.tables_retrieval_failed",
+    "translation": "Жұмыс кеңістігі кестелерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.workspace_name_empty",
+    "translation": "Жұмыс кеңістігінің атауы бос болмауы керек."
+  },
+  {
+    "id": "workspace.create_failed",
+    "translation": "Жұмыс кеңістігін жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.comments_retrieval_failed",
+    "translation": "Тапсырма пікірлерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.comment_add_failed",
+    "translation": "Пікір қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.comment_too_long",
+    "translation": "Пікіріңіз тым ұзын. Оны қысқартып, қайтадан көріңіз."
+  },
+  {
+    "id": "workspace.details_retrieval_failed",
+    "translation": "Жұмыс кеңістігінің мәліметтерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.workspaces_retrieval_failed",
+    "translation": "Жұмыс кеңістіктерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.file_upload_failed",
+    "translation": "Файлдарды жүктеп салу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.file_no_files",
+    "translation": "Ешбір файл берілмеді немесе сәтті жүктелмеді."
+  },
+  {
+    "id": "workspace.table_create_failed",
+    "translation": "Кестені жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.member_add_failed",
+    "translation": "Мүшелерді жұмыс кеңістігіне қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.table_permissions_retrieval_failed",
+    "translation": "Кесте рұқсаттарын алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.table_permissions_update_failed",
+    "translation": "Кесте рұқсаттарын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.kanban_data_failed",
+    "translation": "Канбан деректерін жүктеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.date_range_failed",
+    "translation": "Таңдалған күн аралығы үшін тапсырмаларды жүктеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.calendar_range_invalid",
+    "translation": "Күнтізбе үшін күн аралығы жарамсыз."
+  },
+  {
+    "id": "workspace.calendar_range_failed",
+    "translation": "Таңдалған ай үшін тапсырмаларды жүктеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.linked_records_failed",
+    "translation": "Байланысқан жазбаларды жүктеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.field_formula_update_failed",
+    "translation": "Өріс формуласын жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.task_page_retrieval_failed",
+    "translation": "Тапсырма бетін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "workspace.status_types_retrieval_failed",
+    "translation": "Күй түрлерін алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.forbidden",
+    "translation": "Бұл топты басқаруға рұқсатыңыз жоқ."
+  },
+  {
+    "id": "group.not_found",
+    "translation": "Көрсетілген топ жоқ немесе оны алу мүмкін болмады."
+  },
+  {
+    "id": "group.name_required",
+    "translation": "Топ атауы қажет."
+  },
+  {
+    "id": "group.no_members",
+    "translation": "Кемінде бір мүше берілуі керек."
+  },
+  {
+    "id": "group.role_admin_forbidden",
+    "translation": "Топ әкімші рөлін бере алмайды."
+  },
+  {
+    "id": "group.invalid_role",
+    "translation": "Таңдалған рөлдердің біреуі немесе бірнешеуі жоқ."
+  },
+  {
+    "id": "group.role_validation_failed",
+    "translation": "Таңдалған рөлдерді тексеру сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.create_failed",
+    "translation": "Топты жасау сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.update_failed",
+    "translation": "Топты жаңарту сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.delete_failed",
+    "translation": "Топты жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.list_failed",
+    "translation": "Топтарды алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.retrieval_failed",
+    "translation": "Топты алу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.members_failed",
+    "translation": "Топ мүшелерін жүктеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.add_members_failed",
+    "translation": "Мүшелерді топқа қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "group.remove_member_failed",
+    "translation": "Мүшені топтан жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel_group.list_failed",
+    "translation": "Бұл арнадағы топтарды тізімдеу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel_group.add_failed",
+    "translation": "Топты бұл арнаға қосу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel_group.remove_failed",
+    "translation": "Топты бұл арнадан жою сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel_group.no_groups",
+    "translation": "Ешбір топ таңдалмады."
+  },
+  {
+    "id": "email.footer.contact",
+    "translation": "Қажет болған жағдайда әкімшіңізге хабарласыңыз."
+  },
+  {
+    "id": "email.notification.intro",
+    "translation": "Сізде жаңа хабарландыру бар"
+  },
+  {
+    "id": "email.notification.action_open",
+    "translation": "Ашу"
+  },
+  {
+    "id": "email.notification.mention",
+    "translation": "{{.sender}} сізді \"{{.channel}}\" арнасында атап өтті."
+  },
+  {
+    "id": "email.registration.subject",
+    "translation": "Twigex-ке қош келдіңіз! Тіркелгіңізді баптауды аяқтаңыз!"
+  },
+  {
+    "id": "email.registration.title",
+    "translation": "Twigex-ке қош келдіңіз"
+  },
+  {
+    "id": "email.registration.text",
+    "translation": "Цифрлық еркіндікті рахаттаныңыз. Файлдарды сақтаңыз, жазбалар жасаңыз, жобаларыңызды басқарыңыз, басқалармен сөйлесіңіз және т.б. Кіріп, көңіл көтеріңіз!"
+  },
+  {
+    "id": "email.password_reset.subject",
+    "translation": "Құпия сөзді қалпына келтіру"
+  },
+  {
+    "id": "email.password_reset.title",
+    "translation": "Құпия сөзді қалпына келтіру"
+  },
+  {
+    "id": "email.password_reset.text",
+    "translation": "Егер сіз құпия сөзіңізді қалпына келтірмеген болсаңыз, бұл хатты елемеуіңізге болады!"
+  },
+  {
+    "id": "email.password.set_button",
+    "translation": "Құпия сөзді орнату"
+  },
+  {
+    "id": "email.video_invite.subject",
+    "translation": "Сіз бейнеқоңырауға шақырылдыңыз"
+  },
+  {
+    "id": "email.video_invite.title",
+    "translation": "Бейнеқоңырауға шақыру"
+  },
+  {
+    "id": "email.video_invite.text",
+    "translation": "Сіз бейнеқоңырауға қосылуға шақырылдыңыз. Кіру үшін төмендегі түймені басыңыз."
+  },
+  {
+    "id": "email.video_invite.join_button",
+    "translation": "Қоңырауға қосылу"
+  },
+  {
+    "id": "email.meeting_invite.subject",
+    "translation": "Сіз жоспарланған кездесуге шақырылдыңыз"
+  },
+  {
+    "id": "email.meeting_invite.title",
+    "translation": "Жоспарланған кездесуге шақыру"
+  },
+  {
+    "id": "email.meeting_invite.text",
+    "translation": "Сіз алдағы кездесуге шақырылдыңыз."
+  },
+  {
+    "id": "email.meeting_updated.subject",
+    "translation": "Сіз шақырылған кездесу жаңартылды"
+  },
+  {
+    "id": "email.meeting_updated.title",
+    "translation": "Кездесу жаңартылды"
+  },
+  {
+    "id": "email.meeting_updated.text",
+    "translation": "Сіз шақырылған кездесу жаңартылды. Соңғы мәліметтер төменде берілген."
+  },
+  {
+    "id": "email.meeting.open_button",
+    "translation": "Кездесуді ашу"
+  },
+  {
+    "id": "email.meeting.join_hint",
+    "translation": "Хост кездесуді бастағаннан кейін қосыла аласыз."
+  },
+  {
+    "id": "email.meeting.invited_line",
+    "translation": "{{.Inviter}} сізді {{.Channel}} арнасындағы {{.Meeting}} кездесуіне шақырды."
+  },
+  {
+    "id": "email.meeting.invited_line_no_channel",
+    "translation": "{{.Inviter}} сізді {{.Meeting}} кездесуіне шақырды."
+  },
+  {
+    "id": "email.meeting.scheduled_for",
+    "translation": "{{.Time}} уақытына жоспарланған"
+  },
+  {
+    "id": "email.meeting_cancelled.subject",
+    "translation": "Болдырылмады: {{.Title}}"
+  },
+  {
+    "id": "email.meeting_cancelled.title",
+    "translation": "Кездесу болдырылмады"
+  },
+  {
+    "id": "email.meeting_cancelled.text",
+    "translation": "Келесі кездесу болдырылмады."
+  },
+  {
+    "id": "email.meeting.cancelled_line",
+    "translation": "{{.Inviter}} {{.Channel}} арнасындағы {{.Meeting}} кездесуін болдырмады."
+  },
+  {
+    "id": "email.meeting.cancelled_line_no_channel",
+    "translation": "{{.Inviter}} {{.Meeting}} кездесуін болдырмады."
+  },
+  {
+    "id": "email.meeting.was_scheduled_for",
+    "translation": "{{.Time}} уақытына жоспарланған болатын"
+  },
+  {
+    "id": "email.meeting_member_scheduled.title",
+    "translation": "Жоспарланған кездесу"
+  },
+  {
+    "id": "email.meeting_member_scheduled.text",
+    "translation": "Сіздің арнаңызда кездесу жоспарланды."
+  },
+  {
+    "id": "email.meeting_member_scheduled.intro",
+    "translation": "{{.Channel}} арнасында кездесу жоспарланды"
+  },
+  {
+    "id": "email.meeting_member_updated.title",
+    "translation": "Жаңартылған кездесу"
+  },
+  {
+    "id": "email.meeting_member_updated.text",
+    "translation": "Сіздің арнаңыздағы кездесу жаңартылды."
+  },
+  {
+    "id": "email.meeting_member_updated.intro",
+    "translation": "{{.Channel}} арнасында кездесу жаңартылды"
+  },
+  {
+    "id": "email.label.join",
+    "translation": "Қосылу"
+  },
+  {
+    "id": "email.label.when",
+    "translation": "Қашан"
+  },
+  {
+    "id": "email.label.open",
+    "translation": "Ашу"
+  },
+  {
+    "id": "license.file_too_large",
+    "translation": "Лицензия файлы тым үлкен. 1 МБ-тан кіші файлды жүктеп салыңыз."
+  },
+  {
+    "id": "license.upload_failed",
+    "translation": "Лицензия файлын жүктеп салу сәтсіз аяқталды. Қайталап көріңіз."
+  },
+  {
+    "id": "channel.archived",
+    "translation": ""
+  },
+  {
+    "id": "channel.not_archived",
+    "translation": ""
+  },
+  {
+    "id": "channel.archive_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.unarchive_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.archive_type_invalid",
+    "translation": ""
+  },
+  {
+    "id": "channel.delete_type_invalid",
+    "translation": ""
+  },
+  {
+    "id": "channel.delete_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.role_invalid",
+    "translation": ""
+  }
+]

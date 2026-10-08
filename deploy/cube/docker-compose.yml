@@ -1,0 +1,71 @@
+# Shared Cube.js deployment for Collimato analytics.
+#
+# One Cube.js API instance plus a Cube Store router + worker (for the workspaces
+# that use pre-aggregations). This replaces the old per-workspace Kubernetes
+# StatefulSets — a new workspace is now just a database row in Twigex.
+#
+# Keep this on a private network: only Twigex should reach cube_api:4000, and
+# only cube_api should reach Twigex's /api/internal/cube endpoints. Copy
+# .env.example to .env and fill in the secrets before running.
+
+services:
+  cube_api:
+    # Pinned: driverFactory must return a DriverConfig, which replaced the
+    # dbType option removed in 1.7.0. Keep cubestore on the same version.
+    image: cubejs/cube:v1.7.1
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      CUBEJS_API_SECRET: ${CUBEJS_API_SECRET}
+      CUBEJS_CUBESTORE_HOST: cubestore_router
+      CUBEJS_DEV_MODE: "false"
+      # Boot-time default DB type required since Cube v1.7. The real per-workspace
+      # type comes from driverFactory's returned DriverConfig ({ type, ... }); this
+      # only satisfies the startup assertion when no request context exists yet.
+      CUBEJS_DB_TYPE: ${CUBEJS_DB_TYPE:-postgres}
+      # Hard cap on source-DB queries — a safety valve against runaways, not a UX
+      # knob (the client is already bounded by the frontend poll cap + Cancel).
+      # Keep it generous: it also caps pre-aggregation BUILDS, and it must let an
+      # expensive query finish so Cube can cache the result. Cube's own default is
+      # 10m. Size it at/above your slowest pre-agg build.
+      CUBEJS_DB_QUERY_TIMEOUT: ${CUBEJS_DB_QUERY_TIMEOUT:-10m}
+      TWIGEX_INTERNAL_URL: ${TWIGEX_INTERNAL_URL}
+      CUBE_CALLBACK_SECRET: ${CUBE_CALLBACK_SECRET}
+      CUBE_DB_CONNECT_TIMEOUT_MS: ${CUBE_DB_CONNECT_TIMEOUT_MS:-15000}
+    volumes:
+      - ./cube.js:/cube/conf/cube.js:ro
+    # Twigex runs on the host (not in this compose), so Cube reaches it via
+    # host.docker.internal. On Linux this host alias must be mapped explicitly.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - cubestore_router
+
+  cubestore_router:
+    image: cubejs/cubestore:v1.7.1
+    restart: unless-stopped
+    environment:
+      CUBESTORE_SERVER_NAME: cubestore_router:9999
+      CUBESTORE_META_PORT: "9999"
+      CUBESTORE_WORKERS: cubestore_worker_1:9001
+      CUBESTORE_REMOTE_DIR: /cube/data
+    volumes:
+      - cubestore_data:/cube/data
+
+  cubestore_worker_1:
+    image: cubejs/cubestore:v1.7.1
+    restart: unless-stopped
+    environment:
+      CUBESTORE_SERVER_NAME: cubestore_worker_1:9001
+      CUBESTORE_WORKER_PORT: "9001"
+      CUBESTORE_META_ADDR: cubestore_router:9999
+      CUBESTORE_WORKERS: cubestore_worker_1:9001
+      CUBESTORE_REMOTE_DIR: /cube/data
+    volumes:
+      - cubestore_data:/cube/data
+    depends_on:
+      - cubestore_router
+
+volumes:
+  cubestore_data:

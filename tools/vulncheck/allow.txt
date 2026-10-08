@@ -1,0 +1,10 @@
+# One id per line, nothing else on that line. Lines starting with # are ignored.
+
+# No fix upstream as of September 2026.
+# Unreachable here: every use of the LiveKit SDK is RoomServiceClient, its HTTP
+# management API. Nothing calls ConnectToRoom or handles tracks, so this process
+# never performs a DTLS handshake. It is reported only because dtls.alertError
+# implements error and is linked into the binary, which makes any err.Error()
+# call look like a possible path.
+# Revisit if the backend ever becomes a WebRTC peer.
+GO-2026-4479

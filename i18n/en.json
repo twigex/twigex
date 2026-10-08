@@ -1,0 +1,1986 @@
+[
+  {
+    "id": "activity.get_file_activity.not_found",
+    "translation": "The requested file activity could not be found."
+  },
+  {
+    "id": "user.not_found",
+    "translation": "The specified user does not exist or could not be retrieved."
+  },
+  {
+    "id": "user.seat_limit",
+    "translation": "Your plan's user limit has been reached. Deactivate a user or upgrade to add more."
+  },
+  {
+    "id": "session.invalid",
+    "translation": "The session is invalid."
+  },
+  {
+    "id": "session.expired",
+    "translation": "Your session has expired. Please log in again."
+  },
+  {
+    "id": "session.delete_failed",
+    "translation": "Failed to log out. Please try again."
+  },
+  {
+    "id": "session.not_authorized",
+    "translation": "You are not authorized to perform this action."
+  },
+  {
+    "id": "auth.login_failed",
+    "translation": "Failed to log in. Please try again."
+  },
+  {
+    "id": "auth.logout_failed",
+    "translation": "Failed to log out. Please try again."
+  },
+  {
+    "id": "auth.oauth_unavailable",
+    "translation": "OAuth login is not available in your current plan."
+  },
+  {
+    "id": "auth.oauth_provider_disabled",
+    "translation": "This OAuth provider is not enabled."
+  },
+  {
+    "id": "auth.oauth_failed",
+    "translation": "OAuth login failed. Please try again."
+  },
+  {
+    "id": "auth.invalid_credentials",
+    "translation": "Enter a valid email or username and/or password."
+  },
+  {
+    "id": "auth.mfa_token_invalid",
+    "translation": "The provided MFA token is invalid."
+  },
+  {
+    "id": "auth.mfa_validation_failed",
+    "translation": "Failed to validate MFA token. Please try again."
+  },
+  {
+    "id": "auth.ldap_failed",
+    "translation": "Enter a valid email or username and/or password."
+  },
+  {
+    "id": "auth.ldap_unavailable",
+    "translation": "LDAP authentication is not available on this server."
+  },
+  {
+    "id": "auth.user_deactivated",
+    "translation": "Enter a valid email or username and/or password."
+  },
+  {
+    "id": "auth.rate_limited",
+    "translation": "Too many login attempts. Please wait a moment and try again."
+  },
+  {
+    "id": "auth.no_methods_enabled",
+    "translation": "At least one login method must be enabled."
+  },
+  {
+    "id": "ldap.dial_failed",
+    "translation": "Could not connect to the LDAP server. Check the server URL."
+  },
+  {
+    "id": "ldap.bind_failed",
+    "translation": "LDAP bind failed. Check the bind DN and password."
+  },
+  {
+    "id": "ldap.ca_cert_invalid",
+    "translation": "The CA certificate could not be read. Provide the certificate in PEM format."
+  },
+  {
+    "id": "ldap.sync_already_running",
+    "translation": "A synchronisation is already in progress."
+  },
+  {
+    "id": "ldap.sync_enqueue_failed",
+    "translation": "The synchronisation could not be started."
+  },
+  {
+    "id": "ldap.invalid_sync_interval",
+    "translation": "The synchronisation interval must be between 5 and 1440 minutes."
+  },
+  {
+    "id": "ldap.invalid_sync_deactivate_percent",
+    "translation": "The deactivation limit must be between 1 and 100 percent."
+  },
+  {
+    "id": "ldap.invalid_timeout",
+    "translation": "The connection timeout must be between 1 and 120 seconds."
+  },
+  {
+    "id": "ldap.invalid_connection_security",
+    "translation": "Invalid LDAP connection security. Use 'none', 'tls' or 'starttls', or leave it empty to match the server URL scheme."
+  },
+  {
+    "id": "oidc.invalid_input",
+    "translation": "Missing required provider fields."
+  },
+  {
+    "id": "oidc.not_found",
+    "translation": "Provider not found."
+  },
+  {
+    "id": "oidc.retrieval_failed",
+    "translation": "Failed to retrieve OIDC providers."
+  },
+  {
+    "id": "oidc.create_failed",
+    "translation": "Failed to create OIDC provider. Please try again."
+  },
+  {
+    "id": "oidc.update_failed",
+    "translation": "Failed to update OIDC provider. Please try again."
+  },
+  {
+    "id": "oidc.delete_failed",
+    "translation": "Failed to delete OIDC provider. Please try again."
+  },
+  {
+    "id": "channel.not_found",
+    "translation": "The requested channel could not be found."
+  },
+  {
+    "id": "channel.retrieval_failed",
+    "translation": "Failed to retrieve channels. Please try again."
+  },
+  {
+    "id": "channel.invalid_type",
+    "translation": "The specified channel type is not valid."
+  },
+  {
+    "id": "channel.already_exists",
+    "translation": "A direct message channel between these users already exists."
+  },
+  {
+    "id": "channel.create_failed",
+    "translation": "Failed to create channel. Please try again."
+  },
+  {
+    "id": "channel.update_failed",
+    "translation": "Failed to update channel. Please try again."
+  },
+  {
+    "id": "channel.forbidden",
+    "translation": "You do not have permission to perform this action."
+  },
+  {
+    "id": "channel.not_member",
+    "translation": "You are not a member of this channel."
+  },
+  {
+    "id": "channel.already_member",
+    "translation": "You are already a member of this channel."
+  },
+  {
+    "id": "channel.not_public",
+    "translation": "This channel is not public and cannot be joined directly."
+  },
+  {
+    "id": "channel.direct_remove_forbidden",
+    "translation": "Users cannot be removed from a direct message channel."
+  },
+  {
+    "id": "channel.direct_update_forbidden",
+    "translation": "A direct message cannot be renamed or given a description."
+  },
+  {
+    "id": "channel.role_requires_direct_member",
+    "translation": "Add this user to the channel before making them a channel admin."
+  },
+  {
+    "id": "channel.join_failed",
+    "translation": "Failed to join channel. Please try again."
+  },
+  {
+    "id": "channel.member_add_failed",
+    "translation": "Failed to add users to the channel. Please try again."
+  },
+  {
+    "id": "channel.member_remove_failed",
+    "translation": "Failed to remove user from the channel. Please try again."
+  },
+  {
+    "id": "channel.leave_failed",
+    "translation": "Failed to leave the channel. Please try again."
+  },
+  {
+    "id": "channel.role_change_failed",
+    "translation": "Failed to change user role. Please try again."
+  },
+  {
+    "id": "channel.read_failed",
+    "translation": "Failed to mark channel posts as read."
+  },
+  {
+    "id": "channel.video_participants_failed",
+    "translation": "Failed to retrieve video call participants."
+  },
+  {
+    "id": "channel.video_token_failed",
+    "translation": "Failed to generate video token. Please try again."
+  },
+  {
+    "id": "channel.guest_link_failed",
+    "translation": "Failed to create guest links. Please try again."
+  },
+  {
+    "id": "channel.guest_link_no_recipients",
+    "translation": "Please provide at least one valid email address."
+  },
+  {
+    "id": "channel.guest_link_invalid",
+    "translation": "This invite link is not valid."
+  },
+  {
+    "id": "channel.guest_link_expired",
+    "translation": "This invite link has expired."
+  },
+  {
+    "id": "channel.guest_name_required",
+    "translation": "Please enter your name before joining."
+  },
+  {
+    "id": "channel.meeting_failed",
+    "translation": "Something went wrong with the meeting. Please try again."
+  },
+  {
+    "id": "channel.meeting_create_failed",
+    "translation": "Failed to create the meeting. Please try again."
+  },
+  {
+    "id": "channel.meeting_update_failed",
+    "translation": "Failed to update the meeting. Please try again."
+  },
+  {
+    "id": "channel.meeting_past_time",
+    "translation": "Pick a time in the future."
+  },
+  {
+    "id": "channel.not_direct",
+    "translation": "Calls can only be started in a direct message."
+  },
+  {
+    "id": "channel.direct_invite_forbidden",
+    "translation": "You can't invite people to a direct call."
+  },
+  {
+    "id": "channel.meeting_not_found",
+    "translation": "The requested meeting could not be found."
+  },
+  {
+    "id": "channel.meeting_ended",
+    "translation": "This meeting has ended."
+  },
+  {
+    "id": "meeting_group.no_groups",
+    "translation": "Select at least one group to invite."
+  },
+  {
+    "id": "meeting_group.list_failed",
+    "translation": "Failed to load the meeting's groups. Please try again."
+  },
+  {
+    "id": "meeting_group.add_failed",
+    "translation": "Failed to invite the groups to the meeting. Please try again."
+  },
+  {
+    "id": "meeting_group.update_failed",
+    "translation": "Failed to update the meeting's groups. Please try again."
+  },
+  {
+    "id": "channel.meeting_not_started",
+    "translation": "This meeting has not started yet."
+  },
+  {
+    "id": "channel.meeting_already_started",
+    "translation": "This meeting has already started — end it instead of cancelling."
+  },
+  {
+    "id": "channel.meeting_host_only",
+    "translation": "Only the meeting host can perform this action."
+  },
+  {
+    "id": "channel.meeting_host_invalid",
+    "translation": "The selected user cannot be made host."
+  },
+  {
+    "id": "channel.meeting_not_invited",
+    "translation": "You have not been invited to this meeting."
+  },
+  {
+    "id": "channel.meeting_password_invalid",
+    "translation": "Incorrect meeting password."
+  },
+  {
+    "id": "channel.file_upload_failed",
+    "translation": "Failed to upload file to channel. Please try again."
+  },
+  {
+    "id": "channel.file_too_large",
+    "translation": "File size exceeds the limit of 100MB."
+  },
+  {
+    "id": "channel.attachment_not_found",
+    "translation": "The requested file attachment could not be found."
+  },
+  {
+    "id": "channel.attachment_forbidden",
+    "translation": "You do not have permission to access this attachment."
+  },
+  {
+    "id": "channel.gif_failed",
+    "translation": "Failed to fetch GIFs. Please try again."
+  },
+  {
+    "id": "channel.gif_disabled",
+    "translation": "GIFs are disabled."
+  },
+  {
+    "id": "post.not_found",
+    "translation": "The requested post could not be found."
+  },
+  {
+    "id": "post.retrieval_failed",
+    "translation": "Failed to retrieve posts. Please try again."
+  },
+  {
+    "id": "post.create_failed",
+    "translation": "Failed to create post. Please try again."
+  },
+  {
+    "id": "post.update_failed",
+    "translation": "Failed to update post. Please try again."
+  },
+  {
+    "id": "post.delete_failed",
+    "translation": "Failed to delete post. Please try again."
+  },
+  {
+    "id": "post.forbidden",
+    "translation": "You do not have permission to perform this action on this post."
+  },
+  {
+    "id": "post.invalid_reply",
+    "translation": "The reply target post is invalid or belongs to a different channel."
+  },
+  {
+    "id": "post.too_long",
+    "translation": "Your message is too long. Please shorten it and try again."
+  },
+  {
+    "id": "post.invalid_reaction",
+    "translation": "That reaction is not a valid emoji."
+  },
+  {
+    "id": "post.attachment_failed",
+    "translation": "Failed to process file attachments."
+  },
+  {
+    "id": "post.reaction_create_failed",
+    "translation": "Failed to add reaction. Please try again."
+  },
+  {
+    "id": "post.reaction_delete_failed",
+    "translation": "Failed to remove reaction. Please try again."
+  },
+  {
+    "id": "post.forward_failed",
+    "translation": "Failed to forward post. Please try again."
+  },
+  {
+    "id": "connection.retrieval_failed",
+    "translation": "Failed to retrieve connections. Please try again."
+  },
+  {
+    "id": "connection.create_failed",
+    "translation": "Failed to create connection. Please try again."
+  },
+  {
+    "id": "connection.update_failed",
+    "translation": "Failed to update connection. Please try again."
+  },
+  {
+    "id": "connection.delete_failed",
+    "translation": "Failed to delete connection. Please try again."
+  },
+  {
+    "id": "connection.forbidden",
+    "translation": "You do not have permission to manage connections."
+  },
+  {
+    "id": "connection.not_found",
+    "translation": "The requested connection could not be found."
+  },
+  {
+    "id": "connection.ssl_mode_unsupported",
+    "translation": "That encryption mode is not recognised. Choose one of the listed verification levels."
+  },
+  {
+    "id": "connection.verification_failed",
+    "translation": "Failed to verify the database connection. Please check your credentials."
+  },
+  {
+    "id": "connection.verification.credentials",
+    "translation": "The database rejected the username or password. Check both and try again."
+  },
+  {
+    "id": "connection.verification.database",
+    "translation": "The server is reachable, but no database with that name exists on it."
+  },
+  {
+    "id": "connection.verification.certificate",
+    "translation": "The server's certificate could not be verified. Check that the CA certificate matches the server."
+  },
+  {
+    "id": "connection.verification.hostname",
+    "translation": "The certificate does not cover this host name. Connect using the name in the certificate, or set Verification to Certificate."
+  },
+  {
+    "id": "connection.verification.ca_cert",
+    "translation": "The CA certificate could not be read. Paste the full certificate in PEM format."
+  },
+  {
+    "id": "connection.verification.unreachable",
+    "translation": "Could not reach the server. Check the host and port, and that the server accepts connections from Twigex."
+  },
+  {
+    "id": "chart.retrieval_failed",
+    "translation": "Failed to retrieve charts. Please try again."
+  },
+  {
+    "id": "chart.create_failed",
+    "translation": "Failed to create chart. Please try again."
+  },
+  {
+    "id": "chart.update_failed",
+    "translation": "Failed to update chart. Please try again."
+  },
+  {
+    "id": "chart.delete_failed",
+    "translation": "Failed to delete chart. Please try again."
+  },
+  {
+    "id": "chart.forbidden",
+    "translation": "You do not have permission to access this chart."
+  },
+  {
+    "id": "dashboard.retrieval_failed",
+    "translation": "Failed to retrieve dashboards. Please try again."
+  },
+  {
+    "id": "dashboard.create_failed",
+    "translation": "Failed to create dashboard. Please try again."
+  },
+  {
+    "id": "dashboard.update_failed",
+    "translation": "Failed to update dashboard. Please try again."
+  },
+  {
+    "id": "dashboard.delete_failed",
+    "translation": "Failed to delete dashboard. Please try again."
+  },
+  {
+    "id": "dashboard.forbidden",
+    "translation": "You do not have permission to access this dashboard."
+  },
+  {
+    "id": "dashboard.workspace_mismatch",
+    "translation": "The dashboard does not belong to the specified workspace."
+  },
+  {
+    "id": "dashboard.filter_not_found",
+    "translation": "The requested dashboard filter could not be found."
+  },
+  {
+    "id": "dashboard.filter_add_failed",
+    "translation": "Failed to add filter to dashboard. Please try again."
+  },
+  {
+    "id": "dashboard.filter_update_failed",
+    "translation": "Failed to update dashboard filter. Please try again."
+  },
+  {
+    "id": "dashboard.filter_delete_failed",
+    "translation": "Failed to delete dashboard filter. Please try again."
+  },
+  {
+    "id": "dashboard.chart_update_failed",
+    "translation": "Failed to update dashboard charts. Please try again."
+  },
+  {
+    "id": "role.not_found",
+    "translation": "The requested role could not be found."
+  },
+  {
+    "id": "role.retrieval_failed",
+    "translation": "Failed to retrieve roles. Please try again."
+  },
+  {
+    "id": "role.create_failed",
+    "translation": "Failed to create role. Please try again."
+  },
+  {
+    "id": "role.update_failed",
+    "translation": "Failed to update role. Please try again."
+  },
+  {
+    "id": "role.delete_failed",
+    "translation": "Failed to delete role. Please try again."
+  },
+  {
+    "id": "permission.forbidden",
+    "translation": "You do not have permission to perform this action."
+  },
+  {
+    "id": "role.name_invalid",
+    "translation": "Role name may only contain lowercase letters, numbers, underscores and hyphens."
+  },
+  {
+    "id": "role.forbidden",
+    "translation": "You do not have permission to manage roles."
+  },
+  {
+    "id": "role.name_required",
+    "translation": "Role name is required."
+  },
+  {
+    "id": "role.name_taken",
+    "translation": "A role with this name already exists."
+  },
+  {
+    "id": "role.cannot_delete_builtin",
+    "translation": "Built-in roles cannot be deleted."
+  },
+  {
+    "id": "role.cannot_rename_builtin",
+    "translation": "Built-in roles cannot be renamed."
+  },
+  {
+    "id": "role.check_failed",
+    "translation": "Failed to verify role name availability. Please try again."
+  },
+  {
+    "id": "datamodel.forbidden",
+    "translation": "You do not have permission to manage data models."
+  },
+  {
+    "id": "datamodel.invalid_model",
+    "translation": "The data model is invalid. Check the name, table, and fields."
+  },
+  {
+    "id": "datamodel.name_taken",
+    "translation": "A data model with this name already exists. Choose a different name."
+  },
+  {
+    "id": "datamodel.delete_has_dependents",
+    "translation": "This cube cannot be deleted because other cubes or views still depend on it."
+  },
+  {
+    "id": "datamodel.file_create_failed",
+    "translation": "Failed to create data model file. Please try again."
+  },
+  {
+    "id": "datamodel.file_read_failed",
+    "translation": "Failed to read data model file."
+  },
+  {
+    "id": "datamodel.file_write_failed",
+    "translation": "Failed to save data model file. Please try again."
+  },
+  {
+    "id": "datamodel.file_delete_failed",
+    "translation": "Failed to delete data model file. Please try again."
+  },
+  {
+    "id": "datamodel.generate_failed",
+    "translation": "Failed to generate data model files. Please try again."
+  },
+  {
+    "id": "file.forbidden",
+    "translation": "You do not have permission to access this file."
+  },
+  {
+    "id": "file.not_found",
+    "translation": "The requested file could not be found."
+  },
+  {
+    "id": "file.retrieval_failed",
+    "translation": "Failed to retrieve files. Please try again."
+  },
+  {
+    "id": "file.create_failed",
+    "translation": "Failed to create file. Please try again."
+  },
+  {
+    "id": "file.delete_failed",
+    "translation": "Failed to delete file. Please try again."
+  },
+  {
+    "id": "file.restore_failed",
+    "translation": "Failed to restore file. Please try again."
+  },
+  {
+    "id": "file.move_failed",
+    "translation": "Failed to move file. Please try again."
+  },
+  {
+    "id": "file.locked",
+    "translation": "This file is temporarily locked and cannot be modified right now."
+  },
+  {
+    "id": "file.rename_failed",
+    "translation": "Failed to rename file. Please try again."
+  },
+  {
+    "id": "file.archive_failed",
+    "translation": "Failed to archive file. Please try again."
+  },
+  {
+    "id": "file.no_space",
+    "translation": "You have reached your storage limit. Please free up space and try again."
+  },
+  {
+    "id": "file.metadata_create_failed",
+    "translation": "Failed to create file metadata. Please try again."
+  },
+  {
+    "id": "file.metadata_retrieval_failed",
+    "translation": "Failed to retrieve file metadata. Please try again."
+  },
+  {
+    "id": "file.metadata_add_failed",
+    "translation": "Failed to add metadata to file. Please try again."
+  },
+  {
+    "id": "file.metadata_update_failed",
+    "translation": "Failed to update file metadata. Please try again."
+  },
+  {
+    "id": "file.metadata_edit_failed",
+    "translation": "Failed to edit file metadata. Please try again."
+  },
+  {
+    "id": "file.share_failed",
+    "translation": "Failed to share file. Please try again."
+  },
+  {
+    "id": "file.unshare_failed",
+    "translation": "Failed to unshare file. Please try again."
+  },
+  {
+    "id": "file.share_forbidden",
+    "translation": "You do not have permission to share this file."
+  },
+  {
+    "id": "file.share_below_inherited",
+    "translation": "You can't grant less access than is already inherited from the parent folder."
+  },
+  {
+    "id": "file.share_user_deactivated",
+    "translation": "This user is deactivated and cannot be shared with."
+  },
+  {
+    "id": "file.permissions_update_failed",
+    "translation": "Failed to update share permissions. Please try again."
+  },
+  {
+    "id": "file.metadata_delete_failed",
+    "translation": "Failed to delete file metadata. Please try again."
+  },
+  {
+    "id": "file.unknown_type",
+    "translation": "The specified file type is not supported."
+  },
+  {
+    "id": "link.no_access",
+    "translation": "A share link must allow at least viewing, downloading, or uploading."
+  },
+  {
+    "id": "link.upload_requires_folder",
+    "translation": "Upload links can only be created for folders."
+  },
+  {
+    "id": "link.create_failed",
+    "translation": "Failed to create the share link. Please try again."
+  },
+  {
+    "id": "link.update_failed",
+    "translation": "Failed to update the share link. Please try again."
+  },
+  {
+    "id": "link.delete_failed",
+    "translation": "Failed to delete the share link. Please try again."
+  },
+  {
+    "id": "link.not_found",
+    "translation": "The share link could not be found."
+  },
+  {
+    "id": "link.forbidden",
+    "translation": "You do not have permission to modify this share link."
+  },
+  {
+    "id": "link.retrieval_failed",
+    "translation": "Failed to open the share link. Please try again."
+  },
+  {
+    "id": "link.expired",
+    "translation": "This share link has expired."
+  },
+  {
+    "id": "link.password_required",
+    "translation": "This share link requires a password."
+  },
+  {
+    "id": "link.password_invalid",
+    "translation": "The password is incorrect."
+  },
+  {
+    "id": "link.auth_failed",
+    "translation": "Failed to unlock the share link. Please try again."
+  },
+  {
+    "id": "link.download_forbidden",
+    "translation": "Downloads are not allowed for this share link."
+  },
+  {
+    "id": "link.download_limit",
+    "translation": "This share link has reached its download limit."
+  },
+  {
+    "id": "link.rate_limited",
+    "translation": "Too many attempts. Please wait a moment and try again."
+  },
+  {
+    "id": "link.view_forbidden",
+    "translation": "This share link does not allow viewing this file."
+  },
+  {
+    "id": "office.readonly",
+    "translation": "This document is read-only."
+  },
+  {
+    "id": "link.upload_forbidden",
+    "translation": "This share link does not allow uploads."
+  },
+  {
+    "id": "link.upload_failed",
+    "translation": "Upload failed. Please try again."
+  },
+  {
+    "id": "upload.too_large",
+    "translation": "The file is too large to upload."
+  },
+  {
+    "id": "upload.missing_destination",
+    "translation": "Upload destination is required."
+  },
+  {
+    "id": "upload.missing_name",
+    "translation": "File name is required."
+  },
+  {
+    "id": "upload.invalid_size",
+    "translation": "The file size is invalid."
+  },
+  {
+    "id": "upload.start_failed",
+    "translation": "Failed to start upload session. Please try again."
+  },
+  {
+    "id": "upload.not_found",
+    "translation": "Upload session could not be found."
+  },
+  {
+    "id": "upload.forbidden",
+    "translation": "You do not have permission to access this upload session."
+  },
+  {
+    "id": "upload.expired",
+    "translation": "This upload session has expired. Please start a new upload."
+  },
+  {
+    "id": "upload.conflict",
+    "translation": "This upload session is not in an uploadable state."
+  },
+  {
+    "id": "upload.incomplete",
+    "translation": "Upload is not yet complete. Please finish uploading all parts."
+  },
+  {
+    "id": "upload.chunk_failed",
+    "translation": "Failed to upload file chunk. Please try again."
+  },
+  {
+    "id": "upload.finalize_failed",
+    "translation": "Failed to finalize upload. Please try again."
+  },
+  {
+    "id": "upload.abort_failed",
+    "translation": "Failed to abort upload session. Please try again."
+  },
+  {
+    "id": "upload.invalid_action",
+    "translation": "The specified upload action is not valid."
+  },
+  {
+    "id": "storage.not_available",
+    "translation": "The storage backend is not available. Please try again later."
+  },
+  {
+    "id": "storage.license_required",
+    "translation": "A valid license is required to manage storage."
+  },
+  {
+    "id": "groups.license_required",
+    "translation": "Groups require a paid plan."
+  },
+  {
+    "id": "storage.not_found",
+    "translation": "The requested storage could not be found."
+  },
+  {
+    "id": "storage.get_failed",
+    "translation": "Failed to retrieve storage. Please try again."
+  },
+  {
+    "id": "storage.get_all_failed",
+    "translation": "Failed to retrieve storage list. Please try again."
+  },
+  {
+    "id": "storage.create_failed",
+    "translation": "Failed to create storage. Please try again."
+  },
+  {
+    "id": "storage.update_failed",
+    "translation": "Failed to update storage. Please try again."
+  },
+  {
+    "id": "storage.delete_failed",
+    "translation": "Failed to delete storage. Please try again."
+  },
+  {
+    "id": "storage.set_primary_failed",
+    "translation": "Failed to set primary storage. Please try again."
+  },
+  {
+    "id": "storage.encrypt_failed",
+    "translation": "Failed to encrypt storage credentials. Please try again."
+  },
+  {
+    "id": "storage.update_directory_failed",
+    "translation": "Failed to update storage directory. Please try again."
+  },
+  {
+    "id": "storage.drive_create_failed",
+    "translation": "Failed to create storage drive. Please try again."
+  },
+  {
+    "id": "storage.drive_delete_failed",
+    "translation": "Failed to delete storage drive. Please try again."
+  },
+  {
+    "id": "job.not_found",
+    "translation": "The requested job could not be found."
+  },
+  {
+    "id": "job.retrieval_failed",
+    "translation": "Failed to retrieve jobs. Please try again."
+  },
+  {
+    "id": "job.cancel_failed",
+    "translation": "Failed to cancel job. Please try again."
+  },
+  {
+    "id": "job.cancel_invalid_status",
+    "translation": "Only pending or running jobs can be cancelled."
+  },
+  {
+    "id": "job.acknowledge_failed",
+    "translation": "Failed to acknowledge job. Please try again."
+  },
+  {
+    "id": "license.verify_failed",
+    "translation": "Failed to verify the license. Please check that the license file is valid."
+  },
+  {
+    "id": "license.expired",
+    "translation": "This license has expired. Applying it would replace your current license, so it was not applied."
+  },
+  {
+    "id": "license.seats_exceeded",
+    "translation": "This licence covers fewer users than are currently active. Deactivate users first, or use a licence with more seats."
+  },
+  {
+    "id": "license.save_failed",
+    "translation": "Failed to save the license. Please try again."
+  },
+  {
+    "id": "license.remove_failed",
+    "translation": "Failed to remove the active license. Please try again."
+  },
+  {
+    "id": "notification.retrieval_failed",
+    "translation": "Failed to retrieve notifications. Please try again."
+  },
+  {
+    "id": "license.feature_unavailable",
+    "translation": "This feature is not available in your current plan."
+  },
+  {
+    "id": "notification.not_found",
+    "translation": "The requested notification could not be found."
+  },
+  {
+    "id": "notification.forbidden",
+    "translation": "You do not have permission to access this notification."
+  },
+  {
+    "id": "notification.read_failed",
+    "translation": "Failed to mark notification as read. Please try again."
+  },
+  {
+    "id": "notification.delete_failed",
+    "translation": "Failed to delete notification. Please try again."
+  },
+  {
+    "id": "office.not_available",
+    "translation": "The office editor is not available. Please try again later."
+  },
+  {
+    "id": "office.open_failed",
+    "translation": "Failed to open file in the office editor. Please try again."
+  },
+  {
+    "id": "office.save_failed",
+    "translation": "Failed to save file. Please try again."
+  },
+  {
+    "id": "office.token_invalid",
+    "translation": "The office access token is invalid or has expired."
+  },
+  {
+    "id": "collimato.workspace_user_failed",
+    "translation": "Failed to retrieve workspace user. Please try again."
+  },
+  {
+    "id": "collimato.roles_failed",
+    "translation": "Failed to retrieve workspace roles. Please try again."
+  },
+  {
+    "id": "collimato.permission_denied",
+    "translation": "You do not have permission to access this data."
+  },
+  {
+    "id": "collimato.data_security_unavailable",
+    "translation": "Data access rules cannot be enforced on this server. Contact your administrator."
+  },
+  {
+    "id": "collimato.workspace_limit",
+    "translation": "Your plan includes one workspace. Upgrade to create more."
+  },
+  {
+    "id": "collimato.custom_roles_unavailable",
+    "translation": "Custom roles require a paid plan. The built-in roles remain available."
+  },
+  {
+    "id": "collimato.retrieval_failed",
+    "translation": "Failed to retrieve workspaces. Please try again."
+  },
+  {
+    "id": "collimato.not_found",
+    "translation": "The requested workspace could not be found."
+  },
+  {
+    "id": "collimato.forbidden",
+    "translation": "You do not have permission to access this workspace."
+  },
+  {
+    "id": "collimato.create_failed",
+    "translation": "Failed to create workspace. Please try again."
+  },
+  {
+    "id": "collimato.delete_failed",
+    "translation": "Failed to delete workspace. Please try again."
+  },
+  {
+    "id": "collimato.member_add_failed",
+    "translation": "Failed to add users to the workspace. Please try again."
+  },
+  {
+    "id": "collimato.member_remove_failed",
+    "translation": "Failed to remove user from the workspace. Please try again."
+  },
+  {
+    "id": "collimato.member_not_found",
+    "translation": "You are not a member of this workspace."
+  },
+  {
+    "id": "collimato.users_retrieval_failed",
+    "translation": "Failed to retrieve workspace users. Please try again."
+  },
+  {
+    "id": "collimato.roles_update_failed",
+    "translation": "Failed to update user roles. Please try again."
+  },
+  {
+    "id": "collimato.finish_failed",
+    "translation": "Failed to finish workspace setup. Please try again."
+  },
+  {
+    "id": "collimato.query_failed",
+    "translation": "Failed to query data. Please try again."
+  },
+  {
+    "id": "collimato.request_failed",
+    "translation": "Failed to communicate with the analytics engine. Please try again."
+  },
+  {
+    "id": "collimato.no_groups",
+    "translation": "No groups were provided."
+  },
+  {
+    "id": "collimato.no_roles",
+    "translation": "At least one role must be assigned to the group."
+  },
+  {
+    "id": "collimato.role_not_found",
+    "translation": "One or more of the selected roles do not exist in this workspace."
+  },
+  {
+    "id": "collimato.groups_retrieval_failed",
+    "translation": "Failed to retrieve workspace groups. Please try again."
+  },
+  {
+    "id": "collimato.group_add_failed",
+    "translation": "Failed to add groups to the workspace. Please try again."
+  },
+  {
+    "id": "collimato.group_remove_failed",
+    "translation": "Failed to remove the group from the workspace. Please try again."
+  },
+  {
+    "id": "collimato.group_roles_update_failed",
+    "translation": "Failed to update the group's roles. Please try again."
+  },
+  {
+    "id": "collimato.name_required",
+    "translation": "The workspace needs a name."
+  },
+  {
+    "id": "collimato.update_failed",
+    "translation": "Failed to update the workspace. Please try again."
+  },
+  {
+    "id": "collimato.last_admin",
+    "translation": "A workspace needs at least one workspace admin. Make someone else a workspace admin first."
+  },
+  {
+    "id": "collimato.own_roles",
+    "translation": "You cannot change your own roles. Ask a workspace admin."
+  },
+  {
+    "id": "collimato.admin_role_required",
+    "translation": "Only workspace admins can give, remove or edit the workspace admin role."
+  },
+  {
+    "id": "collimato.own_role_edit",
+    "translation": "You cannot edit a role you hold. Ask a workspace admin."
+  },
+  {
+    "id": "settings.env_locked",
+    "translation": "These settings are managed by environment variables and cannot be changed here."
+  },
+  {
+    "id": "settings.update_failed",
+    "translation": "Failed to update settings. Please try again."
+  },
+  {
+    "id": "settings.encrypt_failed",
+    "translation": "Unable to save settings. An encryption error occurred."
+  },
+  {
+    "id": "settings.email_test_failed",
+    "translation": "Failed to test email server connection. Please try again."
+  },
+  {
+    "id": "settings.retrieval_failed",
+    "translation": "Failed to retrieve settings. Please try again."
+  },
+  {
+    "id": "user.retrieval_failed",
+    "translation": "Failed to retrieve user. Please try again."
+  },
+  {
+    "id": "user.search_failed",
+    "translation": "Failed to search users. Please try again."
+  },
+  {
+    "id": "user.create_failed",
+    "translation": "Failed to create user. Please try again."
+  },
+  {
+    "id": "user.update_failed",
+    "translation": "Failed to update user. Please try again."
+  },
+  {
+    "id": "user.deactivate_failed",
+    "translation": "Failed to deactivate user. Please try again."
+  },
+  {
+    "id": "user.email_required",
+    "translation": "Email is required."
+  },
+  {
+    "id": "user.username_required",
+    "translation": "Username is required."
+  },
+  {
+    "id": "user.username_managed_externally",
+    "translation": "This username is managed by the directory and cannot be changed here."
+  },
+  {
+    "id": "user.username_invalid",
+    "translation": "Username may contain only lowercase letters, numbers, dots, hyphens and underscores, and must start with a letter or number."
+  },
+  {
+    "id": "user.username_reserved",
+    "translation": "This username is reserved and cannot be used."
+  },
+  {
+    "id": "user.storage_limit_invalid",
+    "translation": "Storage limit must be zero or more. Zero means unlimited."
+  },
+  {
+    "id": "user.username_taken",
+    "translation": "This username is already taken."
+  },
+  {
+    "id": "user.email_taken",
+    "translation": "This email address is already in use."
+  },
+  {
+    "id": "user.name_required",
+    "translation": "First name is required."
+  },
+  {
+    "id": "user.lastname_required",
+    "translation": "Last name is required."
+  },
+  {
+    "id": "user.role_required",
+    "translation": "Role is required."
+  },
+  {
+    "id": "user.own_role",
+    "translation": "You cannot change your own role. Ask a system admin."
+  },
+  {
+    "id": "user.admin_role_required",
+    "translation": "Only system admins can give or remove the system admin role, or manage a system admin's account."
+  },
+  {
+    "id": "role.own_role_edit",
+    "translation": "You cannot edit a role you hold. Ask a system admin."
+  },
+  {
+    "id": "user.password_required",
+    "translation": "Password is required."
+  },
+  {
+    "id": "user.password_mismatch",
+    "translation": "Passwords do not match."
+  },
+  {
+    "id": "user.password_incorrect",
+    "translation": "Current password is incorrect."
+  },
+  {
+    "id": "user.password_too_short",
+    "translation": "Password is too short."
+  },
+  {
+    "id": "user.password_missing_case",
+    "translation": "Password must include uppercase and lowercase characters."
+  },
+  {
+    "id": "user.password_missing_number",
+    "translation": "Password must include at least one number."
+  },
+  {
+    "id": "user.password_missing_special",
+    "translation": "Password must include at least one special character."
+  },
+  {
+    "id": "user.photo_upload_failed",
+    "translation": "Failed to upload photo. Please try again."
+  },
+  {
+    "id": "user.photo_not_found",
+    "translation": "User photo not found."
+  },
+  {
+    "id": "user.photo_delete_failed",
+    "translation": "Failed to remove photo. Please try again."
+  },
+  {
+    "id": "user.photo_serve_failed",
+    "translation": "Failed to serve user photo. Please try again."
+  },
+  {
+    "id": "user.mfa_generate_failed",
+    "translation": "Failed to generate MFA QR code. Please try again."
+  },
+  {
+    "id": "user.mfa_enable_failed",
+    "translation": "Failed to enable MFA. Please try again."
+  },
+  {
+    "id": "user.mfa_disable_failed",
+    "translation": "Failed to disable MFA. Please try again."
+  },
+  {
+    "id": "user.status_failed",
+    "translation": "Failed to update user status. Please try again."
+  },
+  {
+    "id": "user.preferences_failed",
+    "translation": "Failed to retrieve user preferences. Please try again."
+  },
+  {
+    "id": "user.timezone_update_failed",
+    "translation": "Failed to update timezone. Please try again."
+  },
+  {
+    "id": "user.password_reset_failed",
+    "translation": "Failed to reset password. Please try again."
+  },
+  {
+    "id": "request.invalid",
+    "translation": "The request is invalid or malformed."
+  },
+  {
+    "id": "workspace.forbidden",
+    "translation": "You do not have permission to perform this action."
+  },
+  {
+    "id": "workspace.workspace_not_found",
+    "translation": "The workspace does not exist or has been deleted."
+  },
+  {
+    "id": "workspace.role_not_found",
+    "translation": "One or more of the selected roles do not exist in this workspace."
+  },
+  {
+    "id": "workspace.last_admin",
+    "translation": "A workspace needs at least one admin. Make someone else an admin first."
+  },
+  {
+    "id": "workspace.own_roles",
+    "translation": "You cannot change your own roles. Ask a workspace admin."
+  },
+  {
+    "id": "workspace.admin_role_required",
+    "translation": "Only workspace admins can give, remove or edit the admin role."
+  },
+  {
+    "id": "workspace.own_role_edit",
+    "translation": "You cannot edit a role you hold. Ask a workspace admin."
+  },
+  {
+    "id": "workspace.roles_license_required",
+    "translation": "Managing workspace roles requires a paid plan."
+  },
+  {
+    "id": "workspace.task_create_failed",
+    "translation": "Failed to create task. Please try again."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Failed to retrieve attachment. Please try again."
+  },
+  {
+    "id": "workspace.role_retrieval_failed",
+    "translation": "Failed to retrieve roles. Please try again."
+  },
+  {
+    "id": "workspace.role_update_failed",
+    "translation": "Failed to update role. Please try again."
+  },
+  {
+    "id": "workspace.role_create_failed",
+    "translation": "Failed to create role. Please try again."
+  },
+  {
+    "id": "workspace.role_delete_failed",
+    "translation": "Failed to delete role. Please try again."
+  },
+  {
+    "id": "workspace.member_retrieval_failed",
+    "translation": "Failed to retrieve workspace member. Please try again."
+  },
+  {
+    "id": "workspace.member_not_found",
+    "translation": "You are not a member of this workspace."
+  },
+  {
+    "id": "workspace.member_role_update_failed",
+    "translation": "Failed to update member role. Please try again."
+  },
+  {
+    "id": "workspace.attachment_not_found",
+    "translation": "Attachment not found."
+  },
+  {
+    "id": "workspace.table_name_empty",
+    "translation": "Table name cannot be empty."
+  },
+  {
+    "id": "workspace.item_not_found",
+    "translation": "Item not found."
+  },
+  {
+    "id": "workspace.role_delete_default_forbidden",
+    "translation": "Default roles cannot be deleted."
+  },
+  {
+    "id": "workspace.status_index_retrieval_failed",
+    "translation": "Failed to retrieve status index. Please try again."
+  },
+  {
+    "id": "workspace.tasks_retrieval_failed",
+    "translation": "Failed to retrieve workspace tasks. Please try again."
+  },
+  {
+    "id": "workspace.assigned_tasks_retrieval_failed",
+    "translation": "Failed to retrieve assigned tasks. Please try again."
+  },
+  {
+    "id": "workspace.view_update_failed",
+    "translation": "Failed to update view. Please try again."
+  },
+  {
+    "id": "workspace.view_access_failed",
+    "translation": "Failed to open view. Please try again."
+  },
+  {
+    "id": "workspace.view_shares_get_failed",
+    "translation": "Failed to retrieve view sharing settings. Please try again."
+  },
+  {
+    "id": "workspace.view_shares_set_failed",
+    "translation": "Failed to update view sharing settings. Please try again."
+  },
+  {
+    "id": "workspace.folder_update_failed",
+    "translation": "Failed to update workspace folder. Please try again."
+  },
+  {
+    "id": "workspace.folder_delete_failed",
+    "translation": "Failed to delete workspace folder. Please try again."
+  },
+  {
+    "id": "workspace.linking_tables_failed",
+    "translation": "Failed to check which tables link here. Please try again."
+  },
+  {
+    "id": "workspace.folder_has_tables",
+    "translation": "Cannot delete this folder: it contains tables and you do not have permission to delete tables."
+  },
+  {
+    "id": "workspace.folder_not_found",
+    "translation": "The folder could not be found."
+  },
+  {
+    "id": "workspace.move_item_invalid",
+    "translation": "Only a table or a folder can be moved."
+  },
+  {
+    "id": "workspace.move_item_not_found",
+    "translation": "The item or the folder it was moved to could not be found."
+  },
+  {
+    "id": "workspace.folder_move_into_itself",
+    "translation": "A folder cannot be moved into itself or into a folder inside it."
+  },
+  {
+    "id": "workspace.move_item_failed",
+    "translation": "Failed to move the item. Please try again."
+  },
+  {
+    "id": "workspace.member_delete_failed",
+    "translation": "Failed to remove workspace member. Please try again."
+  },
+  {
+    "id": "workspace.view_create_failed",
+    "translation": "Failed to create view. Please try again."
+  },
+  {
+    "id": "workspace.view_already_exists",
+    "translation": "A view with this name already exists."
+  },
+  {
+    "id": "workspace.single_select_update_failed",
+    "translation": "Failed to update option name. Please try again."
+  },
+  {
+    "id": "workspace.task_update_failed",
+    "translation": "Failed to update task. Please try again."
+  },
+  {
+    "id": "workspace.task_name_empty",
+    "translation": "Task name cannot be empty."
+  },
+  {
+    "id": "workspace.task_dates_reversed",
+    "translation": "The start date cannot be after the due date."
+  },
+  {
+    "id": "workspace.task_update_protected",
+    "translation": "This status option cannot be renamed."
+  },
+  {
+    "id": "workspace.relationship_not_found",
+    "translation": "No matching relationship found for this field."
+  },
+  {
+    "id": "workspace.linked_table_not_found",
+    "translation": "Linked table not found."
+  },
+  {
+    "id": "workspace.field_value_already_exists",
+    "translation": "A field value with this name already exists."
+  },
+  {
+    "id": "workspace.field_value_add_failed",
+    "translation": "Failed to add field value. Please try again."
+  },
+  {
+    "id": "workspace.linked_task_data_failed",
+    "translation": "Failed to retrieve linked task data. Please try again."
+  },
+  {
+    "id": "workspace.item_retrieval_failed",
+    "translation": "Failed to retrieve item. Please try again."
+  },
+  {
+    "id": "workspace.table_update_failed",
+    "translation": "Failed to update table. Please try again."
+  },
+  {
+    "id": "workspace.workspace_update_failed",
+    "translation": "Failed to update workspace. Please try again."
+  },
+  {
+    "id": "workspace.filter_update_failed",
+    "translation": "Failed to update filter. Please try again."
+  },
+  {
+    "id": "workspace.filter_not_found",
+    "translation": "Filter not found."
+  },
+  {
+    "id": "workspace.filter_delete_failed",
+    "translation": "Failed to delete filter. Please try again."
+  },
+  {
+    "id": "workspace.filter_save_failed",
+    "translation": "Failed to save filter. Please try again."
+  },
+  {
+    "id": "workspace.task_link_invalid_id",
+    "translation": "Invalid item ID in task link."
+  },
+  {
+    "id": "workspace.filter_active_update_failed",
+    "translation": "Failed to update filter status. Please try again."
+  },
+  {
+    "id": "workspace.filtered_table_data_failed",
+    "translation": "Failed to retrieve filtered table data. Please try again."
+  },
+  {
+    "id": "workspace.task_link_update_failed",
+    "translation": "Failed to update task link. Please try again."
+  },
+  {
+    "id": "workspace.display_name_update_failed",
+    "translation": "Failed to update display name. Please try again."
+  },
+  {
+    "id": "workspace.view_or_field_not_found",
+    "translation": "View or field not found."
+  },
+  {
+    "id": "workspace.task_main_view_failed",
+    "translation": "Failed to retrieve main view. Please try again."
+  },
+  {
+    "id": "workspace.task_name_failed",
+    "translation": "Failed to retrieve task name. Please try again."
+  },
+  {
+    "id": "workspace.task_status_name_failed",
+    "translation": "Failed to retrieve status name. Please try again."
+  },
+  {
+    "id": "workspace.grid_view_create_failed",
+    "translation": "Failed to create grid view. Please try again."
+  },
+  {
+    "id": "workspace.column_width_update_failed",
+    "translation": "Failed to update column width. Please try again."
+  },
+  {
+    "id": "workspace.column_not_found",
+    "translation": "Column not found in view."
+  },
+  {
+    "id": "workspace.grid_headers_update_failed",
+    "translation": "Failed to update grid headers. Please try again."
+  },
+  {
+    "id": "workspace.member_to_task_add_failed",
+    "translation": "Failed to add member to task. Please try again."
+  },
+  {
+    "id": "workspace.folder_add_failed",
+    "translation": "Failed to add workspace folder. Please try again."
+  },
+  {
+    "id": "workspace.single_field_delete_failed",
+    "translation": "Failed to delete field. Please try again."
+  },
+  {
+    "id": "workspace.table_field_delete_failed",
+    "translation": "Failed to delete table field. Please try again."
+  },
+  {
+    "id": "workspace.table_view_delete_failed",
+    "translation": "Failed to delete table view. Please try again."
+  },
+  {
+    "id": "workspace.task_delete_failed",
+    "translation": "Failed to delete task. Please try again."
+  },
+  {
+    "id": "workspace.table_delete_failed",
+    "translation": "Failed to delete table. Please try again."
+  },
+  {
+    "id": "workspace.current_user_retrieval_failed",
+    "translation": "Failed to retrieve workspace user. Please try again."
+  },
+  {
+    "id": "workspace.attachment_delete_failed",
+    "translation": "Failed to delete attachment. Please try again."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Failed to retrieve attachment. Please try again."
+  },
+  {
+    "id": "workspace.grid_sort_save_failed",
+    "translation": "Failed to save sort settings. Please try again."
+  },
+  {
+    "id": "workspace.delete_failed",
+    "translation": "Failed to delete workspace. Please try again."
+  },
+  {
+    "id": "workspace.membership_check_failed",
+    "translation": "Failed to check workspace membership. Please try again."
+  },
+  {
+    "id": "workspace.field_name_empty",
+    "translation": "Enter a name for the field."
+  },
+  {
+    "id": "workspace.field_type_invalid",
+    "translation": "Invalid field type."
+  },
+  {
+    "id": "workspace.link_table_id_empty",
+    "translation": "Linked table ID is required for link fields."
+  },
+  {
+    "id": "workspace.field_name_second_invalid",
+    "translation": "Second field name is required for bidirectional links."
+  },
+  {
+    "id": "workspace.table_field_create_failed",
+    "translation": "Failed to create table field. Please try again."
+  },
+  {
+    "id": "workspace.tables_retrieval_failed",
+    "translation": "Failed to retrieve workspace tables. Please try again."
+  },
+  {
+    "id": "workspace.workspace_name_empty",
+    "translation": "Workspace name cannot be empty."
+  },
+  {
+    "id": "workspace.create_failed",
+    "translation": "Failed to create workspace. Please try again."
+  },
+  {
+    "id": "workspace.comments_retrieval_failed",
+    "translation": "Failed to retrieve task comments. Please try again."
+  },
+  {
+    "id": "workspace.comment_add_failed",
+    "translation": "Failed to add comment. Please try again."
+  },
+  {
+    "id": "workspace.comment_too_long",
+    "translation": "Your comment is too long. Please shorten it and try again."
+  },
+  {
+    "id": "workspace.details_retrieval_failed",
+    "translation": "Failed to retrieve workspace details. Please try again."
+  },
+  {
+    "id": "workspace.workspaces_retrieval_failed",
+    "translation": "Failed to retrieve workspaces. Please try again."
+  },
+  {
+    "id": "workspace.file_upload_failed",
+    "translation": "Failed to upload files. Please try again."
+  },
+  {
+    "id": "workspace.file_no_files",
+    "translation": "No files were provided or uploaded successfully."
+  },
+  {
+    "id": "workspace.table_create_failed",
+    "translation": "Failed to create table. Please try again."
+  },
+  {
+    "id": "workspace.member_add_failed",
+    "translation": "Failed to add members to workspace. Please try again."
+  },
+  {
+    "id": "workspace.table_permissions_retrieval_failed",
+    "translation": "Failed to retrieve table permissions. Please try again."
+  },
+  {
+    "id": "workspace.table_permissions_update_failed",
+    "translation": "Failed to update table permissions. Please try again."
+  },
+  {
+    "id": "workspace.kanban_data_failed",
+    "translation": "Failed to load kanban data. Please try again."
+  },
+  {
+    "id": "workspace.date_range_failed",
+    "translation": "Failed to load tasks for the selected date range. Please try again."
+  },
+  {
+    "id": "workspace.calendar_range_invalid",
+    "translation": "Invalid date range for calendar."
+  },
+  {
+    "id": "workspace.calendar_range_failed",
+    "translation": "Failed to load tasks for the selected month. Please try again."
+  },
+  {
+    "id": "workspace.linked_records_failed",
+    "translation": "Failed to load linked records. Please try again."
+  },
+  {
+    "id": "workspace.field_formula_update_failed",
+    "translation": "Failed to update field formula. Please try again."
+  },
+  {
+    "id": "workspace.task_page_retrieval_failed",
+    "translation": "Failed to retrieve task page. Please try again."
+  },
+  {
+    "id": "workspace.status_types_retrieval_failed",
+    "translation": "Failed to retrieve status types. Please try again."
+  },
+  {
+    "id": "group.forbidden",
+    "translation": "You do not have permission to manage this group."
+  },
+  {
+    "id": "group.not_found",
+    "translation": "The specified group does not exist or could not be retrieved."
+  },
+  {
+    "id": "group.name_required",
+    "translation": "Group name is required."
+  },
+  {
+    "id": "group.no_members",
+    "translation": "At least one member must be provided."
+  },
+  {
+    "id": "group.role_admin_forbidden",
+    "translation": "A group cannot grant the administrator role."
+  },
+  {
+    "id": "group.invalid_role",
+    "translation": "One or more of the selected roles do not exist."
+  },
+  {
+    "id": "group.role_validation_failed",
+    "translation": "Failed to validate the selected roles. Please try again."
+  },
+  {
+    "id": "group.create_failed",
+    "translation": "Failed to create group. Please try again."
+  },
+  {
+    "id": "group.update_failed",
+    "translation": "Failed to update group. Please try again."
+  },
+  {
+    "id": "group.delete_failed",
+    "translation": "Failed to delete group. Please try again."
+  },
+  {
+    "id": "group.list_failed",
+    "translation": "Failed to retrieve groups. Please try again."
+  },
+  {
+    "id": "group.retrieval_failed",
+    "translation": "Failed to retrieve group. Please try again."
+  },
+  {
+    "id": "group.members_failed",
+    "translation": "Failed to load group members. Please try again."
+  },
+  {
+    "id": "group.add_members_failed",
+    "translation": "Failed to add members to group. Please try again."
+  },
+  {
+    "id": "group.remove_member_failed",
+    "translation": "Failed to remove member from group. Please try again."
+  },
+  {
+    "id": "channel_group.list_failed",
+    "translation": "Failed to list groups in this channel. Please try again."
+  },
+  {
+    "id": "channel_group.add_failed",
+    "translation": "Failed to add the group to this channel. Please try again."
+  },
+  {
+    "id": "channel_group.remove_failed",
+    "translation": "Failed to remove the group from this channel. Please try again."
+  },
+  {
+    "id": "channel_group.no_groups",
+    "translation": "No groups selected."
+  },
+  {
+    "id": "email.footer.contact",
+    "translation": "Feel free to contact your administrator when needed."
+  },
+  {
+    "id": "email.notification.intro",
+    "translation": "You have a new notification"
+  },
+  {
+    "id": "email.notification.action_open",
+    "translation": "Open"
+  },
+  {
+    "id": "email.notification.mention",
+    "translation": "{{.sender}} mentioned you in \"{{.channel}}\"."
+  },
+  {
+    "id": "email.registration.subject",
+    "translation": "Welcome to Twigex! Finish setting up your account!"
+  },
+  {
+    "id": "email.registration.title",
+    "translation": "Welcome to Twigex"
+  },
+  {
+    "id": "email.registration.text",
+    "translation": "Enjoy your digital freedom. Store files, make notes, manage your projects, chat with others and more. Log in and have fun!"
+  },
+  {
+    "id": "email.password_reset.subject",
+    "translation": "Password reset"
+  },
+  {
+    "id": "email.password_reset.title",
+    "translation": "Password reset"
+  },
+  {
+    "id": "email.password_reset.text",
+    "translation": "If you did not reset your password you can ignore this email!"
+  },
+  {
+    "id": "email.password.set_button",
+    "translation": "Set Password"
+  },
+  {
+    "id": "email.video_invite.subject",
+    "translation": "You have been invited to a video call"
+  },
+  {
+    "id": "email.video_invite.title",
+    "translation": "Video call invitation"
+  },
+  {
+    "id": "email.video_invite.text",
+    "translation": "You have been invited to join a video call. Click the button below to enter."
+  },
+  {
+    "id": "email.video_invite.join_button",
+    "translation": "Join Call"
+  },
+  {
+    "id": "email.meeting_invite.subject",
+    "translation": "You have been invited to a scheduled meeting"
+  },
+  {
+    "id": "email.meeting_invite.title",
+    "translation": "Scheduled meeting invitation"
+  },
+  {
+    "id": "email.meeting_invite.text",
+    "translation": "You have been invited to an upcoming meeting."
+  },
+  {
+    "id": "email.meeting_updated.subject",
+    "translation": "A meeting you were invited to was updated"
+  },
+  {
+    "id": "email.meeting_updated.title",
+    "translation": "Meeting updated"
+  },
+  {
+    "id": "email.meeting_updated.text",
+    "translation": "A meeting you were invited to has been updated. The latest details are below."
+  },
+  {
+    "id": "email.meeting.open_button",
+    "translation": "Open Meeting"
+  },
+  {
+    "id": "email.meeting.join_hint",
+    "translation": "You can join once the host starts the meeting."
+  },
+  {
+    "id": "email.meeting.invited_line",
+    "translation": "{{.Inviter}} invited you to {{.Meeting}} in {{.Channel}}."
+  },
+  {
+    "id": "email.meeting.invited_line_no_channel",
+    "translation": "{{.Inviter}} invited you to {{.Meeting}}."
+  },
+  {
+    "id": "email.meeting.scheduled_for",
+    "translation": "Scheduled for {{.Time}}"
+  },
+  {
+    "id": "email.meeting_cancelled.subject",
+    "translation": "Cancelled: {{.Title}}"
+  },
+  {
+    "id": "email.meeting_cancelled.title",
+    "translation": "Meeting cancelled"
+  },
+  {
+    "id": "email.meeting_cancelled.text",
+    "translation": "The following meeting has been cancelled."
+  },
+  {
+    "id": "email.meeting.cancelled_line",
+    "translation": "{{.Inviter}} cancelled {{.Meeting}} in {{.Channel}}."
+  },
+  {
+    "id": "email.meeting.cancelled_line_no_channel",
+    "translation": "{{.Inviter}} cancelled {{.Meeting}}."
+  },
+  {
+    "id": "email.meeting.was_scheduled_for",
+    "translation": "Was scheduled for {{.Time}}"
+  },
+  {
+    "id": "email.meeting_member_scheduled.title",
+    "translation": "Scheduled meeting"
+  },
+  {
+    "id": "email.meeting_member_scheduled.text",
+    "translation": "A meeting was scheduled in your channel."
+  },
+  {
+    "id": "email.meeting_member_scheduled.intro",
+    "translation": "A meeting was scheduled in {{.Channel}}"
+  },
+  {
+    "id": "email.meeting_member_updated.title",
+    "translation": "Updated meeting"
+  },
+  {
+    "id": "email.meeting_member_updated.text",
+    "translation": "A meeting in your channel was updated."
+  },
+  {
+    "id": "email.meeting_member_updated.intro",
+    "translation": "A meeting was updated in {{.Channel}}"
+  },
+  {
+    "id": "email.label.join",
+    "translation": "Join"
+  },
+  {
+    "id": "email.label.when",
+    "translation": "When"
+  },
+  {
+    "id": "email.label.open",
+    "translation": "Open"
+  },
+  {
+    "id": "license.file_too_large",
+    "translation": "The license file is too large. Please upload a file smaller than 1 MB."
+  },
+  {
+    "id": "license.upload_failed",
+    "translation": "Failed to upload the license file. Please try again."
+  },
+  {
+    "id": "channel.archived",
+    "translation": "This channel is archived. Unarchive it before making changes."
+  },
+  {
+    "id": "channel.not_archived",
+    "translation": "This channel is not archived."
+  },
+  {
+    "id": "channel.archive_failed",
+    "translation": "Failed to archive the channel. Please try again."
+  },
+  {
+    "id": "channel.unarchive_failed",
+    "translation": "Failed to unarchive the channel. Please try again."
+  },
+  {
+    "id": "channel.archive_type_invalid",
+    "translation": "Only public channels can be archived."
+  },
+  {
+    "id": "channel.delete_type_invalid",
+    "translation": "Only public channels can be deleted."
+  },
+  {
+    "id": "channel.delete_failed",
+    "translation": "Failed to delete the channel. Please try again."
+  },
+  {
+    "id": "channel.role_invalid",
+    "translation": "That is not a valid channel role."
+  }
+]

@@ -1,0 +1,10 @@
+/*
+Copyright (c) 2022 Twigex, SIA.
+SPDX-License-Identifier: AGPL-3.0-only
+*/
+
+.default-text-color {
+}
+.main-text-color {
+    @apply text-indigo-500 hover:text-indigo-700;
+}

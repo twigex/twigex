@@ -1,0 +1,6 @@
+.git/
+.gitignore
+.github/
+build/
+frontend/node_modules/
+

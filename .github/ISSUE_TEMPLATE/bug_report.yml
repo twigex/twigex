@@ -1,0 +1,90 @@
+name: Bug report
+description: Report a problem with Twigex. For security vulnerabilities, email security@twigex.com instead and do not open a public issue.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: check the [documentation](https://twigex.com/) and
+        existing issues. Scrub all logs and screenshots before attaching them:
+        no credentials, tokens, connection strings, real email addresses or
+        customer data.
+
+        If you can reproduce the problem on the
+        [demo instance](https://demo.twigex.com/) (username `twigex`,
+        password `twigex`, resets every 30 minutes), say so. That removes the
+        whole configuration surface from the investigation.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The version shown in the About dialog, or the release tarball name (e.g. `twigex-0.15.0-linux-amd64`). For a source build, the commit hash.
+      placeholder: twigex-0.15.0-linux-amd64
+    validations:
+      required: true
+
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Deployment
+      description: How Twigex is deployed.
+      options:
+        - Single binary
+        - Docker Compose
+        - Helm chart
+        - Built from source
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: services
+    attributes:
+      label: Optional services configured
+      description: Only services whose feature is in use matter; leave all unchecked otherwise.
+      options:
+        - label: LiveKit (voice/video)
+        - label: Cube.js (Collimato)
+        - label: EuroOffice or Collabora (document editing)
+        - label: S3-compatible storage
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: MariaDB or MySQL and its version, Redis version, storage backend (local disk or S3), and the deployment platform if relevant.
+      placeholder: |
+        MariaDB 11.4, Redis 7.2, local disk storage, Docker on Ubuntu 24.04
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What you did, what you expected, and what happened instead.
+      placeholder: |
+        1.
+        2.
+        Expected:
+        Happened:
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Server logs and browser console
+      description: The log lines around the failure, and the browser console output for frontend bugs. Scrub credentials and personal data first.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: scrubbed
+    attributes:
+      label: Scrubbing
+      options:
+        - label: I have removed credentials, tokens, connection strings and personal data from everything attached above.
+          required: true

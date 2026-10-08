@@ -1,0 +1,15 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/twigex/twigex/security/advisories/new
+    about: |
+      Do not open a public issue for a security problem. Email
+      security@twigex.com or use private vulnerability reporting.
+  - name: Documentation and manual
+    url: https://twigex.com/
+    about: Installation guides and user documentation.
+  - name: Questions and help
+    url: https://github.com/twigex/twigex/discussions
+    about: |
+      Please open an issue only for bugs and change proposals; check the manual
+      first for setup and usage questions.

@@ -1,0 +1,39 @@
+name: Change proposal
+description: Suggest a change or new capability. Describe the problem you have, not only the solution you want.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Include who is affected and how you work around it today. For anything
+        that adds a setting, a table, an API endpoint or a permission, expect a
+        design discussion first, since those are the parts that are expensive to
+        change after release. One logical change per issue.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what is in the way? Who is affected, and what do you use as a workaround today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What you would like to happen. A proposal is welcome, but the problem statement above decides priority.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Would this introduce any of the following?
+      description: These trigger a design discussion with the maintainers before any code is written.
+      options:
+        - label: A new setting or configuration option
+        - label: A new database table or migration
+        - label: A new API endpoint
+        - label: A change to permissions or access control
+        - label: A new dependency

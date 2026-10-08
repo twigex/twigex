@@ -1,0 +1,1926 @@
+[
+  {
+    "id": "activity.get_file_activity.not_found",
+    "translation": "Pieprasīto faila aktivitāti neizdevās atrast."
+  },
+  {
+    "id": "user.not_found",
+    "translation": "Norādītais lietotājs neeksistē vai to neizdevās iegūt."
+  },
+  {
+    "id": "user.seat_limit",
+    "translation": "Sasniegts jūsu plāna lietotāju ierobežojums. Deaktivizējiet lietotāju vai jauniniet plānu."
+  },
+  {
+    "id": "session.invalid",
+    "translation": "Sesija ir nederīga."
+  },
+  {
+    "id": "session.expired",
+    "translation": "Jūsu sesijas derīguma termiņš ir beidzies. Lūdzu, piesakieties vēlreiz."
+  },
+  {
+    "id": "session.delete_failed",
+    "translation": "Neizdevās atteikties. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "session.not_authorized",
+    "translation": "Jums nav atļaujas veikt šo darbību."
+  },
+  {
+    "id": "auth.login_failed",
+    "translation": "Neizdevās pieteikties. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "auth.logout_failed",
+    "translation": "Neizdevās atteikties. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "auth.oauth_unavailable",
+    "translation": "OAuth pieteikšanās nav pieejama jūsu pašreizējā plānā."
+  },
+  {
+    "id": "auth.oauth_provider_disabled",
+    "translation": "Šis OAuth nodrošinātājs nav iespējots."
+  },
+  {
+    "id": "auth.oauth_failed",
+    "translation": "OAuth pieteikšanās neizdevās. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "auth.invalid_credentials",
+    "translation": "Ievadiet derīgu e-pastu vai lietotājvārdu un/vai paroli."
+  },
+  {
+    "id": "auth.mfa_token_invalid",
+    "translation": "Norādītais MFA marķieris ir nederīgs."
+  },
+  {
+    "id": "auth.mfa_validation_failed",
+    "translation": "Neizdevās validēt MFA marķieri. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "auth.ldap_failed",
+    "translation": "Ievadiet derīgu e-pastu vai lietotājvārdu un/vai paroli."
+  },
+  {
+    "id": "auth.ldap_unavailable",
+    "translation": "LDAP autentifikācija šajā serverī nav pieejama."
+  },
+  {
+    "id": "auth.user_deactivated",
+    "translation": "Ievadiet derīgu e-pastu vai lietotājvārdu un/vai paroli."
+  },
+  {
+    "id": "auth.rate_limited",
+    "translation": "Pārāk daudz pieteikšanās mēģinājumu. Lūdzu, uzgaidiet brīdi un mēģiniet vēlreiz."
+  },
+  {
+    "id": "auth.no_methods_enabled",
+    "translation": "Jābūt iespējotai vismaz vienai pieteikšanās metodei."
+  },
+  {
+    "id": "ldap.dial_failed",
+    "translation": "Neizdevās izveidot savienojumu ar LDAP serveri. Pārbaudiet servera URL."
+  },
+  {
+    "id": "ldap.bind_failed",
+    "translation": "LDAP sasaiste neizdevās. Pārbaudiet sasaistes DN un paroli."
+  },
+  {
+    "id": "ldap.ca_cert_invalid",
+    "translation": "Neizdevās nolasīt CA sertifikātu. Norādiet sertifikātu PEM formātā."
+  },
+  {
+    "id": "ldap.sync_already_running",
+    "translation": "Sinhronizācija jau notiek."
+  },
+  {
+    "id": "ldap.sync_enqueue_failed",
+    "translation": "Sinhronizāciju nevarēja sākt."
+  },
+  {
+    "id": "ldap.invalid_sync_interval",
+    "translation": "Sinhronizācijas intervālam jābūt no 5 līdz 1440 minūtēm."
+  },
+  {
+    "id": "ldap.invalid_sync_deactivate_percent",
+    "translation": "Deaktivizēšanas ierobežojumam jābūt no 1 līdz 100 procentiem."
+  },
+  {
+    "id": "ldap.invalid_timeout",
+    "translation": "Savienojuma noildzei jābūt no 1 līdz 120 sekundēm."
+  },
+  {
+    "id": "ldap.invalid_connection_security",
+    "translation": "Nederīgs LDAP savienojuma drošības veids. Izmantojiet 'none', 'tls' vai 'starttls' vai atstājiet tukšu, lai izmantotu servera URL shēmu."
+  },
+  {
+    "id": "oidc.invalid_input",
+    "translation": "Trūkst obligāto nodrošinātāja lauku."
+  },
+  {
+    "id": "oidc.not_found",
+    "translation": "Nodrošinātājs netika atrasts."
+  },
+  {
+    "id": "oidc.retrieval_failed",
+    "translation": "Neizdevās iegūt OIDC nodrošinātājus."
+  },
+  {
+    "id": "oidc.create_failed",
+    "translation": "Neizdevās izveidot OIDC nodrošinātāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "oidc.update_failed",
+    "translation": "Neizdevās atjaunināt OIDC nodrošinātāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "oidc.delete_failed",
+    "translation": "Neizdevās dzēst OIDC nodrošinātāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.not_found",
+    "translation": "Pieprasīto kanālu neizdevās atrast."
+  },
+  {
+    "id": "channel.retrieval_failed",
+    "translation": "Neizdevās iegūt kanālus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.invalid_type",
+    "translation": "Norādītais kanāla tips nav derīgs."
+  },
+  {
+    "id": "channel.already_exists",
+    "translation": "Tiešo ziņu kanāls starp šiem lietotājiem jau pastāv."
+  },
+  {
+    "id": "channel.create_failed",
+    "translation": "Neizdevās izveidot kanālu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.update_failed",
+    "translation": "Neizdevās atjaunināt kanālu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.forbidden",
+    "translation": "Jums nav atļaujas veikt šo darbību."
+  },
+  {
+    "id": "channel.not_member",
+    "translation": "Jūs neesat šī kanāla dalībnieks."
+  },
+  {
+    "id": "channel.already_member",
+    "translation": "Jūs jau esat šī kanāla dalībnieks."
+  },
+  {
+    "id": "channel.not_public",
+    "translation": "Šis kanāls nav publisks, un tam nevar pievienoties tieši."
+  },
+  {
+    "id": "channel.direct_remove_forbidden",
+    "translation": "Lietotājus nevar noņemt no tiešo ziņu kanāla."
+  },
+  {
+    "id": "channel.direct_update_forbidden",
+    "translation": "Tiešajai ziņai nevar mainīt nosaukumu vai pievienot aprakstu."
+  },
+  {
+    "id": "channel.role_requires_direct_member",
+    "translation": "Pievienojiet šo lietotāju kanālam, pirms padarāt viņu par kanāla administratoru."
+  },
+  {
+    "id": "channel.join_failed",
+    "translation": "Neizdevās pievienoties kanālam. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.member_add_failed",
+    "translation": "Neizdevās pievienot lietotājus kanālam. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.member_remove_failed",
+    "translation": "Neizdevās noņemt lietotāju no kanāla. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.leave_failed",
+    "translation": "Neizdevās pamest kanālu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.role_change_failed",
+    "translation": "Neizdevās mainīt lietotāja lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.read_failed",
+    "translation": "Neizdevās atzīmēt kanāla ierakstus kā izlasītus."
+  },
+  {
+    "id": "channel.video_participants_failed",
+    "translation": "Neizdevās iegūt video zvana dalībniekus."
+  },
+  {
+    "id": "channel.video_token_failed",
+    "translation": "Neizdevās ģenerēt video marķieri. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.guest_link_failed",
+    "translation": "Neizdevās izveidot viesu saites. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.guest_link_no_recipients",
+    "translation": "Lūdzu, norādiet vismaz vienu derīgu e-pasta adresi."
+  },
+  {
+    "id": "channel.guest_link_invalid",
+    "translation": "Šī uzaicinājuma saite nav derīga."
+  },
+  {
+    "id": "channel.guest_link_expired",
+    "translation": "Šīs uzaicinājuma saites derīguma termiņš ir beidzies."
+  },
+  {
+    "id": "channel.guest_name_required",
+    "translation": "Lūdzu, ievadiet savu vārdu pirms pievienošanās."
+  },
+  {
+    "id": "channel.meeting_failed",
+    "translation": "Ar sapulci kaut kas nogāja greizi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.meeting_create_failed",
+    "translation": "Neizdevās izveidot sapulci. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.meeting_update_failed",
+    "translation": "Neizdevās atjaunināt sapulci. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.meeting_past_time",
+    "translation": "Izvēlieties laiku nākotnē."
+  },
+  {
+    "id": "channel.not_direct",
+    "translation": "Zvanus var sākt tikai tiešajā ziņā."
+  },
+  {
+    "id": "channel.direct_invite_forbidden",
+    "translation": "Jūs nevarat uzaicināt cilvēkus uz tiešo zvanu."
+  },
+  {
+    "id": "channel.meeting_not_found",
+    "translation": "Pieprasīto sapulci neizdevās atrast."
+  },
+  {
+    "id": "channel.meeting_ended",
+    "translation": "Šī sapulce ir beigusies."
+  },
+  {
+    "id": "meeting_group.no_groups",
+    "translation": "Atlasiet vismaz vienu grupu, ko uzaicināt."
+  },
+  {
+    "id": "meeting_group.list_failed",
+    "translation": "Neizdevās ielādēt sapulces grupas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "meeting_group.add_failed",
+    "translation": "Neizdevās uzaicināt grupas uz sapulci. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "meeting_group.update_failed",
+    "translation": "Neizdevās atjaunināt sapulces grupas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.meeting_not_started",
+    "translation": "Šī sapulce vēl nav sākusies."
+  },
+  {
+    "id": "channel.meeting_already_started",
+    "translation": "Šī sapulce jau ir sākusies — beidziet to, nevis atceliet."
+  },
+  {
+    "id": "channel.meeting_host_only",
+    "translation": "Šo darbību var veikt tikai sapulces vadītājs."
+  },
+  {
+    "id": "channel.meeting_host_invalid",
+    "translation": "Izvēlēto lietotāju nevar iecelt par vadītāju."
+  },
+  {
+    "id": "channel.meeting_not_invited",
+    "translation": "Jūs neesat uzaicināts uz šo sapulci."
+  },
+  {
+    "id": "channel.meeting_password_invalid",
+    "translation": "Nepareiza sapulces parole."
+  },
+  {
+    "id": "channel.file_upload_failed",
+    "translation": "Neizdevās augšupielādēt failu kanālā. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.file_too_large",
+    "translation": "Faila izmērs pārsniedz 100 MB ierobežojumu."
+  },
+  {
+    "id": "channel.attachment_not_found",
+    "translation": "Pieprasīto faila pielikumu neizdevās atrast."
+  },
+  {
+    "id": "channel.attachment_forbidden",
+    "translation": "Jums nav atļaujas piekļūt šim pielikumam."
+  },
+  {
+    "id": "channel.gif_failed",
+    "translation": "Neizdevās iegūt GIF failus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.gif_disabled",
+    "translation": "GIF faili ir atspējoti."
+  },
+  {
+    "id": "post.not_found",
+    "translation": "Pieprasīto ierakstu neizdevās atrast."
+  },
+  {
+    "id": "post.retrieval_failed",
+    "translation": "Neizdevās iegūt ierakstus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "post.create_failed",
+    "translation": "Neizdevās izveidot ierakstu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "post.update_failed",
+    "translation": "Neizdevās atjaunināt ierakstu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "post.delete_failed",
+    "translation": "Neizdevās dzēst ierakstu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "post.forbidden",
+    "translation": "Jums nav atļaujas veikt šo darbību ar šo ierakstu."
+  },
+  {
+    "id": "post.invalid_reply",
+    "translation": "Atbildes mērķa ieraksts ir nederīgs vai pieder citam kanālam."
+  },
+  {
+    "id": "post.too_long",
+    "translation": "Jūsu ziņojums ir pārāk garš. Lūdzu, saīsiniet to un mēģiniet vēlreiz."
+  },
+  {
+    "id": "post.invalid_reaction",
+    "translation": "Šī reakcija nav derīga emocijzīme."
+  },
+  {
+    "id": "post.attachment_failed",
+    "translation": "Neizdevās apstrādāt failu pielikumus."
+  },
+  {
+    "id": "post.reaction_create_failed",
+    "translation": "Neizdevās pievienot reakciju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "post.reaction_delete_failed",
+    "translation": "Neizdevās noņemt reakciju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "post.forward_failed",
+    "translation": "Neizdevās pārsūtīt ierakstu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "connection.retrieval_failed",
+    "translation": "Neizdevās iegūt savienojumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "connection.create_failed",
+    "translation": "Neizdevās izveidot savienojumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "connection.update_failed",
+    "translation": "Neizdevās atjaunināt savienojumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "connection.delete_failed",
+    "translation": "Neizdevās dzēst savienojumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "connection.forbidden",
+    "translation": "Jums nav atļaujas pārvaldīt savienojumus."
+  },
+  {
+    "id": "connection.not_found",
+    "translation": "Pieprasīto savienojumu neizdevās atrast."
+  },
+  {
+    "id": "connection.ssl_mode_unsupported",
+    "translation": "Šis šifrēšanas režīms nav atpazīts. Izvēlieties kādu no norādītajiem pārbaudes līmeņiem."
+  },
+  {
+    "id": "connection.verification_failed",
+    "translation": "Neizdevās pārbaudīt datubāzes savienojumu. Lūdzu, pārbaudiet savus akreditācijas datus."
+  },
+  {
+    "id": "connection.verification.credentials",
+    "translation": "Datubāze noraidīja lietotājvārdu vai paroli. Pārbaudiet abus un mēģiniet vēlreiz."
+  },
+  {
+    "id": "connection.verification.database",
+    "translation": "Serveris ir pieejams, bet uz tā nav datubāzes ar šādu nosaukumu."
+  },
+  {
+    "id": "connection.verification.certificate",
+    "translation": "Servera sertifikātu nevarēja pārbaudīt. Pārbaudiet, vai CA sertifikāts atbilst serverim."
+  },
+  {
+    "id": "connection.verification.hostname",
+    "translation": "Sertifikāts neattiecas uz šo resursdatora nosaukumu. Izmantojiet sertifikātā norādīto nosaukumu vai iestatiet Pārbaudi uz Sertifikāts."
+  },
+  {
+    "id": "connection.verification.ca_cert",
+    "translation": "CA sertifikātu nevarēja nolasīt. Ielīmējiet pilnu sertifikātu PEM formātā."
+  },
+  {
+    "id": "connection.verification.unreachable",
+    "translation": "Nevarēja sasniegt serveri. Pārbaudiet resursdatoru un portu, kā arī to, vai serveris pieņem savienojumus no Twigex."
+  },
+  {
+    "id": "chart.retrieval_failed",
+    "translation": "Neizdevās iegūt diagrammas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "chart.create_failed",
+    "translation": "Neizdevās izveidot diagrammu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "chart.update_failed",
+    "translation": "Neizdevās atjaunināt diagrammu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "chart.delete_failed",
+    "translation": "Neizdevās dzēst diagrammu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "chart.forbidden",
+    "translation": "Jums nav atļaujas piekļūt šai diagrammai."
+  },
+  {
+    "id": "dashboard.retrieval_failed",
+    "translation": "Neizdevās iegūt informācijas paneļus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "dashboard.create_failed",
+    "translation": "Neizdevās izveidot informācijas paneli. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "dashboard.update_failed",
+    "translation": "Neizdevās atjaunināt informācijas paneli. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "dashboard.delete_failed",
+    "translation": "Neizdevās dzēst informācijas paneli. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "dashboard.forbidden",
+    "translation": "Jums nav atļaujas piekļūt šim informācijas panelim."
+  },
+  {
+    "id": "dashboard.workspace_mismatch",
+    "translation": "Informācijas panelis nepieder norādītajai darba videi."
+  },
+  {
+    "id": "dashboard.filter_not_found",
+    "translation": "Pieprasīto informācijas paneļa filtru neizdevās atrast."
+  },
+  {
+    "id": "dashboard.filter_add_failed",
+    "translation": "Neizdevās pievienot filtru informācijas panelim. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "dashboard.filter_update_failed",
+    "translation": "Neizdevās atjaunināt informācijas paneļa filtru. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "dashboard.filter_delete_failed",
+    "translation": "Neizdevās dzēst informācijas paneļa filtru. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "dashboard.chart_update_failed",
+    "translation": "Neizdevās atjaunināt informācijas paneļa diagrammas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "role.not_found",
+    "translation": "Pieprasīto lomu neizdevās atrast."
+  },
+  {
+    "id": "role.retrieval_failed",
+    "translation": "Neizdevās iegūt lomas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "role.create_failed",
+    "translation": "Neizdevās izveidot lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "role.update_failed",
+    "translation": "Neizdevās atjaunināt lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "role.delete_failed",
+    "translation": "Neizdevās dzēst lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "permission.forbidden",
+    "translation": "Jums nav atļaujas veikt šo darbību."
+  },
+  {
+    "id": "role.name_invalid",
+    "translation": "Lomas nosaukums drīkst saturēt tikai mazos burtus, ciparus, pasvītrojumus un defises."
+  },
+  {
+    "id": "role.forbidden",
+    "translation": "Jums nav atļaujas pārvaldīt lomas."
+  },
+  {
+    "id": "role.name_required",
+    "translation": "Lomas nosaukums ir obligāts."
+  },
+  {
+    "id": "role.name_taken",
+    "translation": "Loma ar šādu nosaukumu jau pastāv."
+  },
+  {
+    "id": "role.cannot_delete_builtin",
+    "translation": "Iebūvētās lomas nevar dzēst."
+  },
+  {
+    "id": "role.check_failed",
+    "translation": "Neizdevās pārbaudīt lomas nosaukuma pieejamību. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "datamodel.forbidden",
+    "translation": "Jums nav atļaujas pārvaldīt datu modeļus."
+  },
+  {
+    "id": "datamodel.invalid_model",
+    "translation": "Datu modelis nav derīgs. Pārbaudiet nosaukumu, tabulu un laukus."
+  },
+  {
+    "id": "datamodel.name_taken",
+    "translation": "Datu modelis ar šādu nosaukumu jau pastāv. Izvēlieties citu nosaukumu."
+  },
+  {
+    "id": "datamodel.delete_has_dependents",
+    "translation": "Šo kubu nevar dzēst, jo citi kubi vai skati joprojām no tā ir atkarīgi."
+  },
+  {
+    "id": "datamodel.file_create_failed",
+    "translation": "Neizdevās izveidot datu modeļa failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "datamodel.file_read_failed",
+    "translation": "Neizdevās nolasīt datu modeļa failu."
+  },
+  {
+    "id": "datamodel.file_write_failed",
+    "translation": "Neizdevās saglabāt datu modeļa failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "datamodel.file_delete_failed",
+    "translation": "Neizdevās dzēst datu modeļa failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "datamodel.generate_failed",
+    "translation": "Neizdevās ģenerēt datu modeļa failus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.forbidden",
+    "translation": "Jums nav atļaujas piekļūt šim failam."
+  },
+  {
+    "id": "file.not_found",
+    "translation": "Pieprasīto failu neizdevās atrast."
+  },
+  {
+    "id": "file.retrieval_failed",
+    "translation": "Neizdevās iegūt failus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.create_failed",
+    "translation": "Neizdevās izveidot failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.delete_failed",
+    "translation": "Neizdevās dzēst failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.restore_failed",
+    "translation": "Neizdevās atjaunot failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.move_failed",
+    "translation": "Neizdevās pārvietot failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.locked",
+    "translation": "Šis fails ir īslaicīgi bloķēts un pašlaik nav modificējams."
+  },
+  {
+    "id": "file.rename_failed",
+    "translation": "Neizdevās pārdēvēt failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.archive_failed",
+    "translation": "Neizdevās arhivēt failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.no_space",
+    "translation": "Jūs esat sasniedzis krātuves ierobežojumu. Lūdzu, atbrīvojiet vietu un mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.metadata_create_failed",
+    "translation": "Neizdevās izveidot faila metadatus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.metadata_retrieval_failed",
+    "translation": "Neizdevās iegūt faila metadatus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.metadata_add_failed",
+    "translation": "Neizdevās pievienot metadatus failam. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.metadata_update_failed",
+    "translation": "Neizdevās atjaunināt faila metadatus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.metadata_edit_failed",
+    "translation": "Neizdevās rediģēt faila metadatus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.share_failed",
+    "translation": "Neizdevās kopīgot failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.unshare_failed",
+    "translation": "Neizdevās pārtraukt faila kopīgošanu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.share_forbidden",
+    "translation": "Jums nav atļaujas kopīgot šo failu."
+  },
+  {
+    "id": "file.share_below_inherited",
+    "translation": "Nevar piešķirt mazāku piekļuvi, nekā jau tiek mantota no vecākmapes."
+  },
+  {
+    "id": "file.share_user_deactivated",
+    "translation": "Šis lietotājs ir deaktivizēts, un ar viņu nevar kopīgot."
+  },
+  {
+    "id": "file.permissions_update_failed",
+    "translation": "Neizdevās atjaunināt kopīgošanas atļaujas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.metadata_delete_failed",
+    "translation": "Neizdevās izdzēst faila metadatus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "file.unknown_type",
+    "translation": "Norādītais faila tips netiek atbalstīts."
+  },
+  {
+    "id": "link.no_access",
+    "translation": "Koplietošanas saitei jāatļauj vismaz skatīšana, lejupielāde vai augšupielāde."
+  },
+  {
+    "id": "link.upload_requires_folder",
+    "translation": "Augšupielādes saites var izveidot tikai mapēm."
+  },
+  {
+    "id": "link.create_failed",
+    "translation": "Neizdevās izveidot koplietošanas saiti. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "link.update_failed",
+    "translation": "Neizdevās atjaunināt koplietošanas saiti. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "link.delete_failed",
+    "translation": "Neizdevās dzēst koplietošanas saiti. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "link.not_found",
+    "translation": "Koplietošanas saite netika atrasta."
+  },
+  {
+    "id": "link.forbidden",
+    "translation": "Jums nav atļaujas mainīt šo koplietošanas saiti."
+  },
+  {
+    "id": "link.retrieval_failed",
+    "translation": "Neizdevās atvērt koplietošanas saiti. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "link.expired",
+    "translation": "Šai koplietošanas saitei ir beidzies derīguma termiņš."
+  },
+  {
+    "id": "link.password_required",
+    "translation": "Šai koplietošanas saitei ir nepieciešama parole."
+  },
+  {
+    "id": "link.password_invalid",
+    "translation": "Parole ir nepareiza."
+  },
+  {
+    "id": "link.auth_failed",
+    "translation": "Neizdevās atbloķēt koplietošanas saiti. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "link.download_forbidden",
+    "translation": "Šai koplietošanas saitei lejupielādes nav atļautas."
+  },
+  {
+    "id": "link.download_limit",
+    "translation": "Šī koplietošanas saite ir sasniegusi lejupielāžu limitu."
+  },
+  {
+    "id": "link.rate_limited",
+    "translation": "Pārāk daudz mēģinājumu. Lūdzu, uzgaidiet brīdi un mēģiniet vēlreiz."
+  },
+  {
+    "id": "link.view_forbidden",
+    "translation": "Šī koplietošanas saite neatļauj skatīt šo failu."
+  },
+  {
+    "id": "office.readonly",
+    "translation": "Šis dokuments ir tikai lasāms."
+  },
+  {
+    "id": "link.upload_forbidden",
+    "translation": "Šī koplietošanas saite neatļauj augšupielādi."
+  },
+  {
+    "id": "link.upload_failed",
+    "translation": "Augšupielāde neizdevās. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "upload.too_large",
+    "translation": "Fails ir pārāk liels, lai to augšupielādētu."
+  },
+  {
+    "id": "upload.missing_destination",
+    "translation": "Ir jānorāda augšupielādes galamērķis."
+  },
+  {
+    "id": "upload.missing_name",
+    "translation": "Ir jānorāda faila nosaukums."
+  },
+  {
+    "id": "upload.invalid_size",
+    "translation": "Faila izmērs ir nederīgs."
+  },
+  {
+    "id": "upload.start_failed",
+    "translation": "Neizdevās sākt augšupielādes sesiju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "upload.not_found",
+    "translation": "Augšupielādes sesiju neizdevās atrast."
+  },
+  {
+    "id": "upload.forbidden",
+    "translation": "Jums nav atļaujas piekļūt šai augšupielādes sesijai."
+  },
+  {
+    "id": "upload.expired",
+    "translation": "Šai augšupielādes sesijai ir beidzies derīguma termiņš. Lūdzu, sāciet jaunu augšupielādi."
+  },
+  {
+    "id": "upload.conflict",
+    "translation": "Šī augšupielādes sesija nav augšupielādējamā stāvoklī."
+  },
+  {
+    "id": "upload.incomplete",
+    "translation": "Augšupielāde vēl nav pabeigta. Lūdzu, pabeidziet augšupielādēt visas daļas."
+  },
+  {
+    "id": "upload.chunk_failed",
+    "translation": "Neizdevās augšupielādēt faila daļu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "upload.finalize_failed",
+    "translation": "Neizdevās pabeigt augšupielādi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "upload.abort_failed",
+    "translation": "Neizdevās pārtraukt augšupielādes sesiju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "upload.invalid_action",
+    "translation": "Norādītā augšupielādes darbība nav derīga."
+  },
+  {
+    "id": "storage.not_available",
+    "translation": "Krātuves aizmugursistēma nav pieejama. Lūdzu, mēģiniet vēlāk."
+  },
+  {
+    "id": "storage.license_required",
+    "translation": "Krātuves pārvaldībai ir nepieciešama derīga licence."
+  },
+  {
+    "id": "groups.license_required",
+    "translation": "Grupām nepieciešams maksas plāns."
+  },
+  {
+    "id": "storage.not_found",
+    "translation": "Pieprasīto krātuvi neizdevās atrast."
+  },
+  {
+    "id": "storage.get_failed",
+    "translation": "Neizdevās iegūt krātuvi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.get_all_failed",
+    "translation": "Neizdevās iegūt krātuvju sarakstu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.create_failed",
+    "translation": "Neizdevās izveidot krātuvi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.update_failed",
+    "translation": "Neizdevās atjaunināt krātuvi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.delete_failed",
+    "translation": "Neizdevās izdzēst krātuvi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.set_primary_failed",
+    "translation": "Neizdevās iestatīt primāro krātuvi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.encrypt_failed",
+    "translation": "Neizdevās šifrēt krātuves akreditācijas datus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.update_directory_failed",
+    "translation": "Neizdevās atjaunināt krātuves direktoriju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.drive_create_failed",
+    "translation": "Neizdevās izveidot krātuves disku. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "storage.drive_delete_failed",
+    "translation": "Neizdevās izdzēst krātuves disku. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "job.not_found",
+    "translation": "Pieprasīto darbu neizdevās atrast."
+  },
+  {
+    "id": "job.retrieval_failed",
+    "translation": "Neizdevās iegūt darbus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "job.cancel_failed",
+    "translation": "Neizdevās atcelt darbu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "job.cancel_invalid_status",
+    "translation": "Atcelt var tikai gaidošus vai izpildē esošus darbus."
+  },
+  {
+    "id": "job.acknowledge_failed",
+    "translation": "Neizdevās apstiprināt darbu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "license.verify_failed",
+    "translation": "Neizdevās verificēt licenci. Lūdzu, pārbaudiet, vai licences fails ir derīgs."
+  },
+  {
+    "id": "license.expired",
+    "translation": "Šīs licences termiņš ir beidzies. Tās pievienošana aizstātu jūsu pašreizējo licenci, tāpēc tā netika pievienota."
+  },
+  {
+    "id": "license.seats_exceeded",
+    "translation": "Šī licence ietver mazāk lietotāju, nekā pašlaik ir aktīvi. Vispirms deaktivizējiet lietotājus vai izmantojiet licenci ar vairāk vietām."
+  },
+  {
+    "id": "license.save_failed",
+    "translation": "Neizdevās saglabāt licenci. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "license.remove_failed",
+    "translation": "Neizdevās noņemt aktīvo licenci. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "notification.retrieval_failed",
+    "translation": "Neizdevās iegūt paziņojumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "license.feature_unavailable",
+    "translation": "Šī funkcija nav pieejama jūsu pašreizējā plānā."
+  },
+  {
+    "id": "notification.not_found",
+    "translation": "Pieprasīto paziņojumu neizdevās atrast."
+  },
+  {
+    "id": "notification.forbidden",
+    "translation": "Jums nav atļaujas piekļūt šim paziņojumam."
+  },
+  {
+    "id": "notification.read_failed",
+    "translation": "Neizdevās atzīmēt paziņojumu kā izlasītu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "notification.delete_failed",
+    "translation": "Neizdevās izdzēst paziņojumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "office.not_available",
+    "translation": "Biroja redaktors nav pieejams. Lūdzu, mēģiniet vēlāk."
+  },
+  {
+    "id": "office.open_failed",
+    "translation": "Neizdevās atvērt failu biroja redaktorā. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "office.save_failed",
+    "translation": "Neizdevās saglabāt failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "office.token_invalid",
+    "translation": "Biroja piekļuves pilnvara ir nederīga vai tai ir beidzies derīguma termiņš."
+  },
+  {
+    "id": "collimato.workspace_user_failed",
+    "translation": "Neizdevās iegūt darba vides lietotāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.roles_failed",
+    "translation": "Neizdevās iegūt darba vides lomas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.permission_denied",
+    "translation": "Jums nav atļaujas piekļūt šiem datiem."
+  },
+  {
+    "id": "collimato.data_security_unavailable",
+    "translation": "Šajā serverī nevar piemērot datu piekļuves noteikumus. Sazinieties ar administratoru."
+  },
+  {
+    "id": "collimato.workspace_limit",
+    "translation": "Jūsu plāns ietver vienu darbvietu. Jauniniet, lai izveidotu vairāk."
+  },
+  {
+    "id": "collimato.custom_roles_unavailable",
+    "translation": "Pielāgotām lomām nepieciešams maksas plāns. Iebūvētās lomas paliek pieejamas."
+  },
+  {
+    "id": "collimato.retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.not_found",
+    "translation": "Pieprasīto darba vidi neizdevās atrast."
+  },
+  {
+    "id": "collimato.forbidden",
+    "translation": "Jums nav atļaujas piekļūt šai darba videi."
+  },
+  {
+    "id": "collimato.create_failed",
+    "translation": "Neizdevās izveidot darba vidi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.delete_failed",
+    "translation": "Neizdevās izdzēst darba vidi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.member_add_failed",
+    "translation": "Neizdevās pievienot lietotājus darba videi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.member_remove_failed",
+    "translation": "Neizdevās noņemt lietotāju no darba vides. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.member_not_found",
+    "translation": "Jūs neesat šīs darba vides dalībnieks."
+  },
+  {
+    "id": "collimato.users_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides lietotājus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.roles_update_failed",
+    "translation": "Neizdevās atjaunināt lietotāja lomas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.finish_failed",
+    "translation": "Neizdevās pabeigt darba vides iestatīšanu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.query_failed",
+    "translation": "Neizdevās vaicāt datus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.request_failed",
+    "translation": "Neizdevās sazināties ar analītikas dzinēju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.no_groups",
+    "translation": "Netika norādītas grupas."
+  },
+  {
+    "id": "collimato.no_roles",
+    "translation": "Grupai ir jāpiešķir vismaz viena loma."
+  },
+  {
+    "id": "collimato.role_not_found",
+    "translation": "Viena vai vairākas no atlasītajām lomām šajā darba vidē nepastāv."
+  },
+  {
+    "id": "collimato.groups_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides grupas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.group_add_failed",
+    "translation": "Neizdevās pievienot grupas darba videi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.group_remove_failed",
+    "translation": "Neizdevās noņemt grupu no darba vides. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "collimato.group_roles_update_failed",
+    "translation": "Neizdevās atjaunināt grupas lomas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "settings.env_locked",
+    "translation": "Šos iestatījumus pārvalda vides mainīgie, un tos šeit nevar mainīt."
+  },
+  {
+    "id": "settings.update_failed",
+    "translation": "Neizdevās atjaunināt iestatījumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "settings.encrypt_failed",
+    "translation": "Nevar saglabāt iestatījumus. Radās šifrēšanas kļūda."
+  },
+  {
+    "id": "settings.email_test_failed",
+    "translation": "Neizdevās pārbaudīt e-pasta servera savienojumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "settings.retrieval_failed",
+    "translation": "Neizdevās iegūt iestatījumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.retrieval_failed",
+    "translation": "Neizdevās iegūt lietotāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.search_failed",
+    "translation": "Neizdevās meklēt lietotājus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.create_failed",
+    "translation": "Neizdevās izveidot lietotāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.update_failed",
+    "translation": "Neizdevās atjaunināt lietotāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.deactivate_failed",
+    "translation": "Neizdevās deaktivizēt lietotāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.email_required",
+    "translation": "Ir jānorāda e-pasts."
+  },
+  {
+    "id": "user.username_required",
+    "translation": "Ir jānorāda lietotājvārds."
+  },
+  {
+    "id": "user.username_managed_externally",
+    "translation": "Šo lietotājvārdu pārvalda direktorijs, un to nevar mainīt šeit."
+  },
+  {
+    "id": "user.username_invalid",
+    "translation": "Lietotājvārdā drīkst būt tikai mazie burti, cipari, punkti, defises un pasvītrojumi, un tam jāsākas ar burtu vai ciparu."
+  },
+  {
+    "id": "user.username_reserved",
+    "translation": "Šis lietotājvārds ir rezervēts un nav izmantojams."
+  },
+  {
+    "id": "user.storage_limit_invalid",
+    "translation": "Krātuves ierobežojumam jābūt nullei vai lielākam. Nulle nozīmē neierobežotu."
+  },
+  {
+    "id": "user.username_taken",
+    "translation": "Šis lietotājvārds jau ir aizņemts."
+  },
+  {
+    "id": "user.email_taken",
+    "translation": "Šī e-pasta adrese jau tiek izmantota."
+  },
+  {
+    "id": "user.name_required",
+    "translation": "Ir jānorāda vārds."
+  },
+  {
+    "id": "user.lastname_required",
+    "translation": "Ir jānorāda uzvārds."
+  },
+  {
+    "id": "user.role_required",
+    "translation": "Ir jānorāda loma."
+  },
+  {
+    "id": "user.password_required",
+    "translation": "Ir jānorāda parole."
+  },
+  {
+    "id": "user.password_mismatch",
+    "translation": "Paroles nesakrīt."
+  },
+  {
+    "id": "user.password_incorrect",
+    "translation": "Pašreizējā parole ir nepareiza."
+  },
+  {
+    "id": "user.password_too_short",
+    "translation": "Parole ir pārāk īsa."
+  },
+  {
+    "id": "user.password_missing_case",
+    "translation": "Parolē ir jāiekļauj lielie un mazie burti."
+  },
+  {
+    "id": "user.password_missing_number",
+    "translation": "Parolē ir jāiekļauj vismaz viens cipars."
+  },
+  {
+    "id": "user.password_missing_special",
+    "translation": "Parolē ir jāiekļauj vismaz viena īpašā rakstzīme."
+  },
+  {
+    "id": "user.photo_upload_failed",
+    "translation": "Neizdevās augšupielādēt fotoattēlu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.photo_not_found",
+    "translation": "Lietotāja fotoattēls netika atrasts."
+  },
+  {
+    "id": "user.photo_delete_failed",
+    "translation": "Neizdevās noņemt fotoattēlu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.photo_serve_failed",
+    "translation": "Neizdevās parādīt lietotāja fotoattēlu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.mfa_generate_failed",
+    "translation": "Neizdevās ģenerēt MFA QR kodu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.mfa_enable_failed",
+    "translation": "Neizdevās iespējot MFA. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.mfa_disable_failed",
+    "translation": "Neizdevās atspējot MFA. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.status_failed",
+    "translation": "Neizdevās atjaunināt lietotāja statusu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.preferences_failed",
+    "translation": "Neizdevās iegūt lietotāja preferences. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.timezone_update_failed",
+    "translation": "Neizdevās atjaunināt laika joslu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "user.password_reset_failed",
+    "translation": "Neizdevās atiestatīt paroli. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "request.invalid",
+    "translation": "Pieprasījums ir nederīgs vai bojāts."
+  },
+  {
+    "id": "workspace.forbidden",
+    "translation": "Jums nav atļaujas veikt šo darbību."
+  },
+  {
+    "id": "workspace.roles_license_required",
+    "translation": "Darbvietas lomu pārvaldībai nepieciešams maksas plāns."
+  },
+  {
+    "id": "workspace.task_create_failed",
+    "translation": "Neizdevās izveidot uzdevumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Neizdevās iegūt pielikumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.role_retrieval_failed",
+    "translation": "Neizdevās iegūt lomas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.role_update_failed",
+    "translation": "Neizdevās atjaunināt lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.role_create_failed",
+    "translation": "Neizdevās izveidot lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.role_delete_failed",
+    "translation": "Neizdevās izdzēst lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.member_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides dalībnieku. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.member_not_found",
+    "translation": "Jūs neesat šīs darba vides dalībnieks."
+  },
+  {
+    "id": "workspace.member_role_update_failed",
+    "translation": "Neizdevās atjaunināt dalībnieka lomu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.attachment_not_found",
+    "translation": "Pielikums netika atrasts."
+  },
+  {
+    "id": "workspace.table_name_empty",
+    "translation": "Tabulas nosaukums nevar būt tukšs."
+  },
+  {
+    "id": "workspace.item_not_found",
+    "translation": "Vienums netika atrasts."
+  },
+  {
+    "id": "workspace.role_in_use",
+    "translation": "Šo lomu nevar izdzēst, jo tā ir piešķirta vienam vai vairākiem dalībniekiem."
+  },
+  {
+    "id": "workspace.role_delete_default_forbidden",
+    "translation": "Noklusējuma lomas nevar izdzēst."
+  },
+  {
+    "id": "workspace.status_index_retrieval_failed",
+    "translation": "Neizdevās iegūt statusa indeksu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.tasks_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides uzdevumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.assigned_tasks_retrieval_failed",
+    "translation": "Neizdevās iegūt piešķirtos uzdevumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.view_update_failed",
+    "translation": "Neizdevās atjaunināt skatu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.view_access_failed",
+    "translation": "Neizdevās atvērt skatu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.view_shares_get_failed",
+    "translation": "Neizdevās iegūt skata koplietošanas iestatījumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.view_shares_set_failed",
+    "translation": "Neizdevās atjaunināt skata koplietošanas iestatījumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.folder_update_failed",
+    "translation": "Neizdevās atjaunināt darba vides mapi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.folder_delete_failed",
+    "translation": "Neizdevās dzēst darba vides mapi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.linking_tables_failed",
+    "translation": "Neizdevās pārbaudīt, kuras tabulas ir saistītas ar šo. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.folder_has_tables",
+    "translation": "Nevar dzēst šo mapi: tajā ir tabulas, un jums nav atļaujas dzēst tabulas."
+  },
+  {
+    "id": "workspace.folder_not_found",
+    "translation": "Mapi nevarēja atrast."
+  },
+  {
+    "id": "workspace.move_item_invalid",
+    "translation": "Pārvietot var tikai tabulu vai mapi."
+  },
+  {
+    "id": "workspace.move_item_not_found",
+    "translation": "Vienumu vai mērķa mapi nevarēja atrast."
+  },
+  {
+    "id": "workspace.folder_move_into_itself",
+    "translation": "Mapi nevar pārvietot pašā sevī vai kādā no tās apakšmapēm."
+  },
+  {
+    "id": "workspace.move_item_failed",
+    "translation": "Neizdevās pārvietot vienumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.member_delete_failed",
+    "translation": "Neizdevās noņemt darba vides dalībnieku. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.view_create_failed",
+    "translation": "Neizdevās izveidot skatu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.view_already_exists",
+    "translation": "Skats ar šādu nosaukumu jau pastāv."
+  },
+  {
+    "id": "workspace.single_select_update_failed",
+    "translation": "Neizdevās atjaunināt opcijas nosaukumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_update_failed",
+    "translation": "Neizdevās atjaunināt uzdevumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_name_empty",
+    "translation": "Uzdevuma nosaukums nedrīkst būt tukšs."
+  },
+  {
+    "id": "workspace.task_dates_reversed",
+    "translation": "Sākuma datums nevar būt vēlāks par izpildes termiņu."
+  },
+  {
+    "id": "workspace.task_update_protected",
+    "translation": "Šo statusa opciju nevar pārdēvēt."
+  },
+  {
+    "id": "workspace.relationship_not_found",
+    "translation": "Šim laukam netika atrasta atbilstoša saistība."
+  },
+  {
+    "id": "workspace.linked_table_not_found",
+    "translation": "Saistītā tabula netika atrasta."
+  },
+  {
+    "id": "workspace.field_value_already_exists",
+    "translation": "Lauka vērtība ar šādu nosaukumu jau pastāv."
+  },
+  {
+    "id": "workspace.field_value_add_failed",
+    "translation": "Neizdevās pievienot lauka vērtību. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.linked_task_data_failed",
+    "translation": "Neizdevās iegūt saistītā uzdevuma datus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.item_retrieval_failed",
+    "translation": "Neizdevās iegūt vienumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.table_update_failed",
+    "translation": "Neizdevās atjaunināt tabulu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.workspace_update_failed",
+    "translation": "Neizdevās atjaunināt darba vidi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.filter_update_failed",
+    "translation": "Neizdevās atjaunināt filtru. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.filter_not_found",
+    "translation": "Filtrs netika atrasts."
+  },
+  {
+    "id": "workspace.filter_delete_failed",
+    "translation": "Neizdevās dzēst filtru. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.filter_save_failed",
+    "translation": "Neizdevās saglabāt filtru. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_link_invalid_id",
+    "translation": "Nederīgs vienuma ID uzdevuma saitē."
+  },
+  {
+    "id": "workspace.filter_active_update_failed",
+    "translation": "Neizdevās atjaunināt filtra statusu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.filtered_table_data_failed",
+    "translation": "Neizdevās iegūt filtrētos tabulas datus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_link_update_failed",
+    "translation": "Neizdevās atjaunināt uzdevuma saiti. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.display_name_update_failed",
+    "translation": "Neizdevās atjaunināt attēlojamo vārdu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.view_or_field_not_found",
+    "translation": "Skats vai lauks netika atrasts."
+  },
+  {
+    "id": "workspace.task_main_view_failed",
+    "translation": "Neizdevās iegūt galveno skatu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_name_failed",
+    "translation": "Neizdevās iegūt uzdevuma nosaukumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_status_name_failed",
+    "translation": "Neizdevās iegūt statusa nosaukumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.grid_view_create_failed",
+    "translation": "Neizdevās izveidot režģa skatu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.column_width_update_failed",
+    "translation": "Neizdevās atjaunināt kolonnas platumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.column_not_found",
+    "translation": "Kolonna skatā netika atrasta."
+  },
+  {
+    "id": "workspace.grid_headers_update_failed",
+    "translation": "Neizdevās atjaunināt režģa galvenes. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.member_to_task_add_failed",
+    "translation": "Neizdevās pievienot dalībnieku uzdevumam. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.folder_add_failed",
+    "translation": "Neizdevās pievienot darba vides mapi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.single_field_delete_failed",
+    "translation": "Neizdevās dzēst lauku. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.table_field_delete_failed",
+    "translation": "Neizdevās dzēst tabulas lauku. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.table_view_delete_failed",
+    "translation": "Neizdevās dzēst tabulas skatu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_delete_failed",
+    "translation": "Neizdevās dzēst uzdevumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.table_delete_failed",
+    "translation": "Neizdevās dzēst tabulu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.current_user_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides lietotāju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.attachment_delete_failed",
+    "translation": "Neizdevās dzēst pielikumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Neizdevās iegūt pielikumu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.grid_sort_save_failed",
+    "translation": "Neizdevās saglabāt kārtošanas iestatījumus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.delete_failed",
+    "translation": "Neizdevās dzēst darba vidi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.membership_check_failed",
+    "translation": "Neizdevās pārbaudīt dalību darba vidē. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.field_name_empty",
+    "translation": "Ievadiet lauka nosaukumu."
+  },
+  {
+    "id": "workspace.field_type_invalid",
+    "translation": "Nederīgs lauka tips."
+  },
+  {
+    "id": "workspace.link_table_id_empty",
+    "translation": "Saistītās tabulas ID ir obligāts saites laukiem."
+  },
+  {
+    "id": "workspace.field_name_second_invalid",
+    "translation": "Otrā lauka nosaukums ir obligāts divvirzienu saitēm."
+  },
+  {
+    "id": "workspace.table_field_create_failed",
+    "translation": "Neizdevās izveidot tabulas lauku. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.tables_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides tabulas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.workspace_name_empty",
+    "translation": "Darba vides nosaukums nedrīkst būt tukšs."
+  },
+  {
+    "id": "workspace.create_failed",
+    "translation": "Neizdevās izveidot darba vidi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.comments_retrieval_failed",
+    "translation": "Neizdevās iegūt uzdevuma komentārus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.comment_add_failed",
+    "translation": "Neizdevās pievienot komentāru. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.comment_too_long",
+    "translation": "Jūsu komentārs ir pārāk garš. Lūdzu, saīsiniet to un mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.details_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides informāciju. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.workspaces_retrieval_failed",
+    "translation": "Neizdevās iegūt darba vides. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.file_upload_failed",
+    "translation": "Neizdevās augšupielādēt failus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.file_no_files",
+    "translation": "Netika nodrošināts vai veiksmīgi augšupielādēts neviens fails."
+  },
+  {
+    "id": "workspace.table_create_failed",
+    "translation": "Neizdevās izveidot tabulu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.member_add_failed",
+    "translation": "Neizdevās pievienot dalībniekus darba videi. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.table_permissions_retrieval_failed",
+    "translation": "Neizdevās iegūt tabulas atļaujas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.table_permissions_update_failed",
+    "translation": "Neizdevās atjaunināt tabulas atļaujas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.kanban_data_failed",
+    "translation": "Neizdevās ielādēt kanban datus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.date_range_failed",
+    "translation": "Neizdevās ielādēt uzdevumus izvēlētajam datumu diapazonam. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.calendar_range_invalid",
+    "translation": "Nederīgs datumu diapazons kalendāram."
+  },
+  {
+    "id": "workspace.calendar_range_failed",
+    "translation": "Neizdevās ielādēt uzdevumus izvēlētajam mēnesim. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.linked_records_failed",
+    "translation": "Neizdevās ielādēt saistītos ierakstus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.field_formula_update_failed",
+    "translation": "Neizdevās atjaunināt lauka formulu. Lūdzu, mēdziniet vēlreiz."
+  },
+  {
+    "id": "workspace.task_page_retrieval_failed",
+    "translation": "Neizdevās iegūt uzdevuma lapu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "workspace.status_types_retrieval_failed",
+    "translation": "Neizdevās iegūt statusa veidus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.forbidden",
+    "translation": "Jums nav atļaujas pārvaldīt šo grupu."
+  },
+  {
+    "id": "group.not_found",
+    "translation": "Norādītā grupa nepastāv vai to neizdevās iegūt."
+  },
+  {
+    "id": "group.name_required",
+    "translation": "Grupas nosaukums ir obligāts."
+  },
+  {
+    "id": "group.no_members",
+    "translation": "Jānorāda vismaz viens dalībnieks."
+  },
+  {
+    "id": "group.role_admin_forbidden",
+    "translation": "Grupa nevar piešķirt administratora lomu."
+  },
+  {
+    "id": "group.invalid_role",
+    "translation": "Viena vai vairākas no izvēlētajām lomām nepastāv."
+  },
+  {
+    "id": "group.role_validation_failed",
+    "translation": "Neizdevās validēt izvēlētās lomas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.create_failed",
+    "translation": "Neizdevās izveidot grupu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.update_failed",
+    "translation": "Neizdevās atjaunināt grupu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.delete_failed",
+    "translation": "Neizdevās dzēst grupu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.list_failed",
+    "translation": "Neizdevās iegūt grupas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.retrieval_failed",
+    "translation": "Neizdevās iegūt grupu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.members_failed",
+    "translation": "Neizdevās ielādēt grupas dalībniekus. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.add_members_failed",
+    "translation": "Neizdevās pievienot dalībniekus grupai. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "group.remove_member_failed",
+    "translation": "Neizdevās noņemt dalībnieku no grupas. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel_group.list_failed",
+    "translation": "Neizdevās iegūt grupu sarakstu šajā kanālā. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel_group.add_failed",
+    "translation": "Neizdevās pievienot grupu šim kanālam. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel_group.remove_failed",
+    "translation": "Neizdevās noņemt grupu no šī kanāla. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel_group.no_groups",
+    "translation": "Nav izvēlēta neviena grupa."
+  },
+  {
+    "id": "email.footer.contact",
+    "translation": "Nepieciešamības gadījumā droši sazinieties ar savu administratoru."
+  },
+  {
+    "id": "email.notification.intro",
+    "translation": "Jums ir jauns paziņojums"
+  },
+  {
+    "id": "email.notification.action_open",
+    "translation": "Atvērt"
+  },
+  {
+    "id": "email.notification.mention",
+    "translation": "{{.sender}} pieminēja jūs kanālā \"{{.channel}}\"."
+  },
+  {
+    "id": "email.registration.subject",
+    "translation": "Laipni lūdzam Twigex! Pabeidziet sava konta iestatīšanu!"
+  },
+  {
+    "id": "email.registration.title",
+    "translation": "Laipni lūdzam Twigex"
+  },
+  {
+    "id": "email.registration.text",
+    "translation": "Baudiet savu digitālo brīvību. Glabājiet failus, veidojiet piezīmes, pārvaldiet savus projektus, sarakstieties ar citiem un vēl vairāk. Piesakieties un izklaidējieties!"
+  },
+  {
+    "id": "email.password_reset.subject",
+    "translation": "Paroles atiestatīšana"
+  },
+  {
+    "id": "email.password_reset.title",
+    "translation": "Paroles atiestatīšana"
+  },
+  {
+    "id": "email.password_reset.text",
+    "translation": "Ja jūs neatiestatījāt savu paroli, varat ignorēt šo e-pastu!"
+  },
+  {
+    "id": "email.password.set_button",
+    "translation": "Iestatīt paroli"
+  },
+  {
+    "id": "email.video_invite.subject",
+    "translation": "Jūs esat uzaicināts uz video zvanu"
+  },
+  {
+    "id": "email.video_invite.title",
+    "translation": "Ielūgums uz video zvanu"
+  },
+  {
+    "id": "email.video_invite.text",
+    "translation": "Jūs esat uzaicināts pievienoties video zvanam. Noklikšķiniet uz zemāk esošās pogas, lai pievienotos."
+  },
+  {
+    "id": "email.video_invite.join_button",
+    "translation": "Pievienoties zvanam"
+  },
+  {
+    "id": "email.meeting_invite.subject",
+    "translation": "Jūs esat uzaicināts uz plānoto sapulci"
+  },
+  {
+    "id": "email.meeting_invite.title",
+    "translation": "Ielūgums uz plānoto sapulci"
+  },
+  {
+    "id": "email.meeting_invite.text",
+    "translation": "Jūs esat uzaicināts uz gaidāmo sapulci."
+  },
+  {
+    "id": "email.meeting_updated.subject",
+    "translation": "Sapulce, uz kuru jūs bijāt uzaicināts, tika atjaunināta"
+  },
+  {
+    "id": "email.meeting_updated.title",
+    "translation": "Sapulce atjaunināta"
+  },
+  {
+    "id": "email.meeting_updated.text",
+    "translation": "Sapulce, uz kuru jūs bijāt uzaicināts, tika atjaunināta. Jaunākā informācija ir zemāk."
+  },
+  {
+    "id": "email.meeting.open_button",
+    "translation": "Atvērt sapulci"
+  },
+  {
+    "id": "email.meeting.join_hint",
+    "translation": "Jūs varēsiet pievienoties, tiklīdz vadītājs sāks sapulci."
+  },
+  {
+    "id": "email.meeting.invited_line",
+    "translation": "{{.Inviter}} uzaicināja jūs uz {{.Meeting}} kanālā {{.Channel}}."
+  },
+  {
+    "id": "email.meeting.invited_line_no_channel",
+    "translation": "{{.Inviter}} uzaicināja jūs uz {{.Meeting}}."
+  },
+  {
+    "id": "email.meeting.scheduled_for",
+    "translation": "Ieplānots {{.Time}}"
+  },
+  {
+    "id": "email.meeting_cancelled.subject",
+    "translation": "Atcelts: {{.Title}}"
+  },
+  {
+    "id": "email.meeting_cancelled.title",
+    "translation": "Sapulce atcelta"
+  },
+  {
+    "id": "email.meeting_cancelled.text",
+    "translation": "Šī sapulce ir atcelta."
+  },
+  {
+    "id": "email.meeting.cancelled_line",
+    "translation": "{{.Inviter}} atcēla {{.Meeting}} kanālā {{.Channel}}."
+  },
+  {
+    "id": "email.meeting.cancelled_line_no_channel",
+    "translation": "{{.Inviter}} atcēla {{.Meeting}}."
+  },
+  {
+    "id": "email.meeting.was_scheduled_for",
+    "translation": "Bija ieplānots {{.Time}}"
+  },
+  {
+    "id": "email.meeting_member_scheduled.title",
+    "translation": "Plānota sapulce"
+  },
+  {
+    "id": "email.meeting_member_scheduled.text",
+    "translation": "Jūsu kanālā tika ieplānota sapulce."
+  },
+  {
+    "id": "email.meeting_member_scheduled.intro",
+    "translation": "Sapulce tika ieplānota kanālā {{.Channel}}"
+  },
+  {
+    "id": "email.meeting_member_updated.title",
+    "translation": "Atjaunināta sapulce"
+  },
+  {
+    "id": "email.meeting_member_updated.text",
+    "translation": "Sapulce jūsu kanālā tika atjaunināta."
+  },
+  {
+    "id": "email.meeting_member_updated.intro",
+    "translation": "Sapulce tika atjaunināta kanālā {{.Channel}}"
+  },
+  {
+    "id": "email.label.join",
+    "translation": "Pievienoties"
+  },
+  {
+    "id": "email.label.when",
+    "translation": "Kad"
+  },
+  {
+    "id": "email.label.open",
+    "translation": "Atvērt"
+  },
+  {
+    "id": "license.file_too_large",
+    "translation": "Licences fails ir pārāk liels. Lūdzu, augšupielādējiet failu, kas mazāks par 1 MB."
+  },
+  {
+    "id": "license.upload_failed",
+    "translation": "Neizdevās augšupielādēt licences failu. Lūdzu, mēģiniet vēlreiz."
+  },
+  {
+    "id": "channel.archived",
+    "translation": ""
+  },
+  {
+    "id": "channel.not_archived",
+    "translation": ""
+  },
+  {
+    "id": "channel.archive_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.unarchive_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.archive_type_invalid",
+    "translation": ""
+  },
+  {
+    "id": "channel.delete_type_invalid",
+    "translation": ""
+  },
+  {
+    "id": "channel.delete_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.role_invalid",
+    "translation": ""
+  }
+]

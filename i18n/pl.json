@@ -1,0 +1,1926 @@
+[
+  {
+    "id": "activity.get_file_activity.not_found",
+    "translation": "Nie znaleziono żądanej aktywności pliku."
+  },
+  {
+    "id": "user.not_found",
+    "translation": "Wskazany użytkownik nie istnieje lub nie udało się go pobrać."
+  },
+  {
+    "id": "user.seat_limit",
+    "translation": "Osiągnięto limit użytkowników w Twoim planie. Dezaktywuj użytkownika lub uaktualnij plan."
+  },
+  {
+    "id": "session.invalid",
+    "translation": "Sesja jest nieprawidłowa."
+  },
+  {
+    "id": "session.expired",
+    "translation": "Twoja sesja wygasła. Zaloguj się ponownie."
+  },
+  {
+    "id": "session.delete_failed",
+    "translation": "Nie udało się wylogować. Spróbuj ponownie."
+  },
+  {
+    "id": "session.not_authorized",
+    "translation": "Nie masz uprawnień do wykonania tej czynności."
+  },
+  {
+    "id": "auth.login_failed",
+    "translation": "Nie udało się zalogować. Spróbuj ponownie."
+  },
+  {
+    "id": "auth.logout_failed",
+    "translation": "Nie udało się wylogować. Spróbuj ponownie."
+  },
+  {
+    "id": "auth.oauth_unavailable",
+    "translation": "Logowanie OAuth nie jest dostępne w Twoim bieżącym planie."
+  },
+  {
+    "id": "auth.oauth_provider_disabled",
+    "translation": "Ten dostawca OAuth nie jest włączony."
+  },
+  {
+    "id": "auth.oauth_failed",
+    "translation": "Logowanie OAuth nie powiodło się. Spróbuj ponownie."
+  },
+  {
+    "id": "auth.invalid_credentials",
+    "translation": "Wprowadź prawidłowy adres e-mail lub nazwę użytkownika i/lub hasło."
+  },
+  {
+    "id": "auth.mfa_token_invalid",
+    "translation": "Podany token MFA jest nieprawidłowy."
+  },
+  {
+    "id": "auth.mfa_validation_failed",
+    "translation": "Nie udało się zweryfikować tokenu MFA. Spróbuj ponownie."
+  },
+  {
+    "id": "auth.ldap_failed",
+    "translation": "Wprowadź prawidłowy adres e-mail lub nazwę użytkownika i/lub hasło."
+  },
+  {
+    "id": "auth.ldap_unavailable",
+    "translation": "Uwierzytelnianie LDAP nie jest dostępne na tym serwerze."
+  },
+  {
+    "id": "auth.user_deactivated",
+    "translation": "Wprowadź prawidłowy adres e-mail lub nazwę użytkownika i/lub hasło."
+  },
+  {
+    "id": "auth.rate_limited",
+    "translation": "Zbyt wiele prób logowania. Poczekaj chwilę i spróbuj ponownie."
+  },
+  {
+    "id": "auth.no_methods_enabled",
+    "translation": "Musi być włączona co najmniej jedna metoda logowania."
+  },
+  {
+    "id": "ldap.dial_failed",
+    "translation": "Nie można połączyć się z serwerem LDAP. Sprawdź adres URL serwera."
+  },
+  {
+    "id": "ldap.bind_failed",
+    "translation": "Powiązanie LDAP nie powiodło się. Sprawdź bind DN i hasło."
+  },
+  {
+    "id": "ldap.ca_cert_invalid",
+    "translation": "Nie udało się odczytać certyfikatu CA. Podaj certyfikat w formacie PEM."
+  },
+  {
+    "id": "ldap.sync_already_running",
+    "translation": "Synchronizacja jest już w toku."
+  },
+  {
+    "id": "ldap.sync_enqueue_failed",
+    "translation": "Nie udało się rozpocząć synchronizacji."
+  },
+  {
+    "id": "ldap.invalid_sync_interval",
+    "translation": "Interwał synchronizacji musi wynosić od 5 do 1440 minut."
+  },
+  {
+    "id": "ldap.invalid_sync_deactivate_percent",
+    "translation": "Limit dezaktywacji musi wynosić od 1 do 100 procent."
+  },
+  {
+    "id": "ldap.invalid_timeout",
+    "translation": "Limit czasu połączenia musi wynosić od 1 do 120 sekund."
+  },
+  {
+    "id": "ldap.invalid_connection_security",
+    "translation": "Nieprawidłowe zabezpieczenie połączenia LDAP. Użyj 'none', 'tls' lub 'starttls' albo pozostaw puste, aby dopasować schemat adresu URL serwera."
+  },
+  {
+    "id": "oidc.invalid_input",
+    "translation": "Brak wymaganych pól dostawcy."
+  },
+  {
+    "id": "oidc.not_found",
+    "translation": "Nie znaleziono dostawcy."
+  },
+  {
+    "id": "oidc.retrieval_failed",
+    "translation": "Nie udało się pobrać dostawców OIDC."
+  },
+  {
+    "id": "oidc.create_failed",
+    "translation": "Nie udało się utworzyć dostawcy OIDC. Spróbuj ponownie."
+  },
+  {
+    "id": "oidc.update_failed",
+    "translation": "Nie udało się zaktualizować dostawcy OIDC. Spróbuj ponownie."
+  },
+  {
+    "id": "oidc.delete_failed",
+    "translation": "Nie udało się usunąć dostawcy OIDC. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.not_found",
+    "translation": "Nie znaleziono żądanego kanału."
+  },
+  {
+    "id": "channel.retrieval_failed",
+    "translation": "Nie udało się pobrać kanałów. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.invalid_type",
+    "translation": "Wskazany typ kanału jest nieprawidłowy."
+  },
+  {
+    "id": "channel.already_exists",
+    "translation": "Kanał wiadomości bezpośrednich między tymi użytkownikami już istnieje."
+  },
+  {
+    "id": "channel.create_failed",
+    "translation": "Nie udało się utworzyć kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.update_failed",
+    "translation": "Nie udało się zaktualizować kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.forbidden",
+    "translation": "Nie masz uprawnień do wykonania tej czynności."
+  },
+  {
+    "id": "channel.not_member",
+    "translation": "Nie jesteś członkiem tego kanału."
+  },
+  {
+    "id": "channel.already_member",
+    "translation": "Jesteś już członkiem tego kanału."
+  },
+  {
+    "id": "channel.not_public",
+    "translation": "Ten kanał nie jest publiczny i nie można do niego dołączyć bezpośrednio."
+  },
+  {
+    "id": "channel.direct_remove_forbidden",
+    "translation": "Użytkowników nie można usunąć z kanału wiadomości bezpośrednich."
+  },
+  {
+    "id": "channel.direct_update_forbidden",
+    "translation": "Wiadomości bezpośredniej nie można zmienić nazwy ani dodać opisu."
+  },
+  {
+    "id": "channel.role_requires_direct_member",
+    "translation": "Dodaj tego użytkownika do kanału, zanim uczynisz go administratorem kanału."
+  },
+  {
+    "id": "channel.join_failed",
+    "translation": "Nie udało się dołączyć do kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.member_add_failed",
+    "translation": "Nie udało się dodać użytkowników do kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.member_remove_failed",
+    "translation": "Nie udało się usunąć użytkownika z kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.leave_failed",
+    "translation": "Nie udało się opuścić kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.role_change_failed",
+    "translation": "Nie udało się zmienić roli użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.read_failed",
+    "translation": "Nie udało się oznaczyć wpisów w kanale jako przeczytane."
+  },
+  {
+    "id": "channel.video_participants_failed",
+    "translation": "Nie udało się pobrać uczestników połączenia wideo."
+  },
+  {
+    "id": "channel.video_token_failed",
+    "translation": "Nie udało się wygenerować tokenu wideo. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.guest_link_failed",
+    "translation": "Nie udało się utworzyć linków dla gości. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.guest_link_no_recipients",
+    "translation": "Podaj co najmniej jeden prawidłowy adres e-mail."
+  },
+  {
+    "id": "channel.guest_link_invalid",
+    "translation": "Ten link zaproszenia jest nieprawidłowy."
+  },
+  {
+    "id": "channel.guest_link_expired",
+    "translation": "Ten link zaproszenia wygasł."
+  },
+  {
+    "id": "channel.guest_name_required",
+    "translation": "Wprowadź swoje imię przed dołączeniem."
+  },
+  {
+    "id": "channel.meeting_failed",
+    "translation": "Coś poszło nie tak ze spotkaniem. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.meeting_create_failed",
+    "translation": "Nie udało się utworzyć spotkania. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.meeting_update_failed",
+    "translation": "Nie udało się zaktualizować spotkania. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.meeting_past_time",
+    "translation": "Wybierz czas w przyszłości."
+  },
+  {
+    "id": "channel.not_direct",
+    "translation": "Połączenia można rozpoczynać tylko w wiadomości bezpośredniej."
+  },
+  {
+    "id": "channel.direct_invite_forbidden",
+    "translation": "Nie możesz zapraszać osób do połączenia bezpośredniego."
+  },
+  {
+    "id": "channel.meeting_not_found",
+    "translation": "Nie znaleziono żądanego spotkania."
+  },
+  {
+    "id": "channel.meeting_ended",
+    "translation": "To spotkanie zostało zakończone."
+  },
+  {
+    "id": "meeting_group.no_groups",
+    "translation": "Wybierz co najmniej jedną grupę do zaproszenia."
+  },
+  {
+    "id": "meeting_group.list_failed",
+    "translation": "Nie udało się załadować grup spotkania. Spróbuj ponownie."
+  },
+  {
+    "id": "meeting_group.add_failed",
+    "translation": "Nie udało się zaprosić grup na spotkanie. Spróbuj ponownie."
+  },
+  {
+    "id": "meeting_group.update_failed",
+    "translation": "Nie udało się zaktualizować grup spotkania. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.meeting_not_started",
+    "translation": "To spotkanie jeszcze się nie rozpoczęło."
+  },
+  {
+    "id": "channel.meeting_already_started",
+    "translation": "To spotkanie już się rozpoczęło — zakończ je zamiast anulować."
+  },
+  {
+    "id": "channel.meeting_host_only",
+    "translation": "Tylko organizator spotkania może wykonać tę czynność."
+  },
+  {
+    "id": "channel.meeting_host_invalid",
+    "translation": "Wybrany użytkownik nie może zostać organizatorem."
+  },
+  {
+    "id": "channel.meeting_not_invited",
+    "translation": "Nie zostałeś zaproszony na to spotkanie."
+  },
+  {
+    "id": "channel.meeting_password_invalid",
+    "translation": "Nieprawidłowe hasło do spotkania."
+  },
+  {
+    "id": "channel.file_upload_failed",
+    "translation": "Nie udało się przesłać pliku do kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.file_too_large",
+    "translation": "Rozmiar pliku przekracza limit 100 MB."
+  },
+  {
+    "id": "channel.attachment_not_found",
+    "translation": "Nie znaleziono żądanego załącznika pliku."
+  },
+  {
+    "id": "channel.attachment_forbidden",
+    "translation": "Nie masz uprawnień do dostępu do tego załącznika."
+  },
+  {
+    "id": "channel.gif_failed",
+    "translation": "Nie udało się pobrać plików GIF. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.gif_disabled",
+    "translation": "Pliki GIF są wyłączone."
+  },
+  {
+    "id": "post.not_found",
+    "translation": "Nie znaleziono żądanego wpisu."
+  },
+  {
+    "id": "post.retrieval_failed",
+    "translation": "Nie udało się pobrać wpisów. Spróbuj ponownie."
+  },
+  {
+    "id": "post.create_failed",
+    "translation": "Nie udało się utworzyć wpisu. Spróbuj ponownie."
+  },
+  {
+    "id": "post.update_failed",
+    "translation": "Nie udało się zaktualizować wpisu. Spróbuj ponownie."
+  },
+  {
+    "id": "post.delete_failed",
+    "translation": "Nie udało się usunąć wpisu. Spróbuj ponownie."
+  },
+  {
+    "id": "post.forbidden",
+    "translation": "Nie masz uprawnień do wykonania tej czynności na tym wpisie."
+  },
+  {
+    "id": "post.invalid_reply",
+    "translation": "Docelowy wpis odpowiedzi jest nieprawidłowy lub należy do innego kanału."
+  },
+  {
+    "id": "post.too_long",
+    "translation": "Twoja wiadomość jest za długa. Skróć ją i spróbuj ponownie."
+  },
+  {
+    "id": "post.invalid_reaction",
+    "translation": "Ta reakcja nie jest prawidłowym emoji."
+  },
+  {
+    "id": "post.attachment_failed",
+    "translation": "Nie udało się przetworzyć załączników plików."
+  },
+  {
+    "id": "post.reaction_create_failed",
+    "translation": "Nie udało się dodać reakcji. Spróbuj ponownie."
+  },
+  {
+    "id": "post.reaction_delete_failed",
+    "translation": "Nie udało się usunąć reakcji. Spróbuj ponownie."
+  },
+  {
+    "id": "post.forward_failed",
+    "translation": "Nie udało się przekazać wpisu. Spróbuj ponownie."
+  },
+  {
+    "id": "connection.retrieval_failed",
+    "translation": "Nie udało się pobrać połączeń. Spróbuj ponownie."
+  },
+  {
+    "id": "connection.create_failed",
+    "translation": "Nie udało się utworzyć połączenia. Spróbuj ponownie."
+  },
+  {
+    "id": "connection.update_failed",
+    "translation": "Nie udało się zaktualizować połączenia. Spróbuj ponownie."
+  },
+  {
+    "id": "connection.delete_failed",
+    "translation": "Nie udało się usunąć połączenia. Spróbuj ponownie."
+  },
+  {
+    "id": "connection.forbidden",
+    "translation": "Nie masz uprawnień do zarządzania połączeniami."
+  },
+  {
+    "id": "connection.not_found",
+    "translation": "Nie znaleziono żądanego połączenia."
+  },
+  {
+    "id": "connection.ssl_mode_unsupported",
+    "translation": "Ten tryb szyfrowania nie jest rozpoznawany. Wybierz jeden z wymienionych poziomów weryfikacji."
+  },
+  {
+    "id": "connection.verification_failed",
+    "translation": "Nie udało się zweryfikować połączenia z bazą danych. Sprawdź swoje dane uwierzytelniające."
+  },
+  {
+    "id": "connection.verification.credentials",
+    "translation": "Baza danych odrzuciła nazwę użytkownika lub hasło. Sprawdź oba i spróbuj ponownie."
+  },
+  {
+    "id": "connection.verification.database",
+    "translation": "Serwer jest dostępny, ale nie ma na nim bazy danych o tej nazwie."
+  },
+  {
+    "id": "connection.verification.certificate",
+    "translation": "Nie udało się zweryfikować certyfikatu serwera. Sprawdź, czy certyfikat CA odpowiada serwerowi."
+  },
+  {
+    "id": "connection.verification.hostname",
+    "translation": "Certyfikat nie obejmuje tej nazwy hosta. Połącz się przy użyciu nazwy z certyfikatu lub ustaw Weryfikację na Certyfikat."
+  },
+  {
+    "id": "connection.verification.ca_cert",
+    "translation": "Nie udało się odczytać certyfikatu CA. Wklej pełny certyfikat w formacie PEM."
+  },
+  {
+    "id": "connection.verification.unreachable",
+    "translation": "Nie można połączyć się z serwerem. Sprawdź host i port oraz to, czy serwer przyjmuje połączenia z Twigex."
+  },
+  {
+    "id": "chart.retrieval_failed",
+    "translation": "Nie udało się pobrać wykresów. Spróbuj ponownie."
+  },
+  {
+    "id": "chart.create_failed",
+    "translation": "Nie udało się utworzyć wykresu. Spróbuj ponownie."
+  },
+  {
+    "id": "chart.update_failed",
+    "translation": "Nie udało się zaktualizować wykresu. Spróbuj ponownie."
+  },
+  {
+    "id": "chart.delete_failed",
+    "translation": "Nie udało się usunąć wykresu. Spróbuj ponownie."
+  },
+  {
+    "id": "chart.forbidden",
+    "translation": "Nie masz uprawnień do dostępu do tego wykresu."
+  },
+  {
+    "id": "dashboard.retrieval_failed",
+    "translation": "Nie udało się pobrać pulpitów nawigacyjnych. Spróbuj ponownie."
+  },
+  {
+    "id": "dashboard.create_failed",
+    "translation": "Nie udało się utworzyć pulpitu nawigacyjnego. Spróbuj ponownie."
+  },
+  {
+    "id": "dashboard.update_failed",
+    "translation": "Nie udało się zaktualizować pulpitu nawigacyjnego. Spróbuj ponownie."
+  },
+  {
+    "id": "dashboard.delete_failed",
+    "translation": "Nie udało się usunąć pulpitu nawigacyjnego. Spróbuj ponownie."
+  },
+  {
+    "id": "dashboard.forbidden",
+    "translation": "Nie masz uprawnień do dostępu do tego pulpitu nawigacyjnego."
+  },
+  {
+    "id": "dashboard.workspace_mismatch",
+    "translation": "Pulpit nawigacyjny nie należy do wskazanego obszaru roboczego."
+  },
+  {
+    "id": "dashboard.filter_not_found",
+    "translation": "Nie znaleziono żądanego filtru pulpitu nawigacyjnego."
+  },
+  {
+    "id": "dashboard.filter_add_failed",
+    "translation": "Nie udało się dodać filtru do pulpitu nawigacyjnego. Spróbuj ponownie."
+  },
+  {
+    "id": "dashboard.filter_update_failed",
+    "translation": "Nie udało się zaktualizować filtru pulpitu nawigacyjnego. Spróbuj ponownie."
+  },
+  {
+    "id": "dashboard.filter_delete_failed",
+    "translation": "Nie udało się usunąć filtru pulpitu nawigacyjnego. Spróbuj ponownie."
+  },
+  {
+    "id": "dashboard.chart_update_failed",
+    "translation": "Nie udało się zaktualizować wykresów pulpitu nawigacyjnego. Spróbuj ponownie."
+  },
+  {
+    "id": "role.not_found",
+    "translation": "Nie znaleziono żądanej roli."
+  },
+  {
+    "id": "role.retrieval_failed",
+    "translation": "Nie udało się pobrać ról. Spróbuj ponownie."
+  },
+  {
+    "id": "role.create_failed",
+    "translation": "Nie udało się utworzyć roli. Spróbuj ponownie."
+  },
+  {
+    "id": "role.update_failed",
+    "translation": "Nie udało się zaktualizować roli. Spróbuj ponownie."
+  },
+  {
+    "id": "role.delete_failed",
+    "translation": "Nie udało się usunąć roli. Spróbuj ponownie."
+  },
+  {
+    "id": "permission.forbidden",
+    "translation": "Nie masz uprawnień do wykonania tej czynności."
+  },
+  {
+    "id": "role.name_invalid",
+    "translation": "Nazwa roli może zawierać tylko małe litery, cyfry, podkreślenia i myślniki."
+  },
+  {
+    "id": "role.forbidden",
+    "translation": "Nie masz uprawnień do zarządzania rolami."
+  },
+  {
+    "id": "role.name_required",
+    "translation": "Nazwa roli jest wymagana."
+  },
+  {
+    "id": "role.name_taken",
+    "translation": "Rola o tej nazwie już istnieje."
+  },
+  {
+    "id": "role.cannot_delete_builtin",
+    "translation": "Wbudowanych ról nie można usunąć."
+  },
+  {
+    "id": "role.check_failed",
+    "translation": "Nie udało się zweryfikować dostępności nazwy roli. Spróbuj ponownie."
+  },
+  {
+    "id": "datamodel.forbidden",
+    "translation": "Nie masz uprawnień do zarządzania modelami danych."
+  },
+  {
+    "id": "datamodel.invalid_model",
+    "translation": "Model danych jest nieprawidłowy. Sprawdź nazwę, tabelę i pola."
+  },
+  {
+    "id": "datamodel.name_taken",
+    "translation": "Model danych o tej nazwie już istnieje. Wybierz inną nazwę."
+  },
+  {
+    "id": "datamodel.delete_has_dependents",
+    "translation": "Tej kostki nie można usunąć, ponieważ inne kostki lub widoki nadal od niej zależą."
+  },
+  {
+    "id": "datamodel.file_create_failed",
+    "translation": "Nie udało się utworzyć pliku modelu danych. Spróbuj ponownie."
+  },
+  {
+    "id": "datamodel.file_read_failed",
+    "translation": "Nie udało się odczytać pliku modelu danych."
+  },
+  {
+    "id": "datamodel.file_write_failed",
+    "translation": "Nie udało się zapisać pliku modelu danych. Spróbuj ponownie."
+  },
+  {
+    "id": "datamodel.file_delete_failed",
+    "translation": "Nie udało się usunąć pliku modelu danych. Spróbuj ponownie."
+  },
+  {
+    "id": "datamodel.generate_failed",
+    "translation": "Nie udało się wygenerować plików modelu danych. Spróbuj ponownie."
+  },
+  {
+    "id": "file.forbidden",
+    "translation": "Nie masz uprawnień do dostępu do tego pliku."
+  },
+  {
+    "id": "file.not_found",
+    "translation": "Nie znaleziono żądanego pliku."
+  },
+  {
+    "id": "file.retrieval_failed",
+    "translation": "Nie udało się pobrać plików. Spróbuj ponownie."
+  },
+  {
+    "id": "file.create_failed",
+    "translation": "Nie udało się utworzyć pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.delete_failed",
+    "translation": "Nie udało się usunąć pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.restore_failed",
+    "translation": "Nie udało się przywrócić pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.move_failed",
+    "translation": "Nie udało się przenieść pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.locked",
+    "translation": "Ten plik jest tymczasowo zablokowany i nie można go teraz modyfikować."
+  },
+  {
+    "id": "file.rename_failed",
+    "translation": "Nie udało się zmienić nazwy pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.archive_failed",
+    "translation": "Nie udało się zarchiwizować pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.no_space",
+    "translation": "Osiągnięto limit przestrzeni dyskowej. Zwolnij miejsce i spróbuj ponownie."
+  },
+  {
+    "id": "file.metadata_create_failed",
+    "translation": "Nie udało się utworzyć metadanych pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.metadata_retrieval_failed",
+    "translation": "Nie udało się pobrać metadanych pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.metadata_add_failed",
+    "translation": "Nie udało się dodać metadanych do pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.metadata_update_failed",
+    "translation": "Nie udało się zaktualizować metadanych pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.metadata_edit_failed",
+    "translation": "Nie udało się edytować metadanych pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.share_failed",
+    "translation": "Nie udało się udostępnić pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.unshare_failed",
+    "translation": "Nie udało się cofnąć udostępnienia pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.share_forbidden",
+    "translation": "Nie masz uprawnień do udostępnienia tego pliku."
+  },
+  {
+    "id": "file.share_below_inherited",
+    "translation": "Nie można przyznać mniejszego dostępu niż ten już dziedziczony z folderu nadrzędnego."
+  },
+  {
+    "id": "file.share_user_deactivated",
+    "translation": "Ten użytkownik jest dezaktywowany i nie można mu udostępnić pliku."
+  },
+  {
+    "id": "file.permissions_update_failed",
+    "translation": "Nie udało się zaktualizować uprawnień udostępniania. Spróbuj ponownie."
+  },
+  {
+    "id": "file.metadata_delete_failed",
+    "translation": "Nie udało się usunąć metadanych pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "file.unknown_type",
+    "translation": "Podany typ pliku nie jest obsługiwany."
+  },
+  {
+    "id": "link.no_access",
+    "translation": "Link udostępniania musi zezwalać co najmniej na podgląd, pobieranie lub przesyłanie."
+  },
+  {
+    "id": "link.upload_requires_folder",
+    "translation": "Linki do przesyłania można tworzyć tylko dla folderów."
+  },
+  {
+    "id": "link.create_failed",
+    "translation": "Nie udało się utworzyć linku udostępniania. Spróbuj ponownie."
+  },
+  {
+    "id": "link.update_failed",
+    "translation": "Nie udało się zaktualizować linku udostępniania. Spróbuj ponownie."
+  },
+  {
+    "id": "link.delete_failed",
+    "translation": "Nie udało się usunąć linku udostępniania. Spróbuj ponownie."
+  },
+  {
+    "id": "link.not_found",
+    "translation": "Nie znaleziono linku udostępniania."
+  },
+  {
+    "id": "link.forbidden",
+    "translation": "Nie masz uprawnień do modyfikacji tego linku udostępniania."
+  },
+  {
+    "id": "link.retrieval_failed",
+    "translation": "Nie udało się otworzyć linku udostępniania. Spróbuj ponownie."
+  },
+  {
+    "id": "link.expired",
+    "translation": "Ten link udostępniania wygasł."
+  },
+  {
+    "id": "link.password_required",
+    "translation": "Ten link udostępniania wymaga hasła."
+  },
+  {
+    "id": "link.password_invalid",
+    "translation": "Hasło jest nieprawidłowe."
+  },
+  {
+    "id": "link.auth_failed",
+    "translation": "Nie udało się odblokować linku udostępniania. Spróbuj ponownie."
+  },
+  {
+    "id": "link.download_forbidden",
+    "translation": "Pobieranie nie jest dozwolone dla tego linku udostępniania."
+  },
+  {
+    "id": "link.download_limit",
+    "translation": "Ten link udostępniania osiągnął limit pobrań."
+  },
+  {
+    "id": "link.rate_limited",
+    "translation": "Zbyt wiele prób. Poczekaj chwilę i spróbuj ponownie."
+  },
+  {
+    "id": "link.view_forbidden",
+    "translation": "Ten link udostępniania nie pozwala na podgląd tego pliku."
+  },
+  {
+    "id": "office.readonly",
+    "translation": "Ten dokument jest tylko do odczytu."
+  },
+  {
+    "id": "link.upload_forbidden",
+    "translation": "Ten link udostępniania nie pozwala na przesyłanie."
+  },
+  {
+    "id": "link.upload_failed",
+    "translation": "Przesyłanie nie powiodło się. Spróbuj ponownie."
+  },
+  {
+    "id": "upload.too_large",
+    "translation": "Plik jest zbyt duży, aby go przesłać."
+  },
+  {
+    "id": "upload.missing_destination",
+    "translation": "Miejsce docelowe przesyłania jest wymagane."
+  },
+  {
+    "id": "upload.missing_name",
+    "translation": "Nazwa pliku jest wymagana."
+  },
+  {
+    "id": "upload.invalid_size",
+    "translation": "Rozmiar pliku jest nieprawidłowy."
+  },
+  {
+    "id": "upload.start_failed",
+    "translation": "Nie udało się rozpocząć sesji przesyłania. Spróbuj ponownie."
+  },
+  {
+    "id": "upload.not_found",
+    "translation": "Nie znaleziono sesji przesyłania."
+  },
+  {
+    "id": "upload.forbidden",
+    "translation": "Nie masz uprawnień dostępu do tej sesji przesyłania."
+  },
+  {
+    "id": "upload.expired",
+    "translation": "Ta sesja przesyłania wygasła. Rozpocznij nowe przesyłanie."
+  },
+  {
+    "id": "upload.conflict",
+    "translation": "Ta sesja przesyłania nie jest w stanie umożliwiającym przesyłanie."
+  },
+  {
+    "id": "upload.incomplete",
+    "translation": "Przesyłanie nie zostało jeszcze zakończone. Dokończ przesyłanie wszystkich części."
+  },
+  {
+    "id": "upload.chunk_failed",
+    "translation": "Nie udało się przesłać fragmentu pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "upload.finalize_failed",
+    "translation": "Nie udało się sfinalizować przesyłania. Spróbuj ponownie."
+  },
+  {
+    "id": "upload.abort_failed",
+    "translation": "Nie udało się przerwać sesji przesyłania. Spróbuj ponownie."
+  },
+  {
+    "id": "upload.invalid_action",
+    "translation": "Podana czynność przesyłania jest nieprawidłowa."
+  },
+  {
+    "id": "storage.not_available",
+    "translation": "Zaplecze pamięci masowej jest niedostępne. Spróbuj ponownie później."
+  },
+  {
+    "id": "storage.license_required",
+    "translation": "Do zarządzania pamięcią masową wymagana jest ważna licencja."
+  },
+  {
+    "id": "groups.license_required",
+    "translation": "Grupy wymagają planu płatnego."
+  },
+  {
+    "id": "storage.not_found",
+    "translation": "Nie znaleziono żądanej pamięci masowej."
+  },
+  {
+    "id": "storage.get_failed",
+    "translation": "Nie udało się pobrać pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.get_all_failed",
+    "translation": "Nie udało się pobrać listy pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.create_failed",
+    "translation": "Nie udało się utworzyć pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.update_failed",
+    "translation": "Nie udało się zaktualizować pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.delete_failed",
+    "translation": "Nie udało się usunąć pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.set_primary_failed",
+    "translation": "Nie udało się ustawić podstawowej pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.encrypt_failed",
+    "translation": "Nie udało się zaszyfrować poświadczeń pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.update_directory_failed",
+    "translation": "Nie udało się zaktualizować katalogu pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.drive_create_failed",
+    "translation": "Nie udało się utworzyć dysku pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "storage.drive_delete_failed",
+    "translation": "Nie udało się usunąć dysku pamięci masowej. Spróbuj ponownie."
+  },
+  {
+    "id": "job.not_found",
+    "translation": "Nie znaleziono żądanego zadania."
+  },
+  {
+    "id": "job.retrieval_failed",
+    "translation": "Nie udało się pobrać zadań. Spróbuj ponownie."
+  },
+  {
+    "id": "job.cancel_failed",
+    "translation": "Nie udało się anulować zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "job.cancel_invalid_status",
+    "translation": "Anulować można tylko zadania oczekujące lub w trakcie realizacji."
+  },
+  {
+    "id": "job.acknowledge_failed",
+    "translation": "Nie udało się potwierdzić zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "license.verify_failed",
+    "translation": "Nie udało się zweryfikować licencji. Sprawdź, czy plik licencji jest prawidłowy."
+  },
+  {
+    "id": "license.expired",
+    "translation": "Ta licencja wygasła. Jej zastosowanie zastąpiłoby obecną licencję, więc nie została zastosowana."
+  },
+  {
+    "id": "license.seats_exceeded",
+    "translation": "Ta licencja obejmuje mniej użytkowników niż jest obecnie aktywnych. Najpierw dezaktywuj użytkowników lub użyj licencji z większą liczbą miejsc."
+  },
+  {
+    "id": "license.save_failed",
+    "translation": "Nie udało się zapisać licencji. Spróbuj ponownie."
+  },
+  {
+    "id": "license.remove_failed",
+    "translation": "Nie udało się usunąć aktywnej licencji. Spróbuj ponownie."
+  },
+  {
+    "id": "notification.retrieval_failed",
+    "translation": "Nie udało się pobrać powiadomień. Spróbuj ponownie."
+  },
+  {
+    "id": "license.feature_unavailable",
+    "translation": "Ta funkcja nie jest dostępna w Twoim bieżącym planie."
+  },
+  {
+    "id": "notification.not_found",
+    "translation": "Nie znaleziono żądanego powiadomienia."
+  },
+  {
+    "id": "notification.forbidden",
+    "translation": "Nie masz uprawnień dostępu do tego powiadomienia."
+  },
+  {
+    "id": "notification.read_failed",
+    "translation": "Nie udało się oznaczyć powiadomienia jako przeczytane. Spróbuj ponownie."
+  },
+  {
+    "id": "notification.delete_failed",
+    "translation": "Nie udało się usunąć powiadomienia. Spróbuj ponownie."
+  },
+  {
+    "id": "office.not_available",
+    "translation": "Edytor pakietu biurowego jest niedostępny. Spróbuj ponownie później."
+  },
+  {
+    "id": "office.open_failed",
+    "translation": "Nie udało się otworzyć pliku w edytorze pakietu biurowego. Spróbuj ponownie."
+  },
+  {
+    "id": "office.save_failed",
+    "translation": "Nie udało się zapisać pliku. Spróbuj ponownie."
+  },
+  {
+    "id": "office.token_invalid",
+    "translation": "Token dostępu pakietu biurowego jest nieprawidłowy lub wygasł."
+  },
+  {
+    "id": "collimato.workspace_user_failed",
+    "translation": "Nie udało się pobrać użytkownika obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.roles_failed",
+    "translation": "Nie udało się pobrać ról obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.permission_denied",
+    "translation": "Nie masz uprawnień dostępu do tych danych."
+  },
+  {
+    "id": "collimato.data_security_unavailable",
+    "translation": "Reguły dostępu do danych nie mogą być egzekwowane na tym serwerze. Skontaktuj się z administratorem."
+  },
+  {
+    "id": "collimato.workspace_limit",
+    "translation": "Twój plan obejmuje jedną przestrzeń roboczą. Uaktualnij, aby utworzyć więcej."
+  },
+  {
+    "id": "collimato.custom_roles_unavailable",
+    "translation": "Role niestandardowe wymagają planu płatnego. Role wbudowane pozostają dostępne."
+  },
+  {
+    "id": "collimato.retrieval_failed",
+    "translation": "Nie udało się pobrać obszarów roboczych. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.not_found",
+    "translation": "Nie znaleziono żądanego obszaru roboczego."
+  },
+  {
+    "id": "collimato.forbidden",
+    "translation": "Nie masz uprawnień dostępu do tego obszaru roboczego."
+  },
+  {
+    "id": "collimato.create_failed",
+    "translation": "Nie udało się utworzyć obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.delete_failed",
+    "translation": "Nie udało się usunąć obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.member_add_failed",
+    "translation": "Nie udało się dodać użytkowników do obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.member_remove_failed",
+    "translation": "Nie udało się usunąć użytkownika z obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.member_not_found",
+    "translation": "Nie jesteś członkiem tego obszaru roboczego."
+  },
+  {
+    "id": "collimato.users_retrieval_failed",
+    "translation": "Nie udało się pobrać użytkowników obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.roles_update_failed",
+    "translation": "Nie udało się zaktualizować ról użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.finish_failed",
+    "translation": "Nie udało się zakończyć konfiguracji obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.query_failed",
+    "translation": "Nie udało się wykonać zapytania o dane. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.request_failed",
+    "translation": "Nie udało się nawiązać komunikacji z silnikiem analitycznym. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.no_groups",
+    "translation": "Nie podano żadnych grup."
+  },
+  {
+    "id": "collimato.no_roles",
+    "translation": "Do grupy musi być przypisana co najmniej jedna rola."
+  },
+  {
+    "id": "collimato.role_not_found",
+    "translation": "Jedna lub więcej wybranych ról nie istnieje w tym obszarze roboczym."
+  },
+  {
+    "id": "collimato.groups_retrieval_failed",
+    "translation": "Nie udało się pobrać grup obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.group_add_failed",
+    "translation": "Nie udało się dodać grup do obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.group_remove_failed",
+    "translation": "Nie udało się usunąć grupy z obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "collimato.group_roles_update_failed",
+    "translation": "Nie udało się zaktualizować ról grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "settings.env_locked",
+    "translation": "Te ustawienia są zarządzane przez zmienne środowiskowe i nie można ich tutaj zmienić."
+  },
+  {
+    "id": "settings.update_failed",
+    "translation": "Nie udało się zaktualizować ustawień. Spróbuj ponownie."
+  },
+  {
+    "id": "settings.encrypt_failed",
+    "translation": "Nie można zapisać ustawień. Wystąpił błąd szyfrowania."
+  },
+  {
+    "id": "settings.email_test_failed",
+    "translation": "Nie udało się przetestować połączenia z serwerem poczty e-mail. Spróbuj ponownie."
+  },
+  {
+    "id": "settings.retrieval_failed",
+    "translation": "Nie udało się pobrać ustawień. Spróbuj ponownie."
+  },
+  {
+    "id": "user.retrieval_failed",
+    "translation": "Nie udało się pobrać użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "user.search_failed",
+    "translation": "Nie udało się wyszukać użytkowników. Spróbuj ponownie."
+  },
+  {
+    "id": "user.create_failed",
+    "translation": "Nie udało się utworzyć użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "user.update_failed",
+    "translation": "Nie udało się zaktualizować użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "user.deactivate_failed",
+    "translation": "Nie udało się dezaktywować użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "user.email_required",
+    "translation": "Adres e-mail jest wymagany."
+  },
+  {
+    "id": "user.username_required",
+    "translation": "Nazwa użytkownika jest wymagana."
+  },
+  {
+    "id": "user.username_managed_externally",
+    "translation": "Ta nazwa użytkownika jest zarządzana przez katalog i nie można jej tutaj zmienić."
+  },
+  {
+    "id": "user.username_invalid",
+    "translation": "Nazwa użytkownika może zawierać tylko małe litery, cyfry, kropki, myślniki i podkreślenia oraz musi zaczynać się od litery lub cyfry."
+  },
+  {
+    "id": "user.username_reserved",
+    "translation": "Ta nazwa użytkownika jest zarezerwowana i nie może zostać użyta."
+  },
+  {
+    "id": "user.storage_limit_invalid",
+    "translation": "Limit miejsca musi wynosić zero lub więcej. Zero oznacza brak limitu."
+  },
+  {
+    "id": "user.username_taken",
+    "translation": "Ta nazwa użytkownika jest już zajęta."
+  },
+  {
+    "id": "user.email_taken",
+    "translation": "Ten adres e-mail jest już używany."
+  },
+  {
+    "id": "user.name_required",
+    "translation": "Imię jest wymagane."
+  },
+  {
+    "id": "user.lastname_required",
+    "translation": "Nazwisko jest wymagane."
+  },
+  {
+    "id": "user.role_required",
+    "translation": "Rola jest wymagana."
+  },
+  {
+    "id": "user.password_required",
+    "translation": "Hasło jest wymagane."
+  },
+  {
+    "id": "user.password_mismatch",
+    "translation": "Hasła nie są zgodne."
+  },
+  {
+    "id": "user.password_incorrect",
+    "translation": "Bieżące hasło jest nieprawidłowe."
+  },
+  {
+    "id": "user.password_too_short",
+    "translation": "Hasło jest zbyt krótkie."
+  },
+  {
+    "id": "user.password_missing_case",
+    "translation": "Hasło musi zawierać wielkie i małe litery."
+  },
+  {
+    "id": "user.password_missing_number",
+    "translation": "Hasło musi zawierać co najmniej jedną cyfrę."
+  },
+  {
+    "id": "user.password_missing_special",
+    "translation": "Hasło musi zawierać co najmniej jeden znak specjalny."
+  },
+  {
+    "id": "user.photo_upload_failed",
+    "translation": "Nie udało się przesłać zdjęcia. Spróbuj ponownie."
+  },
+  {
+    "id": "user.photo_not_found",
+    "translation": "Nie znaleziono zdjęcia użytkownika."
+  },
+  {
+    "id": "user.photo_delete_failed",
+    "translation": "Nie udało się usunąć zdjęcia. Spróbuj ponownie."
+  },
+  {
+    "id": "user.photo_serve_failed",
+    "translation": "Nie udało się udostępnić zdjęcia użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "user.mfa_generate_failed",
+    "translation": "Nie udało się wygenerować kodu QR MFA. Spróbuj ponownie."
+  },
+  {
+    "id": "user.mfa_enable_failed",
+    "translation": "Nie udało się włączyć MFA. Spróbuj ponownie."
+  },
+  {
+    "id": "user.mfa_disable_failed",
+    "translation": "Nie udało się wyłączyć MFA. Spróbuj ponownie."
+  },
+  {
+    "id": "user.status_failed",
+    "translation": "Nie udało się zaktualizować statusu użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "user.preferences_failed",
+    "translation": "Nie udało się pobrać preferencji użytkownika. Spróbuj ponownie."
+  },
+  {
+    "id": "user.timezone_update_failed",
+    "translation": "Nie udało się zaktualizować strefy czasowej. Spróbuj ponownie."
+  },
+  {
+    "id": "user.password_reset_failed",
+    "translation": "Nie udało się zresetować hasła. Spróbuj ponownie."
+  },
+  {
+    "id": "request.invalid",
+    "translation": "Żądanie jest nieprawidłowe lub uszkodzone."
+  },
+  {
+    "id": "workspace.forbidden",
+    "translation": "Nie masz uprawnień do wykonania tej czynności."
+  },
+  {
+    "id": "workspace.roles_license_required",
+    "translation": "Zarządzanie rolami w przestrzeni roboczej wymaga planu płatnego."
+  },
+  {
+    "id": "workspace.task_create_failed",
+    "translation": "Nie udało się utworzyć zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Nie udało się pobrać załącznika. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.role_retrieval_failed",
+    "translation": "Nie udało się pobrać ról. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.role_update_failed",
+    "translation": "Nie udało się zaktualizować roli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.role_create_failed",
+    "translation": "Nie udało się utworzyć roli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.role_delete_failed",
+    "translation": "Nie udało się usunąć roli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.member_retrieval_failed",
+    "translation": "Nie udało się pobrać członka obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.member_not_found",
+    "translation": "Nie jesteś członkiem tego obszaru roboczego."
+  },
+  {
+    "id": "workspace.member_role_update_failed",
+    "translation": "Nie udało się zaktualizować roli członka. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.attachment_not_found",
+    "translation": "Nie znaleziono załącznika."
+  },
+  {
+    "id": "workspace.table_name_empty",
+    "translation": "Nazwa tabeli nie może być pusta."
+  },
+  {
+    "id": "workspace.item_not_found",
+    "translation": "Nie znaleziono elementu."
+  },
+  {
+    "id": "workspace.role_in_use",
+    "translation": "Tej roli nie można usunąć, ponieważ jest przypisana do co najmniej jednego członka."
+  },
+  {
+    "id": "workspace.role_delete_default_forbidden",
+    "translation": "Nie można usuwać ról domyślnych."
+  },
+  {
+    "id": "workspace.status_index_retrieval_failed",
+    "translation": "Nie udało się pobrać indeksu statusów. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.tasks_retrieval_failed",
+    "translation": "Nie udało się pobrać zadań obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.assigned_tasks_retrieval_failed",
+    "translation": "Nie udało się pobrać przypisanych zadań. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.view_update_failed",
+    "translation": "Nie udało się zaktualizować widoku. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.view_access_failed",
+    "translation": "Nie udało się otworzyć widoku. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.view_shares_get_failed",
+    "translation": "Nie udało się pobrać ustawień udostępniania widoku. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.view_shares_set_failed",
+    "translation": "Nie udało się zaktualizować ustawień udostępniania widoku. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.folder_update_failed",
+    "translation": "Nie udało się zaktualizować folderu obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.folder_delete_failed",
+    "translation": "Nie udało się usunąć folderu obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.linking_tables_failed",
+    "translation": "Nie udało się sprawdzić, które tabele są z tym powiązane. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.folder_has_tables",
+    "translation": "Nie można usunąć tego folderu: zawiera tabele, a nie masz uprawnień do usuwania tabel."
+  },
+  {
+    "id": "workspace.folder_not_found",
+    "translation": "Nie znaleziono folderu."
+  },
+  {
+    "id": "workspace.move_item_invalid",
+    "translation": "Można przenieść tylko tabelę lub folder."
+  },
+  {
+    "id": "workspace.move_item_not_found",
+    "translation": "Nie znaleziono elementu lub folderu docelowego."
+  },
+  {
+    "id": "workspace.folder_move_into_itself",
+    "translation": "Nie można przenieść folderu do niego samego ani do folderu w nim."
+  },
+  {
+    "id": "workspace.move_item_failed",
+    "translation": "Nie udało się przenieść elementu. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.member_delete_failed",
+    "translation": "Nie udało się usunąć członka obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.view_create_failed",
+    "translation": "Nie udało się utworzyć widoku. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.view_already_exists",
+    "translation": "Widok o tej nazwie już istnieje."
+  },
+  {
+    "id": "workspace.single_select_update_failed",
+    "translation": "Nie udało się zaktualizować nazwy opcji. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_update_failed",
+    "translation": "Nie udało się zaktualizować zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_name_empty",
+    "translation": "Nazwa zadania nie może być pusta."
+  },
+  {
+    "id": "workspace.task_dates_reversed",
+    "translation": "Data rozpoczęcia nie może być późniejsza niż termin."
+  },
+  {
+    "id": "workspace.task_update_protected",
+    "translation": "Tej opcji statusu nie można zmienić nazwy."
+  },
+  {
+    "id": "workspace.relationship_not_found",
+    "translation": "Nie znaleziono pasującej relacji dla tego pola."
+  },
+  {
+    "id": "workspace.linked_table_not_found",
+    "translation": "Nie znaleziono połączonej tabeli."
+  },
+  {
+    "id": "workspace.field_value_already_exists",
+    "translation": "Wartość pola o tej nazwie już istnieje."
+  },
+  {
+    "id": "workspace.field_value_add_failed",
+    "translation": "Nie udało się dodać wartości pola. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.linked_task_data_failed",
+    "translation": "Nie udało się pobrać danych połączonego zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.item_retrieval_failed",
+    "translation": "Nie udało się pobrać elementu. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.table_update_failed",
+    "translation": "Nie udało się zaktualizować tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.workspace_update_failed",
+    "translation": "Nie udało się zaktualizować obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.filter_update_failed",
+    "translation": "Nie udało się zaktualizować filtru. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.filter_not_found",
+    "translation": "Nie znaleziono filtru."
+  },
+  {
+    "id": "workspace.filter_delete_failed",
+    "translation": "Nie udało się usunąć filtru. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.filter_save_failed",
+    "translation": "Nie udało się zapisać filtru. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_link_invalid_id",
+    "translation": "Nieprawidłowy identyfikator elementu w linku zadania."
+  },
+  {
+    "id": "workspace.filter_active_update_failed",
+    "translation": "Nie udało się zaktualizować statusu filtru. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.filtered_table_data_failed",
+    "translation": "Nie udało się pobrać przefiltrowanych danych tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_link_update_failed",
+    "translation": "Nie udało się zaktualizować linku zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.display_name_update_failed",
+    "translation": "Nie udało się zaktualizować nazwy wyświetlanej. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.view_or_field_not_found",
+    "translation": "Nie znaleziono widoku ani pola."
+  },
+  {
+    "id": "workspace.task_main_view_failed",
+    "translation": "Nie udało się pobrać widoku głównego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_name_failed",
+    "translation": "Nie udało się pobrać nazwy zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_status_name_failed",
+    "translation": "Nie udało się pobrać nazwy statusu. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.grid_view_create_failed",
+    "translation": "Nie udało się utworzyć widoku siatki. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.column_width_update_failed",
+    "translation": "Nie udało się zaktualizować szerokości kolumny. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.column_not_found",
+    "translation": "Nie znaleziono kolumny w widoku."
+  },
+  {
+    "id": "workspace.grid_headers_update_failed",
+    "translation": "Nie udało się zaktualizować nagłówków siatki. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.member_to_task_add_failed",
+    "translation": "Nie udało się dodać członka do zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.folder_add_failed",
+    "translation": "Nie udało się dodać folderu obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.single_field_delete_failed",
+    "translation": "Nie udało się usunąć pola. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.table_field_delete_failed",
+    "translation": "Nie udało się usunąć pola tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.table_view_delete_failed",
+    "translation": "Nie udało się usunąć widoku tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_delete_failed",
+    "translation": "Nie udało się usunąć zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.table_delete_failed",
+    "translation": "Nie udało się usunąć tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.current_user_retrieval_failed",
+    "translation": "Nie udało się pobrać użytkownika obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.attachment_delete_failed",
+    "translation": "Nie udało się usunąć załącznika. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.attachment_retrieval_failed",
+    "translation": "Nie udało się pobrać załącznika. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.grid_sort_save_failed",
+    "translation": "Nie udało się zapisać ustawień sortowania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.delete_failed",
+    "translation": "Nie udało się usunąć obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.membership_check_failed",
+    "translation": "Nie udało się sprawdzić członkostwa w obszarze roboczym. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.field_name_empty",
+    "translation": "Wpisz nazwę pola."
+  },
+  {
+    "id": "workspace.field_type_invalid",
+    "translation": "Nieprawidłowy typ pola."
+  },
+  {
+    "id": "workspace.link_table_id_empty",
+    "translation": "Identyfikator połączonej tabeli jest wymagany dla pól łączących."
+  },
+  {
+    "id": "workspace.field_name_second_invalid",
+    "translation": "Nazwa drugiego pola jest wymagana dla połączeń dwukierunkowych."
+  },
+  {
+    "id": "workspace.table_field_create_failed",
+    "translation": "Nie udało się utworzyć pola tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.tables_retrieval_failed",
+    "translation": "Nie udało się pobrać tabel obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.workspace_name_empty",
+    "translation": "Nazwa obszaru roboczego nie może być pusta."
+  },
+  {
+    "id": "workspace.create_failed",
+    "translation": "Nie udało się utworzyć obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.comments_retrieval_failed",
+    "translation": "Nie udało się pobrać komentarzy do zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.comment_add_failed",
+    "translation": "Nie udało się dodać komentarza. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.comment_too_long",
+    "translation": "Twój komentarz jest za długi. Skróć go i spróbuj ponownie."
+  },
+  {
+    "id": "workspace.details_retrieval_failed",
+    "translation": "Nie udało się pobrać szczegółów obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.workspaces_retrieval_failed",
+    "translation": "Nie udało się pobrać obszarów roboczych. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.file_upload_failed",
+    "translation": "Nie udało się przesłać plików. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.file_no_files",
+    "translation": "Nie dostarczono ani nie przesłano pomyślnie żadnych plików."
+  },
+  {
+    "id": "workspace.table_create_failed",
+    "translation": "Nie udało się utworzyć tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.member_add_failed",
+    "translation": "Nie udało się dodać członków do obszaru roboczego. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.table_permissions_retrieval_failed",
+    "translation": "Nie udało się pobrać uprawnień tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.table_permissions_update_failed",
+    "translation": "Nie udało się zaktualizować uprawnień tabeli. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.kanban_data_failed",
+    "translation": "Nie udało się załadować danych kanban. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.date_range_failed",
+    "translation": "Nie udało się załadować zadań dla wybranego zakresu dat. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.calendar_range_invalid",
+    "translation": "Nieprawidłowy zakres dat dla kalendarza."
+  },
+  {
+    "id": "workspace.calendar_range_failed",
+    "translation": "Nie udało się załadować zadań dla wybranego miesiąca. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.linked_records_failed",
+    "translation": "Nie udało się załadować powiązanych rekordów. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.field_formula_update_failed",
+    "translation": "Nie udało się zaktualizować formuły pola. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.task_page_retrieval_failed",
+    "translation": "Nie udało się pobrać strony zadania. Spróbuj ponownie."
+  },
+  {
+    "id": "workspace.status_types_retrieval_failed",
+    "translation": "Nie udało się pobrać typów statusu. Spróbuj ponownie."
+  },
+  {
+    "id": "group.forbidden",
+    "translation": "Nie masz uprawnień do zarządzania tą grupą."
+  },
+  {
+    "id": "group.not_found",
+    "translation": "Wskazana grupa nie istnieje lub nie udało się jej pobrać."
+  },
+  {
+    "id": "group.name_required",
+    "translation": "Nazwa grupy jest wymagana."
+  },
+  {
+    "id": "group.no_members",
+    "translation": "Należy podać co najmniej jednego członka."
+  },
+  {
+    "id": "group.role_admin_forbidden",
+    "translation": "Grupa nie może nadać roli administratora."
+  },
+  {
+    "id": "group.invalid_role",
+    "translation": "Jedna lub więcej wybranych ról nie istnieje."
+  },
+  {
+    "id": "group.role_validation_failed",
+    "translation": "Nie udało się zweryfikować wybranych ról. Spróbuj ponownie."
+  },
+  {
+    "id": "group.create_failed",
+    "translation": "Nie udało się utworzyć grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "group.update_failed",
+    "translation": "Nie udało się zaktualizować grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "group.delete_failed",
+    "translation": "Nie udało się usunąć grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "group.list_failed",
+    "translation": "Nie udało się pobrać grup. Spróbuj ponownie."
+  },
+  {
+    "id": "group.retrieval_failed",
+    "translation": "Nie udało się pobrać grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "group.members_failed",
+    "translation": "Nie udało się załadować członków grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "group.add_members_failed",
+    "translation": "Nie udało się dodać członków do grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "group.remove_member_failed",
+    "translation": "Nie udało się usunąć członka z grupy. Spróbuj ponownie."
+  },
+  {
+    "id": "channel_group.list_failed",
+    "translation": "Nie udało się wyświetlić grup w tym kanale. Spróbuj ponownie."
+  },
+  {
+    "id": "channel_group.add_failed",
+    "translation": "Nie udało się dodać grupy do tego kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel_group.remove_failed",
+    "translation": "Nie udało się usunąć grupy z tego kanału. Spróbuj ponownie."
+  },
+  {
+    "id": "channel_group.no_groups",
+    "translation": "Nie wybrano żadnych grup."
+  },
+  {
+    "id": "email.footer.contact",
+    "translation": "W razie potrzeby skontaktuj się ze swoim administratorem."
+  },
+  {
+    "id": "email.notification.intro",
+    "translation": "Masz nowe powiadomienie"
+  },
+  {
+    "id": "email.notification.action_open",
+    "translation": "Otwórz"
+  },
+  {
+    "id": "email.notification.mention",
+    "translation": "{{.sender}} wspomniał(a) o Tobie w kanale \"{{.channel}}\"."
+  },
+  {
+    "id": "email.registration.subject",
+    "translation": "Witamy w Twigex! Dokończ konfigurację swojego konta!"
+  },
+  {
+    "id": "email.registration.title",
+    "translation": "Witamy w Twigex"
+  },
+  {
+    "id": "email.registration.text",
+    "translation": "Ciesz się cyfrową swobodą. Przechowuj pliki, twórz notatki, zarządzaj projektami, rozmawiaj z innymi i nie tylko. Zaloguj się i baw się dobrze!"
+  },
+  {
+    "id": "email.password_reset.subject",
+    "translation": "Resetowanie hasła"
+  },
+  {
+    "id": "email.password_reset.title",
+    "translation": "Resetowanie hasła"
+  },
+  {
+    "id": "email.password_reset.text",
+    "translation": "Jeśli nie resetowałeś swojego hasła, możesz zignorować tę wiadomość!"
+  },
+  {
+    "id": "email.password.set_button",
+    "translation": "Ustaw hasło"
+  },
+  {
+    "id": "email.video_invite.subject",
+    "translation": "Zostałeś zaproszony do rozmowy wideo"
+  },
+  {
+    "id": "email.video_invite.title",
+    "translation": "Zaproszenie do rozmowy wideo"
+  },
+  {
+    "id": "email.video_invite.text",
+    "translation": "Zostałeś zaproszony do dołączenia do rozmowy wideo. Kliknij poniższy przycisk, aby wejść."
+  },
+  {
+    "id": "email.video_invite.join_button",
+    "translation": "Dołącz do rozmowy"
+  },
+  {
+    "id": "email.meeting_invite.subject",
+    "translation": "Zostałeś zaproszony na zaplanowane spotkanie"
+  },
+  {
+    "id": "email.meeting_invite.title",
+    "translation": "Zaproszenie na zaplanowane spotkanie"
+  },
+  {
+    "id": "email.meeting_invite.text",
+    "translation": "Zostałeś zaproszony na nadchodzące spotkanie."
+  },
+  {
+    "id": "email.meeting_updated.subject",
+    "translation": "Spotkanie, na które zostałeś zaproszony, zostało zaktualizowane"
+  },
+  {
+    "id": "email.meeting_updated.title",
+    "translation": "Zaktualizowano spotkanie"
+  },
+  {
+    "id": "email.meeting_updated.text",
+    "translation": "Spotkanie, na które zostałeś zaproszony, zostało zaktualizowane. Najnowsze szczegóły znajdują się poniżej."
+  },
+  {
+    "id": "email.meeting.open_button",
+    "translation": "Otwórz spotkanie"
+  },
+  {
+    "id": "email.meeting.join_hint",
+    "translation": "Możesz dołączyć, gdy gospodarz rozpocznie spotkanie."
+  },
+  {
+    "id": "email.meeting.invited_line",
+    "translation": "{{.Inviter}} zaprosił Cię na {{.Meeting}} w kanale {{.Channel}}."
+  },
+  {
+    "id": "email.meeting.invited_line_no_channel",
+    "translation": "{{.Inviter}} zaprosił Cię na {{.Meeting}}."
+  },
+  {
+    "id": "email.meeting.scheduled_for",
+    "translation": "Zaplanowano na {{.Time}}"
+  },
+  {
+    "id": "email.meeting_cancelled.subject",
+    "translation": "Anulowano: {{.Title}}"
+  },
+  {
+    "id": "email.meeting_cancelled.title",
+    "translation": "Spotkanie anulowane"
+  },
+  {
+    "id": "email.meeting_cancelled.text",
+    "translation": "Poniższe spotkanie zostało anulowane."
+  },
+  {
+    "id": "email.meeting.cancelled_line",
+    "translation": "{{.Inviter}} anulował {{.Meeting}} w kanale {{.Channel}}."
+  },
+  {
+    "id": "email.meeting.cancelled_line_no_channel",
+    "translation": "{{.Inviter}} anulował {{.Meeting}}."
+  },
+  {
+    "id": "email.meeting.was_scheduled_for",
+    "translation": "Było zaplanowane na {{.Time}}"
+  },
+  {
+    "id": "email.meeting_member_scheduled.title",
+    "translation": "Zaplanowane spotkanie"
+  },
+  {
+    "id": "email.meeting_member_scheduled.text",
+    "translation": "W Twoim kanale zaplanowano spotkanie."
+  },
+  {
+    "id": "email.meeting_member_scheduled.intro",
+    "translation": "W kanale {{.Channel}} zaplanowano spotkanie"
+  },
+  {
+    "id": "email.meeting_member_updated.title",
+    "translation": "Zaktualizowane spotkanie"
+  },
+  {
+    "id": "email.meeting_member_updated.text",
+    "translation": "Spotkanie w Twoim kanale zostało zaktualizowane."
+  },
+  {
+    "id": "email.meeting_member_updated.intro",
+    "translation": "W kanale {{.Channel}} zaktualizowano spotkanie"
+  },
+  {
+    "id": "email.label.join",
+    "translation": "Dołącz"
+  },
+  {
+    "id": "email.label.when",
+    "translation": "Kiedy"
+  },
+  {
+    "id": "email.label.open",
+    "translation": "Otwórz"
+  },
+  {
+    "id": "license.file_too_large",
+    "translation": "Plik licencji jest zbyt duży. Prześlij plik mniejszy niż 1 MB."
+  },
+  {
+    "id": "license.upload_failed",
+    "translation": "Nie udało się przesłać pliku licencji. Spróbuj ponownie."
+  },
+  {
+    "id": "channel.archived",
+    "translation": ""
+  },
+  {
+    "id": "channel.not_archived",
+    "translation": ""
+  },
+  {
+    "id": "channel.archive_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.unarchive_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.archive_type_invalid",
+    "translation": ""
+  },
+  {
+    "id": "channel.delete_type_invalid",
+    "translation": ""
+  },
+  {
+    "id": "channel.delete_failed",
+    "translation": ""
+  },
+  {
+    "id": "channel.role_invalid",
+    "translation": ""
+  }
+]

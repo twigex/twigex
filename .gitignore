@@ -1,0 +1,40 @@
+.DS_Store
+node_modules
+fontend/node_modules
+frontend/dist
+data
+cloud
+/twigex
+config/storage.json
+config/config.json
+/logs
+/plugins
+/build
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+# go.work file
+go.work
+go.work.sum
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+.claude/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Left behind if "make tidy" is interrupted between its two mv steps
+enterprise/*.orig

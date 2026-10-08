@@ -1,0 +1,65 @@
+/*
+Copyright (c) 2022 Twigex, SIA.
+SPDX-License-Identifier: AGPL-3.0-only
+*/
+
+/* What the grid and both reports lay out alike. */
+.grid-container {
+    display: inline-block;
+}
+
+.grid-row {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.grid-item-text {
+    height: 42px;
+    padding: 6px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.grid-item-text:nth-child(1),
+.grid-item-text:nth-child(2) {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+}
+
+.header-cell {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+}
+
+.alignLeft {
+    text-align: left !important;
+}
+
+.hidden-column {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: hidden !important;
+    display: none !important;
+}
