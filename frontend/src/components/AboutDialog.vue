@@ -72,17 +72,6 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         >
                                             {{ t("files.about.edition") }}
                                             {{ t("files.about.enterprise") }}
-                                            r{{ settingsStore.getEnterpriseRevision }}
-                                        </p>
-                                        <p
-                                            v-if="
-                                                settingsStore.isEnterpriseBuild &&
-                                                settingsStore.getEnterpriseHash
-                                            "
-                                            class="text-sm text-gray-500"
-                                        >
-                                            {{ t("files.about.enterprise_commit") }}
-                                            {{ settingsStore.getEnterpriseHash }}
                                         </p>
                                         <p
                                             v-if="settingsStore.getBuildHash"

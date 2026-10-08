@@ -116,7 +116,6 @@ func startServer(cmd *cobra.Command, args []string) {
 		"port", port,
 		"version", model.Version,
 		"edition", model.Edition,
-		"enterprise_revision", model.EnterpriseRevision,
 		"enterprise_hash", model.EnterpriseHash,
 	)
 	if cert != "" && key != "" {

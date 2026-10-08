@@ -197,7 +197,6 @@
     "files.about.build_date": "Izveides datums:",
     "files.about.edition": "Izdevums:",
     "files.about.enterprise": "Enterprise",
-    "files.about.enterprise_commit": "Enterprise revīzija:",
     "files.delete_dialog.title": "Dzēst failu",
     "files.delete_dialog.confirm_delete": "Vai tiešām vēlaties dzēst <strong> {text} </strong> ?",
     "files.rename_dialog.title": "Pārsaukt failu",
