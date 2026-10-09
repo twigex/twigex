@@ -1893,34 +1893,34 @@
   },
   {
     "id": "channel.archived",
-    "translation": ""
+    "translation": "Бұл арна мұрағатталған. Өзгеріс енгізбес бұрын оны мұрағаттан шығарыңыз."
   },
   {
     "id": "channel.not_archived",
-    "translation": ""
+    "translation": "Бұл арна мұрағатталмаған."
   },
   {
     "id": "channel.archive_failed",
-    "translation": ""
+    "translation": "Арнаны мұрағаттау сәтсіз аяқталды. Қайталап көріңіз."
   },
   {
     "id": "channel.unarchive_failed",
-    "translation": ""
+    "translation": "Арнаны мұрағаттан шығару сәтсіз аяқталды. Қайталап көріңіз."
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": ""
+    "translation": "Тек ашық арналарды мұрағаттауға болады."
   },
   {
     "id": "channel.delete_type_invalid",
-    "translation": ""
+    "translation": "Тек ашық арналарды жоюға болады."
   },
   {
     "id": "channel.delete_failed",
-    "translation": ""
+    "translation": "Арнаны жою сәтсіз аяқталды. Қайталап көріңіз."
   },
   {
     "id": "channel.role_invalid",
-    "translation": ""
+    "translation": "Бұл арнаның жарамды рөлі емес."
   }
 ]

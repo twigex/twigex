@@ -1893,34 +1893,34 @@
   },
   {
     "id": "channel.archived",
-    "translation": ""
+    "translation": "Šis kanāls ir arhivēts. Pirms izmaiņu veikšanas atjaunojiet to no arhīva."
   },
   {
     "id": "channel.not_archived",
-    "translation": ""
+    "translation": "Šis kanāls nav arhivēts."
   },
   {
     "id": "channel.archive_failed",
-    "translation": ""
+    "translation": "Neizdevās arhivēt kanālu. Lūdzu, mēģiniet vēlreiz."
   },
   {
     "id": "channel.unarchive_failed",
-    "translation": ""
+    "translation": "Neizdevās atjaunot kanālu no arhīva. Lūdzu, mēģiniet vēlreiz."
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": ""
+    "translation": "Arhivēt var tikai publiskus kanālus."
   },
   {
     "id": "channel.delete_type_invalid",
-    "translation": ""
+    "translation": "Dzēst var tikai publiskus kanālus."
   },
   {
     "id": "channel.delete_failed",
-    "translation": ""
+    "translation": "Neizdevās dzēst kanālu. Lūdzu, mēģiniet vēlreiz."
   },
   {
     "id": "channel.role_invalid",
-    "translation": ""
+    "translation": "Šī nav derīga kanāla loma."
   }
 ]
