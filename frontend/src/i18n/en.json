@@ -978,6 +978,7 @@
     "collimato.charts.table.description": "A list of all the charts you have access to.",
     "collimato.charts.empty.title": "No charts",
     "collimato.charts.empty.description": "Get started by creating a new chart.",
+    "collimato.charts.empty_value": "(empty)",
     "collimato.charts.search_placeholder": "Search charts...",
     "collimato.charts.search_no_results": "No charts match your search",
     "collimato.charts.search_clear": "Clear filters",

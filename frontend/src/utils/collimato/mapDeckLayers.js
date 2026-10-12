@@ -23,18 +23,26 @@ export function extent(values) {
     return Number.isFinite(min) ? [min, max] : [0, 0];
 }
 
+function toNumber(value) {
+    if (value == null || value === "") {
+        return NaN;
+    }
+
+    return Number(value);
+}
+
 export function createGetRadius(data, field, range = [4, 100], radius) {
     if (field == null || data == null) {
         return () => radius;
     }
 
-    const [minValue, maxValue] = extent(data.map((d) => Number(d[field])));
+    const [minValue, maxValue] = extent(data.map((d) => toNumber(d[field])));
     const radiusScale = scaleLinear()
         .domain([0, Math.sqrt(maxValue - minValue)])
         .range(range);
 
     return (d) => {
-        const value = Number(d[field]);
+        const value = toNumber(d[field]);
 
         if (!Number.isFinite(value)) {
             return range[0];
@@ -58,7 +66,7 @@ export function createColorAccessor(
     let dataDomain;
 
     if (!domain) {
-        dataDomain = extent(data.map((d) => Number(d[field])));
+        dataDomain = extent(data.map((d) => toNumber(d[field])));
     } else {
         dataDomain = domain;
     }
@@ -68,7 +76,12 @@ export function createColorAccessor(
     const colorScale = d3.scaleSequential(d3[colorScheme]).domain([0, 20]);
 
     return (d) => {
-        const value = Number(d[field]);
+        const value = toNumber(d[field]);
+
+        if (!Number.isFinite(value)) {
+            return hexToRGB(fill_color);
+        }
+
         const scaledValue = valueToDomainScale(value);
         const colorStr = colorScale(scaledValue);
         const c = d3.color(colorStr);
@@ -77,12 +90,16 @@ export function createColorAccessor(
     };
 }
 
+function hasPosition(d, { lat, long }) {
+    return Number.isFinite(toNumber(d[lat])) && Number.isFinite(toNumber(d[long]));
+}
+
 function baseDeckProps(layer, layerType) {
     const { lat, long } = layer.config.coordinates;
 
     return {
         id: `${layer.name}-${layerType}`,
-        data: layer.config.data,
+        data: layer.config.data?.filter((d) => hasPosition(d, layer.config.coordinates)),
         getPosition: (d) => [Number(d[long]), Number(d[lat])],
     };
 }
@@ -154,7 +171,7 @@ export function buildArcLayer(layer, layerType) {
 
     return new ArcLayer({
         id: `${layer.name}-${layerType}`,
-        data: layer.config.data,
+        data: layer.config.data?.filter((d) => hasPosition(d, source) && hasPosition(d, target)),
         getSourcePosition: (d) => [Number(d[source.long]), Number(d[source.lat])],
         getTargetPosition: (d) => [Number(d[target.long]), Number(d[target.lat])],
         getSourceColor: createColorAccessor(

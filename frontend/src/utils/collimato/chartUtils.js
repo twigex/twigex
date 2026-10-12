@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Twigex, SIA.
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { t } from "@/i18n/index";
 import { CHART_PALETTE, CHART_LABEL_COLOR } from "@/utils/collimato/chartPalette.js";
 
 export const MAX_QUERY_LIMIT = 50000;
@@ -277,10 +278,16 @@ function measureTitleOf(data, measure) {
     return data.annotation.measures[measure]?.title || measure;
 }
 
+function labelOf(value) {
+    if (value == null || value === "") {
+        return t.value("collimato.charts.empty_value");
+    }
+
+    return String(value);
+}
+
 function valuesOf(item, dimensions) {
-    return dimensions.map((dimension) =>
-        item[dimension] != null ? String(item[dimension]) : "null",
-    );
+    return dimensions.map((dimension) => labelOf(item[dimension]));
 }
 
 export function axisDimensionsOf(configuration, dimensions) {
@@ -296,7 +303,7 @@ export function axisDimensionsOf(configuration, dimensions) {
 function dimensionValuesOf(item, dimensions, timeDimension) {
     return dimensions
         .filter((dimension) => dimension !== timeDimension?.dimension)
-        .map((dimension) => (item[dimension] != null ? String(item[dimension]) : "null"));
+        .map((dimension) => labelOf(item[dimension]));
 }
 
 function seriesNameOf(measureTitle, dimensionValues, showMeasure) {
@@ -312,7 +319,7 @@ function seriesNameOf(measureTitle, dimensionValues, showMeasure) {
 function emptySeries(name, seriesType, length) {
     return {
         name: name,
-        data: Array.from({ length: length }, () => 0),
+        data: Array.from({ length: length }, () => null),
         label: { show: false, position: "top", color: CHART_LABEL_COLOR },
         ...(AXIS_SERIES_PRESETS[seriesType] ?? AXIS_SERIES_PRESETS.line),
     };
@@ -393,8 +400,14 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
                 const bucket = withTime ? raw : raw?.split("T")[0];
                 const index = xAxisData.indexOf(bucket);
 
+                const value = item[measure];
+
                 if (index !== -1) {
-                    seriesFor(name).data[index] += item[measure] ?? 0;
+                    const entry = seriesFor(name);
+
+                    if (value != null && value !== "") {
+                        entry.data[index] += Number(value);
+                    }
                 }
             });
         });
@@ -419,8 +432,14 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
                 const name = seriesNameOf(title, valuesOf(item, seriesDimensions), showMeasure);
                 const index = xAxisData.indexOf(valuesOf(item, axisDimensions).join(", "));
 
+                const value = item[measure];
+
                 if (index !== -1) {
-                    seriesFor(name).data[index] += Number(item[measure]) || 0;
+                    const entry = seriesFor(name);
+
+                    if (value != null && value !== "") {
+                        entry.data[index] += Number(value);
+                    }
                 }
             });
         });
@@ -513,10 +532,23 @@ export function pieChart(data) {
     const measureTitle = measureTitleOf(data, measure);
 
     data.data.forEach((item) => {
-        const name = `${item[primaryDimension] ?? "null"}`;
+        const value = item[measure];
+
+        if (value == null || value === "") {
+            return;
+        }
+
+        const name = labelOf(item[primaryDimension]);
+        const slice = seriesData.find((entry) => entry.name === name);
+
+        if (slice) {
+            slice.value += Number(value);
+
+            return;
+        }
 
         legend.add(name);
-        seriesData.push({ value: item[measure] ?? 0, name: name });
+        seriesData.push({ value: Number(value), name: name });
     });
 
     const option = {
@@ -623,11 +655,17 @@ export function toTableData(data) {
 
 export function number(data) {
     const values = data.query.measures.map((measure) => {
-        const total = data.data.reduce((sum, item) => sum + (Number(item[measure]) || 0), 0);
+        const total = data.data.reduce((sum, item) => {
+            if (item[measure] == null || item[measure] === "") {
+                return sum;
+            }
+
+            return sum + Number(item[measure]);
+        }, null);
 
         return {
             label: measureTitleOf(data, measure),
-            formatted: formatNumber(total),
+            formatted: total == null ? "-" : formatNumber(total),
             value: total,
         };
     });

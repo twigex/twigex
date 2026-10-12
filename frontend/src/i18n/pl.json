@@ -978,6 +978,7 @@
     "collimato.charts.table.description": "Lista wszystkich wykresów, do których masz dostęp.",
     "collimato.charts.empty.title": "Brak wykresów",
     "collimato.charts.empty.description": "Zacznij od utworzenia nowego wykresu.",
+    "collimato.charts.empty_value": "(puste)",
     "collimato.charts.search_placeholder": "Szukaj wykresów...",
     "collimato.charts.search_no_results": "Brak wykresów pasujących do wyszukiwania",
     "collimato.charts.search_clear": "Wyczyść filtry",
