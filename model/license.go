@@ -77,6 +77,7 @@ type Features struct {
 	CollimatoRoles               *bool `json:"collimato_roles"`
 	Groups                       *bool `json:"groups"`
 	WorkspaceRoles               *bool `json:"workspace_roles"`
+	SystemRoles                  *bool `json:"system_roles"`
 	OAuthProviders               *bool `json:"oauth_providers"`
 	LDAP                         *bool `json:"ldap"`
 }
@@ -136,6 +137,10 @@ func (l *License) HasGroups() bool {
 
 func (l *License) HasWorkspaceRoles() bool {
 	return l.enabled(func(f *Features) *bool { return f.WorkspaceRoles })
+}
+
+func (l *License) HasSystemRoles() bool {
+	return l.enabled(func(f *Features) *bool { return f.SystemRoles })
 }
 
 func (l *License) HasOAuthProviders() bool {
@@ -344,6 +349,10 @@ func (l *License) SetDefaults() {
 
 	if l.Features.WorkspaceRoles == nil {
 		l.Features.WorkspaceRoles = NewBool(l.MinimumLicenseBusiness())
+	}
+
+	if l.Features.SystemRoles == nil {
+		l.Features.SystemRoles = NewBool(l.MinimumLicenseBusiness())
 	}
 
 	if l.Features.OAuthProviders == nil {

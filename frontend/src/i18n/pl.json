@@ -2128,6 +2128,8 @@
     "settings.roles.deselect_all": "Odznacz wszystko",
     "settings.roles.role_updated": "Rola zaktualizowana",
     "settings.roles.role_created": "Rola utworzona",
+    "settings.roles.unlicensed.title": "Zarządzanie rolami wymaga licencji",
+    "settings.roles.unlicensed.description": "Tworzenie ról i zmiana uprawnień wymagają aktywnej licencji.",
     "settings.edit_user.account_actions": "Akcje konta",
     "settings.edit_user.reset_password_description": "Wyślij użytkownikowi link do resetowania hasła.",
     "settings.edit_user.revoke_sessions_description": "Zakończ wszystkie sesje tego użytkownika na wszystkich urządzeniach.",

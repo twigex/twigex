@@ -2128,6 +2128,8 @@
     "settings.roles.deselect_all": "Noņemt visu atlasi",
     "settings.roles.role_updated": "Loma atjaunināta",
     "settings.roles.role_created": "Loma izveidota",
+    "settings.roles.unlicensed.title": "Lomu pārvaldībai nepieciešama licence",
+    "settings.roles.unlicensed.description": "Lomu izveidei un atļauju maiņai nepieciešama aktīva licence.",
     "settings.edit_user.account_actions": "Konta darbības",
     "settings.edit_user.reset_password_description": "Nosūtīt lietotājam paroles atiestatīšanas saiti.",
     "settings.edit_user.revoke_sessions_description": "Beigt visas šī lietotāja sesijas visās ierīcēs.",

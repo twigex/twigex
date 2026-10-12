@@ -560,6 +560,10 @@
     "translation": "Neizdevās pārbaudīt lomas nosaukuma pieejamību. Lūdzu, mēģiniet vēlreiz."
   },
   {
+    "id": "role.license_required",
+    "translation": "Lomu pārvaldībai nepieciešams maksas plāns."
+  },
+  {
     "id": "datamodel.forbidden",
     "translation": "Jums nav atļaujas pārvaldīt datu modeļus."
   },

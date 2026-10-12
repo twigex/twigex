@@ -560,6 +560,10 @@
     "translation": "Nie udało się zweryfikować dostępności nazwy roli. Spróbuj ponownie."
   },
   {
+    "id": "role.license_required",
+    "translation": "Zarządzanie rolami wymaga planu płatnego."
+  },
+  {
     "id": "datamodel.forbidden",
     "translation": "Nie masz uprawnień do zarządzania modelami danych."
   },

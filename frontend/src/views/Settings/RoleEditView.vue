@@ -113,7 +113,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 />
                             </div>
                         </div>
-                        <p v-if="isBuiltIn" class="text-sm text-gray-500">
+                        <p v-if="isBuiltIn && !readOnly" class="text-sm text-gray-500">
                             {{ t("settings.roles.built_in_notice") }}
                         </p>
                     </div>
@@ -207,6 +207,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useRoleStore } from "@/store/roles";
 import { useUserStore } from "@/store/user";
 import { useAlertStore } from "@/store/alerts";
+import { useSettingsStore } from "@/store/settings";
 import roleService from "@/services/roleService";
 import { usePermissions } from "@/composables/usePermissions";
 import { ChevronLeftIcon, LockClosedIcon } from "@heroicons/vue/24/outline";
@@ -222,9 +223,14 @@ const loaded = ref(false);
 const isEdit = computed(() => !!route.params.id);
 const isBuiltIn = ref(false);
 const userStore = useUserStore();
+const settingsStore = useSettingsStore();
+
+const rolesLicensed = computed(() => settingsStore.getLicenseFeature("system_roles"));
 
 const readOnly = computed(() => {
     const myRoles = (userStore.user?.role ?? "").split(" ");
+
+    if (!rolesLicensed.value) return true;
 
     if (!isEdit.value || myRoles.includes("system_admin")) return false;
 
@@ -242,6 +248,12 @@ const form = ref({
 const permissionSections = ref([]);
 
 onMounted(async () => {
+    if (!isEdit.value && !rolesLicensed.value) {
+        router.push({ name: "roles" });
+
+        return;
+    }
+
     const [permsRes] = await Promise.all([
         roleService.getPermissions(),
         !roleStore.roles.length
