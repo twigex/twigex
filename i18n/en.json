@@ -564,6 +564,10 @@
     "translation": "Failed to verify role name availability. Please try again."
   },
   {
+    "id": "role.license_required",
+    "translation": "Managing roles requires a paid plan."
+  },
+  {
     "id": "datamodel.forbidden",
     "translation": "You do not have permission to manage data models."
   },

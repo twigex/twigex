@@ -2128,6 +2128,8 @@
     "settings.roles.deselect_all": "Барлық таңдауды алып тастау",
     "settings.roles.role_updated": "Рөл жаңартылды",
     "settings.roles.role_created": "Рөл жасалды",
+    "settings.roles.unlicensed.title": "Рөлдерді басқару үшін лицензия қажет",
+    "settings.roles.unlicensed.description": "Рөлдерді құру және рұқсаттарды өзгерту үшін белсенді лицензия қажет.",
     "settings.edit_user.account_actions": "Тіркелгі әрекеттері",
     "settings.edit_user.reset_password_description": "Пайдаланушыға құпия сөзді қалпына келтіру сілтемесін жіберу.",
     "settings.edit_user.revoke_sessions_description": "Осы пайдаланушының барлық құрылғылардағы сеанстарын аяқтау.",

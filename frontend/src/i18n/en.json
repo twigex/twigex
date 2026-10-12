@@ -2128,6 +2128,8 @@
     "settings.roles.deselect_all": "Deselect all",
     "settings.roles.role_updated": "Role updated",
     "settings.roles.role_created": "Role created",
+    "settings.roles.unlicensed.title": "Managing roles requires a licence",
+    "settings.roles.unlicensed.description": "Creating roles and changing permissions require an active licence.",
     "settings.edit_user.account_actions": "Account actions",
     "settings.edit_user.reset_password_description": "Send the user a password reset link.",
     "settings.edit_user.revoke_sessions_description": "End every session this user has, on all their devices.",
