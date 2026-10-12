@@ -39,10 +39,11 @@ describe("number", () => {
         expect(options.values[0].value).toBe(7);
     });
 
-    it("counts a missing value as nothing rather than NaN", () => {
+    it("reports a missing value as no data rather than zero", () => {
         const options = number(result(["orders.count"], {}));
 
-        expect(options.values[0].value).toBe(0);
+        expect(options.values[0].value).toBeNull();
+        expect(options.values[0].formatted).toBe("-");
     });
 });
 

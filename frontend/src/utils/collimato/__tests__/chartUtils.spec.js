@@ -67,7 +67,7 @@ describe("barChart", () => {
         );
 
         expect(option.xAxis.data).toEqual(["2026-01-01", "2026-01-02", "2026-01-03"]);
-        expect(option.series[0].data).toEqual([0, 7, 0]);
+        expect(option.series[0].data).toEqual([null, 7, null]);
     });
 });
 

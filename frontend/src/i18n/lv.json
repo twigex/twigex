@@ -978,6 +978,7 @@
     "collimato.charts.table.description": "Saraksts ar visām diagrammām, kurām jums ir piekļuve.",
     "collimato.charts.empty.title": "Nav diagrammu",
     "collimato.charts.empty.description": "Sāciet, izveidojot jaunu diagrammu.",
+    "collimato.charts.empty_value": "(tukšs)",
     "collimato.charts.search_placeholder": "Meklēt diagrammas...",
     "collimato.charts.search_no_results": "Neviena diagramma neatbilst jūsu meklējumam",
     "collimato.charts.search_clear": "Notīrīt filtrus",

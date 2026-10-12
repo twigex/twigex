@@ -978,6 +978,7 @@
     "collimato.charts.table.description": "Сізде қатынасы бар барлық диаграммалардың тізімі.",
     "collimato.charts.empty.title": "Диаграммалар жоқ",
     "collimato.charts.empty.description": "Жаңа диаграмма жасаудан бастаңыз.",
+    "collimato.charts.empty_value": "(бос)",
     "collimato.charts.search_placeholder": "Диаграммаларды іздеу...",
     "collimato.charts.search_no_results": "Іздеуіңізге сәйкес диаграмма жоқ",
     "collimato.charts.search_clear": "Сүзгілерді тазарту",
