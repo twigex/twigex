@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
                 <div class="pb-6 border-b border-gray-900/10">
                     <p class="text-sm text-gray-500">
-                        {{ t("settings.license.enterpise_edition") }}
+                        {{ t("settings.license.enterprise_edition") }}
                     </p>
                     <h2 class="mt-1 text-2xl font-bold text-gray-900">
                         {{ license.sku_name }}
@@ -247,11 +247,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 
             <div v-else class="pb-6">
                 <p class="text-sm text-gray-500">
-                    {{ t("settings.license.enterpise_edition") }}
+                    {{ t("settings.license.enterprise_edition") }}
                 </p>
-                <h2 class="mt-1 text-2xl font-bold text-gray-900">Free</h2>
+                <h2 class="mt-1 text-2xl font-bold text-gray-900">
+                    {{ t("settings.license.free_plan") }}
+                </h2>
                 <p class="mt-2 text-sm leading-6 text-gray-600">
-                    {{ t("settings.license.enterpise_edition.purchase") }}
+                    {{ t("settings.license.enterprise_edition.purchase") }}
                 </p>
 
                 <div class="mt-6 border border-gray-200 rounded-lg p-4">
