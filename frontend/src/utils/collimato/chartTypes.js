@@ -10,7 +10,6 @@ import {
     applyBarChartConfiguration,
     applyLineChartConfiguration,
     applyPieChartConfiguration,
-    axisDimensionsOf,
 } from "@/utils/collimato/chartUtils.js";
 
 export const RENDERER_ECHARTS = "echarts";
@@ -107,38 +106,87 @@ export function applyConfiguration(chartType, data, configuration) {
     return apply ? apply(clone, configuration) : clone;
 }
 
-export function drillDownMembers(chartType, configuration, query) {
-    const dimensions = query?.dimensions ?? [];
+export function drillDownValuesFor(chartType, option, params) {
+    const key = drillDownKeyFor(chartType);
 
-    if (chartType === "pie") {
-        return dimensions.slice(0, 1);
+    if (!option || !option.drillDownValues) {
+        return {};
     }
 
-    const usesSeries = drillDownKeyFor(chartType) === "seriesName";
-    const timeDimension = query?.timeDimensions?.[0]?.dimension;
+    const known = option.drillDownValues[key];
 
-    if (timeDimension) {
-        return usesSeries ? dimensions.filter((dimension) => dimension !== timeDimension) : [];
+    if (!known) {
+        return {};
     }
 
-    const axis = axisDimensionsOf(configuration, dimensions);
+    const label = params[key];
 
-    return usesSeries ? dimensions.filter((dimension) => !axis.includes(dimension)) : axis;
+    if (!Object.hasOwn(known, label)) {
+        return {};
+    }
+
+    return known[label];
 }
 
-export function drillDownFilters(chartType, configuration, query, clicked) {
-    const members = drillDownMembers(chartType, configuration, query);
-    const values = String(clicked ?? "").split(", ");
-    const carriesMeasure =
-        drillDownKeyFor(chartType) === "seriesName" && (query?.measures?.length ?? 0) > 1;
+function drillDownFilter(member, values) {
+    const hasNull = values.includes(null);
+    const withoutNull = values.filter((value) => value !== null);
+    const named = withoutNull.map((value) => String(value));
 
-    const named = carriesMeasure ? values.slice(0, -1) : values;
+    const equals = { member: member, operator: "equals", values: named };
+    const notSet = { member: member, operator: "notSet" };
 
-    return members
-        .map((member, index) => ({
-            member: member,
-            operator: "equals",
-            values: [named[index]],
-        }))
-        .filter((filter) => filter.values[0] !== undefined);
+    if (!hasNull) {
+        return equals;
+    }
+
+    if (named.length === 0) {
+        return notSet;
+    }
+
+    return { or: [notSet, equals] };
+}
+
+export function drillDownFilters(clicked) {
+    const filters = [];
+
+    if (!clicked) {
+        return filters;
+    }
+
+    Object.keys(clicked).forEach((member) => {
+        const values = clicked[member];
+
+        filters.push(drillDownFilter(member, values));
+    });
+
+    return filters;
+}
+
+export function filterMembers(filter) {
+    if (filter.or) {
+        return filter.or.flatMap((inner) => filterMembers(inner));
+    }
+
+    if (!filter.member) {
+        return [];
+    }
+
+    return [filter.member];
+}
+
+export function filterValues(filter) {
+    if (filter.operator === "notSet") {
+        return [null];
+    }
+
+    if (filter.or) {
+        return filter.or.flatMap((inner) => filterValues(inner));
+    }
+
+    if (!filter.values) {
+        return [];
+    }
+
+    return filter.values;
 }
