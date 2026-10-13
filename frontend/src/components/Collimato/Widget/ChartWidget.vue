@@ -161,7 +161,8 @@ import BigNumber from "@/components/Collimato/Charts/BigNumber.vue";
 import MapChart from "@/components/Collimato/Charts/Map/MapChart.vue";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-import { isEchartsType, drillDownKeyFor } from "@/utils/collimato/chartTypes.js";
+import { isEchartsType, drillDownValuesFor, filterValues } from "@/utils/collimato/chartTypes.js";
+import { labelOf } from "@/utils/collimato/chartUtils.js";
 import { CheckCircleIcon, FunnelIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
@@ -180,7 +181,7 @@ const loaded = ref(false);
 const map = ref(null);
 const gridItem = ref(null);
 const chartRef = ref(null);
-const nameClicked = ref(null);
+const valuesClicked = ref(null);
 const drillQueries = ref([props.chart.data ? props.chart.data.query : null]);
 
 const currentQuery = computed(() => drillQueries.value.at(-1));
@@ -212,6 +213,10 @@ const updatePosition = () => {
 };
 
 function breadcrumbName(dimensions) {
+    if (dimensions.length === 0) {
+        return props.chart.name;
+    }
+
     return dimensions.map((dimension) => dimension.split(".").at(-1)).join(", ");
 }
 
@@ -221,14 +226,31 @@ function filtersAddedSince(previous, query) {
     return (query.filters ?? []).filter((filter) => !before.includes(JSON.stringify(filter)));
 }
 
+function breadcrumbValue(filters) {
+    const values = filters.flatMap((filter) => filterValues(filter));
+    const labels = values.map((value) => labelOf(value));
+    const unique = [];
+
+    labels.forEach((label) => {
+        if (!unique.includes(label)) {
+            unique.push(label);
+        }
+    });
+
+    return unique.join(", ");
+}
+
 const breadcrumbs = computed(() =>
-    drillQueries.value.map((query, index) => ({
-        query: query,
-        name: breadcrumbName(query.dimensions ?? []),
-        value: filtersAddedSince(drillQueries.value[index - 1], query)
-            .flatMap((filter) => filter.values ?? [])
-            .join(", "),
-    })),
+    drillQueries.value.map((query, index) => {
+        const previous = drillQueries.value[index - 1];
+        const added = filtersAddedSince(previous, query);
+
+        return {
+            query: query,
+            name: breadcrumbName(query.dimensions ?? []),
+            value: breadcrumbValue(added),
+        };
+    }),
 );
 
 function onBreadcrumbClick(query, index) {
@@ -275,17 +297,14 @@ function setBusy(on) {
 
 on("contextmenu", (params) => {
     params.event.event.preventDefault();
-    nameClicked.value = params[drillDownKeyFor(props.chart.chart_type)];
 
-    if (!Array.isArray(nameClicked.value)) {
-        nameClicked.value = [nameClicked.value];
-    }
+    valuesClicked.value = drillDownValuesFor(props.chart.chart_type, currentData.value, params);
 
     emits("right-click", {
         x: params.event.event.x,
         y: params.event.event.y,
         chart: props.chart,
-        name: nameClicked.value,
+        values: valuesClicked.value,
         query: currentQuery.value,
     });
 });

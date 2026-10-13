@@ -278,7 +278,7 @@ function measureTitleOf(data, measure) {
     return data.annotation.measures[measure]?.title || measure;
 }
 
-function labelOf(value) {
+export function labelOf(value) {
     if (value == null || value === "") {
         return t.value("collimato.charts.empty_value");
     }
@@ -288,6 +288,32 @@ function labelOf(value) {
 
 function valuesOf(item, dimensions) {
     return dimensions.map((dimension) => labelOf(item[dimension]));
+}
+
+//Returns values for drillDownValues for options in axisSeriesChart without empty value translation
+function valuesOfRaw(item, dimensions) {
+    return dimensions.map((dimension) => item[dimension] ?? null);
+}
+
+function recordDrillDownValues(known, label, item, dimensions) {
+    if (!Object.hasOwn(known, label)) {
+        known[label] = {};
+    }
+
+    const entry = known[label];
+    const values = valuesOfRaw(item, dimensions);
+
+    dimensions.forEach((dimension, index) => {
+        const value = values[index];
+
+        if (!entry[dimension]) {
+            entry[dimension] = [];
+        }
+
+        if (!entry[dimension].includes(value)) {
+            entry[dimension].push(value);
+        }
+    });
 }
 
 export function axisDimensionsOf(configuration, dimensions) {
@@ -364,6 +390,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
     let xAxisData = [];
     const series = [];
     const legend = [];
+    const drillDownValues = { name: {}, seriesName: {} };
 
     const seriesFor = (name) => {
         let entry = series.find((s) => s.name === name);
@@ -386,6 +413,9 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
         );
 
         const timeKey = `${timeDimension.dimension}.${granularity}`;
+        const seriesDimensions = dimensions.filter(
+            (dimension) => dimension !== timeDimension.dimension,
+        );
 
         measures.forEach((measure) => {
             const title = measureTitleOf(data, measure);
@@ -396,6 +426,9 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
                     dimensionValuesOf(item, dimensions, timeDimension),
                     showMeasure,
                 );
+
+                recordDrillDownValues(drillDownValues.seriesName, name, item, seriesDimensions);
+
                 const raw = item[timeKey];
                 const bucket = withTime ? raw : raw?.split("T")[0];
                 const index = xAxisData.indexOf(bucket);
@@ -420,6 +453,8 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
         data.data.forEach((item) => {
             const label = valuesOf(item, axisDimensions).join(", ");
 
+            recordDrillDownValues(drillDownValues.name, label, item, axisDimensions);
+
             if (!xAxisData.includes(label)) {
                 xAxisData.push(label);
             }
@@ -431,6 +466,8 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
             data.data.forEach((item) => {
                 const name = seriesNameOf(title, valuesOf(item, seriesDimensions), showMeasure);
                 const index = xAxisData.indexOf(valuesOf(item, axisDimensions).join(", "));
+
+                recordDrillDownValues(drillDownValues.seriesName, name, item, seriesDimensions);
 
                 const value = item[measure];
 
@@ -445,6 +482,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
         });
     }
 
+    //Accessible in ChartWidget.vue as currentData.
     const option = {
         color: CHART_PALETTE,
         legend: {
@@ -481,6 +519,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
             type: "value",
             axisLabel: { formatter: numberFormatter },
         },
+        drillDownValues: drillDownValues,
         dataZoom: [
             {
                 type: "slider",
@@ -520,6 +559,7 @@ export function pieChart(data) {
     const dimensions = data.query.dimensions;
     const legend = new Set();
     const seriesData = [];
+    const drillDownValues = { name: {} };
 
     if (dimensions.length === 0 || measures.length === 0) {
         console.warn("No dimensions or measures provided.");
@@ -540,6 +580,8 @@ export function pieChart(data) {
 
         const name = labelOf(item[primaryDimension]);
         const slice = seriesData.find((entry) => entry.name === name);
+
+        recordDrillDownValues(drillDownValues.name, name, item, [primaryDimension]);
 
         if (slice) {
             slice.value += Number(value);
@@ -588,6 +630,7 @@ export function pieChart(data) {
                 },
             },
         ],
+        drillDownValues: drillDownValues,
     };
 
     return option;

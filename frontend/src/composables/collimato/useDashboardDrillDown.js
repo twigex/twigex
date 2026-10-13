@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { ref } from "vue";
-import { transformData, drillDownFilters } from "@/utils/collimato/chartTypes.js";
+import { transformData, drillDownFilters, filterMembers } from "@/utils/collimato/chartTypes.js";
 
 export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, pollLoad }) {
     const drillDownQuery = ref(null);
     const drillDownData = ref(null);
-    const nameClicked = ref(null);
+    const valuesClicked = ref(null);
     const currentChart = ref(null);
     const contextMenuDimensions = ref([]);
 
     function showContextMenu(event) {
         currentChart.value = event.chart;
         drillDownQuery.value = event.query ?? event.chart.data.query;
-        nameClicked.value = event.name;
+        valuesClicked.value = event.values;
         contextMenuDimensions.value = createContextMenuDimensions();
         contextMenu.value.showContextMenu(event);
     }
@@ -40,7 +40,9 @@ export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, poll
         });
 
         drillDownQuery.value.filters.forEach((filter) => {
-            if (!used.includes(filter.member)) used.push(filter.member);
+            filterMembers(filter).forEach((member) => {
+                if (!used.includes(member)) used.push(member);
+            });
         });
 
         const cubes = meta.value?.cubes ?? [];
@@ -87,21 +89,12 @@ export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, poll
     function handleDrillBy(item) {
         const chartIndex = charts.value.findIndex((c) => c.id === currentChart.value.id);
         const oldQuery = JSON.parse(JSON.stringify(drillDownQuery.value));
+        const clickedFilters = drillDownFilters(valuesClicked.value);
 
         drillDownQuery.value = {
             dimensions: [item],
             measures: [...oldQuery.measures],
-            filters: [
-                ...oldQuery.filters,
-                ...[...nameClicked.value].flatMap((name) =>
-                    drillDownFilters(
-                        currentChart.value.chart_type,
-                        currentChart.value.configuration,
-                        oldQuery,
-                        name,
-                    ),
-                ),
-            ],
+            filters: [...oldQuery.filters, ...clickedFilters],
             order: [...oldQuery.order],
             timeDimensions: [...oldQuery.timeDimensions],
             limit: oldQuery.limit,
