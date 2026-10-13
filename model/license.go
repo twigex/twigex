@@ -34,16 +34,16 @@ var tierRank = map[string]int{
 }
 
 type License struct {
-	Id           string    `json:"id"`
-	IssuedAt     int64     `json:"issued_at"`
-	StartsAt     int64     `json:"starts_at"`
-	ExpiresAt    int64     `json:"expires_at"`
-	Customer     *Customer `json:"customer"`
-	Features     *Features `json:"features"`
-	SkuName      string    `json:"sku_name"`
-	SkuShortName string    `json:"sku_short_name"`
-	Deployment   string    `json:"deployment"`
-	Limits       *Limits   `json:"limits,omitempty"`
+	Id         string    `json:"id"`
+	IssuedAt   int64     `json:"issued_at"`
+	StartsAt   int64     `json:"starts_at"`
+	ExpiresAt  int64     `json:"expires_at"`
+	Customer   *Customer `json:"customer"`
+	Features   *Features `json:"features"`
+	PlanName   string    `json:"plan_name"`
+	PlanCode   string    `json:"plan_code"`
+	Deployment string    `json:"deployment"`
+	Limits     *Limits   `json:"limits,omitempty"`
 
 	EnforcementMode string `json:"enforcement_mode"`
 	ExtraUsers      *int   `json:"extra_users,omitempty"`
@@ -306,7 +306,7 @@ func (l *License) IsTierAtLeast(tier string) bool {
 		return false
 	}
 
-	currentRank, ok := tierRank[l.SkuShortName]
+	currentRank, ok := tierRank[l.PlanCode]
 	if !ok {
 		return false
 	}
