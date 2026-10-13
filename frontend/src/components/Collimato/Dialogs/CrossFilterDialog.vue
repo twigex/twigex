@@ -56,7 +56,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                     name="name"
                                                     id="name"
                                                     class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                                    placeholder="filter name"
+                                                    :placeholder="
+                                                        t('collimato.dashboard.filter.name')
+                                                    "
                                                     :class="
                                                         v$.name.$error
                                                             ? 'ring-red-600 focus:ring-red-600'
@@ -274,21 +276,25 @@ const props = defineProps({
 
 const emits = defineEmits(["update:modelValue", "add-filter", "update-filter", "close"]);
 
+function operatorName(key) {
+    return t.value(`collimato.charts.new_chart.filters.filter_dialog.operators.${key}`);
+}
+
 const operators = [
-    { name: "is set", value: "set" },
-    { name: "is not set", value: "notSet" },
-    { name: "equals", value: "equals" },
-    { name: "not equals", value: "notEquals" },
-    { name: "contains", value: "contains" },
-    { name: "not contains", value: "notContains" },
-    { name: ">", value: "gt" },
-    { name: ">=", value: "gte" },
-    { name: "<", value: "lt" },
-    { name: "<=", value: "lte" },
-    { name: "date range", value: "inDateRange" },
-    { name: "not in date range", value: "notInDateRange" },
-    { name: "before date", value: "beforeDate" },
-    { name: "after date", value: "afterDate" },
+    { name: operatorName("set"), value: "set" },
+    { name: operatorName("not_set"), value: "notSet" },
+    { name: operatorName("equals"), value: "equals" },
+    { name: operatorName("not_equals"), value: "notEquals" },
+    { name: operatorName("contains"), value: "contains" },
+    { name: operatorName("not_contains"), value: "notContains" },
+    { name: operatorName("gt"), value: "gt" },
+    { name: operatorName("gte"), value: "gte" },
+    { name: operatorName("lt"), value: "lt" },
+    { name: operatorName("lte"), value: "lte" },
+    { name: operatorName("in_date_range"), value: "inDateRange" },
+    { name: operatorName("not_in_date_range"), value: "notInDateRange" },
+    { name: operatorName("before_date"), value: "beforeDate" },
+    { name: operatorName("after_date"), value: "afterDate" },
 ];
 
 const route = useRoute();

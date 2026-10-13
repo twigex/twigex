@@ -63,7 +63,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             ? 'ring-red-600 focus:ring-red-600'
                                             : 'ring-gray-300 focus:ring-indigo-600'
                                     "
-                                    placeholder="Role name"
+                                    :placeholder="t('collimato.roles.role_name')"
                                 />
                                 <p v-if="v$.name.$error" class="mt-1.5 text-sm text-red-600">
                                     {{ t("common.error.required_field") }}
@@ -84,7 +84,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     rows="3"
                                     :disabled="isBuiltIn"
                                     class="block w-full rounded-md border-0 py-1.5 px-3 text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:leading-6"
-                                    placeholder="Role description"
+                                    :placeholder="t('collimato.roles.role_description')"
                                 />
                             </div>
                         </div>
@@ -218,16 +218,16 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 "
                             >
                                 <template v-if="pendingDelete.table === item">
-                                    <span class="text-sm text-red-700"
-                                        >Remove "{{ item.name }}"?</span
-                                    >
+                                    <span class="text-sm text-red-700">{{
+                                        t("collimato.roles.remove_confirm", { name: item.name })
+                                    }}</span>
                                     <div class="flex items-center gap-x-2">
                                         <button
                                             type="button"
                                             @click="pendingDelete.table = null"
                                             class="text-sm text-gray-500 hover:text-gray-700"
                                         >
-                                            Cancel
+                                            {{ t("common.button.cancel") }}
                                         </button>
                                         <button
                                             type="button"
@@ -240,7 +240,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             "
                                             class="rounded px-2.5 py-1 text-xs font-semibold bg-red-600 text-white hover:bg-red-700"
                                         >
-                                            Remove
+                                            {{ t("common.button.remove") }}
                                         </button>
                                     </div>
                                 </template>
@@ -307,16 +307,18 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 "
                             >
                                 <template v-if="pendingDelete.column === item">
-                                    <span class="text-sm text-red-700 truncate"
-                                        >Remove "{{ item.table }} / {{ item.field }}"?</span
-                                    >
+                                    <span class="text-sm text-red-700 truncate">{{
+                                        t("collimato.roles.remove_confirm", {
+                                            name: `${item.table} / ${item.field}`,
+                                        })
+                                    }}</span>
                                     <div class="flex shrink-0 items-center gap-x-2 ml-3">
                                         <button
                                             type="button"
                                             @click="pendingDelete.column = null"
                                             class="text-sm text-gray-500 hover:text-gray-700"
                                         >
-                                            Cancel
+                                            {{ t("common.button.cancel") }}
                                         </button>
                                         <button
                                             type="button"
@@ -329,7 +331,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             "
                                             class="rounded px-2.5 py-1 text-xs font-semibold bg-red-600 text-white hover:bg-red-700"
                                         >
-                                            Remove
+                                            {{ t("common.button.remove") }}
                                         </button>
                                     </div>
                                 </template>
@@ -402,16 +404,18 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 "
                             >
                                 <template v-if="pendingDelete.row === item">
-                                    <span class="text-sm text-red-700 truncate"
-                                        >Remove "{{ item.member }}"?</span
-                                    >
+                                    <span class="text-sm text-red-700 truncate">{{
+                                        t("collimato.roles.remove_confirm", {
+                                            name: item.member,
+                                        })
+                                    }}</span>
                                     <div class="flex shrink-0 items-center gap-x-2 ml-3">
                                         <button
                                             type="button"
                                             @click="pendingDelete.row = null"
                                             class="text-sm text-gray-500 hover:text-gray-700"
                                         >
-                                            Cancel
+                                            {{ t("common.button.cancel") }}
                                         </button>
                                         <button
                                             type="button"
@@ -424,7 +428,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             "
                                             class="rounded px-2.5 py-1 text-xs font-semibold bg-red-600 text-white hover:bg-red-700"
                                         >
-                                            Remove
+                                            {{ t("common.button.remove") }}
                                         </button>
                                     </div>
                                 </template>
