@@ -2378,5 +2378,13 @@
     "projects.new_task.description": "Description",
     "projects.new_task.pick_date": "Pick a date",
     "projects.access_restricted.title": "Access restricted",
-    "projects.access_restricted.description": "You don't have permission to access Projects. Contact your administrator to request access."
+    "projects.access_restricted.description": "You don't have permission to access Projects. Contact your administrator to request access.",
+    "login.password_reset.title": "Reset your password",
+    "login.password_reset.description": "Enter your email, and you will receive a link in your email.",
+    "login.password_reset.sent_title": "Password reset link sent",
+    "login.password_reset.sent_description": "If your email is in our system, you’ll receive an email shortly with a link to reset your password.",
+    "login.password_reset.requirements": "Password requirements:",
+    "chat.access_restricted.description": "You don't have permission to access chat. Contact your administrator to request access.",
+    "files.access_restricted.description": "You don't have permission to view files. Contact your administrator to request access.",
+    "collimato.access_restricted.description": "You don't have permission to access Collimato. Contact your administrator to request access."
 }

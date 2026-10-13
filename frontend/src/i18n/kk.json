@@ -2378,5 +2378,13 @@
     "projects.new_task.description": "Сипаттама",
     "projects.new_task.pick_date": "Күнді таңдаңыз",
     "projects.access_restricted.title": "Қатынас шектелген",
-    "projects.access_restricted.description": "Сізде жобаларға кіру рұқсаты жоқ. Қатынас сұрау үшін әкімшіңізге хабарласыңыз."
+    "projects.access_restricted.description": "Сізде жобаларға кіру рұқсаты жоқ. Қатынас сұрау үшін әкімшіңізге хабарласыңыз.",
+    "login.password_reset.title": "Құпия сөзді қалпына келтіру",
+    "login.password_reset.description": "Электрондық поштаңызды енгізіңіз, сізге сілтеме жіберіледі.",
+    "login.password_reset.sent_title": "Құпия сөзді қалпына келтіру сілтемесі жіберілді",
+    "login.password_reset.sent_description": "Егер электрондық поштаңыз біздің жүйеде болса, жақын арада құпия сөзді қалпына келтіру сілтемесі бар хат аласыз.",
+    "login.password_reset.requirements": "Құпия сөзге қойылатын талаптар:",
+    "chat.access_restricted.description": "Сізде чатқа кіру рұқсаты жоқ. Қатынас сұрау үшін әкімшіңізге хабарласыңыз.",
+    "files.access_restricted.description": "Сізде файлдарды көру рұқсаты жоқ. Қатынас сұрау үшін әкімшіңізге хабарласыңыз.",
+    "collimato.access_restricted.description": "Сізде Collimato-ға кіру рұқсаты жоқ. Қатынас сұрау үшін әкімшіңізге хабарласыңыз."
 }
