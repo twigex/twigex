@@ -196,7 +196,11 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             v-model="selectedFilter.values[index]"
                                             type="text"
                                             class="block w-full rounded-none rounded-l-md border-0 py-1.5 px-3 text-sm text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                                            placeholder="Enter value"
+                                            :placeholder="
+                                                t(
+                                                    'collimato.roles.row_permission_dialog.enter_value',
+                                                )
+                                            "
                                         />
                                         <button
                                             type="button"
