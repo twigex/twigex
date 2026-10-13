@@ -8,15 +8,17 @@ SPDX-License-Identifier: AGPL-3.0-only
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img class="mx-auto h-10 w-auto" :src="'/logo.png'" alt="Your Company" />
             <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                Reset your password
+                {{ t("login.password_reset.title") }}
             </h2>
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form class="space-y-6" @submit.prevent="resetPassword">
                 <div>
-                    <label for="password" class="block text-sm font-medium leading-6 text-gray-900"
-                        >New password</label
+                    <label
+                        for="password"
+                        class="block text-sm font-medium leading-6 text-gray-900"
+                        >{{ t("settings.password.new_password") }}</label
                     >
                     <div class="mt-2">
                         <input
@@ -37,7 +39,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                     <label
                         for="confirm-password"
                         class="block text-sm font-medium leading-6 text-gray-900"
-                        >Confirm password</label
+                        >{{ t("settings.password.confirm_new_password") }}</label
                     >
                     <div class="mt-2">
                         <input
@@ -62,19 +64,15 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 aria-hidden="true"
                             />
                         </div>
-                        <div class="ml-3 flex-1 md:flex md:justify-between">
+                        <div class="ml-3 flex-1">
                             <p class="text-sm text-gray-700">
-                                Password requirements: <br />
-                                {{ passwordPolicy.PasswordMinLength }}
-                                characters,
-                                {{ passwordPolicy.NumericCharacters ? "1 number," : "" }}
-                                {{ passwordPolicy.SpecialCharacters ? "1 special character," : "" }}
-                                {{
-                                    passwordPolicy.UpperLowerCharacters
-                                        ? "1 uppercase and 1 lowercase letter."
-                                        : ""
-                                }}
+                                {{ t("login.password_reset.requirements") }}
                             </p>
+                            <ul class="mt-1 list-disc pl-5 text-sm text-gray-700">
+                                <li v-for="requirement in requirements" :key="requirement">
+                                    {{ requirement }}
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -83,7 +81,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                         type="submit"
                         class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                        Update password
+                        {{ t("settings.password.title") }}
                     </button>
                 </div>
             </form>
@@ -98,6 +96,7 @@ import authService from "@/services/authService";
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength, helpers, sameAs } from "@vuelidate/validators";
 import { InformationCircleIcon } from "@heroicons/vue/20/solid";
+import { t } from "@/i18n/index";
 
 const route = useRoute();
 const router = useRouter();
@@ -110,34 +109,83 @@ const passwordPolicy = reactive({
     UpperLowerCharacters: true,
 });
 
-const containsNumber = helpers.withMessage("Must contain at least one number", (value) =>
-    /\d/.test(value),
-);
-const containsSpecial = helpers.withMessage(
-    "Must contain at least one special character",
-    (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value),
-);
-const containsUpperLower = helpers.withMessage(
-    "Must contain both upper and lower case letters",
-    (value) => /[a-z]/.test(value) && /[A-Z]/.test(value),
+function hasNumber(value) {
+    return /\d/.test(value);
+}
+
+function hasSpecialCharacter(value) {
+    return /[!@#$%^&*(),.?":{}|<>]/.test(value);
+}
+
+function hasUpperAndLower(value) {
+    return /[a-z]/.test(value) && /[A-Z]/.test(value);
+}
+
+const minLengthMessage = computed(() =>
+    t.value("settings.password.rules.min_length", { min: passwordPolicy.PasswordMinLength }),
 );
 
-const rules = computed(() => ({
-    password: {
-        required: helpers.withMessage("Password is required", required),
+const requirements = computed(() => {
+    const list = [minLengthMessage.value];
+
+    if (passwordPolicy.NumericCharacters) {
+        list.push(t.value("settings.password.rules.number"));
+    }
+
+    if (passwordPolicy.SpecialCharacters) {
+        list.push(t.value("settings.password.rules.special_char"));
+    }
+
+    if (passwordPolicy.UpperLowerCharacters) {
+        list.push(t.value("settings.password.rules.uppe_lower"));
+    }
+
+    return list;
+});
+
+const rules = computed(() => {
+    const requiredMessage = t.value("settings.password.rules.required");
+
+    const passwordRules = {
+        required: helpers.withMessage(requiredMessage, required),
         minLength: helpers.withMessage(
-            `Password must be at least ${passwordPolicy.PasswordMinLength} characters`,
+            minLengthMessage.value,
             minLength(passwordPolicy.PasswordMinLength),
         ),
-        ...(passwordPolicy.NumericCharacters ? { containsNumber } : {}),
-        ...(passwordPolicy.SpecialCharacters ? { containsSpecial } : {}),
-        ...(passwordPolicy.UpperLowerCharacters ? { containsUpperLower } : {}),
-    },
-    confirmPassword: {
-        required: helpers.withMessage("Confirm Password is required", required),
-        sameAsPassword: helpers.withMessage("Passwords must match", sameAs(password)),
-    },
-}));
+    };
+
+    if (passwordPolicy.NumericCharacters) {
+        passwordRules.containsNumber = helpers.withMessage(
+            t.value("settings.password.rules.number"),
+            hasNumber,
+        );
+    }
+
+    if (passwordPolicy.SpecialCharacters) {
+        passwordRules.containsSpecial = helpers.withMessage(
+            t.value("settings.password.rules.special_char"),
+            hasSpecialCharacter,
+        );
+    }
+
+    if (passwordPolicy.UpperLowerCharacters) {
+        passwordRules.containsUpperLower = helpers.withMessage(
+            t.value("settings.password.rules.uppe_lower"),
+            hasUpperAndLower,
+        );
+    }
+
+    return {
+        password: passwordRules,
+        confirmPassword: {
+            required: helpers.withMessage(requiredMessage, required),
+            sameAsPassword: helpers.withMessage(
+                t.value("settings.password.error.no_match"),
+                sameAs(password),
+            ),
+        },
+    };
+});
 
 const v$ = useVuelidate(rules, { password, confirmPassword });
 

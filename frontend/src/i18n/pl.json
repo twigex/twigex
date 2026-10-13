@@ -2378,5 +2378,13 @@
     "projects.new_task.description": "Opis",
     "projects.new_task.pick_date": "Wybierz datę",
     "projects.access_restricted.title": "Dostęp ograniczony",
-    "projects.access_restricted.description": "Nie masz uprawnień, aby korzystać z projektów. Skontaktuj się z administratorem, aby poprosić o dostęp."
+    "projects.access_restricted.description": "Nie masz uprawnień, aby korzystać z projektów. Skontaktuj się z administratorem, aby poprosić o dostęp.",
+    "login.password_reset.title": "Zresetuj hasło",
+    "login.password_reset.description": "Wpisz swój adres e-mail, a otrzymasz wiadomość z linkiem.",
+    "login.password_reset.sent_title": "Link do resetowania hasła został wysłany",
+    "login.password_reset.sent_description": "Jeśli Twój adres e-mail jest w naszym systemie, wkrótce otrzymasz wiadomość z linkiem do zresetowania hasła.",
+    "login.password_reset.requirements": "Wymagania dotyczące hasła:",
+    "chat.access_restricted.description": "Nie masz uprawnień, aby korzystać z czatu. Skontaktuj się z administratorem, aby poprosić o dostęp.",
+    "files.access_restricted.description": "Nie masz uprawnień, aby wyświetlać pliki. Skontaktuj się z administratorem, aby poprosić o dostęp.",
+    "collimato.access_restricted.description": "Nie masz uprawnień, aby korzystać z Collimato. Skontaktuj się z administratorem, aby poprosić o dostęp."
 }

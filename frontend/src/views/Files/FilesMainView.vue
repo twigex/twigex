@@ -15,10 +15,11 @@ SPDX-License-Identifier: AGPL-3.0-only
                 class="flex flex-1 flex-col items-center justify-center h-full text-center px-6"
             >
                 <LockClosedIcon class="h-12 w-12 text-gray-300" aria-hidden="true" />
-                <h3 class="mt-4 text-base font-semibold text-gray-900">Access restricted</h3>
+                <h3 class="mt-4 text-base font-semibold text-gray-900">
+                    {{ t("settings.access_restricted.title") }}
+                </h3>
                 <p class="mt-1 text-sm text-gray-500 max-w-sm">
-                    You don't have permission to view files. Contact your administrator to request
-                    access.
+                    {{ t("files.access_restricted.description") }}
                 </p>
             </div>
 
