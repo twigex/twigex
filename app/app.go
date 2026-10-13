@@ -252,7 +252,7 @@ func (a *App) LoadLicense() error {
 	}
 
 	tlog.Infow("License applied",
-		"plan", license.SkuName,
+		"plan", license.PlanName,
 		"expires_at", license.ExpiresAt,
 	)
 
