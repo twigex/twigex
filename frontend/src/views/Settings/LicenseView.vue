@@ -41,12 +41,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                         {{ t("settings.license.enterpise_edition") }}
                     </p>
                     <h2 class="mt-1 text-2xl font-bold text-gray-900">
-                        {{ license.sku_name }}
+                        {{ license.plan_name }}
                     </h2>
                     <p class="mt-2 text-sm leading-6 text-gray-600">
                         {{
                             t("settings.license.description", {
-                                name: license.sku_name,
+                                name: license.plan_name,
                             })
                         }}
                     </p>
@@ -106,7 +106,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 {{ t("settings.license.edition") }}
                             </dt>
                             <dd class="text-gray-900">
-                                {{ license.sku_name }}
+                                {{ license.plan_name }}
                             </dd>
                         </div>
                         <div class="flex justify-between text-sm">

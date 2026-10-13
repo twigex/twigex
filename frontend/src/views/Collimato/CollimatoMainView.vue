@@ -10,10 +10,11 @@ SPDX-License-Identifier: AGPL-3.0-only
             class="flex flex-col items-center justify-center h-full text-center px-6"
         >
             <LockClosedIcon class="h-12 w-12 text-gray-300" />
-            <h3 class="mt-4 text-base font-semibold text-gray-900">Access restricted</h3>
+            <h3 class="mt-4 text-base font-semibold text-gray-900">
+                {{ t("settings.access_restricted.title") }}
+            </h3>
             <p class="mt-1 text-sm text-gray-500 max-w-sm">
-                You don't have permission to access Collimato. Contact your administrator to request
-                access.
+                {{ t("collimato.access_restricted.description") }}
             </p>
         </div>
         <template v-else>
@@ -33,6 +34,7 @@ import { ref, onMounted } from "vue";
 import collimatoService from "@/services/collimatoService";
 import { usePermissions } from "@/composables/usePermissions";
 import { LockClosedIcon } from "@heroicons/vue/24/outline";
+import { t } from "@/i18n/index.js";
 
 const { can } = usePermissions();
 const workspaces = ref([]);

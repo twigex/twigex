@@ -2380,5 +2380,13 @@
     "projects.new_task.description": "Apraksts",
     "projects.new_task.pick_date": "Izvēlieties datumu",
     "projects.access_restricted.title": "Piekļuve ierobežota",
-    "projects.access_restricted.description": "Jums nav atļaujas piekļūt projektiem. Sazinieties ar administratoru, lai pieprasītu piekļuvi."
+    "projects.access_restricted.description": "Jums nav atļaujas piekļūt projektiem. Sazinieties ar administratoru, lai pieprasītu piekļuvi.",
+    "login.password_reset.title": "Atiestatiet paroli",
+    "login.password_reset.description": "Ievadiet savu e-pasta adresi, un jūs saņemsiet saiti e-pastā.",
+    "login.password_reset.sent_title": "Paroles atiestatīšanas saite nosūtīta",
+    "login.password_reset.sent_description": "Ja jūsu e-pasta adrese ir mūsu sistēmā, drīz saņemsiet e-pastu ar saiti paroles atiestatīšanai.",
+    "login.password_reset.requirements": "Paroles prasības:",
+    "chat.access_restricted.description": "Jums nav atļaujas piekļūt tērzēšanai. Sazinieties ar administratoru, lai pieprasītu piekļuvi.",
+    "files.access_restricted.description": "Jums nav atļaujas skatīt failus. Sazinieties ar administratoru, lai pieprasītu piekļuvi.",
+    "collimato.access_restricted.description": "Jums nav atļaujas piekļūt Collimato. Sazinieties ar administratoru, lai pieprasītu piekļuvi."
 }
