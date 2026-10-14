@@ -11,19 +11,12 @@ import {
     sortBarsByValue,
 } from "@/utils/collimato/charts/chartSettings.js";
 import { generateTimeArray, timeSlotLabels } from "@/utils/collimato/charts/timeSlots.js";
-import { labelOf, valuesOf, measureTitleOf } from "@/utils/collimato/charts/chartLabels.js";
-
-function numberFormatter(value) {
-    if (value >= 1e9) {
-        return (value / 1e9).toFixed(1) + "B"; // Billions
-    } else if (value >= 1e6) {
-        return (value / 1e6).toFixed(1) + "M"; // Millions
-    } else if (value >= 1e3) {
-        return (value / 1e3).toFixed(1) + "k"; // Thousands
-    }
-
-    return value.toString(); // Small numbers
-}
+import {
+    labelOf,
+    valuesOf,
+    measureTitleOf,
+    shortNumber,
+} from "@/utils/collimato/charts/chartLabels.js";
 
 const SUB_DAY_GRANULARITIES = ["second", "minute", "hour"];
 
@@ -219,7 +212,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}, display = 
             nameLocation: "middle",
             nameGap: 80,
             type: "value",
-            axisLabel: { formatter: numberFormatter },
+            axisLabel: { formatter: (value) => shortNumber(value) },
         },
         drillDownValues: drillDownValues,
         dataZoom: [

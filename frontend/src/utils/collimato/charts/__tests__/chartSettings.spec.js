@@ -217,3 +217,44 @@ describe("legend position", () => {
         });
     });
 });
+
+describe("y-axis number labels", () => {
+    function yAxisFormatter(chartType, configuration) {
+        const option = transformData(
+            chartType,
+            cubeResult({
+                measures: ["orders.count"],
+                dimensions: ["orders.status"],
+                rows: [{ "orders.status": "new", "orders.count": "5" }],
+            }),
+        );
+
+        const applied = applyConfiguration(chartType, option, configuration);
+
+        return applied.yAxis.axisLabel.formatter;
+    }
+
+    it("keeps the formatter when the settings are applied", () => {
+        const formatter = yAxisFormatter("line", { legend: true });
+
+        expect(formatter(1500)).toBe("1.5K");
+    });
+
+    it("keeps the formatter on a horizontal bar chart, where the axes swap", () => {
+        const option = transformData(
+            "bar",
+            cubeResult({
+                measures: ["orders.count"],
+                dimensions: ["orders.status"],
+                rows: [{ "orders.status": "new", "orders.count": "5" }],
+            }),
+        );
+
+        const applied = applyConfiguration("bar", option, {
+            legend: true,
+            orientation: "horizontal",
+        });
+
+        expect(applied.xAxis.axisLabel.formatter(1500)).toBe("1.5K");
+    });
+});
