@@ -55,7 +55,12 @@ function emptySeries(name, seriesType, length) {
     return {
         name: name,
         data: Array.from({ length: length }, () => null),
-        label: { show: false, position: "top", color: CHART_LABEL_COLOR },
+        label: {
+            show: false,
+            position: "top",
+            color: CHART_LABEL_COLOR,
+            formatter: (params) => shortNumber(params.value),
+        },
         ...(AXIS_SERIES_PRESETS[seriesType] ?? AXIS_SERIES_PRESETS.line),
     };
 }

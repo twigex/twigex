@@ -258,3 +258,26 @@ describe("y-axis number labels", () => {
         expect(applied.xAxis.axisLabel.formatter(1500)).toBe("1.5K");
     });
 });
+
+describe("bar value labels", () => {
+    it("shows bar values shortened, like the axis", () => {
+        const option = transformData(
+            "bar",
+            cubeResult({
+                measures: ["finance.profit"],
+                dimensions: ["finance.region"],
+                rows: [
+                    { "finance.region": "East", "finance.profit": "-13319284.31" },
+                    { "finance.region": "West", "finance.profit": "3903576.24" },
+                ],
+            }),
+        );
+
+        const applied = applyConfiguration("bar", option, { legend: true, showValues: true });
+        const label = applied.series[0].label;
+
+        expect(label.show).toBe(true);
+        expect(label.formatter({ value: -13319284.31 })).toBe("-13.3M");
+        expect(label.formatter({ value: 3903576.24 })).toBe("3.9M");
+    });
+});
