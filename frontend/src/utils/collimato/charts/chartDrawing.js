@@ -43,12 +43,31 @@ export function transformData(chartType, data, configuration = {}, display = {})
     return transform ? transform(data, configuration, display) : {};
 }
 
+// A JSON copy would drop functions, such as the y-axis number formatter.
+function copyOption(value) {
+    if (Array.isArray(value)) {
+        return value.map((item) => copyOption(item));
+    }
+
+    if (value === null || typeof value !== "object") {
+        return value;
+    }
+
+    const copy = {};
+
+    Object.keys(value).forEach((key) => {
+        copy[key] = copyOption(value[key]);
+    });
+
+    return copy;
+}
+
 export function applyConfiguration(chartType, data, configuration) {
     if (!data || Object.keys(data).length === 0) {
         return data;
     }
 
-    const clone = JSON.parse(JSON.stringify(data));
+    const clone = copyOption(data);
     const apply = CHART_DRAWING[chartType]?.applyConfig;
 
     return apply ? apply(clone, configuration) : clone;

@@ -23,7 +23,7 @@ axisChart.js      line, bar and time bar charts
 pieChart.js       pie charts
 bigNumber.js      big number
 timeSlots.js      the days or months along a time axis, and their labels
-chartLabels.js    labels, including "(empty)"
+chartLabels.js    labels, including "(empty)" and short numbers (1.5K)
 chartSettings.js  what each chart setting does
 drillDown.js      drill-down
 chartPalette.js   colours
