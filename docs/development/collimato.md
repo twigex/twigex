@@ -12,7 +12,9 @@ on the screen.
 
 ## Where things are
 
-All chart code is in `frontend/src/utils/collimato/charts/`:
+The chart code is in `frontend/src/utils/collimato/charts/`. Maps are
+drawn differently, so their code is separate, in
+`utils/collimato/map*.js` and `components/Collimato/Charts/Map/`.
 
 ```
 chartTypes.js     the list of chart types and facts about each one
