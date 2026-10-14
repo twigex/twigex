@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { describe, it, expect } from "vitest";
+import { transformData, applyConfiguration } from "@/utils/collimato/charts/chartDrawing.js";
 import {
-    transformData,
-    applyConfiguration,
-    drillDownFilters,
     drillDownValuesFor,
+    drillDownFilters,
     filterMembers,
     filterValues,
-} from "@/utils/collimato/chartTypes.js";
+} from "@/utils/collimato/charts/drillDown.js";
 
 const result = (dimensions, measures, rows, titles) => ({
     query: { measures, dimensions, timeDimensions: [] },

@@ -4,7 +4,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import BigNumber from "@/components/Collimato/Charts/BigNumber.vue";
-import { number } from "@/utils/collimato/chartUtils.js";
+import { number } from "@/utils/collimato/charts/bigNumber.js";
 
 const result = (measures, row) => ({
     query: { measures: measures, dimensions: [] },

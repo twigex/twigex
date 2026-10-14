@@ -1,7 +1,7 @@
 // Copyright (c) 2022 Twigex, SIA.
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { MAP_DEFAULT_FILL } from "@/utils/collimato/chartPalette.js";
+import { MAP_DEFAULT_FILL } from "@/utils/collimato/charts/chartPalette.js";
 
 function hasCoordinates(coordinates) {
     return Boolean(coordinates?.lat && coordinates?.long);

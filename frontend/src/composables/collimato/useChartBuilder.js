@@ -4,7 +4,7 @@
 import { ref, computed } from "vue";
 import { buildQuery, joinableDataModels, ORDER_NONE } from "@/utils/collimato/chartQuery.js";
 import { layerQuery } from "@/utils/collimato/mapQuery.js";
-import { maxMeasuresFor } from "@/utils/collimato/chartTypes.js";
+import { maxMeasuresFor } from "@/utils/collimato/charts/chartTypes.js";
 import { pollQuery } from "@/utils/collimato/queryPolling.js";
 import {
     defaultLayerConfig,

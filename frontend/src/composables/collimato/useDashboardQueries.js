@@ -5,7 +5,7 @@ import { onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import collimatoService from "@/services/collimatoService.js";
 import { extractErrorMessage } from "@/utils/errors";
-import { transformData } from "@/utils/collimato/chartTypes.js";
+import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { pollQuery } from "@/utils/collimato/queryPolling.js";
 import { layerQuery } from "@/utils/collimato/mapQuery.js";
 

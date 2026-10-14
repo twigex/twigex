@@ -239,7 +239,7 @@ import ItemCard from "@/components/ItemCard.vue";
 import UserAvatarWithText from "@/components/UserAvatarWithText.vue";
 import { PlusIcon, PencilIcon, TrashIcon, MagnifyingGlassIcon } from "@heroicons/vue/20/solid";
 import { ChartBarIcon as ChartBarIconOutline } from "@heroicons/vue/24/outline";
-import { CHART_TYPE_IDS } from "@/utils/collimato/chartTypes.js";
+import { CHART_TYPE_IDS } from "@/utils/collimato/charts/chartTypes.js";
 import {
     presentationFor,
     FALLBACK_PRESENTATION,

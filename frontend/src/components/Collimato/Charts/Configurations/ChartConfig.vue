@@ -54,7 +54,7 @@ import ChartFilters from "@/components/Collimato/Charts/Sidebar/ChartFilters.vue
 import TimeDimensions from "@/components/Collimato/Charts/Sidebar/TimeDimensions.vue";
 import ChartConfigTabs from "@/components/Collimato/Charts/Configurations/ChartConfigTabs.vue";
 import { presentationFor } from "@/components/Collimato/Charts/chartTypePresentation.js";
-import { hasTimeAxis } from "@/utils/collimato/chartTypes.js";
+import { hasTimeAxis } from "@/utils/collimato/charts/chartTypes.js";
 
 const props = defineProps({
     chartType: {

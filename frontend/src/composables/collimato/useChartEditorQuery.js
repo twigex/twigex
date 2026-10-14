@@ -6,8 +6,8 @@ import { useRoute } from "vue-router";
 import collimatoService from "@/services/collimatoService.js";
 import { useCollimatoStore } from "@/store/collimato";
 import { extractErrorMessage } from "@/utils/errors";
-import { toTableData } from "@/utils/collimato/chartUtils.js";
-import { transformData } from "@/utils/collimato/chartTypes.js";
+import { toTableData } from "@/utils/collimato/tableData.js";
+import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { pollQuery } from "@/utils/collimato/queryPolling.js";
 
 export function useChartEditorQuery({ query, chartType, chartOptions, onError }) {

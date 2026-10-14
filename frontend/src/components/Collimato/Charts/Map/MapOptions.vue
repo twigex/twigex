@@ -466,8 +466,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script setup>
 import { ref, computed, watch } from "vue";
 import { t } from "@/i18n/index.js";
-import { joinableDataModels } from "@/utils/collimato/chartQuery.js";
-import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartUtils.js";
+import { joinableDataModels, MAX_QUERY_LIMIT } from "@/utils/collimato/chartQuery.js";
 import { MAP_LAYER_TYPES, MAP_LAYER_TYPE_IDS } from "@/utils/collimato/mapLayerTypes.js";
 import { editorFor } from "@/components/Collimato/Charts/Map/mapLayerEditors.js";
 import BaseSlider from "@/components/BaseSlider.vue";

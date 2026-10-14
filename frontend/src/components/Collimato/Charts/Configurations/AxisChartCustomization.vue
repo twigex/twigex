@@ -60,264 +60,41 @@ SPDX-License-Identifier: AGPL-3.0-only
                 "
             />
 
-            <Listbox as="div" v-if="dimensions.length" class="mb-5" v-model="config.xAxisField">
-                <ListboxLabel class="block text-sm/6 font-medium text-gray-900">{{
-                    t("collimato.charts.new_chart.customize.x_axis_field")
-                }}</ListboxLabel>
-                <p class="text-sm leading-6 text-gray-500">
-                    {{ t("collimato.charts.new_chart.customize.x_axis_field_description") }}
-                </p>
-                <div class="relative mt-2">
-                    <ListboxButton
-                        class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                        <span class="col-start-1 row-start-1 truncate pr-6">{{
-                            selectedXAxisField
-                        }}</span>
-                        <ChevronUpDownIcon
-                            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                            aria-hidden="true"
-                        />
-                    </ListboxButton>
+            <SettingSelect
+                v-if="dimensions.length"
+                class="mb-5"
+                v-model="config.xAxisField"
+                :label="t('collimato.charts.new_chart.customize.x_axis_field')"
+                :description="t('collimato.charts.new_chart.customize.x_axis_field_description')"
+                :options="xAxisFields"
+                @change="update()"
+            />
 
-                    <transition
-                        leave-active-class="transition ease-in duration-100"
-                        leave-from-class="opacity-100"
-                        leave-to-class="opacity-0"
-                    >
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                        >
-                            <ListboxOption
-                                as="template"
-                                v-for="field in xAxisFields"
-                                :key="field.value"
-                                :value="field.value"
-                                v-slot="{ active, selected }"
-                                @click="update()"
-                            >
-                                <li
-                                    :class="[
-                                        active
-                                            ? 'bg-indigo-600 text-white outline-none'
-                                            : 'text-gray-900',
-                                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                                    ]"
-                                >
-                                    <span
-                                        :class="[
-                                            selected ? 'font-semibold' : 'font-normal',
-                                            'block truncate',
-                                        ]"
-                                        >{{ field.label }}</span
-                                    >
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-white' : 'text-indigo-600',
-                                            'absolute inset-y-0 right-0 flex items-center pr-4',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
+            <SettingSelect
+                class="mb-5"
+                v-model="config.sortBars"
+                :label="t('collimato.charts.new_chart.customize.sort_bars')"
+                :options="sortBarsOptions"
+                @change="update()"
+            />
 
-            <Listbox as="div" class="mb-5" v-model="config.sortBars">
-                <ListboxLabel class="block text-sm/6 font-medium text-gray-900">{{
-                    t("collimato.charts.new_chart.customize.sort_bars")
-                }}</ListboxLabel>
-                <div class="relative mt-2">
-                    <ListboxButton
-                        class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                        <span class="col-start-1 row-start-1 truncate pr-6">{{
-                            selectedSortBars
-                        }}</span>
-                        <ChevronUpDownIcon
-                            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                            aria-hidden="true"
-                        />
-                    </ListboxButton>
+            <SettingSelect
+                v-if="showMissingValues"
+                class="mb-5"
+                v-model="config.missingValues"
+                :label="t('collimato.charts.new_chart.customize.missing_values')"
+                :options="missingValuesOptions"
+                @change="update()"
+            />
 
-                    <transition
-                        leave-active-class="transition ease-in duration-100"
-                        leave-from-class="opacity-100"
-                        leave-to-class="opacity-0"
-                    >
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                        >
-                            <ListboxOption
-                                as="template"
-                                v-for="sort in sortBarsOptions"
-                                :key="sort.value"
-                                :value="sort.value"
-                                v-slot="{ active, selected }"
-                                @click="update()"
-                            >
-                                <li
-                                    :class="[
-                                        active
-                                            ? 'bg-indigo-600 text-white outline-none'
-                                            : 'text-gray-900',
-                                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                                    ]"
-                                >
-                                    <span
-                                        :class="[
-                                            selected ? 'font-semibold' : 'font-normal',
-                                            'block truncate',
-                                        ]"
-                                        >{{ sort.label }}</span
-                                    >
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-white' : 'text-indigo-600',
-                                            'absolute inset-y-0 right-0 flex items-center pr-4',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
-
-            <Listbox as="div" v-if="showMissingValues" class="mb-5" v-model="config.missingValues">
-                <ListboxLabel class="block text-sm/6 font-medium text-gray-900">{{
-                    t("collimato.charts.new_chart.customize.missing_values")
-                }}</ListboxLabel>
-                <div class="relative mt-2">
-                    <ListboxButton
-                        class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                        <span class="col-start-1 row-start-1 truncate pr-6">{{
-                            selectedMissingValues
-                        }}</span>
-                        <ChevronUpDownIcon
-                            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                            aria-hidden="true"
-                        />
-                    </ListboxButton>
-
-                    <transition
-                        leave-active-class="transition ease-in duration-100"
-                        leave-from-class="opacity-100"
-                        leave-to-class="opacity-0"
-                    >
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                        >
-                            <ListboxOption
-                                as="template"
-                                v-for="option in missingValuesOptions"
-                                :key="option.value"
-                                :value="option.value"
-                                v-slot="{ active, selected }"
-                                @click="update()"
-                            >
-                                <li
-                                    :class="[
-                                        active
-                                            ? 'bg-indigo-600 text-white outline-none'
-                                            : 'text-gray-900',
-                                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                                    ]"
-                                >
-                                    <span
-                                        :class="[
-                                            selected ? 'font-semibold' : 'font-normal',
-                                            'block truncate',
-                                        ]"
-                                        >{{ option.label }}</span
-                                    >
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-white' : 'text-indigo-600',
-                                            'absolute inset-y-0 right-0 flex items-center pr-4',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
-
-            <Listbox as="div" v-if="config.legend" class="mb-5" v-model="config.legendPosition">
-                <ListboxLabel class="block text-sm/6 font-medium text-gray-900">{{
-                    t("collimato.charts.new_chart.customize.legend_position")
-                }}</ListboxLabel>
-                <div class="relative mt-2">
-                    <ListboxButton
-                        class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                        <span class="col-start-1 row-start-1 truncate pr-6">{{
-                            selectedLegendPosition
-                        }}</span>
-                        <ChevronUpDownIcon
-                            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                            aria-hidden="true"
-                        />
-                    </ListboxButton>
-
-                    <transition
-                        leave-active-class="transition ease-in duration-100"
-                        leave-from-class="opacity-100"
-                        leave-to-class="opacity-0"
-                    >
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                        >
-                            <ListboxOption
-                                as="template"
-                                v-for="position in legendPositions"
-                                :key="position.value"
-                                :value="position.value"
-                                v-slot="{ active, selected }"
-                                @click="update()"
-                            >
-                                <li
-                                    :class="[
-                                        active
-                                            ? 'bg-indigo-600 text-white outline-none'
-                                            : 'text-gray-900',
-                                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                                    ]"
-                                >
-                                    <span
-                                        :class="[
-                                            selected ? 'font-semibold' : 'font-normal',
-                                            'block truncate',
-                                        ]"
-                                        >{{ position.label }}</span
-                                    >
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-white' : 'text-indigo-600',
-                                            'absolute inset-y-0 right-0 flex items-center pr-4',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
+            <SettingSelect
+                v-if="config.legend"
+                class="mb-5"
+                v-model="config.legendPosition"
+                :label="t('collimato.charts.new_chart.customize.legend_position')"
+                :options="legendPositions"
+                @change="update()"
+            />
 
             <BaseCheckbox
                 class="mt-2 mb-5"
@@ -431,70 +208,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                 </div>
             </div>
 
-            <Listbox as="div" v-model="config.angle">
-                <ListboxLabel class="block text-sm/6 font-medium text-gray-900">{{
-                    t("collimato.charts.new_chart.customize.x_tick_layout")
-                }}</ListboxLabel>
-                <div class="relative mt-2">
-                    <ListboxButton
-                        class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                        <span class="col-start-1 row-start-1 truncate pr-6">{{
-                            config.angle
-                        }}</span>
-                        <ChevronUpDownIcon
-                            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                            aria-hidden="true"
-                        />
-                    </ListboxButton>
-
-                    <transition
-                        leave-active-class="transition ease-in duration-100"
-                        leave-from-class="opacity-100"
-                        leave-to-class="opacity-0"
-                    >
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                        >
-                            <ListboxOption
-                                as="template"
-                                v-for="(angle, index) in angles"
-                                :key="index"
-                                :value="angle"
-                                v-slot="{ active, selected }"
-                                @click="update()"
-                            >
-                                <li
-                                    :class="[
-                                        active
-                                            ? 'bg-indigo-600 text-white outline-none'
-                                            : 'text-gray-900',
-                                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                                    ]"
-                                >
-                                    <span
-                                        :class="[
-                                            selected ? 'font-semibold' : 'font-normal',
-                                            'block truncate',
-                                        ]"
-                                        >{{ angle }}</span
-                                    >
-
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-white' : 'text-indigo-600',
-                                            'absolute inset-y-0 right-0 flex items-center pr-4',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
+            <SettingSelect
+                v-model="config.angle"
+                :label="t('collimato.charts.new_chart.customize.x_tick_layout')"
+                :options="angleOptions"
+                @change="update()"
+            />
 
             <div class="flex flex-row justify-between items-center mb-2 mt-5">
                 <h4 class="text-small font-semibold leading-4 text-gray-400">
@@ -592,21 +311,12 @@ import {
     SORT_BARS_OPTIONS,
     MISSING_VALUES_CONNECT,
     MISSING_VALUES_OPTIONS,
-} from "@/utils/collimato/chartUtils.js";
+} from "@/utils/collimato/charts/chartSettings.js";
 import { t } from "@/i18n/index.js";
 import BaseCheckbox from "@/components/BaseCheckbox.vue";
-import {
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
-    Listbox,
-    ListboxButton,
-    ListboxLabel,
-    ListboxOption,
-    ListboxOptions,
-} from "@headlessui/vue";
-import { ChevronUpIcon, CheckIcon } from "@heroicons/vue/20/solid";
-import { ChevronUpDownIcon } from "@heroicons/vue/16/solid";
+import SettingSelect from "@/components/Collimato/Charts/Configurations/SettingSelect.vue";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { ChevronUpIcon } from "@heroicons/vue/20/solid";
 
 const props = defineProps({
     configuration: {
@@ -661,6 +371,11 @@ const config = reactive({
 
 const angles = [0, 45, 90];
 
+const angleOptions = angles.map((angle) => ({
+    value: angle,
+    label: String(angle),
+}));
+
 const CUSTOMIZE = "collimato.charts.new_chart.customize.";
 
 const xAxisFields = computed(() => [
@@ -679,29 +394,11 @@ const sortBarsOptions = computed(() =>
     })),
 );
 
-const selectedSortBars = computed(
-    () => sortBarsOptions.value.find((s) => s.value == config.sortBars)?.label ?? config.sortBars,
-);
-
 const missingValuesOptions = computed(() =>
     MISSING_VALUES_OPTIONS.map((value) => ({
         value: value,
         label: t.value(`${CUSTOMIZE}missing_values_${value}`),
     })),
-);
-
-const selectedMissingValues = computed(() => {
-    const option = missingValuesOptions.value.find((o) => o.value == config.missingValues);
-
-    if (!option) {
-        return config.missingValues;
-    }
-
-    return option.label;
-});
-
-const selectedXAxisField = computed(
-    () => xAxisFields.value.find((f) => f.value == config.xAxisField)?.label ?? config.xAxisField,
 );
 
 const legendPositions = computed(() =>
@@ -711,12 +408,6 @@ const legendPositions = computed(() =>
             `collimato.charts.new_chart.customize.legend_position.${value.toLowerCase()}`,
         ),
     })),
-);
-
-const selectedLegendPosition = computed(
-    () =>
-        legendPositions.value.find((p) => p.value == config.legendPosition)?.label ??
-        config.legendPosition,
 );
 
 function removeNonDigitsBottom(event) {
