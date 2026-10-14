@@ -515,3 +515,93 @@ describe("sort bars by value", () => {
         expect(option.series[0].data).toEqual([9, 1, 5]);
     });
 });
+
+describe("time axis starts at the beginning of the period", () => {
+    function countBy(granularity, dateRange, rows) {
+        return transformData(
+            "line",
+            cubeResult({
+                measures: ["posts.count"],
+                dimensions: [],
+                timeDimensions: [
+                    {
+                        dimension: "posts.created",
+                        granularity: granularity,
+                        dateRange: dateRange,
+                    },
+                ],
+                rows: rows,
+            }),
+        );
+    }
+
+    it("starts a month axis on the 1st when the range starts mid-month", () => {
+        const option = countBy(
+            "month",
+            ["2026-09-15T00:00:00.000", "2026-10-14T23:59:59.999"],
+            [
+                { "posts.created.month": "2026-09-01T00:00:00.000", "posts.count": "152" },
+                { "posts.created.month": "2026-10-01T00:00:00.000", "posts.count": "67" },
+            ],
+        );
+
+        expect(option.xAxis.data).toEqual(["2026-09-01", "2026-10-01"]);
+        expect(option.series[0].data).toEqual([152, 67]);
+    });
+
+    it("starts a week axis on Monday when the range starts on another day", () => {
+        const option = countBy(
+            "week",
+            ["2026-09-17T00:00:00.000", "2026-09-27T23:59:59.999"],
+            [
+                { "posts.created.week": "2026-09-14T00:00:00.000", "posts.count": "40" },
+                { "posts.created.week": "2026-09-21T00:00:00.000", "posts.count": "10" },
+            ],
+        );
+
+        expect(option.xAxis.data).toEqual(["2026-09-14", "2026-09-21"]);
+        expect(option.series[0].data).toEqual([40, 10]);
+    });
+
+    it("starts a quarter axis on the quarter's first month", () => {
+        const option = countBy(
+            "quarter",
+            ["2026-02-10T00:00:00.000", "2026-08-01T23:59:59.999"],
+            [
+                { "posts.created.quarter": "2026-01-01T00:00:00.000", "posts.count": "5" },
+                { "posts.created.quarter": "2026-07-01T00:00:00.000", "posts.count": "3" },
+            ],
+        );
+
+        expect(option.xAxis.data).toEqual(["2026-01-01", "2026-04-01", "2026-07-01"]);
+        expect(option.series[0].data).toEqual([5, null, 3]);
+    });
+
+    it("starts a year axis on 1 January", () => {
+        const option = countBy(
+            "year",
+            ["2025-06-01T00:00:00.000", "2026-03-01T23:59:59.999"],
+            [
+                { "posts.created.year": "2025-01-01T00:00:00.000", "posts.count": "4" },
+                { "posts.created.year": "2026-01-01T00:00:00.000", "posts.count": "6" },
+            ],
+        );
+
+        expect(option.xAxis.data).toEqual(["2025-01-01", "2026-01-01"]);
+        expect(option.series[0].data).toEqual([4, 6]);
+    });
+
+    it("starts an hour axis on the full hour", () => {
+        const option = countBy(
+            "hour",
+            ["2026-09-15T10:30:00.000", "2026-09-15T11:59:59.999"],
+            [
+                { "posts.created.hour": "2026-09-15T10:00:00.000", "posts.count": "2" },
+                { "posts.created.hour": "2026-09-15T11:00:00.000", "posts.count": "1" },
+            ],
+        );
+
+        expect(option.xAxis.data).toEqual(["2026-09-15T10:00:00.000", "2026-09-15T11:00:00.000"]);
+        expect(option.series[0].data).toEqual([2, 1]);
+    });
+});
