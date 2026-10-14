@@ -12,7 +12,7 @@ import {
     isEchartsType,
     transformData,
     applyConfiguration,
-} from "@/utils/collimato/chartTypes.js";
+} from "@/utils/collimato/charts/chartTypes.js";
 
 const LOCALES = { en, lv, kk, pl };
 const POSITIONS = Object.keys(LEGEND_POSITIONS);

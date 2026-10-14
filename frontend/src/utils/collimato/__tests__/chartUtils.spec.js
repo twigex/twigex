@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { transformData, applyConfiguration } from "@/utils/collimato/chartTypes.js";
+import { transformData, applyConfiguration } from "@/utils/collimato/charts/chartTypes.js";
 
 function cubeResult({ measures, dimensions, timeDimensions, rows, titles }) {
     return {

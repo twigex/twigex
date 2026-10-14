@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartUtils.js";
-import { hasTimeAxis } from "@/utils/collimato/chartTypes.js";
+import { hasTimeAxis } from "@/utils/collimato/charts/chartTypes.js";
 
 export const ORDER_OPTIONS = ["asc", "desc", "none"];
 export const ORDER_NONE = "none";

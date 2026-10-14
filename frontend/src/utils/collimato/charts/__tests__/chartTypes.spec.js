@@ -18,7 +18,7 @@ import {
     transformData,
     applyConfiguration,
     maxMeasuresFor,
-} from "@/utils/collimato/chartTypes.js";
+} from "@/utils/collimato/charts/chartTypes.js";
 import { CHART_TYPE_PRESENTATION } from "@/components/Collimato/Charts/chartTypePresentation.js";
 import { buildQuery } from "@/utils/collimato/chartQuery.js";
 

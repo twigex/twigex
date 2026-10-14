@@ -9,7 +9,7 @@ import {
     drillDownValuesFor,
     filterMembers,
     filterValues,
-} from "@/utils/collimato/chartTypes.js";
+} from "@/utils/collimato/charts/chartTypes.js";
 
 const result = (dimensions, measures, rows, titles) => ({
     query: { measures, dimensions, timeDimensions: [] },

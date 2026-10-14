@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { t } from "@/i18n/index";
-import { CHART_PALETTE, CHART_LABEL_COLOR } from "@/utils/collimato/chartPalette.js";
+import { CHART_PALETTE, CHART_LABEL_COLOR } from "@/utils/collimato/charts/chartPalette.js";
 
 export const MAX_QUERY_LIMIT = 50000;
 

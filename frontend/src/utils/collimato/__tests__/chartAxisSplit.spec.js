@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { describe, it, expect } from "vitest";
-import { transformData } from "@/utils/collimato/chartTypes.js";
+import { transformData } from "@/utils/collimato/charts/chartTypes.js";
 
 const weather = {
     query: {
