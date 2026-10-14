@@ -592,7 +592,7 @@ import {
     SORT_BARS_OPTIONS,
     MISSING_VALUES_CONNECT,
     MISSING_VALUES_OPTIONS,
-} from "@/utils/collimato/chartUtils.js";
+} from "@/utils/collimato/charts/chartSettings.js";
 import { t } from "@/i18n/index.js";
 import BaseCheckbox from "@/components/BaseCheckbox.vue";
 import {

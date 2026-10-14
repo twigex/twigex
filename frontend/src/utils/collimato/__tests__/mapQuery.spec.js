@@ -4,7 +4,7 @@
 import { describe, it, expect } from "vitest";
 import { buildLayerQuery, layerQuery } from "@/utils/collimato/mapQuery.js";
 import { defaultLayerConfig } from "@/utils/collimato/mapLayerTypes.js";
-import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartUtils.js";
+import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartQuery.js";
 
 describe("buildLayerQuery", () => {
     it("asks for the model's count grouped by the given dimensions", () => {

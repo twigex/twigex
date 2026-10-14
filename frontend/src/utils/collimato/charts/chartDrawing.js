@@ -1,16 +1,14 @@
 // Copyright (c) 2022 Twigex, SIA.
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { lineChart, barChart, timeBarChart } from "@/utils/collimato/charts/axisChart.js";
+import { pieChart } from "@/utils/collimato/charts/pieChart.js";
+import { number } from "@/utils/collimato/charts/bigNumber.js";
 import {
-    lineChart,
-    barChart,
-    timeBarChart,
-    pieChart,
-    number,
     applyBarChartConfiguration,
     applyLineChartConfiguration,
     applyPieChartConfiguration,
-} from "@/utils/collimato/chartUtils.js";
+} from "@/utils/collimato/charts/chartSettings.js";
 
 export const CHART_DRAWING = {
     big_number: {

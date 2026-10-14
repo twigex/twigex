@@ -163,7 +163,7 @@ import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 import { isEchartsType } from "@/utils/collimato/charts/chartTypes.js";
 import { drillDownValuesFor, filterValues } from "@/utils/collimato/charts/drillDown.js";
-import { labelOf } from "@/utils/collimato/chartUtils.js";
+import { labelOf } from "@/utils/collimato/charts/chartLabels.js";
 import { CheckCircleIcon, FunnelIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({

@@ -240,7 +240,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script setup>
 import { reactive, computed, onMounted } from "vue";
 import { t } from "@/i18n/index.js";
-import { LEGEND_POSITIONS, DEFAULT_LEGEND_POSITION } from "@/utils/collimato/chartUtils.js";
+import {
+    LEGEND_POSITIONS,
+    DEFAULT_LEGEND_POSITION,
+} from "@/utils/collimato/charts/chartSettings.js";
 
 const CUSTOMIZE = "collimato.charts.new_chart.customize.";
 

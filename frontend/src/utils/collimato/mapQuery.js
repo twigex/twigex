@@ -1,8 +1,7 @@
 // Copyright (c) 2022 Twigex, SIA.
 // SPDX-License-Identifier: AGPL-3.0-only
 
-import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartUtils.js";
-import { mergeFilters } from "@/utils/collimato/chartQuery.js";
+import { MAX_QUERY_LIMIT, mergeFilters } from "@/utils/collimato/chartQuery.js";
 import { layerQueryFields, layerTypeValue } from "@/utils/collimato/mapLayerTypes.js";
 
 export function buildLayerQuery(modelName, dimensionNames = [], filters = [], limit) {

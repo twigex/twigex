@@ -8,7 +8,7 @@ import { useCollimatoStore } from "@/store/collimato";
 import { useAlertStore } from "@/store/alerts";
 import collimatoService from "@/services/collimatoService.js";
 import { extractErrorMessage } from "@/utils/errors";
-import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartUtils.js";
+import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartQuery.js";
 import {
     filterApplies,
     filtersForChart,
