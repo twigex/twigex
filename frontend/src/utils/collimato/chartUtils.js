@@ -3,6 +3,7 @@
 
 import { t } from "@/i18n/index";
 import { CHART_PALETTE, CHART_LABEL_COLOR } from "@/utils/collimato/charts/chartPalette.js";
+import { recordDrillDownValues } from "@/utils/collimato/charts/drillDown.js";
 
 export const MAX_QUERY_LIMIT = 50000;
 
@@ -297,32 +298,6 @@ export function labelOf(value) {
 
 function valuesOf(item, dimensions) {
     return dimensions.map((dimension) => labelOf(item[dimension]));
-}
-
-//Returns values for drillDownValues for options in axisSeriesChart without empty value translation
-function valuesOfRaw(item, dimensions) {
-    return dimensions.map((dimension) => item[dimension] ?? null);
-}
-
-function recordDrillDownValues(known, label, item, dimensions) {
-    if (!Object.hasOwn(known, label)) {
-        known[label] = {};
-    }
-
-    const entry = known[label];
-    const values = valuesOfRaw(item, dimensions);
-
-    dimensions.forEach((dimension, index) => {
-        const value = values[index];
-
-        if (!entry[dimension]) {
-            entry[dimension] = [];
-        }
-
-        if (!entry[dimension].includes(value)) {
-            entry[dimension].push(value);
-        }
-    });
 }
 
 export function axisDimensionsOf(configuration, dimensions) {

@@ -7,7 +7,7 @@ import collimatoService from "@/services/collimatoService.js";
 import { useCollimatoStore } from "@/store/collimato";
 import { extractErrorMessage } from "@/utils/errors";
 import { toTableData } from "@/utils/collimato/chartUtils.js";
-import { transformData } from "@/utils/collimato/charts/chartTypes.js";
+import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { pollQuery } from "@/utils/collimato/queryPolling.js";
 
 export function useChartEditorQuery({ query, chartType, chartOptions, onError }) {

@@ -7,12 +7,8 @@ import lv from "@/i18n/lv.json";
 import kk from "@/i18n/kk.json";
 import pl from "@/i18n/pl.json";
 import { LEGEND_POSITIONS, DEFAULT_LEGEND_POSITION } from "@/utils/collimato/chartUtils.js";
-import {
-    CHART_TYPE_IDS,
-    isEchartsType,
-    transformData,
-    applyConfiguration,
-} from "@/utils/collimato/charts/chartTypes.js";
+import { CHART_TYPE_IDS, isEchartsType } from "@/utils/collimato/charts/chartTypes.js";
+import { transformData, applyConfiguration } from "@/utils/collimato/charts/chartDrawing.js";
 
 const LOCALES = { en, lv, kk, pl };
 const POSITIONS = Object.keys(LEGEND_POSITIONS);

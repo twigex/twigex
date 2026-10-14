@@ -2,11 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { ref } from "vue";
-import {
-    transformData,
-    drillDownFilters,
-    filterMembers,
-} from "@/utils/collimato/charts/chartTypes.js";
+import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
+import { drillDownFilters, filterMembers } from "@/utils/collimato/charts/drillDown.js";
 
 export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, pollLoad }) {
     const drillDownQuery = ref(null);

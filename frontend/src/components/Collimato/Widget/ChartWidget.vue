@@ -161,11 +161,8 @@ import BigNumber from "@/components/Collimato/Charts/BigNumber.vue";
 import MapChart from "@/components/Collimato/Charts/Map/MapChart.vue";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-import {
-    isEchartsType,
-    drillDownValuesFor,
-    filterValues,
-} from "@/utils/collimato/charts/chartTypes.js";
+import { isEchartsType } from "@/utils/collimato/charts/chartTypes.js";
+import { drillDownValuesFor, filterValues } from "@/utils/collimato/charts/drillDown.js";
 import { labelOf } from "@/utils/collimato/chartUtils.js";
 import { CheckCircleIcon, FunnelIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 
