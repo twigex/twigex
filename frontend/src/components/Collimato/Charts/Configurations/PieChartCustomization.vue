@@ -33,70 +33,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                 "
             />
 
-            <Listbox as="div" v-model="config.legendPosition">
-                <ListboxLabel class="block text-sm/6 font-medium text-gray-900">{{
-                    t("collimato.charts.new_chart.customize.legend_position")
-                }}</ListboxLabel>
-                <div class="relative mt-2">
-                    <ListboxButton
-                        class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                        <span class="col-start-1 row-start-1 truncate pr-6">{{
-                            selectedLegendPosition
-                        }}</span>
-                        <ChevronUpDownIcon
-                            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                            aria-hidden="true"
-                        />
-                    </ListboxButton>
-
-                    <transition
-                        leave-active-class="transition ease-in duration-100"
-                        leave-from-class="opacity-100"
-                        leave-to-class="opacity-0"
-                    >
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                        >
-                            <ListboxOption
-                                as="template"
-                                v-for="position in legendPositions"
-                                :key="position.value"
-                                :value="position.value"
-                                v-slot="{ active, selected }"
-                                @click="update()"
-                            >
-                                <li
-                                    :class="[
-                                        active
-                                            ? 'bg-indigo-600 text-white outline-none'
-                                            : 'text-gray-900',
-                                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                                    ]"
-                                >
-                                    <span
-                                        :class="[
-                                            selected ? 'font-semibold' : 'font-normal',
-                                            'block truncate',
-                                        ]"
-                                        >{{ position.label }}</span
-                                    >
-
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-white' : 'text-indigo-600',
-                                            'absolute inset-y-0 right-0 flex items-center pr-4',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
+            <SettingSelect
+                v-model="config.legendPosition"
+                :label="t('collimato.charts.new_chart.customize.legend_position')"
+                :options="legendPositions"
+                @change="update()"
+            />
 
             <div class="flex flex-row justify-between items-center mb-2 mt-5">
                 <h4 class="text-small font-semibold leading-4 text-gray-400">
@@ -121,70 +63,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                 </div>
             </div>
 
-            <Listbox as="div" v-model="config.labelType">
-                <ListboxLabel class="block text-sm/6 font-medium text-gray-900">{{
-                    t("collimato.charts.new_chart.customize.label_type")
-                }}</ListboxLabel>
-                <div class="relative mt-2">
-                    <ListboxButton
-                        class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    >
-                        <span class="col-start-1 row-start-1 truncate pr-6">{{
-                            selectedLabelType
-                        }}</span>
-                        <ChevronUpDownIcon
-                            class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-                            aria-hidden="true"
-                        />
-                    </ListboxButton>
-
-                    <transition
-                        leave-active-class="transition ease-in duration-100"
-                        leave-from-class="opacity-100"
-                        leave-to-class="opacity-0"
-                    >
-                        <ListboxOptions
-                            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                        >
-                            <ListboxOption
-                                as="template"
-                                v-for="labelType in labelTypes"
-                                :key="labelType.value"
-                                :value="labelType.value"
-                                v-slot="{ active, selected }"
-                                @click="update()"
-                            >
-                                <li
-                                    :class="[
-                                        active
-                                            ? 'bg-indigo-600 text-white outline-none'
-                                            : 'text-gray-900',
-                                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                                    ]"
-                                >
-                                    <span
-                                        :class="[
-                                            selected ? 'font-semibold' : 'font-normal',
-                                            'block truncate',
-                                        ]"
-                                        >{{ labelType.label }}</span
-                                    >
-
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-white' : 'text-indigo-600',
-                                            'absolute inset-y-0 right-0 flex items-center pr-4',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ListboxOption>
-                        </ListboxOptions>
-                    </transition>
-                </div>
-            </Listbox>
+            <SettingSelect
+                v-model="config.labelType"
+                :label="t('collimato.charts.new_chart.customize.label_type')"
+                :options="labelTypes"
+                @change="update()"
+            />
 
             <BaseCheckbox
                 class="mt-2 mb-5"
@@ -249,18 +133,9 @@ const CUSTOMIZE = "collimato.charts.new_chart.customize.";
 
 import BaseSlider from "@/components/BaseSlider.vue";
 import BaseCheckbox from "@/components/BaseCheckbox.vue";
-import {
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
-    Listbox,
-    ListboxButton,
-    ListboxLabel,
-    ListboxOption,
-    ListboxOptions,
-} from "@headlessui/vue";
-import { ChevronUpIcon, CheckIcon } from "@heroicons/vue/20/solid";
-import { ChevronUpDownIcon } from "@heroicons/vue/16/solid";
+import SettingSelect from "@/components/Collimato/Charts/Configurations/SettingSelect.vue";
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { ChevronUpIcon } from "@heroicons/vue/20/solid";
 
 const props = defineProps({
     configuration: {
@@ -318,16 +193,6 @@ const legendPositions = computed(() =>
         value: value,
         label: t.value(`${CUSTOMIZE}legend_position.${value.toLowerCase()}`),
     })),
-);
-
-const selectedLegendPosition = computed(
-    () =>
-        legendPositions.value.find((p) => p.value == config.legendPosition)?.label ??
-        config.legendPosition,
-);
-
-const selectedLabelType = computed(
-    () => labelTypes.value.find((l) => l.value == config.labelType)?.label ?? config.labelType,
 );
 
 function removeNonDigitsThreshold(event) {
