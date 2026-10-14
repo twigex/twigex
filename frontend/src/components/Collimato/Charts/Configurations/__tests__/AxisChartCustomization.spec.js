@@ -13,7 +13,7 @@ import pl from "@/i18n/pl.json";
 
 const LOCALES = { en, lv, kk, pl };
 
-const CONDITIONAL = ["orientation", "showValues"];
+const CONDITIONAL = ["orientation", "showValues", "missingValues"];
 
 const K = "collimato.charts.new_chart.customize.";
 const AUTO = en[K + "x_axis_field_auto"];
@@ -21,6 +21,9 @@ const NONE = en[K + "x_axis_field_none"];
 const SORT_AS_QUERIED = en[K + "sort_bars_none"];
 const SORT_ASC = en[K + "sort_bars_asc"];
 const SORT_DESC = en[K + "sort_bars_desc"];
+const CONNECT = en[K + "missing_values_connect"];
+const GAP = en[K + "missing_values_gap"];
+const ZERO = en[K + "missing_values_zero"];
 
 function openPicker(w, label) {
     const button = w.findAllComponents(ListboxButton).find((b) => b.text() === label);
@@ -144,6 +147,70 @@ describe("sort bars control", () => {
             Object.entries(LOCALES).forEach(([locale, messages]) =>
                 expect(messages[key], `${locale} ${key}`).toBeTruthy(),
             );
+        });
+    });
+});
+
+describe("missing values control", () => {
+    it("is shown only when the chart asks for it", () => {
+        const hidden = mount(AxisChartCustomization, {
+            props: { configuration: {}, dimensions: [] },
+        });
+
+        const shown = mount(AxisChartCustomization, {
+            props: { configuration: {}, dimensions: [], showMissingValues: true },
+        });
+
+        expect(hidden.text()).not.toContain(en[K + "missing_values"]);
+        expect(shown.text()).toContain(en[K + "missing_values"]);
+    });
+
+    it("offers connect, gap and zero, with connect by default", async () => {
+        const w = mount(AxisChartCustomization, {
+            props: { configuration: {}, dimensions: [], showMissingValues: true },
+        });
+
+        expect(emittedPayload(w).missingValues).toBe("connect");
+
+        await openPicker(w, CONNECT);
+
+        expect(optionLabels(w)).toEqual([CONNECT, GAP, ZERO]);
+    });
+
+    it("carries the choice through", () => {
+        const w = mount(AxisChartCustomization, {
+            props: {
+                configuration: { missingValues: "zero" },
+                dimensions: [],
+                showMissingValues: true,
+            },
+        });
+
+        expect(emittedPayload(w).missingValues).toBe("zero");
+    });
+
+    it("leaves the setting out for charts that do not show it", () => {
+        const w = mount(AxisChartCustomization, {
+            props: { configuration: {}, dimensions: [] },
+        });
+
+        expect(emittedPayload(w)).not.toHaveProperty("missingValues");
+    });
+
+    it("labels every option in every locale", () => {
+        const suffixes = [
+            "missing_values",
+            "missing_values_connect",
+            "missing_values_gap",
+            "missing_values_zero",
+        ];
+
+        suffixes.forEach((suffix) => {
+            const key = K + suffix;
+
+            Object.entries(LOCALES).forEach(([locale, messages]) => {
+                expect(messages[key], `${locale} ${key}`).toBeTruthy();
+            });
         });
     });
 });
