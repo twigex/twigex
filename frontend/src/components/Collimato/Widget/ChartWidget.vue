@@ -162,8 +162,7 @@ import MapChart from "@/components/Collimato/Charts/Map/MapChart.vue";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 import { isEchartsType } from "@/utils/collimato/charts/chartTypes.js";
-import { drillDownValuesFor, filterValues } from "@/utils/collimato/charts/drillDown.js";
-import { labelOf } from "@/utils/collimato/charts/chartLabels.js";
+import { drillDownValuesFor, drillDownBreadcrumbs } from "@/utils/collimato/charts/drillDown.js";
 import { CheckCircleIcon, FunnelIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
@@ -213,46 +212,7 @@ const updatePosition = () => {
     props.chart.position.h = parseInt(h);
 };
 
-function breadcrumbName(dimensions) {
-    if (dimensions.length === 0) {
-        return props.chart.name;
-    }
-
-    return dimensions.map((dimension) => dimension.split(".").at(-1)).join(", ");
-}
-
-function filtersAddedSince(previous, query) {
-    const before = (previous?.filters ?? []).map((filter) => JSON.stringify(filter));
-
-    return (query.filters ?? []).filter((filter) => !before.includes(JSON.stringify(filter)));
-}
-
-function breadcrumbValue(filters) {
-    const values = filters.flatMap((filter) => filterValues(filter));
-    const labels = values.map((value) => labelOf(value));
-    const unique = [];
-
-    labels.forEach((label) => {
-        if (!unique.includes(label)) {
-            unique.push(label);
-        }
-    });
-
-    return unique.join(", ");
-}
-
-const breadcrumbs = computed(() =>
-    drillQueries.value.map((query, index) => {
-        const previous = drillQueries.value[index - 1];
-        const added = filtersAddedSince(previous, query);
-
-        return {
-            query: query,
-            name: breadcrumbName(query.dimensions ?? []),
-            value: breadcrumbValue(added),
-        };
-    }),
-);
+const breadcrumbs = computed(() => drillDownBreadcrumbs(drillQueries.value, props.chart.name));
 
 function onBreadcrumbClick(query, index) {
     drillQueries.value = drillQueries.value.slice(0, index + 1);

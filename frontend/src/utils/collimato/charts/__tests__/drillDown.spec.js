@@ -8,6 +8,7 @@ import {
     drillDownFilters,
     filterMembers,
     filterValues,
+    drillDownBreadcrumbs,
 } from "@/utils/collimato/charts/drillDown.js";
 
 const result = (dimensions, measures, rows, titles) => ({
@@ -242,5 +243,111 @@ describe("filterMembers and filterValues", () => {
     it("reads through a nested filter", () => {
         expect(filterMembers(nested)).toEqual(["w.weather", "w.weather"]);
         expect(filterValues(nested)).toEqual([null, ""]);
+    });
+});
+
+describe("drill down breadcrumbs", () => {
+    const filter = (member, value) => ({
+        member,
+        operator: "equals",
+        values: [value],
+    });
+
+    function breadcrumbsFor(trail, chartName = "Chart") {
+        const crumbs = drillDownBreadcrumbs(trail, chartName);
+
+        return crumbs.map((crumb) => ({ name: crumb.name, value: crumb.value }));
+    }
+
+    it("shows no value on the first level", () => {
+        const crumbs = breadcrumbsFor([{ dimensions: ["w.weather"], filters: [] }]);
+
+        expect(crumbs[0]).toEqual({ name: "weather", value: "" });
+    });
+
+    it("shows the value that led to each level", () => {
+        const crumbs = breadcrumbsFor([
+            { dimensions: ["w.weather"], filters: [] },
+            {
+                dimensions: ["w.borough"],
+                filters: [filter("w.weather", "rain")],
+            },
+            {
+                dimensions: ["w.payment"],
+                filters: [filter("w.weather", "rain"), filter("w.borough", "Manhattan")],
+            },
+        ]);
+
+        expect(crumbs).toEqual([
+            { name: "weather", value: "" },
+            { name: "borough", value: "rain" },
+            { name: "payment", value: "Manhattan" },
+        ]);
+    });
+
+    it("keeps filters the chart already had off the trail", () => {
+        const existing = filter("w.year", "2024");
+
+        const crumbs = breadcrumbsFor([
+            { dimensions: ["w.weather"], filters: [existing] },
+            {
+                dimensions: ["w.borough"],
+                filters: [existing, filter("w.weather", "rain")],
+            },
+        ]);
+
+        expect(crumbs[1].value).toBe("rain");
+    });
+
+    it("joins several values added in one step", () => {
+        const crumbs = breadcrumbsFor([
+            { dimensions: ["w.a", "w.b"], filters: [] },
+            {
+                dimensions: ["w.c"],
+                filters: [filter("w.a", "one"), filter("w.b", "two")],
+            },
+        ]);
+
+        expect(crumbs[1].value).toBe("one, two");
+    });
+
+    it("names a level split by several dimensions", () => {
+        const crumbs = breadcrumbsFor([{ dimensions: ["w.location", "w.weather"], filters: [] }]);
+
+        expect(crumbs[0].name).toBe("location, weather");
+    });
+
+    it("names a level without dimensions after the chart", () => {
+        const crumbs = breadcrumbsFor([{ dimensions: [], filters: [] }], "Sales by month");
+
+        expect(crumbs[0].name).toBe("Sales by month");
+    });
+
+    it("shows (empty) for a value that was NULL", () => {
+        const crumbs = breadcrumbsFor([
+            { dimensions: ["w.product"], filters: [] },
+            {
+                dimensions: ["w.region"],
+                filters: [{ member: "w.product", operator: "notSet" }],
+            },
+        ]);
+
+        expect(crumbs[1].value).toBe("(empty)");
+    });
+
+    it("shows (empty) once when NULL and an empty string were both clicked", () => {
+        const both = {
+            or: [
+                { member: "w.product", operator: "notSet" },
+                { member: "w.product", operator: "equals", values: [""] },
+            ],
+        };
+
+        const crumbs = breadcrumbsFor([
+            { dimensions: ["w.product"], filters: [] },
+            { dimensions: ["w.region"], filters: [both] },
+        ]);
+
+        expect(crumbs[1].value).toBe("(empty)");
     });
 });
