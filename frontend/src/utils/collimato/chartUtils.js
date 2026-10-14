@@ -21,6 +21,15 @@ export const X_AXIS_NONE = "none";
 export const SORT_BARS_NONE = "";
 export const SORT_BARS_OPTIONS = [SORT_BARS_NONE, "asc", "desc"];
 
+export const MISSING_VALUES_CONNECT = "connect";
+export const MISSING_VALUES_GAP = "gap";
+export const MISSING_VALUES_ZERO = "zero";
+export const MISSING_VALUES_OPTIONS = [
+    MISSING_VALUES_CONNECT,
+    MISSING_VALUES_GAP,
+    MISSING_VALUES_ZERO,
+];
+
 export function applyLegendPosition(legend, position) {
     Object.assign(legend, LEGEND_POSITIONS[position] ?? LEGEND_POSITIONS.Top);
 
@@ -351,6 +360,38 @@ function emptySeries(name, seriesType, length) {
     };
 }
 
+function fillMissingWithZero(entry) {
+    entry.data = entry.data.map((value) => {
+        if (value === null) {
+            return 0;
+        }
+
+        return value;
+    });
+}
+
+function missingValuesOf(configuration) {
+    // Charts saved before this setting existed have no value and
+    // must keep connecting.
+    if (!configuration || !configuration.missingValues) {
+        return MISSING_VALUES_CONNECT;
+    }
+
+    return configuration.missingValues;
+}
+
+function applyMissingValues(series, configuration) {
+    const missingValues = missingValuesOf(configuration);
+
+    series.forEach((entry) => {
+        if (missingValues === MISSING_VALUES_ZERO) {
+            fillMissingWithZero(entry);
+        }
+
+        entry.connectNulls = missingValues === MISSING_VALUES_CONNECT;
+    });
+}
+
 function sortBarsByValue(option, direction) {
     if (direction !== "asc" && direction !== "desc") {
         return option;
@@ -481,6 +522,10 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
             });
         });
     }
+
+    // Done here rather than in applyLineChartConfiguration, which
+    // returns early for charts saved without any configuration.
+    applyMissingValues(series, configuration);
 
     //Accessible in ChartWidget.vue as currentData.
     const option = {
