@@ -9,10 +9,12 @@ import { extractErrorMessage } from "@/utils/errors";
 import { toTableData } from "@/utils/collimato/tableData.js";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { pollQuery } from "@/utils/collimato/queryPolling.js";
+import { useChartDisplay } from "@/composables/collimato/useChartDisplay.js";
 
 export function useChartEditorQuery({ query, chartType, chartOptions, onError }) {
     const route = useRoute();
     const collimatoStore = useCollimatoStore();
+    const { chartDisplay } = useChartDisplay();
 
     const loading = ref(false);
     const queryResult = ref(null);
@@ -22,11 +24,15 @@ export function useChartEditorQuery({ query, chartType, chartOptions, onError })
         data: [],
     });
 
-    const options = computed(() =>
-        queryResult.value
-            ? transformData(chartType.value, queryResult.value, chartOptions.value)
-            : null,
-    );
+    const options = computed(() => {
+        if (!queryResult.value) {
+            return null;
+        }
+
+        const display = chartDisplay();
+
+        return transformData(chartType.value, queryResult.value, chartOptions.value, display);
+    });
 
     let loadAbort = null;
 

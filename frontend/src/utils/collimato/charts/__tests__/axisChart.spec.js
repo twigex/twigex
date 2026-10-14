@@ -4,6 +4,7 @@
 import { describe, it, expect } from "vitest";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { cubeResult } from "@/utils/collimato/charts/__tests__/cubeResult.js";
+import { plainSpaces } from "@/utils/collimato/charts/__tests__/plainSpaces.js";
 
 const weather = {
     query: {
@@ -65,7 +66,7 @@ describe("barChart", () => {
             }),
         );
 
-        expect(option.xAxis.data).toEqual(["2026-01-01", "2026-01-02", "2026-01-03"]);
+        expect(option.xAxis.data).toEqual(["1 Jan 2026", "2 Jan 2026", "3 Jan 2026"]);
         expect(option.series[0].data).toEqual([null, 7, null]);
     });
 });
@@ -513,5 +514,102 @@ describe("sort bars by value", () => {
 
         expect(option.xAxis.data).toHaveLength(3);
         expect(option.series[0].data).toEqual([9, 1, 5]);
+    });
+});
+
+describe("time axis keeps every value when the range starts mid-period", () => {
+    function countBy(granularity, dateRange, rows) {
+        return transformData(
+            "line",
+            cubeResult({
+                measures: ["posts.count"],
+                dimensions: [],
+                timeDimensions: [
+                    {
+                        dimension: "posts.created",
+                        granularity: granularity,
+                        dateRange: dateRange,
+                    },
+                ],
+                rows: rows,
+            }),
+        );
+    }
+
+    it("by month, starting mid-month", () => {
+        const option = countBy(
+            "month",
+            ["2026-09-15T00:00:00.000", "2026-10-14T23:59:59.999"],
+            [
+                { "posts.created.month": "2026-09-01T00:00:00.000", "posts.count": "152" },
+                { "posts.created.month": "2026-10-01T00:00:00.000", "posts.count": "67" },
+            ],
+        );
+
+        expect(plainSpaces(option.xAxis.data)).toEqual(["15 – 30 Sept 2026", "1 – 14 Oct 2026"]);
+        expect(option.series[0].data).toEqual([152, 67]);
+    });
+
+    it("by week, starting on a Thursday", () => {
+        const option = countBy(
+            "week",
+            ["2026-09-17T00:00:00.000", "2026-09-27T23:59:59.999"],
+            [
+                { "posts.created.week": "2026-09-14T00:00:00.000", "posts.count": "40" },
+                { "posts.created.week": "2026-09-21T00:00:00.000", "posts.count": "10" },
+            ],
+        );
+
+        expect(plainSpaces(option.xAxis.data)).toEqual(["17 – 20 Sept 2026", "21 – 27 Sept 2026"]);
+        expect(option.series[0].data).toEqual([40, 10]);
+    });
+
+    it("by quarter, starting mid-quarter", () => {
+        const option = countBy(
+            "quarter",
+            ["2026-02-10T00:00:00.000", "2026-08-01T23:59:59.999"],
+            [
+                { "posts.created.quarter": "2026-01-01T00:00:00.000", "posts.count": "5" },
+                { "posts.created.quarter": "2026-07-01T00:00:00.000", "posts.count": "3" },
+            ],
+        );
+
+        expect(plainSpaces(option.xAxis.data)).toEqual([
+            "10 Feb – 31 Mar 2026",
+            "Q2 2026",
+            "1 Jul – 1 Aug 2026",
+        ]);
+        expect(option.series[0].data).toEqual([5, null, 3]);
+    });
+
+    it("by year, starting mid-year", () => {
+        const option = countBy(
+            "year",
+            ["2025-06-01T00:00:00.000", "2026-03-01T23:59:59.999"],
+            [
+                { "posts.created.year": "2025-01-01T00:00:00.000", "posts.count": "4" },
+                { "posts.created.year": "2026-01-01T00:00:00.000", "posts.count": "6" },
+            ],
+        );
+
+        expect(plainSpaces(option.xAxis.data)).toEqual([
+            "1 Jun – 31 Dec 2025",
+            "1 Jan – 1 Mar 2026",
+        ]);
+        expect(option.series[0].data).toEqual([4, 6]);
+    });
+
+    it("by hour, starting mid-hour", () => {
+        const option = countBy(
+            "hour",
+            ["2026-09-15T10:30:00.000", "2026-09-15T11:59:59.999"],
+            [
+                { "posts.created.hour": "2026-09-15T10:00:00.000", "posts.count": "2" },
+                { "posts.created.hour": "2026-09-15T11:00:00.000", "posts.count": "1" },
+            ],
+        );
+
+        expect(option.xAxis.data).toEqual(["15 Sept 2026, 10:00", "15 Sept 2026, 11:00"]);
+        expect(option.series[0].data).toEqual([2, 1]);
     });
 });

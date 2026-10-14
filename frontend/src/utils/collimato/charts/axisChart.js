@@ -10,7 +10,7 @@ import {
     applyMissingValues,
     sortBarsByValue,
 } from "@/utils/collimato/charts/chartSettings.js";
-import { generateTimeArray } from "@/utils/collimato/charts/timeSlots.js";
+import { generateTimeArray, timeSlotLabels } from "@/utils/collimato/charts/timeSlots.js";
 import { labelOf, valuesOf, measureTitleOf } from "@/utils/collimato/charts/chartLabels.js";
 
 function numberFormatter(value) {
@@ -67,7 +67,7 @@ function emptySeries(name, seriesType, length) {
     };
 }
 
-export function axisSeriesChart(data, seriesType, configuration = {}) {
+export function axisSeriesChart(data, seriesType, configuration = {}, display = {}) {
     const { measures, dimensions, timeDimensions } = data.query;
     const timeDimension = timeDimensions?.[0];
     const granularity = timeDimension?.granularity;
@@ -92,12 +92,19 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
     };
 
     if (granularity) {
-        xAxisData = generateTimeArray(
+        // Cube names each row after the start of its period (the Monday, the
+        // 1st), even when the range starts later, but counts only the days
+        // inside the range. A range from Sunday 20 Dec gives a row named
+        // 14 Dec with only the 20th counted. The slots use Cube's names so
+        // each row finds its place; the labels show the days counted.
+        const slots = generateTimeArray(
             timeDimension.dateRange[0],
             timeDimension.dateRange[1],
             granularity,
             withTime,
         );
+
+        xAxisData = slots;
 
         const timeKey = `${timeDimension.dimension}.${granularity}`;
         const seriesDimensions = dimensions.filter(
@@ -118,7 +125,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
 
                 const raw = item[timeKey];
                 const bucket = withTime ? raw : raw?.split("T")[0];
-                const index = xAxisData.indexOf(bucket);
+                const index = slots.indexOf(bucket);
 
                 const value = item[measure];
 
@@ -131,6 +138,10 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
                 }
             });
         });
+
+        const labels = timeSlotLabels(slots, granularity, timeDimension.dateRange, display);
+
+        xAxisData = labels;
     } else {
         const axisDimensions = axisDimensionsOf(configuration, dimensions);
         const seriesDimensions = dimensions.filter(
@@ -233,14 +244,14 @@ export function axisSeriesChart(data, seriesType, configuration = {}) {
     return granularity ? option : sortBarsByValue(option, configuration?.sortBars);
 }
 
-export function lineChart(data, configuration) {
-    return axisSeriesChart(data, "line", configuration);
+export function lineChart(data, configuration, display) {
+    return axisSeriesChart(data, "line", configuration, display);
 }
 
-export function barChart(data, configuration) {
-    return axisSeriesChart(data, "bar", configuration);
+export function barChart(data, configuration, display) {
+    return axisSeriesChart(data, "bar", configuration, display);
 }
 
-export function timeBarChart(data, configuration) {
-    return axisSeriesChart(data, "bar", configuration);
+export function timeBarChart(data, configuration, display) {
+    return axisSeriesChart(data, "bar", configuration, display);
 }

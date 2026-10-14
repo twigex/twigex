@@ -4,8 +4,10 @@
 import { ref } from "vue";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { drillDownFilters, filterMembers } from "@/utils/collimato/charts/drillDown.js";
+import { useChartDisplay } from "@/composables/collimato/useChartDisplay.js";
 
 export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, pollLoad }) {
+    const { chartDisplay } = useChartDisplay();
     const drillDownQuery = ref(null);
     const drillDownData = ref(null);
     const valuesClicked = ref(null);
@@ -76,10 +78,13 @@ export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, poll
 
         pollLoad(query, {
             onSuccess: (result) => {
+                const display = chartDisplay();
+
                 drillDownData.value = transformData(
                     chart.chart_type,
                     result.data,
                     chart.configuration,
+                    display,
                 );
                 widgets.value[chartIndex].drillDown(query, drillDownData.value);
             },
@@ -107,10 +112,13 @@ export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, poll
 
         pollLoad(query, {
             onSuccess: (result) => {
+                const display = chartDisplay();
+
                 drillDownData.value = transformData(
                     currentChart.value.chart_type,
                     result.data,
                     currentChart.value.configuration,
+                    display,
                 );
                 widgets.value[chartIndex].drillDown(query, drillDownData.value);
             },

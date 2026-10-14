@@ -6,11 +6,13 @@ import { useRoute } from "vue-router";
 import collimatoService from "@/services/collimatoService.js";
 import { extractErrorMessage } from "@/utils/errors";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
+import { useChartDisplay } from "@/composables/collimato/useChartDisplay.js";
 import { pollQuery } from "@/utils/collimato/queryPolling.js";
 import { layerQuery } from "@/utils/collimato/mapQuery.js";
 
 export function useDashboardQueries({ widgets }) {
     const route = useRoute();
+    const { chartDisplay } = useChartDisplay();
 
     const pollAborts = new Set();
 
@@ -55,7 +57,13 @@ export function useDashboardQueries({ widgets }) {
     function loadChartData(item, lastWidgetIndex) {
         pollLoad(item.data.query, {
             onSuccess: (result) => {
-                const data = transformData(item.chart_type, result.data, item.configuration);
+                const display = chartDisplay();
+                const data = transformData(
+                    item.chart_type,
+                    result.data,
+                    item.configuration,
+                    display,
+                );
 
                 widgets.value[lastWidgetIndex]?.updateChart(item.data.query, data);
             },
