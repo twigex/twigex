@@ -4,6 +4,7 @@
 import { describe, it, expect } from "vitest";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { cubeResult } from "@/utils/collimato/charts/__tests__/cubeResult.js";
+import { plainSpaces } from "@/utils/collimato/charts/__tests__/plainSpaces.js";
 
 const weather = {
     query: {
@@ -65,7 +66,7 @@ describe("barChart", () => {
             }),
         );
 
-        expect(option.xAxis.data).toEqual(["2026-01-01", "2026-01-02", "2026-01-03"]);
+        expect(option.xAxis.data).toEqual(["1 Jan 2026", "2 Jan 2026", "3 Jan 2026"]);
         expect(option.series[0].data).toEqual([null, 7, null]);
     });
 });
@@ -516,7 +517,7 @@ describe("sort bars by value", () => {
     });
 });
 
-describe("time axis starts at the beginning of the period", () => {
+describe("time axis keeps every value when the range starts mid-period", () => {
     function countBy(granularity, dateRange, rows) {
         return transformData(
             "line",
@@ -535,7 +536,7 @@ describe("time axis starts at the beginning of the period", () => {
         );
     }
 
-    it("starts a month axis on the 1st when the range starts mid-month", () => {
+    it("by month, starting mid-month", () => {
         const option = countBy(
             "month",
             ["2026-09-15T00:00:00.000", "2026-10-14T23:59:59.999"],
@@ -545,11 +546,11 @@ describe("time axis starts at the beginning of the period", () => {
             ],
         );
 
-        expect(option.xAxis.data).toEqual(["2026-09-01", "2026-10-01"]);
+        expect(plainSpaces(option.xAxis.data)).toEqual(["15 – 30 Sept 2026", "1 – 14 Oct 2026"]);
         expect(option.series[0].data).toEqual([152, 67]);
     });
 
-    it("starts a week axis on Monday when the range starts on another day", () => {
+    it("by week, starting on a Thursday", () => {
         const option = countBy(
             "week",
             ["2026-09-17T00:00:00.000", "2026-09-27T23:59:59.999"],
@@ -559,11 +560,11 @@ describe("time axis starts at the beginning of the period", () => {
             ],
         );
 
-        expect(option.xAxis.data).toEqual(["2026-09-14", "2026-09-21"]);
+        expect(plainSpaces(option.xAxis.data)).toEqual(["17 – 20 Sept 2026", "21 – 27 Sept 2026"]);
         expect(option.series[0].data).toEqual([40, 10]);
     });
 
-    it("starts a quarter axis on the quarter's first month", () => {
+    it("by quarter, starting mid-quarter", () => {
         const option = countBy(
             "quarter",
             ["2026-02-10T00:00:00.000", "2026-08-01T23:59:59.999"],
@@ -573,11 +574,15 @@ describe("time axis starts at the beginning of the period", () => {
             ],
         );
 
-        expect(option.xAxis.data).toEqual(["2026-01-01", "2026-04-01", "2026-07-01"]);
+        expect(plainSpaces(option.xAxis.data)).toEqual([
+            "10 Feb – 31 Mar 2026",
+            "Q2 2026",
+            "1 Jul – 1 Aug 2026",
+        ]);
         expect(option.series[0].data).toEqual([5, null, 3]);
     });
 
-    it("starts a year axis on 1 January", () => {
+    it("by year, starting mid-year", () => {
         const option = countBy(
             "year",
             ["2025-06-01T00:00:00.000", "2026-03-01T23:59:59.999"],
@@ -587,11 +592,14 @@ describe("time axis starts at the beginning of the period", () => {
             ],
         );
 
-        expect(option.xAxis.data).toEqual(["2025-01-01", "2026-01-01"]);
+        expect(plainSpaces(option.xAxis.data)).toEqual([
+            "1 Jun – 31 Dec 2025",
+            "1 Jan – 1 Mar 2026",
+        ]);
         expect(option.series[0].data).toEqual([4, 6]);
     });
 
-    it("starts an hour axis on the full hour", () => {
+    it("by hour, starting mid-hour", () => {
         const option = countBy(
             "hour",
             ["2026-09-15T10:30:00.000", "2026-09-15T11:59:59.999"],
@@ -601,7 +609,7 @@ describe("time axis starts at the beginning of the period", () => {
             ],
         );
 
-        expect(option.xAxis.data).toEqual(["2026-09-15T10:00:00.000", "2026-09-15T11:00:00.000"]);
+        expect(option.xAxis.data).toEqual(["15 Sept 2026, 10:00", "15 Sept 2026, 11:00"]);
         expect(option.series[0].data).toEqual([2, 1]);
     });
 });

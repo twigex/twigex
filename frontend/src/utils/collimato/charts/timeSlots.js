@@ -1,6 +1,14 @@
 // Copyright (c) 2022 Twigex, SIA.
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { currentLocale } from "@/i18n/index";
+
+const DATE_LOCALES = { en: "en-GB", lv: "lv", kk: "kk", pl: "pl" };
+
+const DAY_FORMAT = { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" };
+const MONTH_FORMAT = { month: "short", year: "numeric", timeZone: "UTC" };
+const YEAR_FORMAT = { year: "numeric", timeZone: "UTC" };
+
 function incrementDate(date, granularity) {
     switch (granularity) {
         case "second":
@@ -115,4 +123,115 @@ export function generateTimeArray(startTime, endTime, granularity, withTime = tr
     }
 
     return times;
+}
+
+function slotDate(slot) {
+    if (slot.includes("T")) {
+        return new Date(slot + "Z");
+    }
+
+    return new Date(slot + "T00:00:00.000Z");
+}
+
+function endOfPeriod(start, granularity) {
+    const next = new Date(start.getTime());
+
+    incrementDate(next, granularity);
+
+    return new Date(next.getTime() - 1);
+}
+
+function dateLocale() {
+    const locale = DATE_LOCALES[currentLocale.value];
+
+    if (!locale) {
+        return "en-GB";
+    }
+
+    return locale;
+}
+
+function timeFormat(granularity, hour12) {
+    const format = {
+        ...DAY_FORMAT,
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: hour12,
+    };
+
+    if (granularity === "second") {
+        format.second = "2-digit";
+    }
+
+    return format;
+}
+
+function wholePeriodLabel(start, granularity, locale) {
+    if (granularity === "month") {
+        return new Intl.DateTimeFormat(locale, MONTH_FORMAT).format(start);
+    }
+
+    if (granularity === "quarter") {
+        const quarter = Math.floor(start.getUTCMonth() / 3) + 1;
+        const year = start.getUTCFullYear();
+
+        return `Q${quarter} ${year}`;
+    }
+
+    if (granularity === "year") {
+        return new Intl.DateTimeFormat(locale, YEAR_FORMAT).format(start);
+    }
+
+    return null;
+}
+
+// The first and last slot can reach outside the chosen range, but Cube only
+// counts the days inside it, so the label names only those days.
+function timeSlotLabel(slot, granularity, rangeStart, rangeEnd, display) {
+    const locale = dateLocale();
+    const start = slotDate(slot);
+
+    if (granularity === "second" || granularity === "minute" || granularity === "hour") {
+        const format = timeFormat(granularity, display.hour12);
+
+        return new Intl.DateTimeFormat(locale, format).format(start);
+    }
+
+    const days = new Intl.DateTimeFormat(locale, DAY_FORMAT);
+
+    if (granularity === "day") {
+        return days.format(start);
+    }
+
+    const end = endOfPeriod(start, granularity);
+    const startsInside = start >= rangeStart;
+    const endsInside = end <= rangeEnd;
+
+    if (startsInside && endsInside) {
+        const whole = wholePeriodLabel(start, granularity, locale);
+
+        if (whole) {
+            return whole;
+        }
+    }
+
+    let shownStart = start;
+    let shownEnd = end;
+
+    if (!startsInside) {
+        shownStart = rangeStart;
+    }
+
+    if (!endsInside) {
+        shownEnd = rangeEnd;
+    }
+
+    return days.formatRange(shownStart, shownEnd);
+}
+
+export function timeSlotLabels(slots, granularity, dateRange, display = {}) {
+    const rangeStart = new Date(dateRange[0] + "Z");
+    const rangeEnd = new Date(dateRange[1] + "Z");
+
+    return slots.map((slot) => timeSlotLabel(slot, granularity, rangeStart, rangeEnd, display));
 }

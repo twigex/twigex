@@ -22,7 +22,7 @@ chartDrawing.js   picks the right code for each chart type
 axisChart.js      line, bar and time bar charts
 pieChart.js       pie charts
 bigNumber.js      big number
-timeSlots.js      the days or months along a time axis
+timeSlots.js      the days or months along a time axis, and their labels
 chartLabels.js    labels, including "(empty)"
 chartSettings.js  what each chart setting does
 drillDown.js      drill-down

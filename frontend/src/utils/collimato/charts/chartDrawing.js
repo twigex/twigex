@@ -37,10 +37,10 @@ export const CHART_DRAWING = {
     },
 };
 
-export function transformData(chartType, data, configuration = {}) {
+export function transformData(chartType, data, configuration = {}, display = {}) {
     const transform = CHART_DRAWING[chartType]?.transform;
 
-    return transform ? transform(data, configuration) : {};
+    return transform ? transform(data, configuration, display) : {};
 }
 
 export function applyConfiguration(chartType, data, configuration) {
