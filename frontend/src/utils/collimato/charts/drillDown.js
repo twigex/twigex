@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { drillDownKeyFor } from "@/utils/collimato/charts/chartTypes.js";
+import { labelOf } from "@/utils/collimato/charts/chartLabels.js";
 
 //Returns values for drillDownValues for options in axisSeriesChart without empty value translation
 function valuesOfRaw(item, dimensions) {
@@ -112,4 +113,45 @@ export function drillDownValuesFor(chartType, option, params) {
     }
 
     return known[label];
+}
+
+function breadcrumbName(dimensions, chartName) {
+    if (dimensions.length === 0) {
+        return chartName;
+    }
+
+    return dimensions.map((dimension) => dimension.split(".").at(-1)).join(", ");
+}
+
+function filtersAddedSince(previous, query) {
+    const before = (previous?.filters ?? []).map((filter) => JSON.stringify(filter));
+
+    return (query.filters ?? []).filter((filter) => !before.includes(JSON.stringify(filter)));
+}
+
+function breadcrumbValue(filters) {
+    const values = filters.flatMap((filter) => filterValues(filter));
+    const labels = values.map((value) => labelOf(value));
+    const unique = [];
+
+    labels.forEach((label) => {
+        if (!unique.includes(label)) {
+            unique.push(label);
+        }
+    });
+
+    return unique.join(", ");
+}
+
+export function drillDownBreadcrumbs(trail, chartName) {
+    return trail.map((query, index) => {
+        const previous = trail[index - 1];
+        const added = filtersAddedSince(previous, query);
+
+        return {
+            query: query,
+            name: breadcrumbName(query.dimensions ?? [], chartName),
+            value: breadcrumbValue(added),
+        };
+    });
 }
