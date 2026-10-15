@@ -200,9 +200,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount, onUnmounted, nextTick } from "vue";
 import { t } from "@/i18n/index.js";
-import * as pdfjsLib from "pdfjs-dist";
-import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { useMediaStore } from "@/store/media";
+import { loadPdfLibrary } from "@/utils/pdf.js";
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from "@headlessui/vue";
 import {
     XMarkIcon,
@@ -212,8 +211,6 @@ import {
     MagnifyingGlassPlusIcon,
     MagnifyingGlassMinusIcon,
 } from "@heroicons/vue/24/outline";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const mediaStore = useMediaStore();
 const videoPlayer = ref(null);
@@ -290,6 +287,8 @@ async function loadPDF(pdfUrl) {
     pdfError.value = false;
     try {
         await nextTick(); // ensure pdfWrapper is in the DOM
+        const pdfjsLib = await loadPdfLibrary();
+
         const doc = await pdfjsLib.getDocument({
             url: pdfUrl,
             wasmUrl: `${import.meta.env.BASE_URL}pdfjs/wasm/`,
