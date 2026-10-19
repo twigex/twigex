@@ -34,6 +34,11 @@ export const useSettingsStore = defineStore("settings", {
 
             return false;
         },
+        isFeatureEnabled: (state) => (name) => {
+            const flags = state.config?.FeatureFlags ?? {};
+
+            return flags[name] === true;
+        },
     },
 
     actions: {
