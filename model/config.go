@@ -3,7 +3,11 @@
 
 package model
 
-import "golang.org/x/text/language"
+import (
+	"slices"
+
+	"golang.org/x/text/language"
+)
 
 const (
 	DefaultSiteURL    = "http://localhost"
@@ -30,6 +34,8 @@ type ServerConfig struct {
 	LDAPSettings      LDAPSettings
 	PasswordSettings  PasswordSettings
 	CollimatoSettings CollimatoSettings
+
+	FeatureFlags FeatureFlags
 }
 
 type ServerSettings struct {
@@ -515,6 +521,38 @@ func (s *CollimatoSettings) SetDefaults() {
 	}
 }
 
+type FeatureFlags struct {
+	KnowledgeGraph *bool
+}
+
+func (f *FeatureFlags) SetDefaults() {
+	if f.KnowledgeGraph == nil {
+		f.KnowledgeGraph = NewBool(false)
+	}
+}
+
+func (f *FeatureFlags) ByName() map[string]bool {
+	flags := map[string]bool{
+		"KnowledgeGraph": *f.KnowledgeGraph,
+	}
+
+	return flags
+}
+
+func (f *FeatureFlags) Enabled() []string {
+	enabled := make([]string, 0)
+
+	for name, on := range f.ByName() {
+		if on {
+			enabled = append(enabled, name)
+		}
+	}
+
+	slices.Sort(enabled)
+
+	return enabled
+}
+
 func (c *ServerConfig) SetDefaults() {
 	c.ServerSettings.SetDefaults()
 	c.SqlSettings.SetDefaults()
@@ -528,4 +566,6 @@ func (c *ServerConfig) SetDefaults() {
 	c.LDAPSettings.SetDefaults()
 	c.PasswordSettings.SetDefaults()
 	c.CollimatoSettings.SetDefaults()
+
+	c.FeatureFlags.SetDefaults()
 }

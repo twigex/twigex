@@ -112,6 +112,11 @@ func startServer(cmd *cobra.Command, args []string) {
 		os.Exit(0)
 	}()
 
+	enabledFeatures := a.ConfigStore.Config.FeatureFlags.Enabled()
+	if len(enabledFeatures) > 0 {
+		tlog.Warnw("Features still in development are enabled", "features", enabledFeatures)
+	}
+
 	tlog.Infow("Server listening on port",
 		"port", port,
 		"version", model.Version,
