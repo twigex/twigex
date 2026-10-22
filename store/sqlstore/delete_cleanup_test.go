@@ -57,3 +57,34 @@ func TestDeleteChartRemovesItFromDashboards(t *testing.T) {
 		t.Errorf("chart row still exists")
 	}
 }
+
+func TestDeleteDashboardRemovesItsChartsAndFilters(t *testing.T) {
+	db := requireDB(t)
+	cleanTables(t, "collimato_dashboards", "collimato_dashboard_charts", "collimato_dashboard_filters")
+	repo := &collimatoRepository{Db: db}
+
+	for _, id := range []string{"doomed", "kept"} {
+		mustExec(t, `INSERT INTO collimato_dashboards (id, title, owner_id, workspace_id, created_at)
+			VALUES (?, 'd', 'alice', 'ws', 0)`, id)
+		mustExec(t, `INSERT INTO collimato_dashboard_charts (id, dashboard_id, chart_id, created_by, position, created_at)
+			VALUES (?, ?, 'chart', 'alice', '{}', 0)`, "dc-"+id, id)
+		mustExec(t, `INSERT INTO collimato_dashboard_filters (id, dashboard_id, operator)
+			VALUES (?, ?, 'equals')`, "df-"+id, id)
+	}
+
+	if err := repo.DeleteDashboard("doomed"); err != nil {
+		t.Fatalf("DeleteDashboard: %v", err)
+	}
+
+	for _, table := range []string{"collimato_dashboard_charts", "collimato_dashboard_filters"} {
+		if n := countWhere(t, "SELECT COUNT(*) FROM `"+table+"` WHERE dashboard_id = 'doomed'"); n != 0 {
+			t.Errorf("%s still has %d rows for the deleted dashboard", table, n)
+		}
+		if n := countWhere(t, "SELECT COUNT(*) FROM `"+table+"` WHERE dashboard_id = 'kept'"); n != 1 {
+			t.Errorf("%s has %d rows for the other dashboard, want 1", table, n)
+		}
+	}
+	if n := countWhere(t, `SELECT COUNT(*) FROM collimato_dashboards WHERE id = 'doomed'`); n != 0 {
+		t.Errorf("dashboard row still exists")
+	}
+}
