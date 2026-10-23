@@ -100,6 +100,26 @@
     "translation": "Sinhronizāciju nevarēja sākt."
   },
   {
+    "id": "graph.disabled",
+    "translation": "Zināšanu grafs nav ieslēgts."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "Jums nav atļaujas pārvaldīt zināšanu grafu."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "Grafa pārbūve jau notiek."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "Grafa pārbūvi nevarēja sākt."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "Grafa statusu nevarēja nolasīt."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Sinhronizācijas intervālam jābūt no 5 līdz 1440 minūtēm."
   },

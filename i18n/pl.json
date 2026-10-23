@@ -100,6 +100,26 @@
     "translation": "Nie udało się rozpocząć synchronizacji."
   },
   {
+    "id": "graph.disabled",
+    "translation": "Graf wiedzy nie jest włączony."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "Nie masz uprawnień do zarządzania grafem wiedzy."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "Przebudowa grafu jest już w toku."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "Nie udało się rozpocząć przebudowy grafu."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "Nie udało się odczytać stanu grafu."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Interwał synchronizacji musi wynosić od 5 do 1440 minut."
   },

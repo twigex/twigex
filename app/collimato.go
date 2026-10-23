@@ -870,6 +870,8 @@ func (a *App) CreateChart(user model.User, workspaceID string, chart model.NewCh
 		return nil, model.NewAppError("chart.create_failed", http.StatusInternalServerError)
 	}
 
+	a.graphChartSaved(*c)
+
 	return c, nil
 }
 
@@ -1013,6 +1015,8 @@ func (a *App) UpdateChart(user model.User, workspaceID, id string, chartPatch mo
 		return nil, model.NewAppError("chart.update_failed", http.StatusInternalServerError)
 	}
 
+	a.graphChartSaved(*updatedChart)
+
 	return updatedChart, nil
 }
 
@@ -1043,6 +1047,8 @@ func (a *App) DeleteChart(user model.User, workspaceID, id string) *model.AppErr
 		)
 		return model.NewAppError("chart.delete_failed", http.StatusInternalServerError)
 	}
+
+	a.graphChartDeleted(id)
 
 	return nil
 }
@@ -2014,6 +2020,8 @@ func (a *App) SaveCubeFile(user model.User, name, content, fileType, workspaceID
 		return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
 
+	a.graphDataModelChanged(workspaceID)
+
 	return &model.CubeFile{
 		Name:    name,
 		Content: content,
@@ -2266,6 +2274,8 @@ func (a *App) BuildCubeFile(user model.User, workspaceID, fileType string, m mod
 		return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
 
+	a.graphDataModelChanged(workspaceID)
+
 	return &model.CubeFile{
 		Name:         name,
 		Content:      content,
@@ -2369,6 +2379,8 @@ func (a *App) BuildViewFile(user model.User, workspaceID string, m model.View, o
 		)
 		return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
+
+	a.graphDataModelChanged(workspaceID)
 
 	return &model.CubeFile{
 		Name:         name,
@@ -2484,6 +2496,8 @@ func (a *App) DeleteCubeFile(user model.User, name, filetype, workspaceID string
 		)
 		return model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
+
+	a.graphDataModelChanged(workspaceID)
 
 	return nil
 }
@@ -2810,6 +2824,8 @@ func (a *App) GenerateCubeFiles(user model.User, m map[string]interface{}, works
 			)
 			return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 		}
+
+		a.graphDataModelChanged(workspaceID)
 	}
 
 	return result, nil
