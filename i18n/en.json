@@ -120,6 +120,14 @@
     "translation": "The graph status could not be read."
   },
   {
+    "id": "graph.entity_not_found",
+    "translation": "The entity was not found."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "The entity's relations could not be read."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "The synchronisation interval must be between 5 and 1440 minutes."
   },

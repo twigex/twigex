@@ -130,6 +130,39 @@ type GraphRebuildStatus struct {
 	FinishedAt int64              `json:"finished_at"`
 }
 
+const (
+	GraphDirectionOut = "out"
+	GraphDirectionIn  = "in"
+)
+
+type GraphEntityRef struct {
+	Type  string `json:"type"`
+	ID    string `json:"id"`
+	Title string `json:"title"`
+}
+
+// GraphRelationItem is one relation in a group: the entity at the other end,
+// and where the relation comes from.
+type GraphRelationItem struct {
+	Entity GraphEntityRef `json:"entity"`
+	Origin string         `json:"origin"`
+}
+
+// GraphRelationGroup lists the neighbours behind one relation type. A group larger
+// than its item limit carries only the count, which the screen shows as a box.
+type GraphRelationGroup struct {
+	RelationType string              `json:"relation_type"`
+	Direction    string              `json:"direction"`
+	EntityType   string              `json:"entity_type"`
+	Count        int                 `json:"count"`
+	Items        []GraphRelationItem `json:"items"`
+}
+
+type GraphEntityRelations struct {
+	Entity GraphEntityRef       `json:"entity"`
+	Groups []GraphRelationGroup `json:"groups"`
+}
+
 type GraphBuiltInRelationType struct {
 	Key         string
 	Name        string
