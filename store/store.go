@@ -313,6 +313,8 @@ type CollimatoStore interface {
 	DeleteChart(id string) error
 	GetDashboards(workspaceID string) ([]model.Dashboard, error)
 	GetDashboardByID(id string) (*model.Dashboard, error)
+	GetDashboardIDsForChart(chartID string) ([]string, error)
+	GetDashboardIDsForFilterColumn(workspaceID, column string) ([]string, error)
 	CreateDashboard(dashboard model.Dashboard) (*model.Dashboard, error)
 	UpdateDashboard(dashboard model.Dashboard) (*model.Dashboard, error)
 	DeleteDashboard(id string) error
@@ -355,10 +357,12 @@ type GraphStore interface {
 	GetAllRelationTypes(ctx context.Context) ([]model.GraphRelationType, error)
 	AddDatasets(ctx context.Context, datasets []model.GraphDataset) (int64, error)
 	GetAllDatasetsForWorkspace(ctx context.Context, workspaceID string) ([]model.GraphDataset, error)
+	GetDatasetByID(ctx context.Context, id string) (*model.GraphDataset, error)
 	DeleteDatasets(ctx context.Context, ids []string) error
 	AddDatasetFields(ctx context.Context, fields []model.GraphDatasetField) (int64, error)
 	GetAllDatasetFieldsForWorkspace(ctx context.Context, workspaceID string) ([]model.GraphDatasetField, error)
 	GetDatasetFieldsByNames(ctx context.Context, workspaceID string, names []string) ([]model.GraphDatasetField, error)
+	GetDatasetFieldByID(ctx context.Context, id string) (*model.GraphDatasetField, error)
 	DeleteDatasetFields(ctx context.Context, ids []string) error
 	UpdateStructuredRelations(ctx context.Context, relationTypeID, fromTypeID, fromID, toTypeID string, toIDs []string) (int64, int64, error)
 	GetRelationsFrom(ctx context.Context, typeID, entityID string) ([]model.GraphRelation, error)

@@ -120,6 +120,14 @@
     "translation": "Nie udało się odczytać stanu grafu."
   },
   {
+    "id": "graph.entity_not_found",
+    "translation": "Nie znaleziono encji."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "Nie udało się odczytać relacji encji."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Interwał synchronizacji musi wynosić od 5 do 1440 minut."
   },

@@ -120,6 +120,14 @@
     "translation": "Grafa statusu nevarēja nolasīt."
   },
   {
+    "id": "graph.entity_not_found",
+    "translation": "Entītija netika atrasta."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "Entītijas relācijas nevarēja nolasīt."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Sinhronizācijas intervālam jābūt no 5 līdz 1440 minūtēm."
   },

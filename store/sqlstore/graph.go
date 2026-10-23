@@ -191,6 +191,18 @@ func (g *graphRepository) GetAllDatasetsForWorkspace(ctx context.Context, worksp
 	return datasets, rows.Err()
 }
 
+func (g *graphRepository) GetDatasetByID(ctx context.Context, id string) (*model.GraphDataset, error) {
+	var dataset model.GraphDataset
+
+	err := g.Db.QueryRowContext(ctx, "SELECT "+graphDatasetColumns+" FROM graph_datasets WHERE id = ?", id).
+		Scan(&dataset.ID, &dataset.WorkspaceID, &dataset.Name, &dataset.Kind, &dataset.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dataset, nil
+}
+
 func (g *graphRepository) DeleteDatasets(ctx context.Context, ids []string) error {
 	if len(ids) == 0 {
 		return nil
@@ -280,6 +292,18 @@ func (g *graphRepository) GetDatasetFieldsByNames(ctx context.Context, workspace
 	defer rows.Close()
 
 	return scanGraphDatasetFields(rows)
+}
+
+func (g *graphRepository) GetDatasetFieldByID(ctx context.Context, id string) (*model.GraphDatasetField, error) {
+	var field model.GraphDatasetField
+
+	err := g.Db.QueryRowContext(ctx, "SELECT "+graphDatasetFieldColumns+" FROM graph_dataset_fields WHERE id = ?", id).
+		Scan(&field.ID, &field.WorkspaceID, &field.DatasetID, &field.Name, &field.CreatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &field, nil
 }
 
 func (g *graphRepository) DeleteDatasetFields(ctx context.Context, ids []string) error {
