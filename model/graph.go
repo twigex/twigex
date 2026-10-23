@@ -10,6 +10,8 @@ import (
 
 const GraphSourceBuiltIn = "builtin"
 
+const GraphBuiltSetting = "graph.built"
+
 const (
 	GraphRelationKindTable  = "table"
 	GraphRelationKindStored = "stored"
@@ -95,6 +97,37 @@ type GraphDatasetField struct {
 	DatasetID   string `json:"dataset_id"`
 	Name        string `json:"name"`
 	CreatedAt   int64  `json:"created_at"`
+}
+
+type GraphRebuildResult struct {
+	Workspaces       int   `json:"workspaces"`
+	FailedWorkspaces int   `json:"failed_workspaces"`
+	DatasetsAdded    int64 `json:"datasets_added"`
+	DatasetsRemoved  int64 `json:"datasets_removed"`
+	FieldsAdded      int64 `json:"fields_added"`
+	FieldsRemoved    int64 `json:"fields_removed"`
+	RelationsAdded   int64 `json:"relations_added"`
+	RelationsRemoved int64 `json:"relations_removed"`
+}
+
+func (r *GraphRebuildResult) Add(other GraphRebuildResult) {
+	r.DatasetsAdded += other.DatasetsAdded
+	r.DatasetsRemoved += other.DatasetsRemoved
+	r.FieldsAdded += other.FieldsAdded
+	r.FieldsRemoved += other.FieldsRemoved
+	r.RelationsAdded += other.RelationsAdded
+	r.RelationsRemoved += other.RelationsRemoved
+}
+
+const GraphRebuildNeverRun = "never"
+
+type GraphRebuildStatus struct {
+	Built      bool               `json:"built"`
+	Status     string             `json:"status"`
+	Reason     string             `json:"reason,omitempty"`
+	Result     GraphRebuildResult `json:"result"`
+	StartedAt  int64              `json:"started_at"`
+	FinishedAt int64              `json:"finished_at"`
 }
 
 type GraphBuiltInRelationType struct {
@@ -189,6 +222,78 @@ func GraphQueryFields(query DataQuery) []string {
 	}
 
 	return fields
+}
+
+const ChartTypeMap = "map"
+
+type GraphMapPoint struct {
+	Lat  string `json:"lat"`
+	Long string `json:"long"`
+}
+
+type GraphMapPopover struct {
+	Fields []string `json:"fields"`
+}
+
+type GraphMapLayerConfig struct {
+	Coordinates      GraphMapPoint   `json:"coordinates"`
+	Source           GraphMapPoint   `json:"source"`
+	Target           GraphMapPoint   `json:"target"`
+	RadiusField      string          `json:"radius_field"`
+	FillColorField   string          `json:"fill_color_field"`
+	WidthField       string          `json:"width_field"`
+	SourceColorField string          `json:"source_color_field"`
+	TargetColorField string          `json:"target_color_field"`
+	GeojsonField     string          `json:"geojson_field"`
+	Weight           string          `json:"weight"`
+	Popover          GraphMapPopover `json:"popover"`
+}
+
+type GraphMapLayer struct {
+	Model   string              `json:"model"`
+	Filters []QueryFilter       `json:"filters"`
+	Config  GraphMapLayerConfig `json:"config"`
+}
+
+type GraphMapConfiguration struct {
+	Layers []GraphMapLayer `json:"layers"`
+}
+
+// GraphMapFields follows layerQuery in mapQuery.js. A map chart keeps no query
+// of its own; each layer asks for a count of its model plus the fields its
+// settings point at. A layer's config is reset when its type changes, so every
+// field key can be read without checking the type.
+func GraphMapFields(configuration GraphMapConfiguration) []string {
+	query := DataQuery{}
+
+	for _, layer := range configuration.Layers {
+		config := layer.Config
+
+		if layer.Model != "" {
+			query.Measures = append(query.Measures, layer.Model+".count")
+		}
+
+		query.Dimensions = append(query.Dimensions,
+			config.Coordinates.Lat,
+			config.Coordinates.Long,
+			config.Source.Lat,
+			config.Source.Long,
+			config.Target.Lat,
+			config.Target.Long,
+			config.RadiusField,
+			config.FillColorField,
+			config.WidthField,
+			config.SourceColorField,
+			config.TargetColorField,
+			config.GeojsonField,
+			config.Weight,
+		)
+		query.Dimensions = append(query.Dimensions, config.Popover.Fields...)
+
+		query.Filters = append(query.Filters, layer.Filters...)
+	}
+
+	return GraphQueryFields(query)
 }
 
 func graphFilterMembers(filter QueryFilter) []string {

@@ -4,6 +4,7 @@
 package model
 
 import (
+	"encoding/json"
 	"slices"
 	"testing"
 )
@@ -72,6 +73,67 @@ func TestGraphQueryFieldsIgnoresAnEmptyOrder(t *testing.T) {
 	got := GraphQueryFields(query)
 
 	want := []string{"orders.count"}
+
+	if !slices.Equal(got, want) {
+		t.Errorf("want %v, got %v", want, got)
+	}
+}
+
+func TestGraphMapFieldsListsEveryFieldTheLayersRead(t *testing.T) {
+	raw := `{
+		"zoom": 3.6,
+		"layers": [
+			{
+				"type": "point",
+				"model": "stores",
+				"filters": [{"member": "stores.country", "operator": "equals", "values": ["LV"]}],
+				"config": {
+					"fill_color_field": "stores.revenue",
+					"radius_field": "stores.revenue",
+					"coordinates": {"lat": "stores.latitude", "long": "stores.longitude"},
+					"popover": {"fields": ["stores.name"]},
+					"data": null
+				}
+			},
+			{
+				"type": "arc",
+				"model": "routes",
+				"filters": [],
+				"config": {
+					"source": {"lat": "routes.from_lat", "long": "routes.from_lng"},
+					"target": {"lat": "routes.to_lat", "long": "routes.to_lng"},
+					"source_color_field": null,
+					"width_field": "routes.shipments",
+					"popover": {"fields": []},
+					"data": []
+				}
+			}
+		]
+	}`
+
+	configuration := GraphMapConfiguration{}
+
+	err := json.Unmarshal([]byte(raw), &configuration)
+	if err != nil {
+		t.Fatalf("Unmarshal: %v", err)
+	}
+
+	got := GraphMapFields(configuration)
+
+	want := []string{
+		"stores.count",
+		"routes.count",
+		"stores.latitude",
+		"stores.longitude",
+		"stores.revenue",
+		"stores.name",
+		"routes.from_lat",
+		"routes.from_lng",
+		"routes.to_lat",
+		"routes.to_lng",
+		"routes.shipments",
+		"stores.country",
+	}
 
 	if !slices.Equal(got, want) {
 		t.Errorf("want %v, got %v", want, got)

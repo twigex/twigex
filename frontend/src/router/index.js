@@ -44,6 +44,7 @@ import LanguageView from "@/views/Settings/LanguageView.vue";
 import AuthorizationView from "@/views/Settings/AuthorizationView.vue";
 import OfficeView from "@/views/Settings/OfficeView.vue";
 import StorageView from "@/views/Settings/StorageView.vue";
+import KnowledgeGraphView from "@/views/Settings/KnowledgeGraphView.vue";
 import RolesView from "@/views/Settings/RolesView.vue";
 import RoleEditView from "@/views/Settings/RoleEditView.vue";
 import CollimatoMainView from "@/views/Collimato/CollimatoMainView.vue";
@@ -458,6 +459,15 @@ const routes = [
                             requireAdmin: true,
                         },
                         component: StorageView,
+                    },
+                    {
+                        path: "knowledge-graph",
+                        name: "knowledge-graph-settings",
+                        meta: {
+                            requireAuth: true,
+                            requirePermission: "manage_knowledge_graph",
+                        },
+                        component: KnowledgeGraphView,
                     },
                     {
                         path: "roles",

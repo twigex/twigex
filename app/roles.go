@@ -35,7 +35,19 @@ func (a *App) GetSystemPermissions(user model.User) ([]model.PermissionSection, 
 		return nil, model.NewAppError("role.forbidden", http.StatusForbidden)
 	}
 
-	return model.GetSystemPermissionSections(), nil
+	sections := model.GetSystemPermissionSections()
+	if a.graphEnabled() {
+		return sections, nil
+	}
+
+	visible := make([]model.PermissionSection, 0, len(sections))
+	for _, section := range sections {
+		if section.ID != model.KnowledgeGraphPermissionSectionID {
+			visible = append(visible, section)
+		}
+	}
+
+	return visible, nil
 }
 
 func (a *App) CreateSystemRole(user model.User, role model.Role) (*model.Role, *model.AppError) {

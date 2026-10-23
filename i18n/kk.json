@@ -100,6 +100,26 @@
     "translation": "Синхрондауды бастау мүмкін болмады."
   },
   {
+    "id": "graph.disabled",
+    "translation": "Білім графы қосылмаған."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "Сізде білім графын басқаруға рұқсат жоқ."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "Графты қайта құру қазір жүріп жатыр."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "Графты қайта құруды бастау мүмкін болмады."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "Граф күйін оқу мүмкін болмады."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Синхрондау аралығы 5 пен 1440 минут аралығында болуы керек."
   },
