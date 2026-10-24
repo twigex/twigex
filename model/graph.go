@@ -187,16 +187,28 @@ type GraphEntityRef struct {
 type GraphRelationItem struct {
 	Entity GraphEntityRef `json:"entity"`
 	Origin string         `json:"origin"`
+	// Source is the field the relation is read from, for a relation found in
+	// the data, such as orders.company_id.
+	Source string `json:"source,omitempty"`
 }
 
 // GraphRelationGroup lists the neighbours behind one relation type. A group larger
 // than its item limit carries only the count, which the screen shows as a box.
 type GraphRelationGroup struct {
-	RelationType string              `json:"relation_type"`
-	Direction    string              `json:"direction"`
-	EntityType   string              `json:"entity_type"`
-	Count        int                 `json:"count"`
-	Items        []GraphRelationItem `json:"items"`
+	RelationType string `json:"relation_type"`
+	Direction    string `json:"direction"`
+	EntityType   string `json:"entity_type"`
+	Count        int    `json:"count"`
+	// CountCapped means there are more than Count; the screen shows "1000+".
+	CountCapped bool                `json:"count_capped,omitempty"`
+	Items       []GraphRelationItem `json:"items"`
+}
+
+// GraphRelationPage is one page of a group too large to send with its entity.
+// Next is the key to ask for the following page with; empty on the last page.
+type GraphRelationPage struct {
+	Items []GraphRelationItem `json:"items"`
+	Next  string              `json:"next,omitempty"`
 }
 
 type GraphEntityRelations struct {

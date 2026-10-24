@@ -60,7 +60,54 @@ func (a *App) GetGraphEntityRelations(ctx context.Context, user model.User, enti
 		return nil, graphEntityNotFound()
 	}
 
-	return source.relations(ctx, user, entityType, entityID)
+	relations, appErr := source.relations(ctx, user, entityType, entityID)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	for i := range relations.Groups {
+		if relations.Groups[i].Count > graphGroupItemLimit {
+			relations.Groups[i].Items = make([]model.GraphRelationItem, 0)
+		}
+	}
+
+	return relations, nil
+}
+
+// graphGroupPage cuts one page out of a group that was read whole.
+func graphGroupPage(relations *model.GraphEntityRelations, relationTypeKey, direction, after string) (*model.GraphRelationPage, *model.AppError) {
+	index := slices.IndexFunc(relations.Groups, func(group model.GraphRelationGroup) bool {
+		return group.RelationType == relationTypeKey && group.Direction == direction
+	})
+
+	if index == -1 {
+		return &model.GraphRelationPage{Items: make([]model.GraphRelationItem, 0)}, nil
+	}
+
+	items := relations.Groups[index].Items
+
+	start := 0
+
+	if after != "" {
+		last := slices.IndexFunc(items, func(item model.GraphRelationItem) bool {
+			return item.Entity.ID == after
+		})
+
+		if last == -1 {
+			return &model.GraphRelationPage{Items: make([]model.GraphRelationItem, 0)}, nil
+		}
+
+		start = last + 1
+	}
+
+	end := min(start+graphGroupItemLimit, len(items))
+	page := &model.GraphRelationPage{Items: items[start:end]}
+
+	if end < len(items) {
+		page.Next = items[end-1].Entity.ID
+	}
+
+	return page, nil
 }
 
 func (a *App) chartGraphRelations(ctx context.Context, user model.User, ids *graphBuiltInIDs, chartID string) (*model.GraphEntityRelations, *model.AppError) {
@@ -506,10 +553,6 @@ func addGraphGroup(groups []model.GraphRelationGroup, group model.GraphRelationG
 
 	group.Count = len(items)
 	group.Items = items
-
-	if len(items) > graphGroupItemLimit {
-		group.Items = make([]model.GraphRelationItem, 0)
-	}
 
 	return append(groups, group)
 }

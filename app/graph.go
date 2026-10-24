@@ -115,19 +115,18 @@ type graphBuiltInIDs struct {
 }
 
 func (a *App) loadGraphBuiltInIDs(ctx context.Context) (*graphBuiltInIDs, error) {
-	entityTypes, err := a.Store.Graph.GetAllEntityTypes(ctx)
+	ontology, err := a.loadGraphOntology(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	relationTypes, err := a.Store.Graph.GetAllRelationTypes(ctx)
-	if err != nil {
-		return nil, err
-	}
+	return graphBuiltInIDsOf(ontology)
+}
 
+func graphBuiltInIDsOf(ontology *graphOntology) (*graphBuiltInIDs, error) {
 	ids := graphBuiltInIDs{}
 
-	for _, entityType := range entityTypes {
+	for _, entityType := range ontology.entityTypes {
 		if !entityType.BuiltIn {
 			continue
 		}
@@ -140,7 +139,7 @@ func (a *App) loadGraphBuiltInIDs(ctx context.Context) (*graphBuiltInIDs, error)
 		}
 	}
 
-	for _, relationType := range relationTypes {
+	for _, relationType := range ontology.relationTypes {
 		if !relationType.BuiltIn {
 			continue
 		}

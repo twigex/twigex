@@ -420,6 +420,37 @@ func TestGraphRelationsSendOnlyTheCountForALargeGroup(t *testing.T) {
 	}
 }
 
+func TestGraphRelationPageListsALargeBuiltInGroup(t *testing.T) {
+	g := newGraphRelationsTestApp(graphViewerPermissions...)
+
+	for i := 0; i < graphGroupItemLimit+1; i++ {
+		id := fmt.Sprintf("bulk-%02d", i)
+		g.collimato.charts = append(g.collimato.charts, chartUsing(id, "ws", "orders.amount"))
+		g.graph.chartFields[id] = []string{"f-orders.amount"}
+	}
+
+	user := model.User{ID: "anna"}
+	relationType := model.GraphRelationChartUsesDatasetField
+
+	first, appErr := g.app.GetGraphRelationPage(context.Background(), user, model.GraphTypeDatasetField, "f-orders.amount", relationType, model.GraphDirectionIn, "")
+	if appErr != nil {
+		t.Fatalf("first page: %v", appErr)
+	}
+
+	if len(first.Items) != graphGroupItemLimit || first.Next == "" {
+		t.Fatalf("want a full first page with a next key, got %d items and next %q", len(first.Items), first.Next)
+	}
+
+	second, appErr := g.app.GetGraphRelationPage(context.Background(), user, model.GraphTypeDatasetField, "f-orders.amount", relationType, model.GraphDirectionIn, first.Next)
+	if appErr != nil {
+		t.Fatalf("second page: %v", appErr)
+	}
+
+	if len(second.Items) != 2 || second.Next != "" {
+		t.Errorf("want the last 2 items and no next key, got %d items and next %q", len(second.Items), second.Next)
+	}
+}
+
 func TestGraphRelationsAreHiddenWhileTheFlagIsOff(t *testing.T) {
 	g := newGraphTestApp(false)
 
