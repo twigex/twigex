@@ -128,6 +128,54 @@
     "translation": "The entity's relations could not be read."
   },
   {
+    "id": "graph.types_failed",
+    "translation": "The graph types could not be read or saved."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "The type was not found."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "The key must start with a lowercase letter and use only lowercase letters, digits and underscores, up to 64 characters."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Enter a name."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Another type already uses this key."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Built-in types can't be changed or deleted."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "The dataset was not found, or you can't see it."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "A chosen field doesn't belong to the dataset."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "A chosen field isn't visible to you in Collimato. Primary keys are hidden unless the dataset shows them."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "A key, name or relation field must be a dimension, not a measure."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "A relation type uses this type. Delete or change the relation type first."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Both ends of a relation must be types that read their entities from a dataset."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "The synchronisation interval must be between 5 and 1440 minutes."
   },

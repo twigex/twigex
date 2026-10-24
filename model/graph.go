@@ -4,17 +4,24 @@
 package model
 
 import (
+	"errors"
 	"slices"
 	"strings"
 )
 
-const GraphSourceBuiltIn = "builtin"
+var ErrGraphTypeKeyTaken = errors.New("another graph type has this key")
+
+const (
+	GraphSourceBuiltIn = "builtin"
+	GraphSourceDataset = "dataset"
+)
 
 const GraphBuiltSetting = "graph.built"
 
 const (
-	GraphRelationKindTable  = "table"
-	GraphRelationKindStored = "stored"
+	GraphRelationKindTable    = "table"
+	GraphRelationKindStored   = "stored"
+	GraphRelationKindProperty = "property"
 )
 
 const (
@@ -57,18 +64,52 @@ type GraphEntityType struct {
 }
 
 type GraphRelationType struct {
-	ID          string `json:"id"`
-	Key         string `json:"key"`
-	Name        string `json:"name"`
-	ReverseName string `json:"reverse_name"`
-	FromTypeID  string `json:"from_type_id"`
-	ToTypeID    string `json:"to_type_id"`
-	Kind        string `json:"kind"`
-	Description string `json:"description,omitempty"`
-	BuiltIn     bool   `json:"built_in"`
-	CreatedBy   string `json:"created_by,omitempty"`
-	CreatedAt   int64  `json:"created_at"`
-	UpdatedAt   int64  `json:"updated_at"`
+	ID          string                   `json:"id"`
+	Key         string                   `json:"key"`
+	Name        string                   `json:"name"`
+	ReverseName string                   `json:"reverse_name"`
+	FromTypeID  string                   `json:"from_type_id"`
+	ToTypeID    string                   `json:"to_type_id"`
+	Kind        string                   `json:"kind"`
+	KindConfig  *GraphRelationKindConfig `json:"kind_config,omitempty"`
+	Description string                   `json:"description,omitempty"`
+	BuiltIn     bool                     `json:"built_in"`
+	CreatedBy   string                   `json:"created_by,omitempty"`
+	CreatedAt   int64                    `json:"created_at"`
+	UpdatedAt   int64                    `json:"updated_at"`
+}
+
+// GraphRelationKindConfig holds field IDs from graph_dataset_fields. For a
+// property relation, Property is the field on the "to" type that holds the "from"
+// entity's key, or its FromProperty when one is set.
+type GraphRelationKindConfig struct {
+	Property     string `json:"property"`
+	FromProperty string `json:"from_property,omitempty"`
+}
+
+type GraphEntityTypeInput struct {
+	Key           string `json:"key"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	SourceID      string `json:"source_id"`
+	KeyProperty   string `json:"key_property"`
+	TitleProperty string `json:"title_property"`
+}
+
+type GraphRelationTypeInput struct {
+	Key          string `json:"key"`
+	Name         string `json:"name"`
+	ReverseName  string `json:"reverse_name"`
+	Description  string `json:"description"`
+	FromTypeID   string `json:"from_type_id"`
+	ToTypeID     string `json:"to_type_id"`
+	Property     string `json:"property"`
+	FromProperty string `json:"from_property"`
+}
+
+type GraphTypes struct {
+	EntityTypes   []GraphEntityType   `json:"entity_types"`
+	RelationTypes []GraphRelationType `json:"relation_types"`
 }
 
 type GraphRelation struct {

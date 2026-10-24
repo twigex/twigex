@@ -128,6 +128,54 @@
     "translation": "Nie udało się odczytać relacji encji."
   },
   {
+    "id": "graph.types_failed",
+    "translation": "Nie udało się odczytać ani zapisać typów grafu."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "Nie znaleziono typu."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "Klucz musi zaczynać się od małej litery i zawierać tylko małe litery, cyfry i podkreślenia, maksymalnie 64 znaki."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Wpisz nazwę."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Inny typ używa już tego klucza."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Typów wbudowanych nie można zmieniać ani usuwać."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "Nie znaleziono zbioru danych lub nie masz do niego dostępu."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "Wybrane pole nie należy do zbioru danych."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "Wybrane pole nie jest dla Ciebie widoczne w Collimato. Klucze główne są ukryte, chyba że zbiór danych je pokazuje."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "Pole klucza, nazwy lub relacji musi być wymiarem, a nie miarą."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "Ten typ jest używany przez typ relacji. Najpierw usuń lub zmień typ relacji."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Oba końce relacji muszą być typami, które pobierają encje ze zbioru danych."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Interwał synchronizacji musi wynosić od 5 do 1440 minut."
   },

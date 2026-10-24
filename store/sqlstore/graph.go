@@ -6,7 +6,11 @@ package sqlstore
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"time"
+
+	"github.com/go-sql-driver/mysql"
 
 	"github.com/twigex/twigex/model"
 )
@@ -17,7 +21,7 @@ type graphRepository struct {
 
 const (
 	graphEntityTypeColumns   = "id, `key`, name, source, source_id, key_property, title_property, description, built_in, created_by, created_at, updated_at"
-	graphRelationTypeColumns = "id, `key`, name, reverse_name, from_type_id, to_type_id, kind, description, built_in, created_by, created_at, updated_at"
+	graphRelationTypeColumns = "id, `key`, name, reverse_name, from_type_id, to_type_id, kind, kind_config, description, built_in, created_by, created_at, updated_at"
 	graphRelationColumns     = "id, relation_type_id, from_type_id, from_id, to_type_id, to_id, origin, created_by, created_at"
 	graphDatasetColumns      = "id, workspace_id, name, kind, created_at"
 	graphDatasetFieldColumns = "id, workspace_id, dataset_id, name, created_at"
@@ -87,7 +91,7 @@ func (g *graphRepository) CreateOrUpdateRelationType(ctx context.Context, relati
 
 	_, err := g.Db.ExecContext(ctx,
 		"INSERT INTO graph_relation_types ("+graphRelationTypeColumns+`)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		 ON DUPLICATE KEY UPDATE
 		     name = VALUES(name),
 		     reverse_name = VALUES(reverse_name),
@@ -104,6 +108,7 @@ func (g *graphRepository) CreateOrUpdateRelationType(ctx context.Context, relati
 		relationType.FromTypeID,
 		relationType.ToTypeID,
 		relationType.Kind,
+		nil,
 		nullableString(relationType.Description),
 		relationType.BuiltIn,
 		nullableString(relationType.CreatedBy),
@@ -133,6 +138,140 @@ func (g *graphRepository) GetAllRelationTypes(ctx context.Context) ([]model.Grap
 	}
 
 	return relationTypes, rows.Err()
+}
+
+func (g *graphRepository) GetEntityTypeByID(ctx context.Context, id string) (*model.GraphEntityType, error) {
+	row := g.Db.QueryRowContext(ctx, "SELECT "+graphEntityTypeColumns+" FROM graph_entity_types WHERE id = ?", id)
+
+	return scanGraphEntityType(row)
+}
+
+func (g *graphRepository) CreateEntityType(ctx context.Context, entityType model.GraphEntityType) error {
+	_, err := g.Db.ExecContext(ctx,
+		"INSERT INTO graph_entity_types ("+graphEntityTypeColumns+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		entityType.ID,
+		entityType.Key,
+		entityType.Name,
+		entityType.Source,
+		nullableString(entityType.SourceID),
+		nullableString(entityType.KeyProperty),
+		nullableString(entityType.TitleProperty),
+		nullableString(entityType.Description),
+		false,
+		nullableString(entityType.CreatedBy),
+		entityType.CreatedAt,
+		entityType.UpdatedAt,
+	)
+
+	return graphKeyTaken(err)
+}
+
+func (g *graphRepository) UpdateEntityType(ctx context.Context, entityType model.GraphEntityType) error {
+	_, err := g.Db.ExecContext(ctx,
+		`UPDATE graph_entity_types
+		 SET name = ?, source_id = ?, key_property = ?, title_property = ?, description = ?, updated_at = ?
+		 WHERE id = ? AND built_in = 0`,
+		entityType.Name,
+		nullableString(entityType.SourceID),
+		nullableString(entityType.KeyProperty),
+		nullableString(entityType.TitleProperty),
+		nullableString(entityType.Description),
+		entityType.UpdatedAt,
+		entityType.ID,
+	)
+
+	return err
+}
+
+func (g *graphRepository) DeleteEntityType(ctx context.Context, id string) error {
+	_, err := g.Db.ExecContext(ctx, "DELETE FROM graph_entity_types WHERE id = ? AND built_in = 0", id)
+
+	return err
+}
+
+func (g *graphRepository) GetRelationTypeByID(ctx context.Context, id string) (*model.GraphRelationType, error) {
+	row := g.Db.QueryRowContext(ctx, "SELECT "+graphRelationTypeColumns+" FROM graph_relation_types WHERE id = ?", id)
+
+	return scanGraphRelationType(row)
+}
+
+func (g *graphRepository) CreateRelationType(ctx context.Context, relationType model.GraphRelationType) error {
+	kindConfig, err := graphKindConfigValue(relationType.KindConfig)
+	if err != nil {
+		return err
+	}
+
+	_, err = g.Db.ExecContext(ctx,
+		"INSERT INTO graph_relation_types ("+graphRelationTypeColumns+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		relationType.ID,
+		relationType.Key,
+		relationType.Name,
+		relationType.ReverseName,
+		relationType.FromTypeID,
+		relationType.ToTypeID,
+		relationType.Kind,
+		kindConfig,
+		nullableString(relationType.Description),
+		false,
+		nullableString(relationType.CreatedBy),
+		relationType.CreatedAt,
+		relationType.UpdatedAt,
+	)
+
+	return graphKeyTaken(err)
+}
+
+// graphKeyTaken reports a clash on a unique key as ErrGraphTypeKeyTaken. The
+// unique key is the only check that a key is free, so it also covers two
+// admins saving the same key at once.
+func graphKeyTaken(err error) error {
+	var mysqlErr *mysql.MySQLError
+
+	if errors.As(err, &mysqlErr) && mysqlErr.Number == 1062 {
+		return model.ErrGraphTypeKeyTaken
+	}
+
+	return err
+}
+
+func (g *graphRepository) UpdateRelationType(ctx context.Context, relationType model.GraphRelationType) error {
+	kindConfig, err := graphKindConfigValue(relationType.KindConfig)
+	if err != nil {
+		return err
+	}
+
+	_, err = g.Db.ExecContext(ctx,
+		`UPDATE graph_relation_types
+		 SET name = ?, reverse_name = ?, kind_config = ?, description = ?, updated_at = ?
+		 WHERE id = ? AND built_in = 0`,
+		relationType.Name,
+		relationType.ReverseName,
+		kindConfig,
+		nullableString(relationType.Description),
+		relationType.UpdatedAt,
+		relationType.ID,
+	)
+
+	return err
+}
+
+func (g *graphRepository) DeleteRelationType(ctx context.Context, id string) error {
+	_, err := g.Db.ExecContext(ctx, "DELETE FROM graph_relation_types WHERE id = ? AND built_in = 0", id)
+
+	return err
+}
+
+func graphKindConfigValue(kindConfig *model.GraphRelationKindConfig) (any, error) {
+	if kindConfig == nil {
+		return nil, nil
+	}
+
+	raw, err := json.Marshal(kindConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return string(raw), nil
 }
 
 func (g *graphRepository) AddDatasets(ctx context.Context, datasets []model.GraphDataset) (int64, error) {
@@ -464,7 +603,7 @@ func scanGraphEntityType(row graphRowScanner) (*model.GraphEntityType, error) {
 
 func scanGraphRelationType(row graphRowScanner) (*model.GraphRelationType, error) {
 	var relationType model.GraphRelationType
-	var description, createdBy sql.NullString
+	var kindConfig, description, createdBy sql.NullString
 
 	err := row.Scan(
 		&relationType.ID,
@@ -474,6 +613,7 @@ func scanGraphRelationType(row graphRowScanner) (*model.GraphRelationType, error
 		&relationType.FromTypeID,
 		&relationType.ToTypeID,
 		&relationType.Kind,
+		&kindConfig,
 		&description,
 		&relationType.BuiltIn,
 		&createdBy,
@@ -486,6 +626,15 @@ func scanGraphRelationType(row graphRowScanner) (*model.GraphRelationType, error
 
 	relationType.Description = description.String
 	relationType.CreatedBy = createdBy.String
+
+	if kindConfig.Valid {
+		relationType.KindConfig = &model.GraphRelationKindConfig{}
+
+		err = json.Unmarshal([]byte(kindConfig.String), relationType.KindConfig)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	return &relationType, nil
 }
