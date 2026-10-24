@@ -1606,7 +1606,16 @@ func (a *App) GetWorkspaceSQL(ctx context.Context, user model.User, workspaceID 
 	return body, nil
 }
 
+// QueryData runs a query sent by the browser. Ungrouped is always switched
+// off here: with it, a measure such as an average salary would come back as
+// each person's own value, row by row. Only Twigex's own row reads use it.
 func (a *App) QueryData(ctx context.Context, user model.User, workspaceID string, query model.DataQuery) (map[string]any, *model.AppError) {
+	query.Ungrouped = false
+
+	return a.queryData(ctx, user, workspaceID, query)
+}
+
+func (a *App) queryData(ctx context.Context, user model.User, workspaceID string, query model.DataQuery) (map[string]any, *model.AppError) {
 	if !a.canQueryWorkspaceData(user, workspaceID) {
 		return nil, model.NewAppError("collimato.forbidden", http.StatusForbidden)
 	}
