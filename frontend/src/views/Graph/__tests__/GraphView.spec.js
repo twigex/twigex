@@ -9,6 +9,7 @@ import { it, expect, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createRouter, createMemoryHistory } from "vue-router";
+import { usePermissionsStore } from "@/store/permissions";
 import GraphSectionView from "@/views/Graph/GraphSectionView.vue";
 import GraphView from "@/views/Graph/GraphView.vue";
 import OntologyView from "@/views/Graph/OntologyView.vue";
@@ -177,4 +178,19 @@ it("reads a relation from the other side on that type's page", async () => {
 
     expect(text).toContain("Order placed by Company");
     expect(text).toContain("Many to one");
+});
+
+it("shows the buttons to change types only to those who manage the graph", async () => {
+    setActivePinia(createPinia());
+
+    const viewer = await mountAt(graphRouter(), { name: "graph-ontology" });
+
+    expect(viewer.text()).not.toContain("New entity type");
+
+    setActivePinia(createPinia());
+    usePermissionsStore().permissions = ["manage_knowledge_graph"];
+
+    const admin = await mountAt(graphRouter(), { name: "graph-ontology" });
+
+    expect(admin.text()).toContain("New entity type");
 });

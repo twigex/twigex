@@ -21,6 +21,7 @@ type graphVisibleMeta struct {
 	datasets   map[string]bool
 	fields     map[string]bool
 	dimensions map[string]bool
+	titles     map[string]string
 }
 
 func graphEntityNotFound() *model.AppError {
@@ -440,6 +441,7 @@ func (a *App) graphVisibleMeta(ctx context.Context, user model.User, workspaceID
 		datasets:   make(map[string]bool),
 		fields:     make(map[string]bool),
 		dimensions: make(map[string]bool),
+		titles:     make(map[string]string),
 	}
 
 	collection, appErr := a.GetWorkspaceMeta(ctx, user, workspaceID)
@@ -457,6 +459,7 @@ func (a *App) graphVisibleMeta(ctx context.Context, user model.User, workspaceID
 		for _, dimension := range cube.Dimensions {
 			visible.fields[dimension.Name] = true
 			visible.dimensions[dimension.Name] = true
+			visible.titles[dimension.Name] = dimension.Title
 		}
 
 		for _, measure := range cube.Measures {

@@ -7,6 +7,7 @@ import { createColumnPlacer, freePosition, COLUMN_GAP, ROW_GAP } from "@/utils/g
 import { pathTo } from "@/utils/graph/path.js";
 import { typeStyles } from "@/utils/graph/palette.js";
 import { relationsOf } from "@/utils/graph/relations.js";
+import { suggestKey, fallbackKey } from "@/utils/graph/keys.js";
 
 const company = { id: "t-company", key: "company" };
 const order = { id: "t-order", key: "order" };
@@ -124,5 +125,23 @@ describe("relationsOf", () => {
             "one_to_many",
             "many_to_one",
         ]);
+    });
+});
+
+describe("suggestKey", () => {
+    it("turns names into keys the server accepts", () => {
+        expect(suggestKey("Purchase order")).toBe("purchase_order");
+        expect(suggestKey("Ēka 2")).toBe("eka_2");
+        expect(suggestKey("2nd hand")).toBe("nd_hand");
+        expect(suggestKey("company", "places", "order")).toBe("company_places_order");
+        expect(suggestKey("a".repeat(80))).toHaveLength(64);
+        expect(suggestKey("Spółka")).toBe("spolka");
+        expect(suggestKey("Компания")).toBe("");
+    });
+});
+
+describe("fallbackKey", () => {
+    it("makes a key the server accepts", () => {
+        expect(fallbackKey("type")).toMatch(/^type_[a-z0-9]+$/);
     });
 });

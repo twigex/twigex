@@ -600,3 +600,46 @@ func TestGraphTypeNamesHaveALengthLimit(t *testing.T) {
 		t.Errorf("want graph.type_name_too_long for the plural name, got %v", appErr)
 	}
 }
+
+func (f *fakeGraphCollimatoStore) GetWorkspacesForUser(_ string) ([]model.CollimatoWorkspace, error) {
+	return f.workspaces, nil
+}
+
+func TestGraphDatasetChoicesOfferOnlyVisibleDimensions(t *testing.T) {
+	g := newGraphTypesTestApp()
+
+	g.collimato.workspaces = []model.CollimatoWorkspace{
+		{ID: "ws", Name: "Sales"},
+		{ID: "broken", Name: "Broken"},
+		{ID: "ws-deleted", Name: "Deleted", DeletedAt: 1},
+	}
+
+	g.meta["ws-deleted"] = g.meta["ws"]
+	g.graph.datasets = append(g.graph.datasets, model.GraphDataset{ID: "ds-deleted", WorkspaceID: "ws-deleted", Name: "companies"})
+
+	choices, appErr := g.app.GetGraphDatasetChoices(context.Background(), graphTypeAdmin)
+	if appErr != nil {
+		t.Fatalf("GetGraphDatasetChoices: %v", appErr)
+	}
+
+	if len(choices) != 2 {
+		t.Fatalf("want companies and orders from Sales only, got %+v", choices)
+	}
+
+	for _, choice := range choices {
+		if choice.WorkspaceName != "Sales" {
+			t.Errorf("want only the readable workspace, got %s", choice.WorkspaceName)
+		}
+
+		for _, field := range choice.Fields {
+			if field.Name == "companies.id" || field.Name == "orders.count" {
+				t.Errorf("want no hidden key and no measure, got %s", field.Name)
+			}
+		}
+	}
+
+	_, appErr = g.app.GetGraphDatasetChoices(context.Background(), graphTypeMember)
+	if appErr == nil || appErr.ID != "graph.forbidden" {
+		t.Errorf("want graph.forbidden for a member, got %v", appErr)
+	}
+}
