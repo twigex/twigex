@@ -4,204 +4,180 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-    <SidebarLayout :title="t('graph.title')">
-        <template #sidebar="{ mini }">
-            <GraphNavigation
-                v-if="!mini"
-                :entity-type-count="entityTypes.length"
-                :relation-type-count="relationTypeCount"
-            />
-            <div v-else class="flex justify-center pt-2">
-                <ShareIcon class="size-5 text-indigo-600" aria-hidden="true" />
-            </div>
-        </template>
+    <div class="flex h-full flex-col gap-y-3 overflow-hidden bg-gray-50 p-3 sm:p-4">
+        <GraphSearch :entity-types="searchTypes" :styles="styles" @pick="pickStart" />
 
-        <div class="flex h-full flex-col gap-y-3 overflow-hidden bg-gray-50 p-3 sm:p-4">
-            <GraphSearch :entity-types="searchTypes" :styles="styles" @pick="pickStart" />
-
-            <div
-                class="flex shrink-0 flex-wrap gap-2"
-                role="group"
-                :aria-label="t('graph.chips.label')"
+        <div
+            class="flex shrink-0 flex-wrap gap-2"
+            role="group"
+            :aria-label="t('graph.chips.label')"
+        >
+            <button
+                type="button"
+                :aria-pressed="map.shownTypes.value.length === 0"
+                :class="chipClass(map.shownTypes.value.length === 0)"
+                @click="map.showAllTypes()"
             >
-                <button
-                    type="button"
-                    :aria-pressed="map.shownTypes.value.length === 0"
-                    :class="chipClass(map.shownTypes.value.length === 0)"
-                    @click="map.showAllTypes()"
-                >
-                    {{ t("graph.chips.all") }}
-                </button>
-                <button
-                    v-for="entityType in entityTypes"
-                    :key="entityType.key"
-                    type="button"
-                    :aria-pressed="map.shownTypes.value.includes(entityType.key)"
-                    :class="chipClass(map.shownTypes.value.includes(entityType.key))"
-                    @click="map.toggleType(entityType.key)"
-                >
-                    <span
-                        class="size-2.5 rounded-full"
-                        :style="{ background: styles[entityType.key]?.color }"
-                    ></span>
-                    {{ entityType.name }}
-                </button>
-            </div>
+                {{ t("graph.chips.all") }}
+            </button>
+            <button
+                v-for="entityType in entityTypes"
+                :key="entityType.key"
+                type="button"
+                :aria-pressed="map.shownTypes.value.includes(entityType.key)"
+                :class="chipClass(map.shownTypes.value.includes(entityType.key))"
+                @click="map.toggleType(entityType.key)"
+            >
+                <span
+                    class="size-2.5 rounded-full"
+                    :style="{ background: styles[entityType.key]?.color }"
+                ></span>
+                {{ entityType.name }}
+            </button>
+        </div>
 
-            <div class="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
-                <section
-                    class="relative flex min-h-[24rem] min-w-0 flex-1 flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-200"
-                    :aria-label="t('graph.card.label')"
-                >
-                    <div
-                        class="flex flex-wrap items-center gap-3 border-b border-gray-100 px-4 py-3"
+        <div class="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+            <section
+                class="relative flex min-h-[24rem] min-w-0 flex-1 flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-200"
+                :aria-label="t('graph.card.label')"
+            >
+                <div class="flex flex-wrap items-center gap-3 border-b border-gray-100 px-4 py-3">
+                    <nav
+                        v-if="pathSteps.length > 0"
+                        class="flex min-w-0 flex-1"
+                        :aria-label="t('graph.path')"
                     >
-                        <nav
-                            v-if="pathSteps.length > 0"
-                            class="flex min-w-0 flex-1"
-                            :aria-label="t('graph.path')"
-                        >
-                            <ol
-                                role="list"
-                                class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm"
+                        <ol role="list" class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+                            <li
+                                v-for="(step, index) in pathSteps"
+                                :key="step.key"
+                                class="flex items-center gap-x-2"
                             >
-                                <li
-                                    v-for="(step, index) in pathSteps"
-                                    :key="step.key"
-                                    class="flex items-center gap-x-2"
-                                >
-                                    <ChevronRightIcon
-                                        v-if="index > 0"
-                                        class="size-4 shrink-0 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                    <button
-                                        type="button"
-                                        :class="
-                                            index === pathSteps.length - 1
-                                                ? 'font-semibold text-gray-900'
-                                                : 'text-indigo-600 hover:text-indigo-500'
-                                        "
-                                        @click="inspect(step.key)"
-                                    >
-                                        {{ step.label }}
-                                    </button>
-                                </li>
-                            </ol>
-                        </nav>
-                        <p
-                            v-else
-                            class="min-w-0 flex-1 truncate text-sm font-semibold text-gray-900"
-                        >
-                            {{ t("graph.title") }}
-                        </p>
-
-                        <span v-if="hasStart" class="text-sm text-gray-500">
-                            {{
-                                t("graph.card.counts", {
-                                    entities: counts.entities,
-                                    relations: counts.relations,
-                                })
-                            }}
-                        </span>
-
-                        <span class="isolate inline-flex rounded-md shadow-sm">
-                            <button
-                                v-for="(option, index) in layoutOptions"
-                                :key="option.value"
-                                type="button"
-                                :class="[
-                                    map.layout.value === option.value
-                                        ? 'bg-indigo-50 text-indigo-700'
-                                        : 'bg-white text-gray-700 hover:bg-gray-50',
-                                    index === 0 ? 'rounded-l-md' : '-ml-px rounded-r-md',
-                                    'relative inline-flex items-center px-3 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:z-10',
-                                ]"
-                                @click="map.setLayout(option.value)"
-                            >
-                                {{ option.label }}
-                            </button>
-                        </span>
-
-                        <BaseButton
-                            variant="secondary"
-                            size="small"
-                            :is-disabled="!canExpandSelected"
-                            @click="expandSelected"
-                        >
-                            {{ t("graph.card.expand_selected") }}
-                        </BaseButton>
-                        <BaseButton
-                            variant="secondary"
-                            size="small"
-                            :prepend-icon="ArrowPathIcon"
-                            :is-disabled="!hasStart"
-                            @click="startFromRoute"
-                        >
-                            {{ t("graph.start_over") }}
-                        </BaseButton>
-                    </div>
-
-                    <div class="relative flex-1 bg-gray-50/40">
-                        <GraphCanvas :map="map" @inspect="inspect" @expand="expand" />
-
-                        <div
-                            v-if="!hasStart"
-                            class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
-                        >
-                            <ShareIcon class="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-                            <h3 class="mt-2 text-sm font-semibold text-gray-900">
-                                {{ t("graph.empty.title") }}
-                            </h3>
-                            <p class="mt-1 text-sm text-gray-500">
-                                {{ t("graph.empty.description") }}
-                            </p>
-                        </div>
-
-                        <div
-                            v-if="map.errorMessage.value"
-                            class="absolute inset-x-4 top-4 mx-auto max-w-md rounded-md bg-red-50 p-4 shadow-sm"
-                        >
-                            <div class="flex">
-                                <XCircleIcon
-                                    class="h-5 w-5 shrink-0 text-red-400"
+                                <ChevronRightIcon
+                                    v-if="index > 0"
+                                    class="size-4 shrink-0 text-gray-400"
                                     aria-hidden="true"
                                 />
-                                <p class="ml-3 text-sm text-red-700">
-                                    {{ map.errorMessage.value }}
-                                </p>
-                            </div>
-                        </div>
+                                <button
+                                    type="button"
+                                    :class="
+                                        index === pathSteps.length - 1
+                                            ? 'font-semibold text-gray-900'
+                                            : 'text-indigo-600 hover:text-indigo-500'
+                                    "
+                                    @click="inspect(step.key)"
+                                >
+                                    {{ step.label }}
+                                </button>
+                            </li>
+                        </ol>
+                    </nav>
+                    <p v-else class="min-w-0 flex-1 truncate text-sm font-semibold text-gray-900">
+                        {{ t("graph.title") }}
+                    </p>
+
+                    <span v-if="hasStart" class="text-sm text-gray-500">
+                        {{
+                            t("graph.card.counts", {
+                                entities: counts.entities,
+                                relations: counts.relations,
+                            })
+                        }}
+                    </span>
+
+                    <span class="isolate inline-flex rounded-md shadow-sm">
+                        <button
+                            v-for="(option, index) in layoutOptions"
+                            :key="option.value"
+                            type="button"
+                            :class="[
+                                map.layout.value === option.value
+                                    ? 'bg-indigo-50 text-indigo-700'
+                                    : 'bg-white text-gray-700 hover:bg-gray-50',
+                                index === 0 ? 'rounded-l-md' : '-ml-px rounded-r-md',
+                                'relative inline-flex items-center px-3 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 focus:z-10',
+                            ]"
+                            @click="map.setLayout(option.value)"
+                        >
+                            {{ option.label }}
+                        </button>
+                    </span>
+
+                    <BaseButton
+                        variant="secondary"
+                        size="small"
+                        :is-disabled="!canExpandSelected"
+                        @click="expandSelected"
+                    >
+                        {{ t("graph.card.expand_selected") }}
+                    </BaseButton>
+                    <BaseButton
+                        variant="secondary"
+                        size="small"
+                        :prepend-icon="ArrowPathIcon"
+                        :is-disabled="!hasStart"
+                        @click="startFromRoute"
+                    >
+                        {{ t("graph.start_over") }}
+                    </BaseButton>
+                </div>
+
+                <div class="relative flex-1 bg-gray-50/40">
+                    <GraphCanvas :map="map" @inspect="inspect" @expand="expand" />
+
+                    <div
+                        v-if="!hasStart"
+                        class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
+                    >
+                        <ShareIcon class="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+                        <h3 class="mt-2 text-sm font-semibold text-gray-900">
+                            {{ t("graph.empty.title") }}
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500">
+                            {{ t("graph.empty.description") }}
+                        </p>
                     </div>
 
                     <div
-                        class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-gray-100 px-4 py-3 text-xs text-gray-500"
+                        v-if="map.errorMessage.value"
+                        class="absolute inset-x-4 top-4 mx-auto max-w-md rounded-md bg-red-50 p-4 shadow-sm"
                     >
-                        <span class="inline-flex items-center gap-x-1.5">
-                            <span class="h-px w-7 bg-gray-400"></span>
-                            {{ t("graph.legend.relation") }}
-                        </span>
-                        <span class="inline-flex items-center gap-x-1.5">
-                            <span class="size-2.5 rounded-full bg-gray-400"></span>
-                            {{ t("graph.legend.group") }}
-                        </span>
-                        <span class="flex-1"></span>
-                        <span>{{ t("graph.legend.hint") }}</span>
+                        <div class="flex">
+                            <XCircleIcon class="h-5 w-5 shrink-0 text-red-400" aria-hidden="true" />
+                            <p class="ml-3 text-sm text-red-700">
+                                {{ map.errorMessage.value }}
+                            </p>
+                        </div>
                     </div>
-                </section>
+                </div>
 
-                <GraphDetails
-                    v-if="panelNode"
-                    :map="map"
-                    :node-key="panelKey"
-                    @close="panelKey = ''"
-                    @open="openConnection"
-                    @add="addFromBox"
-                    @expand="expand"
-                />
-            </div>
+                <div
+                    class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-gray-100 px-4 py-3 text-xs text-gray-500"
+                >
+                    <span class="inline-flex items-center gap-x-1.5">
+                        <span class="h-px w-7 bg-gray-400"></span>
+                        {{ t("graph.legend.relation") }}
+                    </span>
+                    <span class="inline-flex items-center gap-x-1.5">
+                        <span class="size-2.5 rounded-full bg-gray-400"></span>
+                        {{ t("graph.legend.group") }}
+                    </span>
+                    <span class="flex-1"></span>
+                    <span>{{ t("graph.legend.hint") }}</span>
+                </div>
+            </section>
+
+            <GraphDetails
+                v-if="panelNode"
+                :map="map"
+                :node-key="panelKey"
+                @close="panelKey = ''"
+                @open="openConnection"
+                @add="addFromBox"
+                @expand="expand"
+            />
         </div>
-    </SidebarLayout>
+    </div>
 </template>
 
 <script setup>
@@ -210,13 +186,10 @@ import { useRoute, useRouter } from "vue-router";
 import { ArrowPathIcon, ChevronRightIcon } from "@heroicons/vue/20/solid";
 import { ShareIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 import { t } from "@/i18n/index.js";
-import graphService from "@/services/graphService";
-import { extractErrorMessage } from "@/utils/errors";
 import { typeStyles } from "@/utils/graph/palette.js";
 import { useGraphMap } from "@/composables/graph/useGraphMap.js";
-import SidebarLayout from "@/components/Navigation/SidebarLayout.vue";
+import { useGraphTypes } from "@/composables/graph/useGraphTypes.js";
 import BaseButton from "@/components/BaseButton.vue";
-import GraphNavigation from "@/components/Graph/GraphNavigation.vue";
 import GraphSearch from "@/components/Graph/GraphSearch.vue";
 import GraphCanvas from "@/components/Graph/GraphCanvas.vue";
 import GraphDetails from "@/components/Graph/GraphDetails.vue";
@@ -225,8 +198,9 @@ const route = useRoute();
 const router = useRouter();
 const map = useGraphMap();
 
-const entityTypes = ref([]);
-const relationTypeCount = ref(0);
+const graphTypes = useGraphTypes();
+
+const entityTypes = computed(() => graphTypes.types.value.entity_types);
 
 const layoutOptions = computed(() => [
     { value: "columns", label: t.value("graph.layout.columns") },
@@ -284,7 +258,7 @@ function chipClass(on) {
 }
 
 function pickStart(type, id) {
-    router.push({ name: "graph", query: { type: type, id: id } });
+    router.push({ name: "graph-explore", query: { type: type, id: id } });
 }
 
 function startFromRoute() {
@@ -339,20 +313,14 @@ function addFromBox(item) {
     inspect(key);
 }
 
-async function loadTypes() {
-    try {
-        const response = await graphService.getTypes();
-
-        entityTypes.value = response.data.entity_types;
-        relationTypeCount.value = response.data.relation_types.length;
-        map.setTypes(response.data);
-    } catch (e) {
-        map.errorMessage.value = extractErrorMessage(e);
-    }
-}
-
 onMounted(async () => {
-    await loadTypes();
+    await graphTypes.ready;
+
+    map.setTypes(graphTypes.types.value);
+
+    if (graphTypes.errorMessage.value) {
+        map.errorMessage.value = graphTypes.errorMessage.value;
+    }
 
     startFromRoute();
 });
