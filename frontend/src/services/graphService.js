@@ -44,10 +44,10 @@ const graphService = {
         return axios.delete(`/graph/relation-types/${encodeURIComponent(id)}`);
     },
 
-    searchEntities(type, search, signal) {
+    searchEntities(type, search, signal, after) {
         const path = `/graph/types/${encodeURIComponent(type)}/entities`;
 
-        return axios.get(path, { params: { search: search }, signal: signal });
+        return axios.get(path, { params: { search: search, after: after }, signal: signal });
     },
 
     getRelations(type, id) {

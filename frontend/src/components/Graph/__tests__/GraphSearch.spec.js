@@ -47,7 +47,9 @@ it("shows a spinner while searching, then the results, and keeps the typed text"
 
     await vi.advanceTimersByTimeAsync(400);
 
-    searches.at(-1).answer({ data: [{ type: "company", id: "c-05", title: "Tallinn Tech" }] });
+    searches
+        .at(-1)
+        .answer({ data: { items: [{ type: "company", id: "c-05", title: "Tallinn Tech" }] } });
 
     await flushPromises();
 

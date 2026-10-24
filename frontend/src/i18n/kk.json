@@ -2541,5 +2541,20 @@
     "graph.form.relation.read_from": "{field} өрісінен оқылады",
     "graph.form.delete.title": "Жою керек пе?",
     "graph.form.delete.type_message": "\"{name}\" нысан түрін жою керек пе? Деректері орнында қалады; тек түрі жойылады.",
-    "graph.form.delete.relation_message": "\"{name}\" байланыс түрін жою керек пе? Деректер орнында қалады; тек байланыс түрі жойылады."
+    "graph.form.delete.relation_message": "\"{name}\" байланыс түрін жою керек пе? Деректер орнында қалады; тек байланыс түрі жойылады.",
+    "graph.entities.title": "Нысандар",
+    "graph.entities.description": "Түрдің барлық нысандары, деректер жиынынан тікелей оқылады. Графта көру үшін біреуін таңдаңыз.",
+    "graph.entities.no_types": "Әзірге нысан түрлері жоқ",
+    "graph.entities.no_types_help": "Нысандар деректер жиынынан оқылатын нысан түрлерінен алынады. Онтология бөлімінде түр жасаңыз.",
+    "graph.entities.open_ontology": "Онтологияны ашу",
+    "graph.entities.type_not_found": "Бұл нысан түрі табылмады.",
+    "graph.entities.type_details": "Түр туралы",
+    "graph.entities.search": "Атауы бойынша іздеу",
+    "graph.entities.column.name": "Атауы",
+    "graph.entities.show_on_graph": "Графта көрсету",
+    "graph.entities.shown": "Көрсетілді: {count}",
+    "graph.entities.load_more": "Тағы жүктеу",
+    "graph.entities.none": "Бұл түрде сіз көре алатын нысандар жоқ.",
+    "graph.entities.none_found": "Бұл атауға сәйкес нысандар жоқ.",
+    "graph.entities.view": "Нысандарды көру"
 }

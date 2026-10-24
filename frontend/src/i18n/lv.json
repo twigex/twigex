@@ -2541,5 +2541,20 @@
     "graph.form.relation.read_from": "nolasīts no {field}",
     "graph.form.delete.title": "Dzēst?",
     "graph.form.delete.type_message": "Dzēst entītijas tipu \"{name}\"? Tā dati paliek savā vietā; tiek noņemts tikai tips.",
-    "graph.form.delete.relation_message": "Dzēst relācijas tipu \"{name}\"? Dati paliek savā vietā; tiek noņemts tikai relācijas tips."
+    "graph.form.delete.relation_message": "Dzēst relācijas tipu \"{name}\"? Dati paliek savā vietā; tiek noņemts tikai relācijas tips.",
+    "graph.entities.title": "Entītijas",
+    "graph.entities.description": "Visas tipa entītijas, nolasītas tieši no tā datu kopas. Izvēlies vienu, lai to redzētu grafā.",
+    "graph.entities.no_types": "Vēl nav entītiju tipu",
+    "graph.entities.no_types_help": "Entītijas nāk no entītiju tipiem, kas nolasīti no datu kopas. Izveido tipu sadaļā Ontoloģija.",
+    "graph.entities.open_ontology": "Atvērt Ontoloģiju",
+    "graph.entities.type_not_found": "Šis entītijas tips netika atrasts.",
+    "graph.entities.type_details": "Tipa informācija",
+    "graph.entities.search": "Meklēt pēc nosaukuma",
+    "graph.entities.column.name": "Nosaukums",
+    "graph.entities.show_on_graph": "Rādīt grafā",
+    "graph.entities.shown": "Parādīti: {count}",
+    "graph.entities.load_more": "Ielādēt vēl",
+    "graph.entities.none": "Šim tipam nav entītiju, ko tu vari redzēt.",
+    "graph.entities.none_found": "Neviena entītija neatbilst šim nosaukumam.",
+    "graph.entities.view": "Skatīt entītijas"
 }

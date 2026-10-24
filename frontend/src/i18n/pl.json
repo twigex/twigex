@@ -2541,5 +2541,20 @@
     "graph.form.relation.read_from": "odczytywane z {field}",
     "graph.form.delete.title": "Usunąć?",
     "graph.form.delete.type_message": "Usunąć typ encji \"{name}\"? Jego dane pozostają na miejscu; usuwany jest tylko typ.",
-    "graph.form.delete.relation_message": "Usunąć typ relacji \"{name}\"? Dane pozostają na miejscu; usuwany jest tylko typ relacji."
+    "graph.form.delete.relation_message": "Usunąć typ relacji \"{name}\"? Dane pozostają na miejscu; usuwany jest tylko typ relacji.",
+    "graph.entities.title": "Encje",
+    "graph.entities.description": "Wszystkie encje danego typu, czytane na bieżąco z jego zbioru danych. Wybierz jedną, aby zobaczyć ją na grafie.",
+    "graph.entities.no_types": "Brak typów encji",
+    "graph.entities.no_types_help": "Encje pochodzą z typów encji czytanych ze zbioru danych. Utwórz typ w sekcji Ontologia.",
+    "graph.entities.open_ontology": "Otwórz Ontologię",
+    "graph.entities.type_not_found": "Nie znaleziono tego typu encji.",
+    "graph.entities.type_details": "Szczegóły typu",
+    "graph.entities.search": "Szukaj po nazwie",
+    "graph.entities.column.name": "Nazwa",
+    "graph.entities.show_on_graph": "Pokaż na grafie",
+    "graph.entities.shown": "Pokazano: {count}",
+    "graph.entities.load_more": "Wczytaj więcej",
+    "graph.entities.none": "Ten typ nie ma encji, które możesz zobaczyć.",
+    "graph.entities.none_found": "Żadna encja nie pasuje do tej nazwy.",
+    "graph.entities.view": "Zobacz encje"
 }

@@ -169,6 +169,14 @@ const routes = [
                         component: () => import("@/views/Graph/GraphView.vue"),
                     },
                     {
+                        path: "entities/:key?",
+                        name: "graph-entities",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/EntitiesView.vue"),
+                    },
+                    {
                         path: "ontology",
                         name: "graph-ontology",
                         meta: {

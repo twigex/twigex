@@ -75,7 +75,7 @@ vi.mock("@/services/graphService", () => ({
             },
         }),
         searchEntities: async () => ({
-            data: [{ type: "company", id: "c-05", title: "Tallinn Tech" }],
+            data: { items: [{ type: "company", id: "c-05", title: "Tallinn Tech" }] },
         }),
         getRelations: async () => ({
             data: { entity: { type: "company", id: "c-05", title: "Tallinn Tech" }, groups: [] },
@@ -100,6 +100,7 @@ function graphRouter() {
                 redirect: (to) => ({ name: "graph-explore", query: to.query }),
                 children: [
                     { path: "explore", name: "graph-explore", component: GraphView },
+                    { path: "entities/:key?", name: "graph-entities", component: GraphView },
                     { path: "ontology", name: "graph-ontology", component: OntologyView },
                     {
                         path: "ontology/types/:key",
