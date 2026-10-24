@@ -521,3 +521,184 @@ func TestGetDashboardIDsForChartAndFilterColumn(t *testing.T) {
 		t.Errorf("want only d2 from ws, got %v", byFilter)
 	}
 }
+
+func TestCreateEntityTypeReportsATakenKey(t *testing.T) {
+	db := requireDB(t)
+	resetGraphTables(t)
+
+	repo := &graphRepository{Db: db}
+	ctx := context.Background()
+
+	company := model.GraphEntityType{
+		ID:        model.NewID(),
+		Key:       "company",
+		Name:      "Company",
+		Source:    model.GraphSourceDataset,
+		CreatedAt: 1,
+		UpdatedAt: 1,
+	}
+
+	err := repo.CreateEntityType(ctx, company)
+	if err != nil {
+		t.Fatalf("CreateEntityType: %v", err)
+	}
+
+	company.ID = model.NewID()
+
+	err = repo.CreateEntityType(ctx, company)
+	if !errors.Is(err, model.ErrGraphTypeKeyTaken) {
+		t.Errorf("want ErrGraphTypeKeyTaken, got %v", err)
+	}
+}
+
+func TestUserEntityTypesCanBeChangedButBuiltInsCannot(t *testing.T) {
+	db := requireDB(t)
+	resetGraphTables(t)
+
+	repo := &graphRepository{Db: db}
+	ctx := context.Background()
+
+	err := repo.CreateOrUpdateEntityType(ctx, model.GraphEntityType{Key: "chart", Name: "Chart", Source: model.GraphSourceBuiltIn, BuiltIn: true})
+	if err != nil {
+		t.Fatalf("save the built-in type: %v", err)
+	}
+
+	company := model.GraphEntityType{
+		ID:            model.NewID(),
+		Key:           "company",
+		Name:          "Company",
+		Source:        model.GraphSourceDataset,
+		SourceID:      "ds-companies",
+		KeyProperty:   "f-key",
+		TitleProperty: "f-name",
+		CreatedAt:     1,
+		UpdatedAt:     1,
+	}
+
+	err = repo.CreateEntityType(ctx, company)
+	if err != nil {
+		t.Fatalf("CreateEntityType: %v", err)
+	}
+
+	company.Name = "Client"
+	company.TitleProperty = "f-title"
+	company.UpdatedAt = 2
+
+	err = repo.UpdateEntityType(ctx, company)
+	if err != nil {
+		t.Fatalf("UpdateEntityType: %v", err)
+	}
+
+	saved, err := repo.GetEntityTypeByID(ctx, company.ID)
+	if err != nil {
+		t.Fatalf("GetEntityTypeByID: %v", err)
+	}
+
+	if saved.Name != "Client" || saved.TitleProperty != "f-title" || saved.Key != "company" || saved.BuiltIn {
+		t.Errorf("want the renamed user type, got %+v", saved)
+	}
+
+	all, err := repo.GetAllEntityTypes(ctx)
+	if err != nil {
+		t.Fatalf("GetAllEntityTypes: %v", err)
+	}
+
+	builtIn := all[0]
+	if builtIn.Key != "chart" {
+		builtIn = all[1]
+	}
+
+	builtIn.Name = "Changed"
+
+	err = repo.UpdateEntityType(ctx, builtIn)
+	if err != nil {
+		t.Fatalf("UpdateEntityType on the built-in: %v", err)
+	}
+
+	err = repo.DeleteEntityType(ctx, builtIn.ID)
+	if err != nil {
+		t.Fatalf("DeleteEntityType on the built-in: %v", err)
+	}
+
+	kept, err := repo.GetEntityTypeByID(ctx, builtIn.ID)
+	if err != nil || kept.Name != "Chart" {
+		t.Errorf("want the built-in type unchanged, got %+v (%v)", kept, err)
+	}
+
+	err = repo.DeleteEntityType(ctx, company.ID)
+	if err != nil {
+		t.Fatalf("DeleteEntityType: %v", err)
+	}
+
+	_, err = repo.GetEntityTypeByID(ctx, company.ID)
+	if !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("want the user type gone, got %v", err)
+	}
+}
+
+func TestRelationTypeKindConfigIsSavedAndReadBack(t *testing.T) {
+	db := requireDB(t)
+	resetGraphTables(t)
+
+	repo := &graphRepository{Db: db}
+	ctx := context.Background()
+
+	err := repo.CreateOrUpdateRelationType(ctx, model.GraphRelationType{
+		Key:         "chart_uses_dataset_field",
+		Name:        "uses",
+		ReverseName: "used by",
+		FromTypeID:  "chart-type",
+		ToTypeID:    "field-type",
+		Kind:        model.GraphRelationKindStored,
+		BuiltIn:     true,
+	})
+	if err != nil {
+		t.Fatalf("save the built-in relation type: %v", err)
+	}
+
+	places := model.GraphRelationType{
+		ID:          model.NewID(),
+		Key:         "company_places_order",
+		Name:        "places",
+		ReverseName: "placed by",
+		FromTypeID:  "company-type",
+		ToTypeID:    "order-type",
+		Kind:        model.GraphRelationKindProperty,
+		KindConfig:  &model.GraphRelationKindConfig{Property: "f-company-id"},
+		CreatedAt:   1,
+		UpdatedAt:   1,
+	}
+
+	err = repo.CreateRelationType(ctx, places)
+	if err != nil {
+		t.Fatalf("CreateRelationType: %v", err)
+	}
+
+	places.KindConfig = &model.GraphRelationKindConfig{Property: "f-buyer-id", FromProperty: "f-reg-no"}
+	places.UpdatedAt = 2
+
+	err = repo.UpdateRelationType(ctx, places)
+	if err != nil {
+		t.Fatalf("UpdateRelationType: %v", err)
+	}
+
+	saved, err := repo.GetRelationTypeByID(ctx, places.ID)
+	if err != nil {
+		t.Fatalf("GetRelationTypeByID: %v", err)
+	}
+
+	if saved.KindConfig == nil || saved.KindConfig.Property != "f-buyer-id" || saved.KindConfig.FromProperty != "f-reg-no" {
+		t.Errorf("want the new relation settings, got %+v", saved.KindConfig)
+	}
+
+	all, err := repo.GetAllRelationTypes(ctx)
+	if err != nil {
+		t.Fatalf("GetAllRelationTypes: %v", err)
+	}
+
+	for _, relationType := range all {
+		if relationType.BuiltIn && relationType.KindConfig != nil {
+			t.Errorf("want no settings on the built-in relation type, got %+v", relationType.KindConfig)
+		}
+	}
+}

@@ -14,11 +14,32 @@ import (
 	"github.com/twigex/twigex/tlog"
 )
 
+// EnsureGraphBuiltInTypes saves the built-in types by key. A key that a
+// user's own type already holds is left alone, because saving over it would
+// turn their type into a built-in one; the clash is logged instead.
 func (a *App) EnsureGraphBuiltInTypes() {
 	ctx, cancel := a.dbCtx(context.Background())
 	defer cancel()
 
+	existingEntityTypes, err := a.Store.Graph.GetAllEntityTypes(ctx)
+	if err != nil {
+		tlog.Errorw("Failed to retrieve graph entity types", "error", err)
+		return
+	}
+
+	userEntityKeys := make(map[string]bool)
+	for _, entityType := range existingEntityTypes {
+		if !entityType.BuiltIn {
+			userEntityKeys[entityType.Key] = true
+		}
+	}
+
 	for _, entityType := range model.GraphBuiltInEntityTypes() {
+		if userEntityKeys[entityType.Key] {
+			tlog.Errorw("A user's graph entity type has the key a built-in type needs", "type", entityType.Key)
+			continue
+		}
+
 		err := a.Store.Graph.CreateOrUpdateEntityType(ctx, entityType)
 		if err != nil {
 			tlog.Errorw("Failed to save built-in graph entity type", "type", entityType.Key, "error", err)
@@ -34,10 +55,30 @@ func (a *App) EnsureGraphBuiltInTypes() {
 
 	typeIDs := make(map[string]string, len(entityTypes))
 	for _, entityType := range entityTypes {
-		typeIDs[entityType.Key] = entityType.ID
+		if entityType.BuiltIn {
+			typeIDs[entityType.Key] = entityType.ID
+		}
+	}
+
+	existingRelationTypes, err := a.Store.Graph.GetAllRelationTypes(ctx)
+	if err != nil {
+		tlog.Errorw("Failed to retrieve graph relation types", "error", err)
+		return
+	}
+
+	userRelationKeys := make(map[string]bool)
+	for _, relationType := range existingRelationTypes {
+		if !relationType.BuiltIn {
+			userRelationKeys[relationType.Key] = true
+		}
 	}
 
 	for _, builtIn := range model.GraphBuiltInRelationTypes() {
+		if userRelationKeys[builtIn.Key] {
+			tlog.Errorw("A user's graph relation type has the key a built-in type needs", "relation_type", builtIn.Key)
+			continue
+		}
+
 		fromTypeID, fromFound := typeIDs[builtIn.FromType]
 		toTypeID, toFound := typeIDs[builtIn.ToType]
 		if !fromFound || !toFound {
@@ -87,6 +128,10 @@ func (a *App) loadGraphBuiltInIDs(ctx context.Context) (*graphBuiltInIDs, error)
 	ids := graphBuiltInIDs{}
 
 	for _, entityType := range entityTypes {
+		if !entityType.BuiltIn {
+			continue
+		}
+
 		switch entityType.Key {
 		case model.GraphTypeChart:
 			ids.chartType = entityType.ID
@@ -96,6 +141,10 @@ func (a *App) loadGraphBuiltInIDs(ctx context.Context) (*graphBuiltInIDs, error)
 	}
 
 	for _, relationType := range relationTypes {
+		if !relationType.BuiltIn {
+			continue
+		}
+
 		if relationType.Key == model.GraphRelationChartUsesDatasetField {
 			ids.chartUsesFieldRelation = relationType.ID
 		}

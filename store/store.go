@@ -355,6 +355,14 @@ type GraphStore interface {
 	GetAllEntityTypes(ctx context.Context) ([]model.GraphEntityType, error)
 	CreateOrUpdateRelationType(ctx context.Context, relationType model.GraphRelationType) error
 	GetAllRelationTypes(ctx context.Context) ([]model.GraphRelationType, error)
+	GetEntityTypeByID(ctx context.Context, id string) (*model.GraphEntityType, error)
+	CreateEntityType(ctx context.Context, entityType model.GraphEntityType) error
+	UpdateEntityType(ctx context.Context, entityType model.GraphEntityType) error
+	DeleteEntityType(ctx context.Context, id string) error
+	GetRelationTypeByID(ctx context.Context, id string) (*model.GraphRelationType, error)
+	CreateRelationType(ctx context.Context, relationType model.GraphRelationType) error
+	UpdateRelationType(ctx context.Context, relationType model.GraphRelationType) error
+	DeleteRelationType(ctx context.Context, id string) error
 	AddDatasets(ctx context.Context, datasets []model.GraphDataset) (int64, error)
 	GetAllDatasetsForWorkspace(ctx context.Context, workspaceID string) ([]model.GraphDataset, error)
 	GetDatasetByID(ctx context.Context, id string) (*model.GraphDataset, error)
