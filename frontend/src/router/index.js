@@ -176,6 +176,14 @@ const routes = [
                         },
                         component: () => import("@/views/Graph/OntologyView.vue"),
                     },
+                    {
+                        path: "ontology/types/:key",
+                        name: "graph-ontology-type",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/OntologyTypeView.vue"),
+                    },
                 ],
             },
             {

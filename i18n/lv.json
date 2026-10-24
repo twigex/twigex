@@ -144,6 +144,10 @@
     "translation": "Ievadiet nosaukumu."
   },
   {
+    "id": "graph.type_name_too_long",
+    "translation": "Nosaukumā var būt ne vairāk kā 255 rakstzīmes."
+  },
+  {
     "id": "graph.type_key_taken",
     "translation": "Šo atslēgu jau izmanto cits tips."
   },
@@ -174,6 +178,22 @@
   {
     "id": "graph.relation_type_needs_dataset_types",
     "translation": "Abiem relācijas galiem jābūt tipiem, kas savas entītijas ņem no datu kopas."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "Statusam jābūt: eksperimentāls, aktīvs vai novecojis."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Izvēlieties vienu no piedāvātajām krāsām."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "Ikonas nosaukumā drīkst būt tikai mazie burti, cipari un defises."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Izvēlieties: viens pret vienu, viens pret daudziem, daudzi pret vienu vai daudzi pret daudziem."
   },
   {
     "id": "ldap.invalid_sync_interval",

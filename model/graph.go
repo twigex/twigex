@@ -30,6 +30,30 @@ const (
 )
 
 const (
+	GraphStatusExperimental = "experimental"
+	GraphStatusActive       = "active"
+	GraphStatusDeprecated   = "deprecated"
+)
+
+var GraphStatuses = []string{GraphStatusExperimental, GraphStatusActive, GraphStatusDeprecated}
+
+const (
+	GraphOneToOne   = "one_to_one"
+	GraphOneToMany  = "one_to_many"
+	GraphManyToOne  = "many_to_one"
+	GraphManyToMany = "many_to_many"
+)
+
+var GraphCardinalities = []string{GraphOneToOne, GraphOneToMany, GraphManyToOne, GraphManyToMany}
+
+// GraphColors are the colours a type may have. They are names, not colour
+// codes, because the screen styles each one with its own fixed classes.
+var GraphColors = []string{
+	"indigo", "emerald", "amber", "pink", "cyan", "violet", "orange",
+	"green", "rose", "blue", "yellow", "teal", "slate",
+}
+
+const (
 	GraphDatasetKindCube = "cube"
 	GraphDatasetKindView = "view"
 )
@@ -57,8 +81,13 @@ type GraphEntityType struct {
 	KeyProperty   string `json:"key_property,omitempty"`
 	TitleProperty string `json:"title_property,omitempty"`
 	Description   string `json:"description,omitempty"`
+	PluralName    string `json:"plural_name,omitempty"`
+	Icon          string `json:"icon,omitempty"`
+	Color         string `json:"color,omitempty"`
+	Status        string `json:"status"`
 	BuiltIn       bool   `json:"built_in"`
 	CreatedBy     string `json:"created_by,omitempty"`
+	UpdatedBy     string `json:"updated_by,omitempty"`
 	CreatedAt     int64  `json:"created_at"`
 	UpdatedAt     int64  `json:"updated_at"`
 
@@ -78,9 +107,11 @@ type GraphRelationType struct {
 	ToTypeID    string                   `json:"to_type_id"`
 	Kind        string                   `json:"kind"`
 	KindConfig  *GraphRelationKindConfig `json:"kind_config,omitempty"`
+	Cardinality string                   `json:"cardinality,omitempty"`
 	Description string                   `json:"description,omitempty"`
 	BuiltIn     bool                     `json:"built_in"`
 	CreatedBy   string                   `json:"created_by,omitempty"`
+	UpdatedBy   string                   `json:"updated_by,omitempty"`
 	CreatedAt   int64                    `json:"created_at"`
 	UpdatedAt   int64                    `json:"updated_at"`
 }
@@ -100,6 +131,10 @@ type GraphRelationKindConfig struct {
 type GraphEntityTypeInput struct {
 	Key           string `json:"key"`
 	Name          string `json:"name"`
+	PluralName    string `json:"plural_name"`
+	Icon          string `json:"icon"`
+	Color         string `json:"color"`
+	Status        string `json:"status"`
 	Description   string `json:"description"`
 	SourceID      string `json:"source_id"`
 	KeyProperty   string `json:"key_property"`
@@ -115,6 +150,7 @@ type GraphRelationTypeInput struct {
 	ToTypeID     string `json:"to_type_id"`
 	Property     string `json:"property"`
 	FromProperty string `json:"from_property"`
+	Cardinality  string `json:"cardinality"`
 }
 
 type GraphTypes struct {
@@ -233,14 +269,51 @@ type GraphBuiltInRelationType struct {
 	FromType    string
 	ToType      string
 	Kind        string
+	Cardinality string
 }
 
 func GraphBuiltInEntityTypes() []GraphEntityType {
 	return []GraphEntityType{
-		{Key: GraphTypeDataset, Name: "Dataset", Source: GraphSourceBuiltIn, BuiltIn: true},
-		{Key: GraphTypeDatasetField, Name: "Dataset field", Source: GraphSourceBuiltIn, BuiltIn: true},
-		{Key: GraphTypeChart, Name: "Chart", Source: GraphSourceBuiltIn, BuiltIn: true},
-		{Key: GraphTypeDashboard, Name: "Dashboard", Source: GraphSourceBuiltIn, BuiltIn: true},
+		{
+			Key:        GraphTypeDataset,
+			Name:       "Dataset",
+			PluralName: "Datasets",
+			Icon:       "circle-stack",
+			Color:      "amber",
+			Status:     GraphStatusActive,
+			Source:     GraphSourceBuiltIn,
+			BuiltIn:    true,
+		},
+		{
+			Key:        GraphTypeDatasetField,
+			Name:       "Dataset field",
+			PluralName: "Dataset fields",
+			Icon:       "hashtag",
+			Color:      "pink",
+			Status:     GraphStatusActive,
+			Source:     GraphSourceBuiltIn,
+			BuiltIn:    true,
+		},
+		{
+			Key:        GraphTypeChart,
+			Name:       "Chart",
+			PluralName: "Charts",
+			Icon:       "chart-bar",
+			Color:      "indigo",
+			Status:     GraphStatusActive,
+			Source:     GraphSourceBuiltIn,
+			BuiltIn:    true,
+		},
+		{
+			Key:        GraphTypeDashboard,
+			Name:       "Dashboard",
+			PluralName: "Dashboards",
+			Icon:       "squares-2x2",
+			Color:      "emerald",
+			Status:     GraphStatusActive,
+			Source:     GraphSourceBuiltIn,
+			BuiltIn:    true,
+		},
 	}
 }
 
@@ -253,6 +326,7 @@ func GraphBuiltInRelationTypes() []GraphBuiltInRelationType {
 			FromType:    GraphTypeDashboard,
 			ToType:      GraphTypeChart,
 			Kind:        GraphRelationKindTable,
+			Cardinality: GraphManyToMany,
 		},
 		{
 			Key:         GraphRelationChartUsesDatasetField,
@@ -261,6 +335,7 @@ func GraphBuiltInRelationTypes() []GraphBuiltInRelationType {
 			FromType:    GraphTypeChart,
 			ToType:      GraphTypeDatasetField,
 			Kind:        GraphRelationKindStored,
+			Cardinality: GraphManyToMany,
 		},
 		{
 			Key:         GraphRelationDashboardUsesDatasetField,
@@ -269,6 +344,7 @@ func GraphBuiltInRelationTypes() []GraphBuiltInRelationType {
 			FromType:    GraphTypeDashboard,
 			ToType:      GraphTypeDatasetField,
 			Kind:        GraphRelationKindTable,
+			Cardinality: GraphManyToMany,
 		},
 		{
 			Key:         GraphRelationDatasetFieldBelongsToDataset,
@@ -277,6 +353,7 @@ func GraphBuiltInRelationTypes() []GraphBuiltInRelationType {
 			FromType:    GraphTypeDatasetField,
 			ToType:      GraphTypeDataset,
 			Kind:        GraphRelationKindTable,
+			Cardinality: GraphManyToOne,
 		},
 	}
 }

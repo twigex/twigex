@@ -568,6 +568,9 @@ func TestUserEntityTypesCanBeChangedButBuiltInsCannot(t *testing.T) {
 		ID:            model.NewID(),
 		Key:           "company",
 		Name:          "Company",
+		PluralName:    "Companies",
+		Icon:          "building-office",
+		Color:         "cyan",
 		Source:        model.GraphSourceDataset,
 		SourceID:      "ds-companies",
 		KeyProperty:   "f-key",
@@ -583,6 +586,8 @@ func TestUserEntityTypesCanBeChangedButBuiltInsCannot(t *testing.T) {
 
 	company.Name = "Client"
 	company.TitleProperty = "f-title"
+	company.Status = model.GraphStatusDeprecated
+	company.UpdatedBy = "user-2"
 	company.UpdatedAt = 2
 
 	err = repo.UpdateEntityType(ctx, company)
@@ -597,6 +602,14 @@ func TestUserEntityTypesCanBeChangedButBuiltInsCannot(t *testing.T) {
 
 	if saved.Name != "Client" || saved.TitleProperty != "f-title" || saved.Key != "company" || saved.BuiltIn {
 		t.Errorf("want the renamed user type, got %+v", saved)
+	}
+
+	if saved.PluralName != "Companies" || saved.Icon != "building-office" || saved.Color != "cyan" {
+		t.Errorf("want the look kept, got %+v", saved)
+	}
+
+	if saved.Status != model.GraphStatusDeprecated || saved.UpdatedBy != "user-2" {
+		t.Errorf("want the status and editor saved, got %+v", saved)
 	}
 
 	all, err := repo.GetAllEntityTypes(ctx)
@@ -676,6 +689,7 @@ func TestRelationTypeKindConfigIsSavedAndReadBack(t *testing.T) {
 	}
 
 	places.KindConfig = &model.GraphRelationKindConfig{Property: "f-buyer-id", FromProperty: "f-reg-no"}
+	places.Cardinality = model.GraphManyToMany
 	places.UpdatedAt = 2
 
 	err = repo.UpdateRelationType(ctx, places)
@@ -690,6 +704,10 @@ func TestRelationTypeKindConfigIsSavedAndReadBack(t *testing.T) {
 
 	if saved.KindConfig == nil || saved.KindConfig.Property != "f-buyer-id" || saved.KindConfig.FromProperty != "f-reg-no" {
 		t.Errorf("want the new relation settings, got %+v", saved.KindConfig)
+	}
+
+	if saved.Cardinality != model.GraphManyToMany {
+		t.Errorf("want many to many, got %q", saved.Cardinality)
 	}
 
 	all, err := repo.GetAllRelationTypes(ctx)

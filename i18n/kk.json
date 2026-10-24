@@ -144,6 +144,10 @@
     "translation": "Атауын енгізіңіз."
   },
   {
+    "id": "graph.type_name_too_long",
+    "translation": "Атау 255 таңбадан аспауы керек."
+  },
+  {
     "id": "graph.type_key_taken",
     "translation": "Бұл кілтті басқа түр пайдаланып жатыр."
   },
@@ -174,6 +178,22 @@
   {
     "id": "graph.relation_type_needs_dataset_types",
     "translation": "Байланыстың екі ұшы да нысандарын деректер жиынынан алатын түрлер болуы керек."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "Күйі эксперименттік, белсенді немесе ескірген болуы керек."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Ұсынылған түстердің бірін таңдаңыз."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "Белгіше атауында тек кіші әріптер, сандар және сызықшалар болуы мүмкін."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Біреуі біреуге, біреуі көпке, көбі біреуге немесе көбі көпке таңдаңыз."
   },
   {
     "id": "ldap.invalid_sync_interval",

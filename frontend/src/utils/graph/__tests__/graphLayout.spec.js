@@ -6,6 +6,7 @@ import { columnOrder } from "@/utils/graph/typeOrder.js";
 import { createColumnPlacer, freePosition, COLUMN_GAP, ROW_GAP } from "@/utils/graph/layout.js";
 import { pathTo } from "@/utils/graph/path.js";
 import { typeStyles } from "@/utils/graph/palette.js";
+import { relationsOf } from "@/utils/graph/relations.js";
 
 const company = { id: "t-company", key: "company" };
 const order = { id: "t-order", key: "order" };
@@ -91,10 +92,37 @@ describe("pathTo", () => {
 });
 
 describe("typeStyles", () => {
-    it("keeps the built-in colours and gives new types the next one each", () => {
-        const styles = typeStyles([{ key: "chart" }, company, order]);
+    it("uses the chosen colour, and gives a type without one a colour nobody uses", () => {
+        const styles = typeStyles([
+            { key: "chart", color: "indigo" },
+            { key: "company", color: "cyan" },
+            { key: "order" },
+        ]);
 
         expect(styles.chart.color).toBe("#4f46e5");
-        expect(styles.company.color).not.toBe(styles.order.color);
+        expect(styles.company.color).toBe("#0891b2");
+        expect(styles.order.color).not.toBe(styles.company.color);
+        expect(styles.order.color).not.toBe(styles.chart.color);
+    });
+});
+
+describe("relationsOf", () => {
+    it("lists a relation type from a type to itself from both ends", () => {
+        const fulfilled = {
+            key: "order_fulfilled_by_order",
+            name: "is fulfilled by",
+            reverse_name: "fulfils",
+            from_type_id: order.id,
+            to_type_id: order.id,
+            cardinality: "one_to_many",
+        };
+
+        const relations = relationsOf(order, [fulfilled], new Map([[order.id, order]]));
+
+        expect(relations.map((relation) => relation.name)).toEqual(["is fulfilled by", "fulfils"]);
+        expect(relations.map((relation) => relation.cardinality)).toEqual([
+            "one_to_many",
+            "many_to_one",
+        ]);
     });
 });

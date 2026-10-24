@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"net/http"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/twigex/twigex/collimato"
@@ -485,5 +486,117 @@ func TestGetGraphTypesNamesTheSourcesForAdminsOnly(t *testing.T) {
 		if entityType.SourceName != "" || entityType.KeyPropertyName != "" {
 			t.Errorf("want no names for a member, got %+v", entityType)
 		}
+	}
+}
+
+func TestGraphTypeLookIsCheckedAndDefaulted(t *testing.T) {
+	cases := []struct {
+		name   string
+		change func(input *model.GraphEntityTypeInput)
+		want   string
+	}{
+		{"an unknown status", func(input *model.GraphEntityTypeInput) { input.Status = "retired" }, "graph.type_status_invalid"},
+		{"a colour code instead of a name", func(input *model.GraphEntityTypeInput) { input.Color = "#ff0000" }, "graph.type_color_invalid"},
+		{"an icon name with spaces", func(input *model.GraphEntityTypeInput) { input.Icon = "building office" }, "graph.type_icon_invalid"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			g := newGraphTypesTestApp()
+
+			input := companyTypeInput()
+			tc.change(&input)
+
+			_, appErr := g.app.CreateGraphEntityType(context.Background(), graphTypeAdmin, input)
+			if appErr == nil || appErr.ID != tc.want {
+				t.Errorf("want %s, got %v", tc.want, appErr)
+			}
+		})
+	}
+
+	g := newGraphTypesTestApp()
+
+	input := companyTypeInput()
+	input.PluralName = " Companies "
+	input.Icon = "building-office"
+	input.Color = "cyan"
+
+	company, appErr := g.app.CreateGraphEntityType(context.Background(), graphTypeAdmin, input)
+	if appErr != nil {
+		t.Fatalf("CreateGraphEntityType: %v", appErr)
+	}
+
+	if company.PluralName != "Companies" || company.Icon != "building-office" || company.Color != "cyan" {
+		t.Errorf("want the look saved, got %+v", company)
+	}
+
+	input.Status = model.GraphStatusDeprecated
+
+	updated, appErr := g.app.UpdateGraphEntityType(context.Background(), graphTypeAdmin, company.ID, input)
+	if appErr != nil {
+		t.Fatalf("UpdateGraphEntityType: %v", appErr)
+	}
+
+	if updated.Status != model.GraphStatusDeprecated || updated.UpdatedBy != graphTypeAdmin.ID {
+		t.Errorf("want the status changed and the editor recorded, got %+v", updated)
+	}
+}
+
+func TestGraphRelationTypeCardinalityDefaultsToOneToMany(t *testing.T) {
+	g := newGraphTypesTestApp()
+
+	company, order := createCompanyAndOrderTypes(t, g)
+
+	relationType, appErr := g.app.CreateGraphRelationType(context.Background(), graphTypeAdmin, placesInput(company, order))
+	if appErr != nil {
+		t.Fatalf("CreateGraphRelationType: %v", appErr)
+	}
+
+	if relationType.Cardinality != model.GraphOneToMany {
+		t.Errorf("want one to many, got %q", relationType.Cardinality)
+	}
+
+	wrong := placesInput(company, order)
+	wrong.Key = "company_places_order_too"
+	wrong.Cardinality = "several"
+
+	_, appErr = g.app.CreateGraphRelationType(context.Background(), graphTypeAdmin, wrong)
+	if appErr == nil || appErr.ID != "graph.relation_type_cardinality_invalid" {
+		t.Errorf("want graph.relation_type_cardinality_invalid, got %v", appErr)
+	}
+}
+
+func TestGraphEntityTypeWithoutStatusIsReportedActive(t *testing.T) {
+	g := newGraphTypesTestApp()
+
+	company, appErr := g.app.CreateGraphEntityType(context.Background(), graphTypeAdmin, companyTypeInput())
+	if appErr != nil {
+		t.Fatalf("CreateGraphEntityType: %v", appErr)
+	}
+
+	if company.Status != model.GraphStatusActive {
+		t.Errorf("want active, got %q", company.Status)
+	}
+}
+
+func TestGraphTypeNamesHaveALengthLimit(t *testing.T) {
+	g := newGraphTypesTestApp()
+
+	tooLong := strings.Repeat("a", 256)
+
+	input := companyTypeInput()
+	input.Name = tooLong
+
+	_, appErr := g.app.CreateGraphEntityType(context.Background(), graphTypeAdmin, input)
+	if appErr == nil || appErr.ID != "graph.type_name_too_long" {
+		t.Errorf("want graph.type_name_too_long for the name, got %v", appErr)
+	}
+
+	input = companyTypeInput()
+	input.PluralName = tooLong
+
+	_, appErr = g.app.CreateGraphEntityType(context.Background(), graphTypeAdmin, input)
+	if appErr == nil || appErr.ID != "graph.type_name_too_long" {
+		t.Errorf("want graph.type_name_too_long for the plural name, got %v", appErr)
 	}
 }
