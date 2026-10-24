@@ -47,9 +47,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import Sigma from "sigma";
-import { EdgeCurvedArrowProgram } from "@sigma/edge-curve";
 import { ArrowsPointingOutIcon, MinusIcon, PlusIcon } from "@heroicons/vue/20/solid";
 import { t } from "@/i18n/index.js";
+import { baseSigmaSettings } from "@/utils/graph/drawing.js";
 
 const props = defineProps({
     map: {
@@ -66,8 +66,6 @@ const EDGE_PATH_COLOR = "#a5b4fc";
 const EDGE_FADED_COLOR = "#f3f4f6";
 const NODE_FADED_COLOR = "#e5e7eb";
 const FREE_CURVATURE = 0.15;
-const LABEL_FONT = "Inter, ui-sans-serif, system-ui, sans-serif";
-const LABEL_COLOR = "#1f2937";
 const ZOOM_DURATION = 200;
 
 const container = ref(null);
@@ -193,54 +191,6 @@ function drawEdge(edge, data) {
     return drawn;
 }
 
-// Labels go under the dots, and a group box shows its count inside.
-function drawLabel(context, data, settings) {
-    if (data.isGroup && !data.faded) {
-        context.font = `700 ${settings.labelSize - 1}px ${LABEL_FONT}`;
-        context.fillStyle = "#ffffff";
-        context.textAlign = "center";
-        context.textBaseline = "middle";
-        context.fillText(data.countText, data.x, data.y);
-    }
-
-    if (!data.label) {
-        return;
-    }
-
-    let weight = 500;
-
-    if (data.highlighted) {
-        weight = 600;
-    }
-
-    context.font = `${weight} ${settings.labelSize}px ${LABEL_FONT}`;
-    context.fillStyle = LABEL_COLOR;
-    context.textAlign = "center";
-    context.textBaseline = "top";
-    context.fillText(data.label, data.x, data.y + data.size + 4);
-}
-
-// A dot in focus gets a soft ring and its label on a white background, so it
-// stays readable over lines.
-function drawHover(context, data, settings) {
-    context.beginPath();
-    context.arc(data.x, data.y, data.size + 6, 0, Math.PI * 2);
-    context.fillStyle = "rgba(79, 70, 229, 0.12)";
-    context.fill();
-
-    if (data.label) {
-        context.font = `600 ${settings.labelSize}px ${LABEL_FONT}`;
-
-        const width = context.measureText(data.label).width;
-        const top = data.y + data.size + 3;
-
-        context.fillStyle = "#ffffff";
-        context.fillRect(data.x - width / 2 - 4, top, width + 8, settings.labelSize + 4);
-    }
-
-    drawLabel(context, data, settings);
-}
-
 // The column titles sit above the map, so they follow it when it is zoomed
 // or moved.
 function updateHeaders() {
@@ -293,24 +243,12 @@ function onDoubleClickNode(event) {
 
 onMounted(() => {
     renderer = new Sigma(props.map.graph, container.value, {
-        renderEdgeLabels: true,
-        defaultEdgeType: "curved",
-        edgeProgramClasses: {
-            curved: EdgeCurvedArrowProgram,
-        },
+        ...baseSigmaSettings(),
         defaultEdgeColor: EDGE_COLOR,
-        labelRenderedSizeThreshold: 0,
-        labelFont: LABEL_FONT,
         labelSize: 12,
-        labelColor: { color: LABEL_COLOR },
-        edgeLabelFont: LABEL_FONT,
-        edgeLabelSize: 10,
-        edgeLabelColor: { color: "#4b5563" },
         zIndex: true,
         nodeReducer: drawNode,
         edgeReducer: drawEdge,
-        defaultDrawNodeLabel: drawLabel,
-        defaultDrawNodeHover: drawHover,
     });
 
     renderer.on("clickNode", onClickNode);

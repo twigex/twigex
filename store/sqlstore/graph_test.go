@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/twigex/twigex/model"
@@ -700,5 +701,42 @@ func TestRelationTypeKindConfigIsSavedAndReadBack(t *testing.T) {
 		if relationType.BuiltIn && relationType.KindConfig != nil {
 			t.Errorf("want no settings on the built-in relation type, got %+v", relationType.KindConfig)
 		}
+	}
+}
+
+func TestRelationTypeKindConfigSavesOnlyTheFieldIDs(t *testing.T) {
+	db := requireDB(t)
+	resetGraphTables(t)
+
+	repo := &graphRepository{Db: db}
+	ctx := context.Background()
+
+	places := model.GraphRelationType{
+		ID:          model.NewID(),
+		Key:         "company_places_order",
+		Name:        "places",
+		ReverseName: "placed by",
+		FromTypeID:  "company-type",
+		ToTypeID:    "order-type",
+		Kind:        model.GraphRelationKindProperty,
+		KindConfig:  &model.GraphRelationKindConfig{Property: "f-company-id", PropertyName: "orders.company_id"},
+		CreatedAt:   1,
+		UpdatedAt:   1,
+	}
+
+	err := repo.CreateRelationType(ctx, places)
+	if err != nil {
+		t.Fatalf("CreateRelationType: %v", err)
+	}
+
+	var raw string
+
+	err = db.QueryRow("SELECT kind_config FROM graph_relation_types WHERE id = ?", places.ID).Scan(&raw)
+	if err != nil {
+		t.Fatalf("read kind_config: %v", err)
+	}
+
+	if strings.Contains(raw, "orders.company_id") || !strings.Contains(raw, "f-company-id") {
+		t.Errorf("want only the field ID saved, got %s", raw)
 	}
 }

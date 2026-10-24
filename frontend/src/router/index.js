@@ -156,7 +156,27 @@ const routes = [
                 meta: {
                     requireAuth: true,
                 },
-                component: () => import("@/views/Graph/GraphView.vue"),
+                component: () => import("@/views/Graph/GraphSectionView.vue"),
+                // Keeps ?type=…&id=…, so a /graph address that names an entity opens it.
+                redirect: (to) => ({ name: "graph-explore", query: to.query }),
+                children: [
+                    {
+                        path: "explore",
+                        name: "graph-explore",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/GraphView.vue"),
+                    },
+                    {
+                        path: "ontology",
+                        name: "graph-ontology",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/OntologyView.vue"),
+                    },
+                ],
             },
             {
                 path: "collimato",

@@ -61,6 +61,12 @@ type GraphEntityType struct {
 	CreatedBy     string `json:"created_by,omitempty"`
 	CreatedAt     int64  `json:"created_at"`
 	UpdatedAt     int64  `json:"updated_at"`
+
+	// Names for the screen, looked up from the IDs above when the types are
+	// listed for someone who manages them; never saved.
+	SourceName        string `json:"source_name,omitempty"`
+	KeyPropertyName   string `json:"key_property_name,omitempty"`
+	TitlePropertyName string `json:"title_property_name,omitempty"`
 }
 
 type GraphRelationType struct {
@@ -85,6 +91,10 @@ type GraphRelationType struct {
 type GraphRelationKindConfig struct {
 	Property     string `json:"property"`
 	FromProperty string `json:"from_property,omitempty"`
+
+	// Names for the screen, as on GraphEntityType; never saved.
+	PropertyName     string `json:"property_name,omitempty"`
+	FromPropertyName string `json:"from_property_name,omitempty"`
 }
 
 type GraphEntityTypeInput struct {
