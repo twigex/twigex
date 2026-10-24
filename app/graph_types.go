@@ -12,6 +12,7 @@ import (
 	"slices"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/twigex/twigex/model"
 	"github.com/twigex/twigex/tlog"
@@ -19,6 +20,10 @@ import (
 
 // Keys appear in addresses, so they are kept to a plain, stable form.
 var graphTypeKeyPattern = regexp.MustCompile(`^[a-z][a-z0-9_]{0,63}$`)
+
+// An icon is named, like "building-office"; the screen draws the icons it
+// knows and a plain one for any other name.
+var graphTypeIconPattern = regexp.MustCompile(`^[a-z0-9-]{1,32}$`)
 
 func graphTypesFailed(err error) *model.AppError {
 	tlog.Errorw("Failed to read or save graph types", "error", err)
@@ -170,6 +175,11 @@ func (a *App) CreateGraphEntityType(ctx context.Context, user model.User, input 
 		return nil, appErr
 	}
 
+	appErr = checkGraphTypeLook(input)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	appErr = a.checkGraphTypeFields(ctx, user, input.SourceID, input.KeyProperty, input.TitleProperty)
 	if appErr != nil {
 		return nil, appErr
@@ -181,6 +191,10 @@ func (a *App) CreateGraphEntityType(ctx context.Context, user model.User, input 
 		ID:            model.NewID(),
 		Key:           input.Key,
 		Name:          strings.TrimSpace(input.Name),
+		PluralName:    strings.TrimSpace(input.PluralName),
+		Icon:          input.Icon,
+		Color:         input.Color,
+		Status:        graphStatus(input),
 		Source:        model.GraphSourceDataset,
 		SourceID:      input.SourceID,
 		KeyProperty:   input.KeyProperty,
@@ -227,6 +241,11 @@ func (a *App) UpdateGraphEntityType(ctx context.Context, user model.User, id str
 		return nil, appErr
 	}
 
+	appErr = checkGraphTypeLook(input)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	if input.SourceID != entityType.SourceID {
 		appErr = a.checkGraphEntityTypeUnused(ctx, id)
 		if appErr != nil {
@@ -240,10 +259,15 @@ func (a *App) UpdateGraphEntityType(ctx context.Context, user model.User, id str
 	}
 
 	entityType.Name = strings.TrimSpace(input.Name)
+	entityType.PluralName = strings.TrimSpace(input.PluralName)
+	entityType.Icon = input.Icon
+	entityType.Color = input.Color
+	entityType.Status = graphStatus(input)
 	entityType.Description = strings.TrimSpace(input.Description)
 	entityType.SourceID = input.SourceID
 	entityType.KeyProperty = input.KeyProperty
 	entityType.TitleProperty = input.TitleProperty
+	entityType.UpdatedBy = user.ID
 	entityType.UpdatedAt = time.Now().Unix()
 
 	err := a.Store.Graph.UpdateEntityType(ctx, *entityType)
@@ -309,6 +333,11 @@ func (a *App) CreateGraphRelationType(ctx context.Context, user model.User, inpu
 		return nil, appErr
 	}
 
+	cardinality, appErr := graphCardinality(input)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	now := time.Now().Unix()
 
 	relationType := model.GraphRelationType{
@@ -323,6 +352,7 @@ func (a *App) CreateGraphRelationType(ctx context.Context, user model.User, inpu
 			Property:     input.Property,
 			FromProperty: input.FromProperty,
 		},
+		Cardinality: cardinality,
 		Description: strings.TrimSpace(input.Description),
 		CreatedBy:   user.ID,
 		CreatedAt:   now,
@@ -369,6 +399,11 @@ func (a *App) UpdateGraphRelationType(ctx context.Context, user model.User, id s
 		return nil, appErr
 	}
 
+	cardinality, appErr := graphCardinality(input)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	relationType.Name = strings.TrimSpace(input.Name)
 	relationType.ReverseName = strings.TrimSpace(input.ReverseName)
 	relationType.Description = strings.TrimSpace(input.Description)
@@ -376,6 +411,8 @@ func (a *App) UpdateGraphRelationType(ctx context.Context, user model.User, id s
 		Property:     input.Property,
 		FromProperty: input.FromProperty,
 	}
+	relationType.Cardinality = cardinality
+	relationType.UpdatedBy = user.ID
 	relationType.UpdatedAt = time.Now().Unix()
 
 	err := a.Store.Graph.UpdateRelationType(ctx, *relationType)
@@ -420,10 +457,65 @@ func checkGraphTypeKey(key string) *model.AppError {
 	return nil
 }
 
+// checkGraphTypeLook checks the values that only change how a type looks and
+// is labelled. Each may be left empty: no icon, a colour from the list, and
+// "active" for the status.
+func checkGraphTypeLook(input model.GraphEntityTypeInput) *model.AppError {
+	if utf8.RuneCountInString(input.PluralName) > graphTypeNameLimit {
+		return model.NewAppError("graph.type_name_too_long", http.StatusBadRequest)
+	}
+
+	if input.Status != "" && !slices.Contains(model.GraphStatuses, input.Status) {
+		return model.NewAppError("graph.type_status_invalid", http.StatusBadRequest)
+	}
+
+	if input.Color != "" && !slices.Contains(model.GraphColors, input.Color) {
+		return model.NewAppError("graph.type_color_invalid", http.StatusBadRequest)
+	}
+
+	if input.Icon != "" && !graphTypeIconPattern.MatchString(input.Icon) {
+		return model.NewAppError("graph.type_icon_invalid", http.StatusBadRequest)
+	}
+
+	return nil
+}
+
+// A type saved without a status is active, the same as the column's default,
+// so the answer to the save says what the database holds.
+func graphStatus(input model.GraphEntityTypeInput) string {
+	if input.Status == "" {
+		return model.GraphStatusActive
+	}
+
+	return input.Status
+}
+
+// A property relation's "to" type holds the "from" entity's key, so each "to"
+// entity has one "from" entity, and one "from" entity has many: one to many,
+// unless the admin says otherwise.
+func graphCardinality(input model.GraphRelationTypeInput) (string, *model.AppError) {
+	if input.Cardinality == "" {
+		return model.GraphOneToMany, nil
+	}
+
+	if !slices.Contains(model.GraphCardinalities, input.Cardinality) {
+		return "", model.NewAppError("graph.relation_type_cardinality_invalid", http.StatusBadRequest)
+	}
+
+	return input.Cardinality, nil
+}
+
+// Names are stored in columns of 255 characters.
+const graphTypeNameLimit = 255
+
 func checkGraphTypeNames(names ...string) *model.AppError {
 	for _, name := range names {
 		if strings.TrimSpace(name) == "" {
 			return model.NewAppError("graph.type_name_required", http.StatusBadRequest)
+		}
+
+		if utf8.RuneCountInString(name) > graphTypeNameLimit {
+			return model.NewAppError("graph.type_name_too_long", http.StatusBadRequest)
 		}
 	}
 

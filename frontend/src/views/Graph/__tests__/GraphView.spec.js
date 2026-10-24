@@ -12,6 +12,7 @@ import { createRouter, createMemoryHistory } from "vue-router";
 import GraphSectionView from "@/views/Graph/GraphSectionView.vue";
 import GraphView from "@/views/Graph/GraphView.vue";
 import OntologyView from "@/views/Graph/OntologyView.vue";
+import OntologyTypeView from "@/views/Graph/OntologyTypeView.vue";
 
 vi.mock("sigma", () => ({
     default: class {
@@ -39,6 +40,11 @@ vi.mock("@/services/graphService", () => ({
                         id: "t-company",
                         key: "company",
                         name: "Company",
+                        plural_name: "Companies",
+                        icon: "building-office",
+                        color: "cyan",
+                        status: "active",
+                        description: "Customers and suppliers from the ERP.",
                         source: "dataset",
                         source_name: "companies",
                         key_property_name: "companies.key",
@@ -61,6 +67,7 @@ vi.mock("@/services/graphService", () => ({
                         from_type_id: "t-company",
                         to_type_id: "t-order",
                         kind: "property",
+                        cardinality: "one_to_many",
                         kind_config: { property_name: "orders.company_id" },
                     },
                 ],
@@ -93,6 +100,11 @@ function graphRouter() {
                 children: [
                     { path: "explore", name: "graph-explore", component: GraphView },
                     { path: "ontology", name: "graph-ontology", component: OntologyView },
+                    {
+                        path: "ontology/types/:key",
+                        name: "graph-ontology-type",
+                        component: OntologyTypeView,
+                    },
                 ],
             },
         ],
@@ -125,17 +137,44 @@ it("opens a /graph address on the entity it names", async () => {
     expect(wrapper.text()).toContain("Types: 3 · Relation types: 1");
 });
 
-it("lists the types and relations on the ontology page", async () => {
+it("shows the entity types as cards", async () => {
     setActivePinia(createPinia());
 
     const wrapper = await mountAt(graphRouter(), { name: "graph-ontology" });
 
+    expect(wrapper.text()).toContain("Companies");
+    expect(wrapper.text()).toContain("Customers and suppliers from the ERP.");
     expect(wrapper.text()).toContain("Dataset companies");
-    expect(wrapper.text()).toContain("companies.key");
     expect(wrapper.text()).toContain("Built-in");
+});
+
+it("lists the relation types on their own tab", async () => {
+    setActivePinia(createPinia());
+
+    const wrapper = await mountAt(graphRouter(), {
+        name: "graph-ontology",
+        query: { tab: "relations" },
+    });
+
     const text = wrapper.text().replace(/\s+/g, " ");
 
     expect(text).toContain("Company places Order");
-    expect(wrapper.text()).toContain("orders.company_id");
-    expect(wrapper.text()).toContain("From data");
+    expect(text).toContain("One to many");
+    expect(text).toContain("orders.company_id");
+    expect(text).toContain("From data");
+});
+
+it("reads a relation from the other side on that type's page", async () => {
+    setActivePinia(createPinia());
+
+    const wrapper = await mountAt(graphRouter(), {
+        name: "graph-ontology-type",
+        params: { key: "order" },
+        query: { tab: "relations" },
+    });
+
+    const text = wrapper.text().replace(/\s+/g, " ");
+
+    expect(text).toContain("Order placed by Company");
+    expect(text).toContain("Many to one");
 });
