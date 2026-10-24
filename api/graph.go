@@ -18,6 +18,7 @@ func (a *API) initGraph() {
 	a.BaseRoutes.Graph.HandleFunc("/entities/{type}/relations/{relation_type}", a.getGraphRelationPage).Methods("GET")
 	a.BaseRoutes.Graph.HandleFunc("/types/{type}/entities", a.searchGraphEntities).Methods("GET")
 	a.BaseRoutes.Graph.HandleFunc("/types", a.getGraphTypes).Methods("GET")
+	a.BaseRoutes.Graph.HandleFunc("/datasets", a.getGraphDatasetChoices).Methods("GET")
 	a.BaseRoutes.Graph.HandleFunc("/entity-types", a.createGraphEntityType).Methods("POST")
 	a.BaseRoutes.Graph.HandleFunc("/entity-types/{id}", a.updateGraphEntityType).Methods("PUT")
 	a.BaseRoutes.Graph.HandleFunc("/entity-types/{id}", a.deleteGraphEntityType).Methods("DELETE")
@@ -142,6 +143,22 @@ func (a *API) searchGraphEntities(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondJSON(w, http.StatusOK, entities)
+}
+
+func (a *API) getGraphDatasetChoices(w http.ResponseWriter, r *http.Request) {
+	user, appErr := a.app.GetCurrentUser(r)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	choices, appErr := a.app.GetGraphDatasetChoices(r.Context(), *user)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	respondJSON(w, http.StatusOK, choices)
 }
 
 func (a *API) getGraphTypes(w http.ResponseWriter, r *http.Request) {

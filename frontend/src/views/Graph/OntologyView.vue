@@ -6,11 +6,29 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
     <div class="h-full overflow-y-auto bg-gray-50 p-3 sm:p-4">
         <div class="mx-auto flex max-w-6xl flex-col gap-y-4">
-            <div>
-                <h1 class="text-base font-semibold leading-6 text-gray-900">
-                    {{ t("graph.ontology.title") }}
-                </h1>
-                <p class="mt-1 text-sm text-gray-500">{{ t("graph.ontology.description") }}</p>
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                    <h1 class="text-base font-semibold leading-6 text-gray-900">
+                        {{ t("graph.ontology.title") }}
+                    </h1>
+                    <p class="mt-1 text-sm text-gray-500">{{ t("graph.ontology.description") }}</p>
+                </div>
+                <BaseButton
+                    v-if="editing.canEdit.value && currentTab === 'types'"
+                    size="small"
+                    :prepend-icon="PlusIcon"
+                    @click="editing.newType()"
+                >
+                    {{ t("graph.form.type.new_title") }}
+                </BaseButton>
+                <BaseButton
+                    v-if="editing.canEdit.value && currentTab === 'relations'"
+                    size="small"
+                    :prepend-icon="PlusIcon"
+                    @click="editing.newRelationType()"
+                >
+                    {{ t("graph.form.relation.new_title") }}
+                </BaseButton>
             </div>
 
             <div v-if="ontology.graphTypes.errorMessage.value" class="rounded-md bg-red-50 p-4">
@@ -141,6 +159,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 <th scope="col" class="px-4 py-3">
                                     {{ t("graph.ontology.column.read_from") }}
                                 </th>
+                                <th v-if="editing.canEdit.value" scope="col" class="px-4 py-3">
+                                    <span class="sr-only">{{ t("graph.form.actions") }}</span>
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -195,6 +216,27 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         {{ ontology.readFrom(relationType) }}
                                     </span>
                                 </td>
+                                <td
+                                    v-if="editing.canEdit.value"
+                                    class="whitespace-nowrap px-4 py-3 text-right text-sm font-medium"
+                                >
+                                    <template v-if="!relationType.built_in">
+                                        <button
+                                            type="button"
+                                            class="text-indigo-600 hover:text-indigo-500"
+                                            @click="editing.editRelationType(relationType)"
+                                        >
+                                            {{ t("common.button.edit") }}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="ml-4 text-red-600 hover:text-red-500"
+                                            @click="editing.askDelete('relation', relationType)"
+                                        >
+                                            {{ t("common.button.delete") }}
+                                        </button>
+                                    </template>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -213,20 +255,49 @@ SPDX-License-Identifier: AGPL-3.0-only
                 </p>
             </section>
         </div>
+
+        <TypeFormDialog
+            :open="editing.typeForm.value.open"
+            :entity-type="editing.typeForm.value.entityType"
+            @saved="typeSaved"
+            @close="editing.closeForms()"
+        />
+        <RelationTypeFormDialog
+            :open="editing.relationTypeForm.value.open"
+            :relation-type="editing.relationTypeForm.value.relationType"
+            :entity-types="ontology.types.value.entity_types"
+            :from-type-id="editing.relationTypeForm.value.fromTypeId"
+            @saved="editing.saved()"
+            @close="editing.closeForms()"
+        />
+        <ConfirmDialog
+            :open="editing.deleting.value.open"
+            :title="t('graph.form.delete.title')"
+            :message="editing.deleteMessage.value"
+            :confirm-label="t('common.button.delete')"
+            @confirm="editing.confirmDelete()"
+            @close="editing.cancelDelete()"
+        />
     </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
-import { LockClosedIcon, XCircleIcon } from "@heroicons/vue/20/solid";
+import { LockClosedIcon, PlusIcon, XCircleIcon } from "@heroicons/vue/20/solid";
 import { t } from "@/i18n/index.js";
 import { useOntology } from "@/composables/graph/useOntology.js";
+import { useTypeEditing } from "@/composables/graph/useTypeEditing.js";
+import BaseButton from "@/components/BaseButton.vue";
+import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import TypeMapCanvas from "@/components/Graph/TypeMapCanvas.vue";
+import TypeFormDialog from "@/components/Graph/TypeFormDialog.vue";
+import RelationTypeFormDialog from "@/components/Graph/RelationTypeFormDialog.vue";
 
 const route = useRoute();
 const router = useRouter();
 const ontology = useOntology();
+const editing = useTypeEditing();
 
 const loaded = ref(false);
 
@@ -260,6 +331,13 @@ const selfRelationCount = computed(() => {
         (relationType) => relationType.from_type_id === relationType.to_type_id,
     ).length;
 });
+
+// A new type opens its own page once it's saved.
+async function typeSaved(entityType) {
+    await editing.saved();
+
+    router.push({ name: "graph-ontology-type", params: { key: entityType.key } });
+}
 
 function showTab(tab) {
     router.replace({ query: { ...route.query, tab: tab } });
