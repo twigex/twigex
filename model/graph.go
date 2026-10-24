@@ -273,6 +273,12 @@ type GraphRelationPage struct {
 	Next  string              `json:"next,omitempty"`
 }
 
+// GraphEntityPage is one page of a type's entities, read the same way.
+type GraphEntityPage struct {
+	Items []GraphEntityRef `json:"items"`
+	Next  string           `json:"next,omitempty"`
+}
+
 type GraphEntityRelations struct {
 	Entity GraphEntityRef       `json:"entity"`
 	Groups []GraphRelationGroup `json:"groups"`

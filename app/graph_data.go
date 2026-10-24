@@ -495,10 +495,12 @@ func (a *App) dataRelationPage(ctx context.Context, user model.User, ontology *g
 	return page, nil
 }
 
-// SearchGraphEntities finds entities of a user-defined type by name, for
-// picking where to start. A user who may not read the dataset gets no
-// results rather than an error.
-func (a *App) SearchGraphEntities(ctx context.Context, user model.User, typeKey, search string) ([]model.GraphEntityRef, *model.AppError) {
+// SearchGraphEntities lists entities of a user-defined type, 50 at a time in
+// key order, for picking where to start and for the Entities table. A search
+// keeps only names that contain it, and after is the key of the last entity
+// already shown. A user who may not read the dataset gets no results rather
+// than an error.
+func (a *App) SearchGraphEntities(ctx context.Context, user model.User, typeKey, search, after string) (*model.GraphEntityPage, *model.AppError) {
 	if !a.graphEnabled() {
 		return nil, model.NewAppError("graph.disabled", http.StatusNotFound)
 	}
@@ -506,11 +508,20 @@ func (a *App) SearchGraphEntities(ctx context.Context, user model.User, typeKey,
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	ontology, err := a.loadGraphOntology(ctx)
+	source, found, err := a.graphSourceFor(ctx, typeKey)
 	if err != nil {
 		return nil, graphRelationsFailed("", err)
 	}
 
+	searchable, canSearch := source.(graphSearchableSource)
+	if !found || !canSearch {
+		return nil, graphEntityNotFound()
+	}
+
+	return searchable.search(ctx, user, typeKey, search, after)
+}
+
+func (a *App) dataEntitySearch(ctx context.Context, user model.User, ontology *graphOntology, typeKey, search, after string) (*model.GraphEntityPage, *model.AppError) {
 	dataType, appErr := a.findGraphDataType(ctx, ontology, typeKey)
 	if appErr != nil {
 		return nil, appErr
@@ -525,19 +536,32 @@ func (a *App) SearchGraphEntities(ctx context.Context, user model.User, typeKey,
 
 	fields := []string{dataType.keyField, dataType.titleField}
 
-	rows, appErr := a.graphRows(ctx, user, dataType, fields, filters, "", graphGroupItemLimit)
+	rows, appErr := a.graphRows(ctx, user, dataType, fields, filters, after, graphGroupItemLimit+1)
 	if appErr != nil {
 		if graphCheckRefused(appErr) {
-			return make([]model.GraphEntityRef, 0), nil
+			return &model.GraphEntityPage{Items: make([]model.GraphEntityRef, 0)}, nil
 		}
 
 		return nil, appErr
 	}
 
-	entities := make([]model.GraphEntityRef, 0, len(rows))
+	return graphEntityPage(dataType, rows), nil
+}
+
+// graphEntityPage turns up to one row more than a page into the page. The
+// extra row only tells that another page follows.
+func graphEntityPage(dataType *graphDataType, rows []map[string]any) *model.GraphEntityPage {
+	page := &model.GraphEntityPage{Items: make([]model.GraphEntityRef, 0, graphGroupItemLimit)}
+
 	for _, row := range rows {
-		entities = append(entities, dataType.ref(row))
+		if len(page.Items) == graphGroupItemLimit {
+			page.Next = page.Items[graphGroupItemLimit-1].ID
+
+			break
+		}
+
+		page.Items = append(page.Items, dataType.ref(row))
 	}
 
-	return entities, nil
+	return page
 }

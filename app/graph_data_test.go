@@ -379,18 +379,71 @@ func TestDataEntityRelationsAnswerNotFoundForAMissingOrHiddenEntity(t *testing.T
 func TestSearchGraphEntitiesFindsByName(t *testing.T) {
 	g, _ := newGraphDataTestApp()
 
-	found, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "u1"}, "company", "tallinn")
+	found, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "u1"}, "company", "tallinn", "")
 	if appErr != nil {
 		t.Fatalf("SearchGraphEntities: %v", appErr)
 	}
 
-	if len(found) != 1 || found[0].ID != "c-05" || found[0].Title != "Tallinn Tech" {
-		t.Errorf("want Tallinn Tech, got %+v", found)
+	if len(found.Items) != 1 || found.Items[0].ID != "c-05" || found.Items[0].Title != "Tallinn Tech" {
+		t.Errorf("want Tallinn Tech, got %+v", found.Items)
 	}
 
-	outside, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "outsider"}, "company", "")
-	if appErr != nil || len(outside) != 0 {
+	if found.Next != "" {
+		t.Errorf("want no next page, got %q", found.Next)
+	}
+
+	outside, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "outsider"}, "company", "", "")
+	if appErr != nil || len(outside.Items) != 0 {
 		t.Errorf("want no results for a user outside the workspace, got %+v (%v)", outside, appErr)
+	}
+}
+
+// The Entities table pages through a type 50 at a time, and a search keeps
+// its filter on every page.
+func TestSearchGraphEntitiesPagesInKeyOrder(t *testing.T) {
+	g, engine := newGraphDataTestApp()
+
+	for i := 0; i < 120; i++ {
+		key := fmt.Sprintf("c-1%04d", i)
+		name := fmt.Sprintf("Company %d", i)
+
+		if i%2 == 0 {
+			name = fmt.Sprintf("Shop %d", i)
+		}
+
+		engine.tables["companies"] = append(engine.tables["companies"], fakeCompany(key, name))
+	}
+
+	sizes := make([]int, 0)
+	after := ""
+
+	for len(sizes) < 5 {
+		page, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "u1"}, "company", "shop", after)
+		if appErr != nil {
+			t.Fatalf("SearchGraphEntities: %v", appErr)
+		}
+
+		for _, item := range page.Items {
+			if !strings.HasPrefix(item.Title, "Shop") {
+				t.Fatalf("want only shops, got %q", item.Title)
+			}
+		}
+
+		if after != "" && page.Items[0].ID <= after {
+			t.Errorf("want the page to start after %s, got %s", after, page.Items[0].ID)
+		}
+
+		sizes = append(sizes, len(page.Items))
+
+		if page.Next == "" {
+			break
+		}
+
+		after = page.Next
+	}
+
+	if !slices.Equal(sizes, []int{50, 10}) {
+		t.Errorf("want pages of 50 and 10 shops, got %v", sizes)
 	}
 }
 
