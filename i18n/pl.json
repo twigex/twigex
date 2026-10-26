@@ -564,6 +564,10 @@
     "translation": "Zarządzanie rolami wymaga planu płatnego."
   },
   {
+    "id": "datamodel.duplicate_name",
+    "translation": "Dwa pola w tym modelu danych mają tę samą nazwę. Nadaj każdemu polu własną nazwę."
+  },
+  {
     "id": "datamodel.forbidden",
     "translation": "Nie masz uprawnień do zarządzania modelami danych."
   },

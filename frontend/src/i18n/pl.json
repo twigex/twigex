@@ -877,6 +877,7 @@
     "collimato.builder.table": "Tabela",
     "collimato.builder.cube_name": "Nazwa zbioru danych",
     "collimato.builder.name_error": "Użyj liter, cyfr i podkreśleń; musi zaczynać się od litery.",
+    "collimato.builder.field_name_taken": "Ta nazwa jest już używana.",
     "collimato.builder.dimensions": "Wymiary",
     "collimato.builder.dimensions_help": "Wybierz, które kolumny udostępnić i ich typy.",
     "collimato.builder.col_include": "Uwzględnij",

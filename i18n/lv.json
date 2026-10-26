@@ -564,6 +564,10 @@
     "translation": "Lomu pārvaldībai nepieciešams maksas plāns."
   },
   {
+    "id": "datamodel.duplicate_name",
+    "translation": "Diviem šī datu modeļa laukiem ir vienāds nosaukums. Piešķiriet katram laukam savu nosaukumu."
+  },
+  {
     "id": "datamodel.forbidden",
     "translation": "Jums nav atļaujas pārvaldīt datu modeļus."
   },

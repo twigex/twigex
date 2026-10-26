@@ -877,6 +877,7 @@
     "collimato.builder.table": "Table",
     "collimato.builder.cube_name": "Dataset name",
     "collimato.builder.name_error": "Use letters, numbers and underscores; must start with a letter.",
+    "collimato.builder.field_name_taken": "This name is already used.",
     "collimato.builder.dimensions": "Dimensions",
     "collimato.builder.dimensions_help": "Choose which columns to expose and their types.",
     "collimato.builder.col_include": "Include",

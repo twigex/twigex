@@ -877,6 +877,7 @@
     "collimato.builder.table": "Кесте",
     "collimato.builder.cube_name": "Деректер жиынтығының атауы",
     "collimato.builder.name_error": "Әріптерді, сандарды және астын сызуды пайдаланыңыз; әріптен басталуы керек.",
+    "collimato.builder.field_name_taken": "Бұл атау қолданылып жатыр.",
     "collimato.builder.dimensions": "Өлшемдер",
     "collimato.builder.dimensions_help": "Қандай бағандарды көрсету керегін және олардың түрлерін таңдаңыз.",
     "collimato.builder.col_include": "Қосу",

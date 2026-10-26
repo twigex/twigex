@@ -307,3 +307,28 @@ func TestDatasetFromTableSkipsEveryColumn(t *testing.T) {
 		t.Errorf("want 1 skipped, got %v", skipped)
 	}
 }
+
+func TestHasDuplicateMemberNames(t *testing.T) {
+	unique := model.Dataset{
+		Dimensions: []model.CubeDimension{{Name: "id"}, {Name: "full_name"}},
+		Measures:   []model.CubeMeasure{{Name: "count"}, {Name: "total"}},
+	}
+	if hasDuplicateMemberNames(unique) {
+		t.Errorf("unique names reported as duplicates")
+	}
+
+	twoDimensions := model.Dataset{
+		Dimensions: []model.CubeDimension{{Name: "full_name"}, {Name: "full_name"}},
+	}
+	if !hasDuplicateMemberNames(twoDimensions) {
+		t.Errorf("two dimensions with one name were not caught")
+	}
+
+	dimensionAndMeasure := model.Dataset{
+		Dimensions: []model.CubeDimension{{Name: "total"}},
+		Measures:   []model.CubeMeasure{{Name: "count"}, {Name: "total"}},
+	}
+	if !hasDuplicateMemberNames(dimensionAndMeasure) {
+		t.Errorf("a dimension and a measure with one name were not caught")
+	}
+}
