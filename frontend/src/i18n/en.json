@@ -883,6 +883,8 @@
     "collimato.builder.col_column": "Column",
     "collimato.builder.col_type": "Type",
     "collimato.builder.col_pk": "Primary key",
+    "collimato.builder.col_public": "Visible",
+    "collimato.builder.col_public_help": "Show the primary key as a field in charts. Cube hides primary keys otherwise.",
     "collimato.builder.col_title": "Title",
     "collimato.builder.pick_table": "Pick a table to see its columns.",
     "collimato.builder.optional": "Optional",

@@ -521,6 +521,7 @@ type CubeDimension struct {
 	SQL        string `json:"sql"`
 	Type       string `json:"type"`
 	PrimaryKey bool   `json:"primary_key,omitempty"`
+	Public     bool   `json:"public,omitempty"`
 	Title      string `json:"title,omitempty"`
 	// Custom marks a raw-SQL dimension
 	Custom bool `json:"custom,omitempty"`

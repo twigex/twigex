@@ -135,6 +135,14 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                     <th class="w-20 px-3 py-2">
                                                         {{ t("collimato.builder.col_pk") }}
                                                     </th>
+                                                    <th
+                                                        class="w-20 px-3 py-2"
+                                                        :title="
+                                                            t('collimato.builder.col_public_help')
+                                                        "
+                                                    >
+                                                        {{ t("collimato.builder.col_public") }}
+                                                    </th>
                                                     <th class="px-3 py-2">
                                                         {{ t("collimato.builder.col_title") }}
                                                     </th>
@@ -168,6 +176,17 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                             v-model="col.primaryKey"
                                                             type="checkbox"
                                                             :disabled="!col.include"
+                                                            @change="onPrimaryKeyChange(col)"
+                                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                        />
+                                                    </td>
+                                                    <td class="px-3 py-2">
+                                                        <input
+                                                            v-model="col.public"
+                                                            type="checkbox"
+                                                            :disabled="
+                                                                !col.include || !col.primaryKey
+                                                            "
                                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                                                         />
                                                     </td>
@@ -584,7 +603,7 @@ const databases = ref([]); // [{ database: connId, name: label, tables: [...] }]
 const connectionId = ref("");
 const tableName = ref("");
 const cubeName = ref("");
-const columns = ref([]); // [{ name, type, include, primaryKey, title }]
+const columns = ref([]); // [{ name, type, include, primaryKey, public, title }]
 const customDimensions = ref([]); // raw-SQL dimensions [{ name, sql, type, title }]
 const measures = ref([]); // column-based measures (count is implicit)
 const customMeasures = ref([]); // raw-SQL measures [{ name, type, sql, title }]
@@ -667,8 +686,15 @@ function loadColumnsForTable() {
         type: cubeType(c.type),
         include: true,
         primaryKey: c.name === "id",
+        public: false,
         title: "",
     }));
+}
+
+function onPrimaryKeyChange(col) {
+    if (!col.primaryKey) {
+        col.public = false;
+    }
 }
 
 function onConnectionChange() {
@@ -758,6 +784,7 @@ function hydrateFromModel(model) {
         if (d) {
             col.type = d.type;
             col.primaryKey = !!d.primary_key;
+            col.public = !!d.public;
             col.title = d.title || "";
         }
     });
@@ -814,6 +841,7 @@ async function save() {
                     sql: c.name,
                     type: c.type,
                     primary_key: c.primaryKey,
+                    public: c.primaryKey && c.public,
                     title: c.title || undefined,
                 })),
             ...customDimensions.value

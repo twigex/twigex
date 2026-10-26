@@ -191,6 +191,62 @@ func TestRenderCubeYAMLMeasureTypeNormalisation(t *testing.T) {
 	}
 }
 
+func TestRenderCubeYAMLPublicPrimaryKey(t *testing.T) {
+	m := model.Dataset{
+		Name:     "orders",
+		SqlTable: "orders",
+		Dimensions: []model.CubeDimension{
+			{Name: "id", SQL: "id", Type: "number", PrimaryKey: true, Public: true},
+			{Name: "user_id", SQL: "user_id", Type: "number", Public: true},
+			{Name: "number", SQL: "number", Type: "number"},
+		},
+		Measures: []model.CubeMeasure{{Name: "count", Type: "count"}},
+	}
+
+	got, err := renderCubeYAML(m, &model.Connection{Default: true})
+	if err != nil {
+		t.Fatalf("render: %v", err)
+	}
+
+	var parsed yamlCubeFile
+	if err := yaml.Unmarshal([]byte(got), &parsed); err != nil {
+		t.Fatalf("output is not valid YAML: %v\n%s", err, got)
+	}
+
+	public := make(map[string]bool)
+	for _, d := range parsed.Cubes[0].Dimensions {
+		public[d.Name] = d.Public
+	}
+
+	if !public["id"] {
+		t.Errorf("a visible primary key should be public:\n%s", got)
+	}
+	if public["user_id"] {
+		t.Errorf("only a primary key is marked public:\n%s", got)
+	}
+	if n := strings.Count(got, "public: true"); n != 1 {
+		t.Errorf("want 1 public line, got %d:\n%s", n, got)
+	}
+}
+
+func TestRenderCubeYAMLHiddenPrimaryKey(t *testing.T) {
+	m := model.Dataset{
+		Name:       "orders",
+		SqlTable:   "orders",
+		Dimensions: []model.CubeDimension{{Name: "id", SQL: "id", Type: "number", PrimaryKey: true}},
+		Measures:   []model.CubeMeasure{{Name: "count", Type: "count"}},
+	}
+
+	got, err := renderCubeYAML(m, &model.Connection{Default: true})
+	if err != nil {
+		t.Fatalf("render: %v", err)
+	}
+
+	if strings.Contains(got, "public") {
+		t.Errorf("a primary key stays hidden unless asked:\n%s", got)
+	}
+}
+
 func TestDatasetFromTable(t *testing.T) {
 	conn := &model.Connection{ID: "conn1", Database: "Analytics"}
 	columns := []model.ColumnDetail{
