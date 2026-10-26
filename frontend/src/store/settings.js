@@ -27,18 +27,17 @@ export const useSettingsStore = defineStore("settings", {
         isEnterpriseBuild(state) {
             return state.config.Edition === "enterprise";
         },
-        getEnterpriseRevision(state) {
-            return state.config.EnterpriseRevision;
-        },
-        getEnterpriseHash(state) {
-            return state.config.EnterpriseHash?.slice(0, 7);
-        },
         getLicenseFeature: (state) => (feature) => {
             if (state.license && state.license[feature] !== undefined) {
                 return state.license[feature];
             }
 
             return false;
+        },
+        isFeatureEnabled: (state) => (name) => {
+            const flags = state.config?.FeatureFlags ?? {};
+
+            return flags[name] === true;
         },
     },
 

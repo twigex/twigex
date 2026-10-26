@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { describe, it, expect } from "vitest";
-import { CHART_PALETTE, CHART_LABEL_COLOR } from "@/utils/collimato/chartPalette.js";
-import { CHART_TYPE_IDS, isEchartsType, transformData } from "@/utils/collimato/chartTypes.js";
+import { CHART_PALETTE, CHART_LABEL_COLOR } from "@/utils/collimato/charts/chartPalette.js";
+import { CHART_TYPE_IDS, isEchartsType } from "@/utils/collimato/charts/chartTypes.js";
+import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 
 const result = {
     query: {

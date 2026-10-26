@@ -3,7 +3,7 @@
 
 import { onMounted, onBeforeUnmount, toValue } from "vue";
 import * as echarts from "echarts";
-import { applyConfiguration } from "@/utils/collimato/chartTypes.js";
+import { applyConfiguration } from "@/utils/collimato/charts/chartDrawing.js";
 
 export function useEcharts(container, chartType, configuration) {
     let instance = null;

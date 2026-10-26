@@ -151,7 +151,7 @@ import ChartEditorPreview from "@/components/Collimato/ChartEditorPreview.vue";
 import { useAlertStore } from "@/store/alerts";
 import { extractErrorMessage } from "@/utils/errors";
 import { useCollimatoStore } from "@/store/collimato";
-import { CHART_TYPE_IDS } from "@/utils/collimato/chartTypes.js";
+import { CHART_TYPE_IDS } from "@/utils/collimato/charts/chartTypes.js";
 import { presentationFor } from "@/components/Collimato/Charts/chartTypePresentation.js";
 import { useChartBuilder } from "@/composables/collimato/useChartBuilder.js";
 import { useChartEditorQuery } from "@/composables/collimato/useChartEditorQuery.js";

@@ -32,7 +32,9 @@ export const CHART_TYPE_PRESENTATION = {
         labelKey: `${LABELS}line_chart`,
         shortLabelKey: `${LABELS}short.line`,
         customization: AxisChartCustomization,
-        customizationProps: {},
+        // Bars look the same with a gap or a zero, so only lines get the
+        // setting.
+        customizationProps: { showMissingValues: true },
         listStyle: {
             bg: "bg-blue-500",
             badge: "bg-blue-50 text-blue-700 ring-blue-700/10",

@@ -4,7 +4,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import BigNumber from "@/components/Collimato/Charts/BigNumber.vue";
-import { number } from "@/utils/collimato/chartUtils.js";
+import { number } from "@/utils/collimato/charts/bigNumber.js";
 
 const result = (measures, row) => ({
     query: { measures: measures, dimensions: [] },
@@ -39,10 +39,11 @@ describe("number", () => {
         expect(options.values[0].value).toBe(7);
     });
 
-    it("counts a missing value as nothing rather than NaN", () => {
+    it("reports a missing value as no data rather than zero", () => {
         const options = number(result(["orders.count"], {}));
 
-        expect(options.values[0].value).toBe(0);
+        expect(options.values[0].value).toBeNull();
+        expect(options.values[0].formatted).toBe("-");
     });
 });
 

@@ -560,6 +560,10 @@
     "translation": "Nie udało się zweryfikować dostępności nazwy roli. Spróbuj ponownie."
   },
   {
+    "id": "role.license_required",
+    "translation": "Zarządzanie rolami wymaga planu płatnego."
+  },
+  {
     "id": "datamodel.forbidden",
     "translation": "Nie masz uprawnień do zarządzania modelami danych."
   },
@@ -1893,34 +1897,34 @@
   },
   {
     "id": "channel.archived",
-    "translation": ""
+    "translation": "Ten kanał jest zarchiwizowany. Przywróć go z archiwum przed wprowadzeniem zmian."
   },
   {
     "id": "channel.not_archived",
-    "translation": ""
+    "translation": "Ten kanał nie jest zarchiwizowany."
   },
   {
     "id": "channel.archive_failed",
-    "translation": ""
+    "translation": "Nie udało się zarchiwizować kanału. Spróbuj ponownie."
   },
   {
     "id": "channel.unarchive_failed",
-    "translation": ""
+    "translation": "Nie udało się przywrócić kanału z archiwum. Spróbuj ponownie."
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": ""
+    "translation": "Archiwizować można tylko kanały publiczne."
   },
   {
     "id": "channel.delete_type_invalid",
-    "translation": ""
+    "translation": "Usuwać można tylko kanały publiczne."
   },
   {
     "id": "channel.delete_failed",
-    "translation": ""
+    "translation": "Nie udało się usunąć kanału. Spróbuj ponownie."
   },
   {
     "id": "channel.role_invalid",
-    "translation": ""
+    "translation": "To nie jest prawidłowa rola w kanale."
   }
 ]

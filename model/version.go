@@ -9,11 +9,8 @@ var (
 	BuildHash      = "dev"
 	BuildTimestamp = "0"
 
-	// An enterprise build keeps Version at the release it is built from and
-	// numbers its own fixes as revisions, so upgrade checks never see them.
-	Edition            = "community"
-	EnterpriseRevision = ""
-	EnterpriseHash     = ""
+	Edition        = "community"
+	EnterpriseHash = ""
 
 	// MinClientVersion should be raised via MIN_CLIENT_VERSION.
 	MinClientVersion = "0.0.0"

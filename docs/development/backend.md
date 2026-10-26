@@ -11,12 +11,13 @@
 7. [App Layer](#app-layer)
 8. [Store Layer](#store-layer)
 9. [Timestamp Units](#timestamp-units)
-10. [i18n Error IDs](#i18n-error-ids)
-11. [AI Use Policy](#ai-use-policy)
-12. [Comments](#comments)
-13. [Dead Code](#dead-code)
-14. [Common Mistakes](#common-mistakes)
-15. [Quick Reference](#quick-reference)
+10. [Feature Flags](#feature-flags)
+11. [i18n Error IDs](#i18n-error-ids)
+12. [AI Use Policy](#ai-use-policy)
+13. [Comments](#comments)
+14. [Dead Code](#dead-code)
+15. [Common Mistakes](#common-mistakes)
+16. [Quick Reference](#quick-reference)
 
 ---
 
@@ -715,6 +716,49 @@ before writing — the unit isn't visible from the column type (`BIGINT`).
 Writing `time.Now().Unix()` into a milliseconds column (or vice versa)
 produces silently wrong data: the value is off by 1000× and tests that
 don't compare timestamps will happily pass.
+
+---
+
+## Feature Flags
+
+A feature flag keeps an unfinished feature off until it is ready.
+
+Flags live in `model.FeatureFlags`, are off by default, and are switched on
+with an environment variable at startup:
+
+```
+TWIGEX_FEATURE_<NAME>=true
+```
+
+Signed-in users get the flags in the client config, and the frontend checks
+them with `settingsStore.isFeatureEnabled("<Name>")`.
+
+### Adding a flag
+
+1. Add a `*bool` field to `model.FeatureFlags`.
+2. Default it to `false` in `FeatureFlags.SetDefaults`.
+3. Add it to `FeatureFlags.ByName`.
+4. Read it in `loadFeatureFlags` in `config/config.go` as
+   `TWIGEX_FEATURE_<NAME>`.
+
+### Checking a flag
+
+Check it where the feature starts, not deep inside it: register the routes,
+start the background jobs and show the menu entry only when the flag is on.
+When the flag is off, the routes are never registered, so nothing can reach
+the feature.
+
+In the frontend, check the flag before calling a flagged endpoint. In
+production, a route that isn't registered doesn't answer with an error: the
+request falls through to the frontend's `index.html` with a `200`.
+
+A flag only hides a feature. It never replaces a permission check.
+
+### Removing a flag
+
+When the feature is finished, delete the field, its default, its `ByName`
+entry, its line in `loadFeatureFlags` and every check, so the feature is simply
+on. Update the tests that use the flag by name.
 
 ---
 

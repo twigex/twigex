@@ -76,6 +76,7 @@ func (c *ConfigStore) loadEnvVariables() {
 	c.loadChannelSettings()
 	c.loadLDAPSettings()
 	c.loadCollimatoSettings()
+	c.loadFeatureFlags()
 	c.computeEnvLocked()
 }
 
@@ -163,6 +164,10 @@ func (c *ConfigStore) loadCollimatoSettings() {
 	setStr(&c.Config.CollimatoSettings.CubeAPIURL, "TWIGEX_COLLIMATO_CUBE_API_URL")
 	setStr(&c.Config.CollimatoSettings.CubeAPISecret, "TWIGEX_COLLIMATO_CUBE_API_SECRET")
 	setStr(&c.Config.CollimatoSettings.CubeCallbackSecret, "TWIGEX_COLLIMATO_CUBE_CALLBACK_SECRET")
+}
+
+func (c *ConfigStore) loadFeatureFlags() {
+	setBool(&c.Config.FeatureFlags.KnowledgeGraph, "TWIGEX_FEATURE_KNOWLEDGE_GRAPH")
 }
 
 func (c *ConfigStore) loadLDAPSettings() {

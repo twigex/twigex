@@ -58,7 +58,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                     class="flex-1 border-none py-1.5 pl-1 text-sm leading-5 text-gray-900 focus:ring-0 min-w-[50px]"
                     @change="search = $event.target.value"
                     @blur="search = ''"
-                    :placeholder="modelValue.length === 0 ? 'Select values' : ''"
+                    :placeholder="
+                        modelValue.length === 0 ? t('collimato.dashboard.filter.values') : ''
+                    "
                 />
             </div>
 
@@ -104,7 +106,9 @@ SPDX-License-Identifier: AGPL-3.0-only
             </ComboboxOptions>
         </div>
 
-        <p v-if="error" class="mt-2 text-sm text-red-600">This field is required</p>
+        <p v-if="error" class="mt-2 text-sm text-red-600">
+            {{ t("collimato.dashboard.filter.required") }}
+        </p>
     </Combobox>
 </template>
 
