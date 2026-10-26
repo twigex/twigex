@@ -15,10 +15,13 @@ import {
     hasTimeAxis,
     isEchartsType,
     drillDownKeyFor,
+    maxMeasuresFor,
+} from "@/utils/collimato/charts/chartTypes.js";
+import {
+    CHART_DRAWING,
     transformData,
     applyConfiguration,
-    maxMeasuresFor,
-} from "@/utils/collimato/chartTypes.js";
+} from "@/utils/collimato/charts/chartDrawing.js";
 import { CHART_TYPE_PRESENTATION } from "@/components/Collimato/Charts/chartTypePresentation.js";
 import { buildQuery } from "@/utils/collimato/chartQuery.js";
 
@@ -32,20 +35,26 @@ describe("every registered chart type", () => {
 
     it.each(CHART_TYPE_IDS)("%s has a transform unless it renders itself", (id) => {
         const type = CHART_TYPES[id];
+        const drawing = CHART_DRAWING[id];
 
         if (type.renderer === RENDERER_MAP) {
-            expect(type.transform).toBeNull();
+            expect(drawing.transform).toBeNull();
         } else {
-            expect(typeof type.transform).toBe("function");
+            expect(typeof drawing.transform).toBe("function");
         }
     });
 
     it.each(CHART_TYPE_IDS)("%s only applies config when ECharts renders it", (id) => {
         const type = CHART_TYPES[id];
+        const drawing = CHART_DRAWING[id];
 
-        if (type.applyConfig) {
+        if (drawing.applyConfig) {
             expect(type.renderer).toBe(RENDERER_ECHARTS);
         }
+    });
+
+    it("has a drawing entry for every type and no other", () => {
+        expect(Object.keys(CHART_DRAWING).sort()).toEqual([...CHART_TYPE_IDS].sort());
     });
 
     it.each(CHART_TYPE_IDS)("%s only drills down when ECharts renders it", (id) => {

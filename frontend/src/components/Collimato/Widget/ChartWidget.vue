@@ -161,7 +161,8 @@ import BigNumber from "@/components/Collimato/Charts/BigNumber.vue";
 import MapChart from "@/components/Collimato/Charts/Map/MapChart.vue";
 import { ChevronRightIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
-import { isEchartsType, drillDownKeyFor } from "@/utils/collimato/chartTypes.js";
+import { isEchartsType } from "@/utils/collimato/charts/chartTypes.js";
+import { drillDownValuesFor, drillDownBreadcrumbs } from "@/utils/collimato/charts/drillDown.js";
 import { CheckCircleIcon, FunnelIcon, XCircleIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
@@ -180,7 +181,7 @@ const loaded = ref(false);
 const map = ref(null);
 const gridItem = ref(null);
 const chartRef = ref(null);
-const nameClicked = ref(null);
+const valuesClicked = ref(null);
 const drillQueries = ref([props.chart.data ? props.chart.data.query : null]);
 
 const currentQuery = computed(() => drillQueries.value.at(-1));
@@ -211,25 +212,7 @@ const updatePosition = () => {
     props.chart.position.h = parseInt(h);
 };
 
-function breadcrumbName(dimensions) {
-    return dimensions.map((dimension) => dimension.split(".").at(-1)).join(", ");
-}
-
-function filtersAddedSince(previous, query) {
-    const before = (previous?.filters ?? []).map((filter) => JSON.stringify(filter));
-
-    return (query.filters ?? []).filter((filter) => !before.includes(JSON.stringify(filter)));
-}
-
-const breadcrumbs = computed(() =>
-    drillQueries.value.map((query, index) => ({
-        query: query,
-        name: breadcrumbName(query.dimensions ?? []),
-        value: filtersAddedSince(drillQueries.value[index - 1], query)
-            .flatMap((filter) => filter.values ?? [])
-            .join(", "),
-    })),
-);
+const breadcrumbs = computed(() => drillDownBreadcrumbs(drillQueries.value, props.chart.name));
 
 function onBreadcrumbClick(query, index) {
     drillQueries.value = drillQueries.value.slice(0, index + 1);
@@ -275,17 +258,14 @@ function setBusy(on) {
 
 on("contextmenu", (params) => {
     params.event.event.preventDefault();
-    nameClicked.value = params[drillDownKeyFor(props.chart.chart_type)];
 
-    if (!Array.isArray(nameClicked.value)) {
-        nameClicked.value = [nameClicked.value];
-    }
+    valuesClicked.value = drillDownValuesFor(props.chart.chart_type, currentData.value, params);
 
     emits("right-click", {
         x: params.event.event.x,
         y: params.event.event.y,
         chart: props.chart,
-        name: nameClicked.value,
+        values: valuesClicked.value,
         query: currentQuery.value,
     });
 });

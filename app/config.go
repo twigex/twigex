@@ -16,8 +16,7 @@ func (a *App) GetClientConfig(authenticated bool) map[string]any {
 		config["BuildDate"] = model.BuildDate
 		config["BuildHash"] = model.BuildHash
 		config["Edition"] = model.Edition
-		config["EnterpriseRevision"] = model.EnterpriseRevision
-		config["EnterpriseHash"] = model.EnterpriseHash
+		config["FeatureFlags"] = a.ConfigStore.Config.FeatureFlags.ByName()
 	}
 
 	return config

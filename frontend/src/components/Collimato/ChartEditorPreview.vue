@@ -103,7 +103,7 @@ import { t } from "@/i18n/index.js";
 import ChartContainer from "@/components/Collimato/Charts/ChartContainer.vue";
 import BigNumber from "@/components/Collimato/Charts/BigNumber.vue";
 import Table from "@/components/Collimato/ResultTable.vue";
-import { isEchartsType } from "@/utils/collimato/chartTypes.js";
+import { isEchartsType } from "@/utils/collimato/charts/chartTypes.js";
 import { ChevronRightIcon } from "@heroicons/vue/20/solid";
 import { TableCellsIcon } from "@heroicons/vue/24/outline";
 

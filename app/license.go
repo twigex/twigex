@@ -118,7 +118,7 @@ func (a *App) GetLicenseMap(licenseInfo bool) *map[string]interface{} {
 	if license != nil {
 		if licenseInfo {
 			m["name"] = license.Customer.Name
-			m["edition"] = license.SkuName
+			m["edition"] = license.PlanName
 			m["expires_at"] = license.ExpiresAt
 			m["starts_at"] = license.StartsAt
 			m["issued_at"] = license.IssuedAt

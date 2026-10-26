@@ -11,10 +11,10 @@ SPDX-License-Identifier: AGPL-3.0-only
                 <h2
                     class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
                 >
-                    Reset your password
+                    {{ t("login.password_reset.title") }}
                 </h2>
                 <p class="text-sm text-center text-gray-500 pt-3">
-                    Enter your email, and you will receive a link in your email.
+                    {{ t("login.password_reset.description") }}
                 </p>
             </div>
         </div>
@@ -22,9 +22,9 @@ SPDX-License-Identifier: AGPL-3.0-only
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form v-if="!sent" class="space-y-6" action="#" method="POST">
                 <div>
-                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
-                        >Email address</label
-                    >
+                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900">{{
+                        t("common.label.email")
+                    }}</label>
                     <div class="mt-2">
                         <input
                             v-model="email"
@@ -36,7 +36,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                         <p v-if="error" class="mt-2 text-sm text-red-600" id="email-error">
-                            Not a valid email address.
+                            {{ t("guest_invite.invalid_email") }}
                         </p>
                     </div>
                 </div>
@@ -46,7 +46,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                         @click.prevent="resetPassword"
                         class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                        Reset password
+                        {{ t("settings.edit_user.reset_password") }}
                     </button>
                 </div>
             </form>
@@ -65,17 +65,18 @@ SPDX-License-Identifier: AGPL-3.0-only
                         d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                     />
                 </svg>
-                <h3 class="mt-2 text-sm font-semibold text-gray-900">Password reset link sent</h3>
+                <h3 class="mt-2 text-sm font-semibold text-gray-900">
+                    {{ t("login.password_reset.sent_title") }}
+                </h3>
                 <p class="mt-1 text-sm text-gray-500">
-                    If your email is in our system, you’ll receive an email shortly with a link to
-                    reset your password.
+                    {{ t("login.password_reset.sent_description") }}
                 </p>
 
                 <div class="text-sm mt-5">
                     <a
                         @click.prevent="router.push({ name: 'login' })"
                         class="font-semibold text-indigo-600 hover:text-indigo-500 cursor-pointer"
-                        >Sign in to your account</a
+                        >{{ t("login.label.sign_in_account") }}</a
                     >
                 </div>
             </div>
@@ -87,6 +88,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import authService from "@/services/authService";
+import { t } from "@/i18n/index";
 
 const router = useRouter();
 const email = ref("");
@@ -112,7 +114,7 @@ function isEmailValid() {
         return true;
     }
 
-    error.value = "Please enter a valid email address.";
+    error.value = true;
 
     return false;
 }

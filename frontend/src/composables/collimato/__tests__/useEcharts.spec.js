@@ -6,7 +6,7 @@ import { mount } from "@vue/test-utils";
 import { defineComponent, h, ref } from "vue";
 import { init } from "echarts";
 import { useEcharts } from "@/composables/collimato/useEcharts.js";
-import { transformData } from "@/utils/collimato/chartTypes.js";
+import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 
 const instance = {
     setOption: vi.fn(),

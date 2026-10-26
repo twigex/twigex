@@ -43,7 +43,24 @@ SPDX-License-Identifier: AGPL-3.0-only
         </div>
 
         <div v-else class="flex-1 overflow-y-auto">
-            <div class="px-6 py-6">
+            <div class="space-y-6 px-6 py-6">
+                <div v-if="!rolesLicensed" class="rounded-md bg-yellow-50 p-4">
+                    <div class="flex">
+                        <LockClosedIcon
+                            class="size-5 shrink-0 text-yellow-400"
+                            aria-hidden="true"
+                        />
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-yellow-800">
+                                {{ t("settings.roles.unlicensed.title") }}
+                            </h3>
+                            <p class="mt-1 text-sm text-yellow-700">
+                                {{ t("settings.roles.unlicensed.description") }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <DataTable
                     v-model:sort="sort"
                     :columns="columns"
@@ -117,6 +134,7 @@ import { computed, ref, onMounted } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { useRoleStore } from "@/store/roles";
 import { useAlertStore } from "@/store/alerts";
+import { useSettingsStore } from "@/store/settings";
 import roleService from "@/services/roleService";
 import { usePermissions } from "@/composables/usePermissions";
 import { t } from "@/i18n/index";
@@ -130,7 +148,9 @@ import { roleLabel, roleDescription } from "@/utils/roleLabels";
 
 const router = useRouter();
 const roleStore = useRoleStore();
+const settingsStore = useSettingsStore();
 const { can } = usePermissions();
+const rolesLicensed = computed(() => settingsStore.getLicenseFeature("system_roles"));
 const loaded = ref(false);
 const pendingDelete = ref(null);
 const sort = ref({ key: "display_name", desc: false });

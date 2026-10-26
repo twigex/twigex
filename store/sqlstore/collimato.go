@@ -739,12 +739,26 @@ func (c *collimatoRepository) DeleteDashboardFilter(dashboardID, filterID string
 }
 
 func (c *collimatoRepository) DeleteDashboard(id string) error {
-	_, err := c.Db.Exec("DELETE FROM collimato_dashboards WHERE id = ?", id)
+	tx, err := c.Db.Begin()
 	if err != nil {
 		return err
 	}
 
-	return nil
+	defer tx.Rollback()
+
+	if _, err := tx.Exec("DELETE FROM collimato_dashboard_charts WHERE dashboard_id = ?", id); err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec("DELETE FROM collimato_dashboard_filters WHERE dashboard_id = ?", id); err != nil {
+		return err
+	}
+
+	if _, err := tx.Exec("DELETE FROM collimato_dashboards WHERE id = ?", id); err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func (c *collimatoRepository) AddDashboardCharts(userID string, dashboardID string, charts []model.DashboardChartPatch) error {

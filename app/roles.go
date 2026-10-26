@@ -43,6 +43,10 @@ func (a *App) CreateSystemRole(user model.User, role model.Role) (*model.Role, *
 		return nil, model.NewAppError("role.forbidden", http.StatusForbidden)
 	}
 
+	if !a.Server.License.HasSystemRoles() {
+		return nil, model.NewAppError("role.license_required", http.StatusPaymentRequired)
+	}
+
 	if role.Name == "" {
 		return nil, model.NewAppError("role.name_required", http.StatusBadRequest)
 	}
@@ -74,6 +78,10 @@ func (a *App) CreateSystemRole(user model.User, role model.Role) (*model.Role, *
 func (a *App) UpdateSystemRole(user model.User, id string, patch model.RolePatch) (*model.Role, *model.AppError) {
 	if !a.SessionHasPermission(user, model.AdminPermissions.PermissionManageRoles) {
 		return nil, model.NewAppError("role.forbidden", http.StatusForbidden)
+	}
+
+	if !a.Server.License.HasSystemRoles() {
+		return nil, model.NewAppError("role.license_required", http.StatusPaymentRequired)
 	}
 
 	role, err := a.Store.Roles.GetByID(id)

@@ -58,9 +58,13 @@ import SidebarLayout from "@/components/Navigation/SidebarLayout.vue";
 import SettingsNavigation from "@/components/Settings/SettingsNavigation.vue";
 import { PlusIcon } from "@heroicons/vue/20/solid";
 import { t } from "@/i18n/index";
+import { useSettingsStore } from "@/store/settings";
 
 const route = useRoute();
 const router = useRouter();
+const settingsStore = useSettingsStore();
+
+const rolesLicensed = computed(() => settingsStore.getLicenseFeature("system_roles"));
 
 const selfHeadedRoutes = [
     "new-role",
@@ -158,10 +162,12 @@ const headerConfig = computed(() => {
         roles: {
             title: tr("settings.headers.roles.title"),
             description: tr("settings.headers.roles.description"),
-            action: {
-                label: tr("settings.headers.roles.action"),
-                route: "new-role",
-            },
+            action: rolesLicensed.value
+                ? {
+                      label: tr("settings.headers.roles.action"),
+                      route: "new-role",
+                  }
+                : null,
         },
     };
 

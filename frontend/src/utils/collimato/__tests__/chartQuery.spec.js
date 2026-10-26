@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { describe, it, expect } from "vitest";
-import { buildQuery, joinableDataModels } from "@/utils/collimato/chartQuery.js";
-import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartUtils.js";
+import { buildQuery, joinableDataModels, MAX_QUERY_LIMIT } from "@/utils/collimato/chartQuery.js";
 
 const measure = (name) => ({ name });
 const dimension = (name) => ({ name });
