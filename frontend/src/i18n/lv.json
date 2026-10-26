@@ -877,6 +877,7 @@
     "collimato.builder.table": "Tabula",
     "collimato.builder.cube_name": "Datu kopas nosaukums",
     "collimato.builder.name_error": "Izmantojiet burtus, ciparus un pasvītrojumus; jāsākas ar burtu.",
+    "collimato.builder.field_name_taken": "Šis nosaukums jau tiek izmantots.",
     "collimato.builder.dimensions": "Dimensijas",
     "collimato.builder.dimensions_help": "Izvēlieties, kuras kolonnas atklāt, un to tipus.",
     "collimato.builder.col_include": "Iekļaut",
