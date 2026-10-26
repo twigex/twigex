@@ -2501,6 +2501,7 @@ type yamlDimension struct {
 	SQL        string `yaml:"sql"`
 	Type       string `yaml:"type"`
 	PrimaryKey bool   `yaml:"primary_key,omitempty"`
+	Public     bool   `yaml:"public,omitempty"`
 	Title      string `yaml:"title,omitempty"`
 }
 
@@ -2608,6 +2609,7 @@ func renderCubeYAML(m model.Dataset, conn *model.Connection) (string, error) {
 			SQL:        cleanSQL(d.SQL),
 			Type:       d.Type,
 			PrimaryKey: d.PrimaryKey,
+			Public:     d.PrimaryKey && d.Public,
 			Title:      d.Title,
 		})
 	}

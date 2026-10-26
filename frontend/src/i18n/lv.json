@@ -883,6 +883,8 @@
     "collimato.builder.col_column": "Kolonna",
     "collimato.builder.col_type": "Tips",
     "collimato.builder.col_pk": "Primārā atslēga",
+    "collimato.builder.col_public": "Redzama",
+    "collimato.builder.col_public_help": "Rādīt primāro atslēgu kā lauku diagrammās. Citādi Cube primārās atslēgas slēpj.",
     "collimato.builder.col_title": "Virsraksts",
     "collimato.builder.pick_table": "Izvēlieties tabulu, lai redzētu tās kolonnas.",
     "collimato.builder.optional": "Neobligāts",

@@ -883,6 +883,8 @@
     "collimato.builder.col_column": "Kolumna",
     "collimato.builder.col_type": "Typ",
     "collimato.builder.col_pk": "Klucz główny",
+    "collimato.builder.col_public": "Widoczny",
+    "collimato.builder.col_public_help": "Pokazuj klucz główny jako pole na wykresach. W przeciwnym razie Cube ukrywa klucze główne.",
     "collimato.builder.col_title": "Tytuł",
     "collimato.builder.pick_table": "Wybierz tabelę, aby zobaczyć jej kolumny.",
     "collimato.builder.optional": "Opcjonalne",
