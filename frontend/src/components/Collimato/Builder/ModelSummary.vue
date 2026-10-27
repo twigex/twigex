@@ -72,6 +72,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                             <span v-for="d in model.dimensions" :key="d.name" :class="chipClass">
                                 <span class="font-mono">{{ d.name }}</span>
                                 <span v-if="d.primary_key" :class="tagClass">PK</span>
+                                <span v-if="d.primary_key && d.public" :class="tagClass">
+                                    {{ t("collimato.builder.col_public") }}
+                                </span>
                                 <span v-if="d.custom" :class="tagClass">SQL</span>
                             </span>
                         </div>

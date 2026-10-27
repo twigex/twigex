@@ -568,6 +568,10 @@
     "translation": "Managing roles requires a paid plan."
   },
   {
+    "id": "datamodel.duplicate_name",
+    "translation": "Two fields in this data model have the same name. Give each field its own name."
+  },
+  {
     "id": "datamodel.forbidden",
     "translation": "You do not have permission to manage data models."
   },

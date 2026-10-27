@@ -135,6 +135,14 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                     <th class="w-20 px-3 py-2">
                                                         {{ t("collimato.builder.col_pk") }}
                                                     </th>
+                                                    <th
+                                                        class="w-20 px-3 py-2"
+                                                        :title="
+                                                            t('collimato.builder.col_public_help')
+                                                        "
+                                                    >
+                                                        {{ t("collimato.builder.col_public") }}
+                                                    </th>
                                                     <th class="px-3 py-2">
                                                         {{ t("collimato.builder.col_title") }}
                                                     </th>
@@ -155,6 +163,19 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                     </td>
                                                     <td class="px-3 py-2 font-mono text-gray-900">
                                                         {{ col.name }}
+                                                        <p
+                                                            v-if="
+                                                                col.include &&
+                                                                duplicateNames.has(col.name)
+                                                            "
+                                                            class="font-sans text-sm text-red-600"
+                                                        >
+                                                            {{
+                                                                t(
+                                                                    "collimato.builder.field_name_taken",
+                                                                )
+                                                            }}
+                                                        </p>
                                                     </td>
                                                     <td class="px-3 py-2">
                                                         <BaseSelect
@@ -168,6 +189,17 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                             v-model="col.primaryKey"
                                                             type="checkbox"
                                                             :disabled="!col.include"
+                                                            @change="onPrimaryKeyChange(col)"
+                                                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                        />
+                                                    </td>
+                                                    <td class="px-3 py-2">
+                                                        <input
+                                                            v-model="col.public"
+                                                            type="checkbox"
+                                                            :disabled="
+                                                                !col.include || !col.primaryKey
+                                                            "
                                                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                                                         />
                                                     </td>
@@ -217,10 +249,18 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     >
                                         <div class="grid grid-cols-12 items-center gap-2">
                                             <input
-                                                v-model="d.name"
+                                                :value="d.name"
                                                 type="text"
                                                 :placeholder="t('collimato.builder.dim_name')"
-                                                :class="[cellInputClass, 'col-span-4 font-mono']"
+                                                :class="[
+                                                    cellInputClass,
+                                                    'col-span-4 font-mono',
+                                                    duplicateNames.has(d.name)
+                                                        ? 'ring-red-600'
+                                                        : '',
+                                                ]"
+                                                @input="onNameInput(d, $event)"
+                                                @blur="onNameBlur(d)"
                                             />
                                             <div class="col-span-3">
                                                 <BaseSelect
@@ -241,6 +281,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             >
                                                 <XMarkIcon class="h-5 w-5" />
                                             </button>
+                                            <p
+                                                v-if="duplicateNames.has(d.name)"
+                                                class="col-span-12 text-sm text-red-600"
+                                            >
+                                                {{ t("collimato.builder.field_name_taken") }}
+                                            </p>
                                         </div>
                                         <textarea
                                             v-model="d.sql"
@@ -304,10 +350,18 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             class="mb-2 grid grid-cols-12 items-center gap-2"
                                         >
                                             <input
-                                                v-model="m.name"
+                                                :value="m.name"
                                                 type="text"
                                                 :placeholder="t('collimato.builder.measure_name')"
-                                                :class="[cellInputClass, 'col-span-3']"
+                                                :class="[
+                                                    cellInputClass,
+                                                    'col-span-3',
+                                                    duplicateNames.has(m.name)
+                                                        ? 'ring-red-600'
+                                                        : '',
+                                                ]"
+                                                @input="onNameInput(m, $event)"
+                                                @blur="onNameBlur(m)"
                                             />
                                             <div class="col-span-2">
                                                 <BaseSelect
@@ -337,6 +391,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             >
                                                 <XMarkIcon class="h-5 w-5" />
                                             </button>
+                                            <p
+                                                v-if="duplicateNames.has(m.name)"
+                                                class="col-span-12 text-sm text-red-600"
+                                            >
+                                                {{ t("collimato.builder.field_name_taken") }}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -367,10 +427,18 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     >
                                         <div class="grid grid-cols-12 items-center gap-2">
                                             <input
-                                                v-model="m.name"
+                                                :value="m.name"
                                                 type="text"
                                                 :placeholder="t('collimato.builder.measure_name')"
-                                                :class="[cellInputClass, 'col-span-4 font-mono']"
+                                                :class="[
+                                                    cellInputClass,
+                                                    'col-span-4 font-mono',
+                                                    duplicateNames.has(m.name)
+                                                        ? 'ring-red-600'
+                                                        : '',
+                                                ]"
+                                                @input="onNameInput(m, $event)"
+                                                @blur="onNameBlur(m)"
                                             />
                                             <div class="col-span-3">
                                                 <BaseSelect
@@ -391,6 +459,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             >
                                                 <XMarkIcon class="h-5 w-5" />
                                             </button>
+                                            <p
+                                                v-if="duplicateNames.has(m.name)"
+                                                class="col-span-12 text-sm text-red-600"
+                                            >
+                                                {{ t("collimato.builder.field_name_taken") }}
+                                            </p>
                                         </div>
                                         <textarea
                                             v-model="m.sql"
@@ -545,6 +619,11 @@ import BaseSelect from "@/components/BaseSelect.vue";
 import collimatoService from "@/services/collimatoService";
 import { useAlertStore } from "@/store/alerts";
 import { extractErrorMessage } from "@/utils/errors";
+import {
+    typingMemberName,
+    finishedMemberName,
+    duplicateMemberNames,
+} from "@/utils/collimato/memberNames.js";
 import { t } from "@/i18n/index.js";
 
 const props = defineProps({
@@ -584,7 +663,7 @@ const databases = ref([]); // [{ database: connId, name: label, tables: [...] }]
 const connectionId = ref("");
 const tableName = ref("");
 const cubeName = ref("");
-const columns = ref([]); // [{ name, type, include, primaryKey, title }]
+const columns = ref([]); // [{ name, type, include, primaryKey, public, title }]
 const customDimensions = ref([]); // raw-SQL dimensions [{ name, sql, type, title }]
 const measures = ref([]); // column-based measures (count is implicit)
 const customMeasures = ref([]); // raw-SQL measures [{ name, type, sql, title }]
@@ -637,12 +716,44 @@ const nameError = computed(
     () => cubeName.value !== "" && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(cubeName.value),
 );
 
+const duplicateNames = computed(() => {
+    const columnNames = columns.value.filter((c) => c.include).map((c) => c.name);
+    const customDimensionNames = customDimensions.value.map((d) => d.name);
+    const measureNames = measures.value.map((m) => m.name);
+    const customMeasureNames = customMeasures.value.map((m) => m.name);
+
+    return duplicateMemberNames([
+        ...columnNames,
+        ...customDimensionNames,
+        "count",
+        ...measureNames,
+        ...customMeasureNames,
+    ]);
+});
+
+function onNameInput(item, event) {
+    const input = event.target;
+    const typed = input.value;
+    const name = typingMemberName(typed);
+    const removed = typed.length - name.length;
+    const caret = Math.max(0, input.selectionStart - removed);
+
+    item.name = name;
+    input.value = name;
+    input.setSelectionRange(caret, caret);
+}
+
+function onNameBlur(item) {
+    item.name = finishedMemberName(item.name);
+}
+
 const canSave = computed(
     () =>
         !!connectionId.value &&
         !!tableName.value &&
         !!cubeName.value &&
         !nameError.value &&
+        duplicateNames.value.size === 0 &&
         (columns.value.some((c) => c.include) ||
             customDimensions.value.some((d) => d.name && d.sql)),
 );
@@ -667,8 +778,15 @@ function loadColumnsForTable() {
         type: cubeType(c.type),
         include: true,
         primaryKey: c.name === "id",
+        public: false,
         title: "",
     }));
+}
+
+function onPrimaryKeyChange(col) {
+    if (!col.primaryKey) {
+        col.public = false;
+    }
 }
 
 function onConnectionChange() {
@@ -758,6 +876,7 @@ function hydrateFromModel(model) {
         if (d) {
             col.type = d.type;
             col.primaryKey = !!d.primary_key;
+            col.public = !!d.public;
             col.title = d.title || "";
         }
     });
@@ -814,6 +933,7 @@ async function save() {
                     sql: c.name,
                     type: c.type,
                     primary_key: c.primaryKey,
+                    public: c.primaryKey && c.public,
                     title: c.title || undefined,
                 })),
             ...customDimensions.value
