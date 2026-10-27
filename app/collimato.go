@@ -2022,6 +2022,26 @@ func (a *App) SaveCubeFile(user model.User, name, content, fileType, workspaceID
 	}, nil
 }
 
+func hasDuplicateMemberNames(m model.Dataset) bool {
+	seen := make(map[string]bool)
+
+	for _, d := range m.Dimensions {
+		if seen[d.Name] {
+			return true
+		}
+		seen[d.Name] = true
+	}
+
+	for _, ms := range m.Measures {
+		if seen[ms.Name] {
+			return true
+		}
+		seen[ms.Name] = true
+	}
+
+	return false
+}
+
 // isValidIdentifier reports whether s is a safe Cube member/cube name
 // (^[A-Za-z_][A-Za-z0-9_]*$). Used to reject malformed builder input.
 func isValidIdentifier(s string) bool {
@@ -2144,6 +2164,10 @@ func (a *App) BuildCubeFile(user model.User, workspaceID, fileType string, m mod
 		if !isValidIdentifier(ms.Name) || cubeMeasureTypes[ms.Type] == "" {
 			return nil, model.NewAppError("datamodel.invalid_model", http.StatusBadRequest)
 		}
+	}
+
+	if hasDuplicateMemberNames(m) {
+		return nil, model.NewAppError("datamodel.duplicate_name", http.StatusBadRequest)
 	}
 
 	for _, j := range m.Joins {
@@ -2501,6 +2525,7 @@ type yamlDimension struct {
 	SQL        string `yaml:"sql"`
 	Type       string `yaml:"type"`
 	PrimaryKey bool   `yaml:"primary_key,omitempty"`
+	Public     bool   `yaml:"public,omitempty"`
 	Title      string `yaml:"title,omitempty"`
 }
 
@@ -2608,6 +2633,7 @@ func renderCubeYAML(m model.Dataset, conn *model.Connection) (string, error) {
 			SQL:        cleanSQL(d.SQL),
 			Type:       d.Type,
 			PrimaryKey: d.PrimaryKey,
+			Public:     d.PrimaryKey && d.Public,
 			Title:      d.Title,
 		})
 	}
