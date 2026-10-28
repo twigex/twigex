@@ -132,6 +132,24 @@ func TestDateFiltersOnDaysNeverCompareWithText(t *testing.T) {
 	}
 }
 
+func TestNullConditionMatchesOnlyItsOwnOperators(t *testing.T) {
+	for _, tc := range []struct {
+		op   string
+		want string
+	}{
+		{"is_set", "d IS NOT NULL"},
+		{"is_not_set", "d IS NULL"},
+		{"is", ""},
+		{"", ""},
+	} {
+		got := nullCondition("d", tc.op)
+
+		if got.SQL != tc.want {
+			t.Errorf("nullCondition(%q) = %q, want %q", tc.op, got.SQL, tc.want)
+		}
+	}
+}
+
 func TestUpdatingADateWritesTheDayAndHandsItBack(t *testing.T) {
 	requireDB(t)
 	cleanTables(t, "workspace_tables")

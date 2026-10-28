@@ -1559,11 +1559,14 @@ func setCondition(col, op string) model.SQLFilter {
 }
 
 func nullCondition(col, op string) model.SQLFilter {
-	if op == "is_set" {
+	switch op {
+	case "is_set":
 		return model.SQLFilter{SQL: col + " IS NOT NULL"}
+	case "is_not_set":
+		return model.SQLFilter{SQL: col + " IS NULL"}
 	}
 
-	return model.SQLFilter{SQL: col + " IS NULL"}
+	return model.SQLFilter{}
 }
 
 func (w *workspaceRepository) buildFlatFilterSQLInline(filters []model.Filter, headers []model.WorkspaceHeaders, loc *time.Location, tableNames map[string]string) model.SQLFilter {
