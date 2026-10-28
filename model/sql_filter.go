@@ -35,7 +35,7 @@ func (f SQLFilter) And(other SQLFilter) SQLFilter {
 // rows are ordered by column and then main.id. A nil value is NULL, which
 // sorts first. column is written into the SQL as given, so it must be a
 // constant, never a name from a request.
-func RowsAfter(column string, value *int64, id string) SQLFilter {
+func RowsAfter(column string, value any, id string) SQLFilter {
 	if value == nil {
 		return SQLFilter{
 			SQL:  "(" + column + " IS NOT NULL OR main.id > ?)",
@@ -45,6 +45,6 @@ func RowsAfter(column string, value *int64, id string) SQLFilter {
 
 	return SQLFilter{
 		SQL:  "(" + column + " > ? OR (" + column + " = ? AND main.id > ?))",
-		Args: []any{*value, *value, id},
+		Args: []any{value, value, id},
 	}
 }

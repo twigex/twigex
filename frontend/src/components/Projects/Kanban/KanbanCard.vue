@@ -37,23 +37,23 @@ SPDX-License-Identifier: AGPL-3.0-only
                 >
                     <span class="font-medium">{{ t("projects.kanban_view.start") }} </span>
                     <span style="font-size: 13px">
-                        {{ formatDate(task.start_date) }}
+                        {{ formatDay(task.start_date) }}
                     </span>
                     &nbsp;–&nbsp;
                     <span class="font-medium">{{ t("projects.kanban_view.due") }} </span>
                     <span style="font-size: 13px">
-                        {{ formatDate(task.due_date) }}
+                        {{ formatDay(task.due_date) }}
                     </span>
                 </template>
 
                 <template v-else-if="shown.has('start_date') && task.start_date">
                     <span class="font-medium">{{ t("projects.kanban_view.start") }}</span>
-                    {{ formatDate(task.start_date) }}
+                    {{ formatDay(task.start_date) }}
                 </template>
 
                 <template v-else-if="shown.has('due_date') && task.due_date">
                     <span class="font-medium">{{ t("projects.kanban_view.due") }}</span>
-                    {{ formatDate(task.due_date) }}
+                    {{ formatDay(task.due_date) }}
                 </template>
             </div>
 
@@ -126,7 +126,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                             {{ header.display_name || header.name }}:
                         </span>
                         <span class="text-xs text-gray-600" style="font-size: 13px">
-                            {{ formatDateOnly(task[header.name]) }}
+                            {{ formatDay(task[header.name]) || "-" }}
                         </span>
                     </div>
                     <div
@@ -291,6 +291,7 @@ import { UserPlusIcon, Square2StackIcon } from "@heroicons/vue/20/solid";
 import UserAvatarWithText from "@/components/UserAvatarWithText.vue";
 import { safeHref } from "@/utils/links";
 import { getStatusDisplayName } from "@/utils/projects/cells";
+import useDateOperations from "@/composables/useDateOperations.js";
 
 // A card on the board. It is drawn once per task, so it reads everything it
 // needs from its props and asks the board to act for it.
@@ -305,20 +306,7 @@ defineProps({
 
 const emit = defineEmits(["open", "assign", "menu", "goToTable"]);
 
-const formatDate = (timestamp) => {
-    if (!timestamp) return "-";
-    const date = new Date(timestamp * 1000);
-
-    return date
-        .toLocaleString("de-DE", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        })
-        .replace(",", "");
-};
+const { formatDay } = useDateOperations();
 
 const getStatusStyle = (status) => {
     if (!status || (!status.id && !status.name)) return { class: "bg-transparent" };
@@ -347,13 +335,6 @@ const formatUnixTimestamp = (timestamp) => {
     } catch {
         return "-";
     }
-};
-
-const formatDateOnly = (dateStr) => {
-    if (!dateStr) return "-";
-    const [year, month, day] = dateStr.split("-");
-
-    return `${day}.${month}.${year}`;
 };
 </script>
 

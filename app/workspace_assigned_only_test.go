@@ -57,12 +57,12 @@ func (f *fakeAssignedOnlyStore) CountTasksAcrossTables(_ context.Context, source
 	return make([]int, len(groups)), nil
 }
 
-func (f *fakeAssignedOnlyStore) GetTasksByDateRange(_ context.Context, _ string, _, _ int64, filter model.SQLFilter, _ int) ([]map[string]interface{}, int, error) {
+func (f *fakeAssignedOnlyStore) GetTasksByDateRange(_ context.Context, _ string, _, _ string, filter model.SQLFilter, _ int) ([]map[string]interface{}, int, error) {
 	f.gotFilters["gantt"] = filter
 	return nil, 0, nil
 }
 
-func (f *fakeAssignedOnlyStore) GetTasksByCalendarRange(_ context.Context, _ string, _, _ int64, filter model.SQLFilter) ([]map[string]interface{}, error) {
+func (f *fakeAssignedOnlyStore) GetTasksByCalendarRange(_ context.Context, _ string, _, _ string, filter model.SQLFilter) ([]map[string]interface{}, error) {
 	f.gotFilters["calendar"] = filter
 	return nil, nil
 }
@@ -114,10 +114,10 @@ func loadAllViews(t *testing.T, a *App, tableID string, user model.User) []map[s
 	if _, appErr := a.GetKanbanData(ctx, "ws-a", tableID, "v-kanban", "", "", 50, model.FilterPayload{}, user); appErr != nil {
 		t.Fatalf("kanban: %v", appErr)
 	}
-	if _, appErr := a.GetTasksByDateRange(ctx, "ws-a", tableID, 0, 1, model.FilterPayload{}, user); appErr != nil {
+	if _, appErr := a.GetTasksByDateRange(ctx, "ws-a", tableID, "2026-10-01", "2026-10-31", model.FilterPayload{}, user); appErr != nil {
 		t.Fatalf("gantt: %v", appErr)
 	}
-	if _, appErr := a.GetTasksByCalendarRange(ctx, "ws-a", tableID, 0, 1, model.FilterPayload{}, user); appErr != nil {
+	if _, appErr := a.GetTasksByCalendarRange(ctx, "ws-a", tableID, "2026-10-01", "2026-10-31", model.FilterPayload{}, user); appErr != nil {
 		t.Fatalf("calendar: %v", appErr)
 	}
 	grid, appErr := a.GetFilteredTableData(ctx, "ws-a", tableID, "", model.FilterPayload{Timezone: "UTC", Limit: 100}, user, true)

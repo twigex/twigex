@@ -9,18 +9,21 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/twigex/twigex/model"
 )
 
 // taskCursor marks the last task a page showed, so the next page starts
 // after it rather than skipping over every task before it. Value is the
-// task's value in the column the page is sorted by. Saved is its place in a
-// Kanban column's saved order, when it has one.
+// task's value in the column the page is sorted by, or Day when that column
+// holds a day. Saved is its place in a Kanban column's saved order, when it
+// has one.
 type taskCursor struct {
-	ID    string `json:"i"`
-	Value *int64 `json:"v,omitempty"`
-	Saved *int   `json:"s,omitempty"`
+	ID    string  `json:"i"`
+	Value *int64  `json:"v,omitempty"`
+	Day   *string `json:"d,omitempty"`
+	Saved *int    `json:"s,omitempty"`
 }
 
 func (c taskCursor) encode() string {
@@ -53,7 +56,14 @@ func decodeTaskCursor(s string) (*taskCursor, *model.AppError) {
 }
 
 func (c taskCursor) after(column string) model.SQLFilter {
-	return model.RowsAfter(column, c.Value, c.ID)
+	switch {
+	case c.Day != nil:
+		return model.RowsAfter(column, *c.Day, c.ID)
+	case c.Value != nil:
+		return model.RowsAfter(column, *c.Value, c.ID)
+	}
+
+	return model.RowsAfter(column, nil, c.ID)
 }
 
 // cursorValue reads a whole number column from a scanned row, which holds it
@@ -77,6 +87,26 @@ func cursorValue(v any) *int64 {
 	}
 
 	return &n
+}
+
+// cursorDay reads a day column from a scanned row, which holds it as a time
+// or as text depending on how the query was sent.
+func cursorDay(v any) *string {
+	var day string
+	switch v := v.(type) {
+	case time.Time:
+		day = v.Format(time.DateOnly)
+	case string:
+		if len(v) < len(time.DateOnly) {
+			return nil
+		}
+
+		day = v[:len(time.DateOnly)]
+	default:
+		return nil
+	}
+
+	return &day
 }
 
 func notInFilter(column string, values []string) model.SQLFilter {

@@ -59,7 +59,7 @@ func setupFilterTables(t *testing.T) *workspaceRepository {
 		{"t3", "plain", "done", ""},
 		{"t4", "child", "open", "t3"},
 	} {
-		mustExec(t, "INSERT INTO `"+filterTaskTable+"` (id, name, status, start_date, parent_task_id, deleted_at) VALUES (?, ?, ?, 100, NULLIF(?, ''), 0)",
+		mustExec(t, "INSERT INTO `"+filterTaskTable+"` (id, name, status, start_date, parent_task_id, deleted_at) VALUES (?, ?, ?, '2026-01-10', NULLIF(?, ''), 0)",
 			r.id, r.name, r.status, r.parent)
 	}
 	mustExec(t, "INSERT INTO `"+filterParentTable+"` (id, name, deleted_at) VALUES ('p1', 'Project', 0)")
@@ -173,7 +173,7 @@ func TestStatusFilterOnLinkedField(t *testing.T) {
 
 func TestLaterThanTodayMatchesFutureDates(t *testing.T) {
 	w := setupFilterTables(t)
-	mustExec(t, "UPDATE `"+filterTaskTable+"` SET start_date = ? WHERE id = 't2'", time.Now().AddDate(0, 0, 10).Unix())
+	mustExec(t, "UPDATE `"+filterTaskTable+"` SET start_date = ? WHERE id = 't2'", time.Now().AddDate(0, 0, 10).Format(time.DateOnly))
 	filters := flat(is("start_date", "Later than Today"))
 
 	rows, err := w.GetTableRowsFiltered(context.Background(), filterTaskTable,
@@ -241,7 +241,7 @@ func TestAssignedOnlySubtaskUnderAnotherUsersTaskIsItsOwnBranch(t *testing.T) {
 
 func TestOpenSubtasksAtEveryDepth(t *testing.T) {
 	w := setupFilterTables(t)
-	mustExec(t, "INSERT INTO `"+filterTaskTable+"` (id, name, status, start_date, parent_task_id, deleted_at) VALUES ('t5', 'grandchild', 'done', 100, 't4', 0), ('t6', 'deep', NULL, 100, 't5', 0), ('t7', 'gone', 'open', 100, 't3', 1)")
+	mustExec(t, "INSERT INTO `"+filterTaskTable+"` (id, name, status, start_date, parent_task_id, deleted_at) VALUES ('t5', 'grandchild', 'done', '2026-01-10', 't4', 0), ('t6', 'deep', NULL, '2026-01-10', 't5', 0), ('t7', 'gone', 'open', '2026-01-10', 't3', 1)")
 	mustExec(t, "UPDATE `"+filterTaskTable+"` SET assignee = CASE id WHEN 't6' THEN 'anna' ELSE 'bob' END")
 	ctx := context.Background()
 	done := []string{"done"}
@@ -273,7 +273,7 @@ func TestOpenSubtasksAtEveryDepth(t *testing.T) {
 
 func TestPositionsFollowTheSortOrder(t *testing.T) {
 	w := setupFilterTables(t)
-	mustExec(t, "UPDATE `"+filterTaskTable+"` SET start_date = CASE id WHEN 't1' THEN 300 WHEN 't2' THEN NULL WHEN 't4' THEN 300 ELSE 50 END")
+	mustExec(t, "UPDATE `"+filterTaskTable+"` SET start_date = CASE id WHEN 't1' THEN '2026-01-30' WHEN 't2' THEN NULL WHEN 't4' THEN '2026-01-30' ELSE '2026-01-05' END")
 	open := model.SQLFilter{SQL: "(main.status IS NULL OR main.status NOT IN (?))", Args: []any{"done"}}
 	const byStartDesc = "ORDER BY main.start_date DESC, main.id ASC"
 
@@ -336,17 +336,17 @@ func TestAssignedOnlyFilterInEveryTaskQuery(t *testing.T) {
 		t.Errorf("kanban rows = %v, %v; want [t1 t4]", got, err)
 	}
 
-	gantt, total, err := w.GetTasksByDateRange(ctx, filterTaskTable, 0, 200, anna, 0)
+	gantt, total, err := w.GetTasksByDateRange(ctx, filterTaskTable, "2026-01-01", "2026-01-20", anna, 0)
 	if got := rowIDs(gantt); err != nil || total != 2 || !slices.Equal(got, []string{"t1", "t4"}) {
 		t.Errorf("gantt rows = %v of %d, %v; want [t1 t4] of 2", got, total, err)
 	}
 
-	first, total, err := w.GetTasksByDateRange(ctx, filterTaskTable, 0, 200, anna, 1)
+	first, total, err := w.GetTasksByDateRange(ctx, filterTaskTable, "2026-01-01", "2026-01-20", anna, 1)
 	if err != nil || total != 2 || len(first) != 1 {
 		t.Errorf("limited gantt rows = %v of %d, %v; want one row of 2", first, total, err)
 	}
 
-	calendar, err := w.GetTasksByCalendarRange(ctx, filterTaskTable, 0, 200, anna)
+	calendar, err := w.GetTasksByCalendarRange(ctx, filterTaskTable, "2026-01-01", "2026-01-20", anna)
 	if got := rowIDs(calendar); err != nil || !slices.Equal(got, []string{"t1", "t4"}) {
 		t.Errorf("calendar rows = %v, %v; want [t1 t4]", got, err)
 	}

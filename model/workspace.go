@@ -19,11 +19,33 @@ var ErrLinkTargetMissing = errors.New("a linked row does not exist")
 // NewTaskFields holds what a task may be created with besides its name. A
 // zero value leaves that field empty.
 type NewTaskFields struct {
-	Status      string `json:"status"`
-	Assignee    string `json:"assignee"`
-	StartDate   int64  `json:"start_date"`
-	DueDate     int64  `json:"due_date"`
-	Description string `json:"description"`
+	Status      string  `json:"status"`
+	Assignee    string  `json:"assignee"`
+	StartDate   TaskDay `json:"start_date"`
+	DueDate     TaskDay `json:"due_date"`
+	Description string  `json:"description"`
+}
+
+// TaskDay is a start or due date as a client sent it.
+//
+// TODO: take only text a release after dates became days. Until then a tab
+// opened before still sends a Unix time as a number.
+type TaskDay string
+
+func (d *TaskDay) UnmarshalJSON(b []byte) error {
+	var text string
+	if err := json.Unmarshal(b, &text); err == nil {
+		*d = TaskDay(text)
+		return nil
+	}
+
+	var number json.Number
+	if err := json.Unmarshal(b, &number); err != nil {
+		return err
+	}
+
+	*d = TaskDay(number.String())
+	return nil
 }
 
 // ErrFolderCycle is returned when a folder is to be moved into itself or into
@@ -349,13 +371,16 @@ var systemFields = map[string][2]string{
 	"id":          {"text", "ID"},
 	"name":        {"text", "Name"},
 	"description": {"text", "Description"},
-	"start_date":  {"default_date", "Start date"},
-	"due_date":    {"default_date", "Due date"},
-	"updated_at":  {"default_date", "Updated at"},
-	"created_at":  {"default_date", "Created at"},
-	"assignee":    {"default_assignee", "Assignee"},
-	"created_by":  {"default_assignee", "Created by"},
-	"status":      {"status", "Status"},
+	// default_date is any built-in date. Start and due dates hold a day in a
+	// DATE column; created and updated hold a moment as Unix seconds. Code that
+	// must tell them apart reads the column type, DATE for a day.
+	"start_date": {"default_date", "Start date"},
+	"due_date":   {"default_date", "Due date"},
+	"updated_at": {"default_date", "Updated at"},
+	"created_at": {"default_date", "Created at"},
+	"assignee":   {"default_assignee", "Assignee"},
+	"created_by": {"default_assignee", "Created by"},
+	"status":     {"status", "Status"},
 }
 
 func SystemFieldData(tableID, fieldName string) *WorkspaceFieldData {

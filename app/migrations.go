@@ -14,7 +14,11 @@ type appMigration struct {
 
 // appMigrations fix data that SQL alone cannot. Each runs once, in order, and
 // its name is recorded in app_migrations, so a name must never change.
-var appMigrations = []appMigration{}
+var appMigrations = []appMigration{
+	{name: "task_dates_as_days", run: func(a *App) error {
+		return a.Store.Workspace.ConvertTaskDatesToDays()
+	}},
+}
 
 func (a *App) DoAppMigrations() {
 	for _, m := range appMigrations {

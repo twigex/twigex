@@ -229,7 +229,6 @@ import { t } from "@/i18n/index.js";
 import FormDialog from "@/components/FormDialog.vue";
 import DatePickerField from "@/components/DatePicker/DatePickerField.vue";
 import UserAvatar from "@/components/UserAvatar.vue";
-import useDateOperations from "@/composables/useDateOperations.js";
 import workspaceService from "@/services/workspaceService";
 import { useAlertStore } from "@/store/alerts";
 import { useWorkspaceStore } from "@/store/workspaces";
@@ -241,7 +240,6 @@ const memberPage = 20;
 
 const route = useRoute();
 const workspaceStore = useWorkspaceStore();
-const { getTimestampFromDateString } = useDateOperations();
 
 const name = ref("");
 const status = ref("");
@@ -342,8 +340,8 @@ async function create(openAfter) {
         fields: {
             status: status.value || "",
             assignee: assignee.value?.id || "",
-            start_date: getTimestampFromDateString(startDate.value) || 0,
-            due_date: getTimestampFromDateString(dueDate.value) || 0,
+            start_date: startDate.value,
+            due_date: dueDate.value,
             description: description.value.trim(),
         },
     };

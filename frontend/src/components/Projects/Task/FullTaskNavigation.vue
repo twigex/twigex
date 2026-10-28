@@ -231,13 +231,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         }}
                                     </span>
                                     <span v-else-if="isDayField(header)" class="truncate">
-                                        {{
-                                            getDate(
-                                                getTimestampFromDateString(
-                                                    fieldValues[header.name],
-                                                ),
-                                            )
-                                        }}
+                                        {{ formatDay(fieldValues[header.name]) }}
                                     </span>
                                     <span v-else class="truncate">
                                         {{ formatDateForDisplay(fieldValues[header.name], header) }}
@@ -668,7 +662,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         v-if="subtask.due_date"
                                         class="block text-xs text-gray-500 truncate"
                                     >
-                                        {{ getDate(subtask.due_date).slice(0, 10) }}
+                                        {{ formatDay(subtask.due_date) }}
                                     </span>
                                     <CalendarDaysIcon v-else class="h-4 w-4 text-gray-400" />
                                 </div>
@@ -932,7 +926,8 @@ const confirmFileDelete = async () => {
     };
 };
 
-const { getDate, getTimestampFromDateString, getDateInputValue, isDayField } = useDateOperations();
+const { getDate, getTimestampFromDateString, getDateInputValue, formatDay, isDayField } =
+    useDateOperations();
 
 const formatDateForDisplay = (value) => {
     if (!value) {
@@ -1188,12 +1183,6 @@ const saveValue = (fieldName, item, value) => {
 
     let newValue = typeof value === "string" ? value : String(value);
 
-    // Convert date fields to timestamp and ensure value is a string before sending to the backend
-    if (fieldName === "start_date" || fieldName === "due_date") {
-        newValue = String(getTimestampFromDateString(newValue));
-        getSelectedItem.value[fieldName] = newValue;
-    }
-
     workspaceService
         .updateTask({
             workspace_id: route.params.id,
@@ -1203,17 +1192,9 @@ const saveValue = (fieldName, item, value) => {
             value: newValue,
         })
         .then((response) => {
-            let saved = Object.hasOwn(response.data, fieldName)
+            const saved = Object.hasOwn(response.data, fieldName)
                 ? response.data[fieldName]
                 : newValue;
-
-            if (
-                ["start_date", "due_date"].includes(fieldName) &&
-                saved != null &&
-                !isNaN(Number(saved))
-            ) {
-                saved = parseInt(saved, 10);
-            }
 
             const nowMs = Date.now();
 

@@ -25,8 +25,8 @@ func TestCreateTaskWritesItsFieldsWithIt(t *testing.T) {
 	task, err := w.CreateTask("w1", "t1", "Launch", "u1", "", "task-1", 1000, map[string]any{
 		"status":      "todo",
 		"assignee":    "u2",
-		"start_date":  int64(100),
-		"due_date":    int64(200),
+		"start_date":  "2026-10-27",
+		"due_date":    "2026-10-28",
 		"description": "Notes",
 	})
 	if err != nil {
@@ -37,8 +37,8 @@ func TestCreateTaskWritesItsFieldsWithIt(t *testing.T) {
 		"name":        "Launch",
 		"status":      "todo",
 		"assignee":    "u2",
-		"start_date":  "100",
-		"due_date":    "200",
+		"start_date":  "2026-10-27",
+		"due_date":    "2026-10-28",
 		"description": "Notes",
 		"created_by":  "u1",
 	} {

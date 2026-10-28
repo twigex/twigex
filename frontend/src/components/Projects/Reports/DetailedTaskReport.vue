@@ -260,7 +260,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                         >–</span
                                                     >
                                                     <template v-else>{{
-                                                        getDate(item[header.name])
+                                                        isDayField(header)
+                                                            ? formatDay(item[header.name])
+                                                            : getDate(item[header.name])
                                                     }}</template>
                                                 </template>
 
@@ -345,7 +347,7 @@ import {
 import { ChevronRightIcon, ChevronDownIcon, Square2StackIcon } from "@heroicons/vue/20/solid";
 
 const expandedTasks = ref(new Set());
-const { getDate } = useDateOperations();
+const { getDate, formatDay, isDayField } = useDateOperations();
 const route = useRoute();
 const router = useRouter();
 

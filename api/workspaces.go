@@ -1389,15 +1389,15 @@ func (a *API) getTasksByDateRange(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	var body struct {
-		From    int64                `json:"from"`
-		To      int64                `json:"to"`
+		From    model.TaskDay        `json:"from"`
+		To      model.TaskDay        `json:"to"`
 		Filters *model.FilterPayload `json:"filters,omitempty"`
 	}
 	if !decodeBody(w, r, &body) {
 		return
 	}
 
-	if body.From == 0 || body.To == 0 {
+	if body.From == "" || body.To == "" {
 		respondAppError(w, r, model.NewAppError("workspace.date_range_failed", http.StatusBadRequest))
 		return
 	}
@@ -1407,7 +1407,7 @@ func (a *API) getTasksByDateRange(w http.ResponseWriter, r *http.Request) {
 		filters = *body.Filters
 	}
 
-	data, appErr := a.app.GetTasksByDateRange(r.Context(), params["id"], params["tid"], body.From, body.To, filters, *user)
+	data, appErr := a.app.GetTasksByDateRange(r.Context(), params["id"], params["tid"], string(body.From), string(body.To), filters, *user)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
@@ -1426,15 +1426,15 @@ func (a *API) getTasksByCalendarRange(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	var body struct {
-		From    int64                `json:"from"`
-		To      int64                `json:"to"`
+		From    model.TaskDay        `json:"from"`
+		To      model.TaskDay        `json:"to"`
 		Filters *model.FilterPayload `json:"filters,omitempty"`
 	}
 	if !decodeBody(w, r, &body) {
 		return
 	}
 
-	if body.From == 0 || body.To == 0 {
+	if body.From == "" || body.To == "" {
 		respondAppError(w, r, model.NewAppError("workspace.calendar_range_invalid", http.StatusBadRequest))
 		return
 	}
@@ -1444,7 +1444,7 @@ func (a *API) getTasksByCalendarRange(w http.ResponseWriter, r *http.Request) {
 		filters = *body.Filters
 	}
 
-	data, appErr := a.app.GetTasksByCalendarRange(r.Context(), params["id"], params["tid"], body.From, body.To, filters, *user)
+	data, appErr := a.app.GetTasksByCalendarRange(r.Context(), params["id"], params["tid"], string(body.From), string(body.To), filters, *user)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return

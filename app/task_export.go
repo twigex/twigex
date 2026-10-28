@@ -108,7 +108,7 @@ func (a *App) PrepareTaskExport(ctx context.Context, workspaceIDs []string, user
 	// task table has can be sorted on.
 	export.orderSQL = buildSortSQL(filters.Sort, func(name string) bool { return taskReportSortable[name] })
 	if export.orderSQL == buildSortSQL(nil, nil) {
-		export.orderSQL = "ORDER BY (main.due_date IS NULL OR main.due_date = 0), main.due_date, main.created_at, main.id"
+		export.orderSQL = "ORDER BY main.due_date IS NULL, main.due_date, main.created_at, main.id"
 	}
 
 	seen := map[string]bool{}
@@ -430,7 +430,7 @@ func (e *TaskExport) cell(h model.WorkspaceHeaders, row map[string]interface{}, 
 		return l.users[raw]
 	case h.HeaderUsage == "master link":
 		return e.tableNames[raw]
-	case h.HeaderType == "DATE":
+	case h.HeaderType == "DATE" || h.Name == "start_date" || h.Name == "due_date":
 		if d, err := time.Parse("2006-01-02", raw); err == nil {
 			return d.Format(e.dateLayout)
 		}
@@ -447,7 +447,7 @@ func (e *TaskExport) cell(h model.WorkspaceHeaders, row map[string]interface{}, 
 
 func isDateHeader(h model.WorkspaceHeaders) bool {
 	switch h.Name {
-	case "start_date", "due_date", "updated_at", "created_at":
+	case "updated_at", "created_at":
 		return true
 	}
 

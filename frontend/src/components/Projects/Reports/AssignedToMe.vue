@@ -240,7 +240,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                         >–</span
                                                     >
                                                     <template v-else>{{
-                                                        getDate(item[header.name])
+                                                        isDayField(header)
+                                                            ? formatDay(item[header.name])
+                                                            : getDate(item[header.name])
                                                     }}</template>
                                                 </template>
                                                 <span
@@ -348,7 +350,7 @@ import ReportHeaderRow from "@/components/Projects/Reports/ReportHeaderRow.vue";
 import { useOpenTask } from "@/composables/projects/useOpenTask";
 
 const router = useRouter();
-const { getDate } = useDateOperations();
+const { getDate, formatDay, isDayField } = useDateOperations();
 
 const userStore = useUserStore();
 const workspaceStore = useWorkspaceStore();

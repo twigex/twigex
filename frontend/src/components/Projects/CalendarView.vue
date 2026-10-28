@@ -781,7 +781,7 @@ async function loadTasks() {
 
     isLoading.value = true;
     try {
-        const { from, to } = visibleWindow();
+        const { from, to } = visibleDays.value;
         const res = await workspaceService.getTasksByCalendarRange(
             route.params.id,
             route.params.tid,
