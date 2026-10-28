@@ -159,8 +159,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                 <pre
                     v-show="showCode"
                     class="mx-3 mb-3 min-h-[10rem] flex-1 overflow-auto rounded bg-gray-900 p-3 font-mono text-xs text-gray-100"
-                    >{{ file.content }}</pre
-                >
+                    >{{ file.content }}</pre>
             </div>
         </div>
     </div>
