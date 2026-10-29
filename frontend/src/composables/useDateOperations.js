@@ -90,6 +90,16 @@ export default function useDateOperations() {
             .format("YYYY-MM-DD");
     };
 
+    const getEndOfDayTimestamp = (day) => {
+        if (!day) return 0;
+
+        const date = moment.tz(day, "YYYY-MM-DD", true, useUserStore().getTimezone);
+
+        if (!date.isValid()) return 0;
+
+        return date.endOf("day").unix();
+    };
+
     // The day a day field holds, YYYY-MM-DD, whether the server sends it alone
     // or as midnight UTC; null without one.
     const getDayOf = (value) => {
@@ -128,6 +138,7 @@ export default function useDateOperations() {
         getLastActivity,
         getTimestampFromDateString,
         getDateInputValue,
+        getEndOfDayTimestamp,
         getDayOf,
         formatDay,
         isDayField,
