@@ -553,19 +553,15 @@ func (m *fileRepository) Get(id string) (*model.File, error) { //*files.File
 	return &file, nil
 }
 
-// ResolveEffectiveShare computes a user's effective permission for one file
-// under inherited sharing: it walks the file and its ancestors and aggregates
-// the most-permissive grant reachable via any share on that chain, returning 0
-// or 1 rows to match GetFilePermissions' shape. It replaces the per-file lookup
-// once shares live only on the share root instead of being fanned out.
-//
-// The base row is included regardless of deleted_at (parity with
-// GetFilePermissions for a file's own grant), but the recursion only ascends
-// through live ancestors: a deleted intermediate folder blocks inheritance, so
-// a descendant can never resolve access through a trashed parent.
+// ResolveEffectiveShare gives a user's access to a file, combined from the
+// shares on the file and on the folders above it: the highest level, and no
+// expiry if any share has none. Expired shares don't count, a file in the
+// trash gets no access, and shares above a trashed folder don't reach down.
+// It returns one row, or none without access.
 func (m *fileRepository) ResolveEffectiveShare(ctx context.Context, userID string, fileID string) ([]model.File, error) {
 	shareJoin, shareArgs := effectiveShareSubquery(userID)
 	args := append([]any{fileID}, shareArgs...)
+	args = append(args, time.Now().Unix())
 
 	results, err := m.Db.QueryContext(ctx, `
 		WITH RECURSIVE ancestors (id, parent, depth) AS (
@@ -585,6 +581,7 @@ func (m *fileRepository) ResolveEffectiveShare(ctx context.Context, userID strin
 			MAX(efs.access_level)
 		FROM ancestors
 		JOIN `+shareJoin+` ON efs.file_id = ancestors.id
+		WHERE efs.expiration = 0 OR efs.expiration > ?
 		HAVING COUNT(efs.file_id) > 0`, args...)
 	if err != nil {
 		return nil, err
@@ -592,16 +589,11 @@ func (m *fileRepository) ResolveEffectiveShare(ctx context.Context, userID strin
 
 	defer results.Close()
 
-	now := time.Now().Unix()
 	permissions := make([]model.File, 0)
 	file := model.File{}
 	for results.Next() {
 		if err := results.Scan(&file.Expiration, &file.AccessLevel); err != nil {
 			return nil, err
-		}
-
-		if now > file.Expiration && file.Expiration != 0 {
-			continue
 		}
 
 		permissions = append(permissions, file)
