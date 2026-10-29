@@ -100,6 +100,7 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 import { useFloating, flip, shift, offset, autoUpdate } from "@floating-ui/vue";
 import { CalendarDaysIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import DatePicker from "@/components/DatePicker/DatePicker.vue";
+import useDateOperations from "@/composables/useDateOperations.js";
 
 const props = defineProps({
     expiry: {
@@ -140,34 +141,14 @@ const { floatingStyles } = useFloating(reference, floating, {
     whileElementsMounted: autoUpdate,
 });
 
-function unixToYMD(unix) {
-    if (!unix || unix === 0) return "";
-
-    // unix is UTC seconds → format as YYYY-MM-DD in UTC
-    return new Date(unix * 1000).toISOString().slice(0, 10);
-}
-
-function ymdToUnix(ymd) {
-    if (!ymd) return 0;
-
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ymd));
-
-    if (!m) return 0;
-
-    const y = Number(m[1]);
-    const mo = Number(m[2]);
-    const d = Number(m[3]);
-
-    // IMPORTANT: interpret selected date as UTC midnight
-    return Math.floor(Date.UTC(y, mo - 1, d, 0, 0, 0) / 1000);
-}
+const { getDateInputValue, getEndOfDayTimestamp } = useDateOperations();
 
 const localExpiry = computed({
     get() {
-        return unixToYMD(props.expiry);
+        return getDateInputValue(props.expiry, false);
     },
     set(ymd) {
-        emit("update:expiry", ymdToUnix(ymd));
+        emit("update:expiry", getEndOfDayTimestamp(ymd));
     },
 });
 

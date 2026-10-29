@@ -48,6 +48,35 @@ describe("getTimestampFromDateString", () => {
     });
 });
 
+describe("getEndOfDayTimestamp", () => {
+    beforeEach(() => setActivePinia(createPinia()));
+
+    it("gives the last second of the day where the user is", () => {
+        for (const timezone of ["America/New_York", "Europe/Riga", "Asia/Tokyo"]) {
+            useUserStore().user = {
+                ...useUserStore().user,
+                timezone: { useAutomaticTimezone: "false", manualTimezone: timezone },
+            };
+            const { getEndOfDayTimestamp, getDateInputValue } = useDateOperations();
+
+            const expiry = getEndOfDayTimestamp("2026-10-28");
+
+            expect(moment.unix(expiry).tz(timezone).format("YYYY-MM-DD HH:mm:ss")).toBe(
+                "2026-10-28 23:59:59",
+            );
+            expect(dayIn(timezone, expiry + 1)).toBe("2026-10-29");
+            expect(getDateInputValue(expiry, false)).toBe("2026-10-28");
+        }
+    });
+
+    it("gives no expiry without a valid day", () => {
+        const { getEndOfDayTimestamp } = useDateOperations();
+
+        expect(getEndOfDayTimestamp("")).toBe(0);
+        expect(getEndOfDayTimestamp("28.10.2026")).toBe(0);
+    });
+});
+
 describe("getDayOf", () => {
     beforeEach(() => setActivePinia(createPinia()));
 
