@@ -197,6 +197,10 @@ function windowForMode(mode) {
     ];
 }
 
+function dayOf(unix) {
+    return moment.unix(unix).tz(userStore.getTimezone).format("YYYY-MM-DD");
+}
+
 function rowsFromTable(table) {
     return (table.data_base || []).map((item) => {
         const row = {};
@@ -263,8 +267,8 @@ async function loadData(from, to) {
             workspaceService.getTasksByDateRange(
                 route.params.id,
                 route.params.tid,
-                from,
-                to,
+                dayOf(from),
+                dayOf(to),
                 f,
                 signal,
             ),
@@ -320,8 +324,8 @@ async function extendRange(from, to) {
         const res = await workspaceService.getTasksByDateRange(
             route.params.id,
             route.params.tid,
-            from,
-            to,
+            dayOf(from),
+            dayOf(to),
             activeFilters(),
         );
         const table = res?.data;

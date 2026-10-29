@@ -650,14 +650,14 @@ func (w *workspaceRepository) GetTaskFieldValue(tableName, taskID, fieldName str
 		return "", err
 	}
 
-	var value string
+	var value sql.NullString
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE id = ?", field, table)
 	err = w.Db.QueryRow(query, taskID).Scan(&value)
 	if err != nil {
 		return "", err
 	}
 
-	return value, nil
+	return value.String, nil
 }
 
 // GetColumnNames returns a table's column names as the table spells them.
@@ -1385,88 +1385,70 @@ func (r *workspaceRepository) GetUserTimezone(userID string) (*model.UserTimezon
 	return &tz, nil
 }
 
-func resolveDateOption(option string, loc *time.Location) (start int64, end int64, isRange bool) {
+func resolveDateOption(option string, loc *time.Location) (start string, end string, isRange bool) {
 	if loc == nil {
 		loc = time.UTC
 	}
 
-	now := time.Now().In(loc)
-	year, month, day := now.Date()
-	startOfToday := time.Date(year, month, day, 0, 0, 0, 0, loc)
+	year, month, day := time.Now().In(loc).Date()
+	today := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
+
+	offset := int(time.Monday - today.Weekday())
+	if offset > 0 {
+		offset = -6
+	}
+
+	thisWeek := today.AddDate(0, 0, offset)
+	thisMonth := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
+	thisQuarter := time.Date(year, (month-1)/3*3+1, 1, 0, 0, 0, 0, time.UTC)
+	thisYear := time.Date(year, time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	switch option {
 	case "Today":
-		return startOfToday.Unix(), startOfToday.Add(24 * time.Hour).Unix(), true
+		return dayString(today), dayString(today.AddDate(0, 0, 1)), true
 	case "Yesterday":
-		y := startOfToday.Add(-24 * time.Hour)
-		return y.Unix(), startOfToday.Unix(), true
+		return dayString(today.AddDate(0, 0, -1)), dayString(today), true
 	case "Tomorrow":
-		t := startOfToday.Add(24 * time.Hour)
-		return t.Unix(), t.Add(24 * time.Hour).Unix(), true
+		return dayString(today.AddDate(0, 0, 1)), dayString(today.AddDate(0, 0, 2)), true
 	case "Next 7 days":
-		return now.Unix(), now.AddDate(0, 0, 7).Unix(), true
+		return dayString(today), dayString(today.AddDate(0, 0, 8)), true
 	case "Last 7 days":
-		return now.AddDate(0, 0, -7).Unix(), now.Unix(), true
+		return dayString(today.AddDate(0, 0, -7)), dayString(today.AddDate(0, 0, 1)), true
 	case "This week":
-		offset := int(time.Monday - startOfToday.Weekday())
-		if offset > 0 {
-			offset = -6
-		}
-
-		start := startOfToday.AddDate(0, 0, offset)
-		end := start.AddDate(0, 0, 7)
-		return start.Unix(), end.Unix(), true
+		return dayString(thisWeek), dayString(thisWeek.AddDate(0, 0, 7)), true
 	case "Last week":
-		offset := int(time.Monday - startOfToday.Weekday())
-		if offset > 0 {
-			offset = -6
-		}
-
-		start := startOfToday.AddDate(0, 0, offset-7)
-		end := startOfToday.AddDate(0, 0, offset)
-		return start.Unix(), end.Unix(), true
+		return dayString(thisWeek.AddDate(0, 0, -7)), dayString(thisWeek), true
 	case "Next week":
-		offset := int(time.Monday - startOfToday.Weekday())
-		if offset > 0 {
-			offset = -6
-		}
-
-		start := startOfToday.AddDate(0, 0, offset+7)
-		end := start.AddDate(0, 0, 7)
-		return start.Unix(), end.Unix(), true
+		return dayString(thisWeek.AddDate(0, 0, 7)), dayString(thisWeek.AddDate(0, 0, 14)), true
 	case "This month":
-		firstDay := time.Date(year, month, 1, 0, 0, 0, 0, loc)
-		lastDay := firstDay.AddDate(0, 1, 0)
-		return firstDay.Unix(), lastDay.Unix(), true
+		return dayString(thisMonth), dayString(thisMonth.AddDate(0, 1, 0)), true
 	case "Last month":
-		firstDay := time.Date(year, month-1, 1, 0, 0, 0, 0, loc)
-		lastDay := firstDay.AddDate(0, 1, 0)
-		return firstDay.Unix(), lastDay.Unix(), true
+		return dayString(thisMonth.AddDate(0, -1, 0)), dayString(thisMonth), true
 	case "Next month":
-		firstDay := time.Date(year, month+1, 1, 0, 0, 0, 0, loc)
-		lastDay := firstDay.AddDate(0, 1, 0)
-		return firstDay.Unix(), lastDay.Unix(), true
+		return dayString(thisMonth.AddDate(0, 1, 0)), dayString(thisMonth.AddDate(0, 2, 0)), true
+	case "Last quarter":
+		return dayString(thisQuarter.AddDate(0, -3, 0)), dayString(thisQuarter), true
+	case "Next quarter":
+		return dayString(thisQuarter.AddDate(0, 3, 0)), dayString(thisQuarter.AddDate(0, 6, 0)), true
 	case "This year":
-		start := time.Date(year, time.January, 1, 0, 0, 0, 0, loc)
-		end := time.Date(year+1, time.January, 1, 0, 0, 0, 0, loc)
-		return start.Unix(), end.Unix(), true
+		return dayString(thisYear), dayString(thisYear.AddDate(1, 0, 0)), true
 	case "Last year":
-		start := time.Date(year-1, time.January, 1, 0, 0, 0, 0, loc)
-		end := time.Date(year, time.January, 1, 0, 0, 0, 0, loc)
-		return start.Unix(), end.Unix(), true
+		return dayString(thisYear.AddDate(-1, 0, 0)), dayString(thisYear), true
 	case "Next year":
-		start := time.Date(year+1, time.January, 1, 0, 0, 0, 0, loc)
-		end := time.Date(year+2, time.January, 1, 0, 0, 0, 0, loc)
-		return start.Unix(), end.Unix(), true
+		return dayString(thisYear.AddDate(1, 0, 0)), dayString(thisYear.AddDate(2, 0, 0)), true
 	case "Today & Earlier":
-		return 0, startOfToday.Add(24 * time.Hour).Unix(), true
+		return "", dayString(today.AddDate(0, 0, 1)), true
 	case "Overdue":
-		return 0, startOfToday.Unix(), true
+		return "", dayString(today), true
 	case "Later than Today":
-		return startOfToday.Add(24 * time.Hour).Unix(), 0, true
+		return dayString(today.AddDate(0, 0, 1)), "", true
 	}
 
-	return 0, 0, false
+	return "", "", false
+}
+
+func dayString(t time.Time) string {
+	return t.Format(time.DateOnly)
 }
 
 // filterHeader returns the column a filter names, or nil when the table has no
@@ -1543,11 +1525,11 @@ func combineFilterGroups(groups []model.FilterGroup, build func([]model.Filter) 
 	return combined
 }
 
-func dateBoundsCondition(col string, start, end int64) model.SQLFilter {
+func dateBoundsCondition(col string, start, end string) model.SQLFilter {
 	switch {
-	case end == 0:
+	case end == "":
 		return model.SQLFilter{SQL: col + " >= ?", Args: []any{start}}
-	case start == 0:
+	case start == "":
 		return model.SQLFilter{SQL: col + " < ?", Args: []any{end}}
 	}
 
@@ -1571,6 +1553,17 @@ func setCondition(col, op string) model.SQLFilter {
 		return model.SQLFilter{SQL: "(" + col + " IS NOT NULL AND " + col + " != '')"}
 	case "is_not_set":
 		return model.SQLFilter{SQL: "(" + col + " IS NULL OR " + col + " = '')"}
+	}
+
+	return model.SQLFilter{}
+}
+
+func nullCondition(col, op string) model.SQLFilter {
+	switch op {
+	case "is_set":
+		return model.SQLFilter{SQL: col + " IS NOT NULL"}
+	case "is_not_set":
+		return model.SQLFilter{SQL: col + " IS NULL"}
 	}
 
 	return model.SQLFilter{}
@@ -1657,15 +1650,32 @@ func inlineFilterCondition(f model.Filter, header *model.WorkspaceHeaders, loc *
 	}
 
 	if f.Operator == "is_set" || f.Operator == "is_not_set" {
+		if header.HeaderType == "DATE" || header.Name == "start_date" || header.Name == "due_date" {
+			return nullCondition(col, f.Operator)
+		}
+
 		return setCondition(col, f.Operator)
 	}
 
 	if header.Name == "start_date" || header.Name == "due_date" {
 		if start, end, ok := inlineDateBounds(f, loc); ok {
-			return dateBoundsCondition(col, start, end)
+			within := dateBoundsCondition(col, start, end)
+			if opU == "is_not" {
+				return model.SQLFilter{SQL: "(NOT (" + within.SQL + ") OR " + col + " IS NULL)", Args: within.Args}
+			}
+
+			return within
 		}
 
-		return model.SQLFilter{SQL: col + " = ?", Args: []any{f.Value}}
+		if _, err := time.Parse(time.DateOnly, f.Value); err != nil {
+			if opU == "is_not" {
+				return model.SQLFilter{}
+			}
+
+			return model.SQLFilter{SQL: "1 = 0"}
+		}
+
+		return equalityCondition(col, f.Operator, f.Value)
 	}
 
 	if header.Name == "status" && len(f.Values) > 0 {
@@ -1682,44 +1692,32 @@ func inlineFilterCondition(f model.Filter, header *model.WorkspaceHeaders, loc *
 	return equalityCondition(col, f.Operator, f.Value)
 }
 
-func inlineDateBounds(f model.Filter, loc *time.Location) (int64, int64, bool) {
+func inlineDateBounds(f model.Filter, loc *time.Location) (string, string, bool) {
 	start, end, ok := resolveDateOption(f.Value, loc)
 
-	if f.Date != "" {
-		parsed, err := time.Parse("2006-01-02", f.Date)
-		if err == nil {
-			if loc != nil {
-				parsed = time.Date(parsed.Year(), parsed.Month(), parsed.Day(), 0, 0, 0, 0, loc)
-			}
+	if f.Date == "" {
+		return start, end, ok
+	}
 
-			switch f.Value {
-			case "Exact date":
-				start = parsed.Unix()
-				end = parsed.Add(24 * time.Hour).Unix()
-				ok = true
-			case "After date":
-				start = parsed.Add(24 * time.Hour).Unix()
-				end = 0
-				ok = true
-			case "Before date":
-				start = 0
-				end = parsed.Unix()
-				ok = true
-			case "Date range":
-				if f.Date2 != "" {
-					parsed2, err := time.Parse("2006-01-02", f.Date2)
-					if err == nil {
-						if loc != nil {
-							parsed2 = time.Date(parsed2.Year(), parsed2.Month(), parsed2.Day(), 0, 0, 0, 0, loc)
-						}
+	first, err := time.Parse(time.DateOnly, f.Date)
+	if err != nil {
+		return start, end, ok
+	}
 
-						start = parsed.Unix()
-						end = parsed2.Add(24 * time.Hour).Unix()
-						ok = true
-					}
-				}
-			}
+	switch f.Value {
+	case "Exact date":
+		return dayString(first), dayString(first.AddDate(0, 0, 1)), true
+	case "After date":
+		return dayString(first.AddDate(0, 0, 1)), "", true
+	case "Before date":
+		return "", dayString(first), true
+	case "Date range":
+		last, err := time.Parse(time.DateOnly, f.Date2)
+		if err != nil {
+			return start, end, ok
 		}
+
+		return dayString(first), dayString(last.AddDate(0, 0, 1)), true
 	}
 
 	return start, end, ok
@@ -2733,15 +2731,14 @@ func scanRowsToMaps(rows *sql.Rows) ([]map[string]interface{}, error) {
 // GetTasksByDateRange returns the tasks whose dates touch [from, to], those
 // nearest today first, at most limit of them when limit is above zero, with
 // how many there are in all.
-func (w *workspaceRepository) GetTasksByDateRange(ctx context.Context, tableName string, from, to int64, filter model.SQLFilter, limit int) ([]map[string]interface{}, int, error) {
+func (w *workspaceRepository) GetTasksByDateRange(ctx context.Context, tableName string, from, to string, filter model.SQLFilter, limit int) ([]map[string]interface{}, int, error) {
 	// Include tasks where start_date OR due_date falls in the window so
 	// tasks with only one date set still appear in the gantt.
 	where := `(deleted_at IS NULL OR deleted_at = 0)
 		AND (
-			(start_date IS NOT NULL AND start_date != 0 AND start_date BETWEEN ? AND ?)
-			OR (due_date IS NOT NULL AND due_date != 0 AND due_date BETWEEN ? AND ?)
-			OR (start_date IS NOT NULL AND start_date != 0 AND start_date < ?
-			    AND due_date IS NOT NULL AND due_date != 0 AND due_date > ?)
+			start_date BETWEEN ? AND ?
+			OR due_date BETWEEN ? AND ?
+			OR (start_date < ? AND due_date > ?)
 		)`
 	if filter.SQL != "" {
 		where += " AND (" + filter.SQL + ")"
@@ -2768,7 +2765,7 @@ func (w *workspaceRepository) GetTasksByDateRange(ctx context.Context, tableName
 	q := fmt.Sprintf(`
 		SELECT id, name, start_date, due_date FROM %s
 		WHERE %s
-		ORDER BY ABS(CAST(COALESCE(NULLIF(start_date, 0), due_date) AS SIGNED) - UNIX_TIMESTAMP()), id
+		ORDER BY ABS(DATEDIFF(COALESCE(start_date, due_date), CURDATE())), id
 	`, table, where)
 	if limit > 0 {
 		q += " LIMIT ?"
@@ -2890,7 +2887,7 @@ func (w *workspaceRepository) GetLinkedRecordsLite(ctx context.Context, tableNam
 
 // GetTasksByCalendarRange returns tasks whose date range overlaps [from, to]:
 // starts in window, ends in window, or spans the entire window.
-func (w *workspaceRepository) GetTasksByCalendarRange(ctx context.Context, tableName string, from, to int64, filter model.SQLFilter) ([]map[string]interface{}, error) {
+func (w *workspaceRepository) GetTasksByCalendarRange(ctx context.Context, tableName string, from, to string, filter model.SQLFilter) ([]map[string]interface{}, error) {
 	table, err := quoteIdent(tableName)
 	if err != nil {
 		return nil, err
@@ -2900,10 +2897,9 @@ func (w *workspaceRepository) GetTasksByCalendarRange(ctx context.Context, table
 		SELECT id, name, start_date, due_date FROM %s
 		WHERE (deleted_at IS NULL OR deleted_at = 0)
 		AND (
-			(start_date IS NOT NULL AND start_date != 0 AND start_date BETWEEN ? AND ?)
-			OR (due_date  IS NOT NULL AND due_date  != 0 AND due_date  BETWEEN ? AND ?)
-			OR (start_date IS NOT NULL AND start_date != 0 AND start_date < ?
-				AND due_date IS NOT NULL AND due_date != 0 AND due_date > ?)
+			start_date BETWEEN ? AND ?
+			OR due_date BETWEEN ? AND ?
+			OR (start_date < ? AND due_date > ?)
 		)
 	`, table)
 	if filter.SQL != "" {
@@ -4044,8 +4040,8 @@ func (w *workspaceRepository) createTaskTableDDLTx(tx *sql.Tx, tableName string)
 	_, err = tx.Exec(`CREATE TABLE IF NOT EXISTS ` + table + ` (
 		id VARCHAR(36) NOT NULL PRIMARY KEY,
 		name VARCHAR(255),
-		start_date BIGINT,
-		due_date BIGINT,
+		start_date DATE,
+		due_date DATE,
 		assignee VARCHAR(255),
 		status VARCHAR(50),
 		description TEXT,
@@ -6395,12 +6391,12 @@ func (w *workspaceRepository) GetTaskPageKeys(ctx context.Context, sources []mod
 				where += " AND " + src.Filter.SQL
 			}
 
-			for group, part := range []struct{ cond, col string }{
-				{"main.due_date > 0", "main.due_date"},
-				{"(main.due_date IS NULL OR main.due_date = 0)", "main.created_at"},
+			for group, part := range []struct{ cond, col, key string }{
+				{"main.due_date IS NOT NULL", "main.due_date", "TO_DAYS(main.due_date)"},
+				{"main.due_date IS NULL", "main.created_at", "main.created_at"},
 			} {
 				parts = append(parts, fmt.Sprintf("(SELECT ? AS table_id, main.id AS id, %d AS g, %s AS s0 FROM `%s` AS main WHERE %s AND %s ORDER BY %s, main.id LIMIT ?)",
-					group, part.col, src.TableName, where, part.cond, part.col))
+					group, part.key, src.TableName, where, part.cond, part.col))
 				args = append(args, src.TableID)
 				args = append(args, src.Filter.Args...)
 				args = append(args, offset+limit)

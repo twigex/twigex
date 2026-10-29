@@ -686,7 +686,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             aria-hidden="true"
                                         />
                                         <span v-if="item[header.name]" class="truncate">{{
-                                            dateCellText(header, item[header.name])
+                                            dateCellText(item[header.name])
                                         }}</span>
                                     </button>
                                 </div>
@@ -731,32 +731,6 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                 }}
                                             </div>
                                         </div>
-
-                                        <div
-                                            v-else-if="
-                                                ['start_date', 'due_date'].includes(
-                                                    getHeaderType(colIndex).header_name,
-                                                )
-                                            "
-                                            class="w-full min-w-0"
-                                        >
-                                            <button
-                                                type="button"
-                                                class="flex w-full min-w-0 items-center gap-x-1.5 text-left text-[13px] text-gray-700"
-                                                :title="t('projects.grid_view.pick_a_date')"
-                                                @click.stop="
-                                                    toggleDatePickerPopover($event, item, colIndex)
-                                                "
-                                            >
-                                                <CalendarIcon
-                                                    class="h-4 w-4 flex-none text-gray-400"
-                                                    aria-hidden="true"
-                                                />
-                                                <span v-if="item[header.name]" class="truncate">{{
-                                                    dateCellText(header, item[header.name])
-                                                }}</span>
-                                            </button>
-                                        </div>
                                     </div>
 
                                     <div
@@ -776,7 +750,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                 aria-hidden="true"
                                             />
                                             <span v-if="item[header.name]" class="truncate">{{
-                                                dateCellText(header, item[header.name])
+                                                dateCellText(item[header.name])
                                             }}</span>
                                         </button>
                                     </div>
@@ -1294,8 +1268,7 @@ const handleFileUpload = async (event, item, colIndex) => {
 const { openFile, chooseFiles, uploadTaskFiles } = useTaskFiles();
 
 const expandedTasks = ref(new Set());
-const { getDate, getDateAndTime, getTimestampFromDateString, getDateInputValue, isDayField } =
-    useDateOperations();
+const { getDate, getDateAndTime, formatDay, getDateInputValue, isDayField } = useDateOperations();
 
 const toggleExpand = (id) => {
     if (expandedTasks.value.has(id)) expandedTasks.value.delete(id);
@@ -1435,14 +1408,10 @@ const activeDateValue = computed(() => {
     return getDateInputValue(activeDatePickerPopoverItem.value?.[header?.name], isDayField(header));
 });
 
-// Start and due dates are stored as timestamps, date fields as their day.
-const dateCellText = (header, value) => {
+const dateCellText = (value) => {
     if (!value) return "";
 
-    return (
-        (isDayField(header) ? getDate(getTimestampFromDateString(value)) : getDate(+value)) ||
-        String(value)
-    );
+    return formatDay(value) || String(value);
 };
 
 const {
@@ -2184,10 +2153,6 @@ const saveValue = async (colIndex, item, event) => {
 
     let tableID = !props.isDialog ? route.params.tid : dialogTableID.value;
 
-    if (fieldName === "start_date" || fieldName === "due_date") {
-        newValue = String(getTimestampFromDateString(newValue));
-    }
-
     try {
         const response = await workspaceService.updateTask({
             workspace_id: route.params.id,
@@ -2202,11 +2167,10 @@ const saveValue = async (colIndex, item, event) => {
             ? response.data[fieldName]
             : newValue;
 
-        const isDateField =
-            ["start_date", "due_date"].includes(fieldName) ||
-            colHeader?.header_usage === "default_date";
+        const isTimestampField =
+            colHeader?.header_usage === "default_date" && colHeader?.header_type !== "DATE";
 
-        item[fieldName] = isDateField && appliedValue ? +appliedValue : appliedValue;
+        item[fieldName] = isTimestampField && appliedValue ? +appliedValue : appliedValue;
         item.updated_at = Date.now();
         bumpRowEdit(item.id);
 

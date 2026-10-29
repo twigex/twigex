@@ -21,9 +21,9 @@ func TestAssignedSectionsSplitTheDayInTheUsersTimeZone(t *testing.T) {
 	}
 
 	now := time.Date(2026, 9, 28, 23, 30, 0, 0, riga)
-	todayStart := time.Date(2026, 9, 28, 0, 0, 0, 0, riga).Unix()
-	tomorrow := time.Date(2026, 9, 29, 0, 0, 0, 0, riga).Unix()
-	weekEnd := time.Date(2026, 10, 6, 0, 0, 0, 0, riga).Unix()
+	todayStart := "2026-09-28"
+	tomorrow := "2026-09-29"
+	weekEnd := "2026-10-06"
 
 	var keys []string
 	bounds := map[string][]any{}
@@ -89,7 +89,7 @@ func (f *fakeAssignedStore) GetMainViewIDs(map[string]string) (map[string]string
 func TestGetAssignedToMeReturnsCountsAndOnePagePerSection(t *testing.T) {
 	ws := &fakeAssignedStore{
 		counts: []int{3, 0, 0, 0, 1},
-		rows:   []map[string]interface{}{{"id": "task-1", "table_id": "t-a", "due_date": int64(7)}},
+		rows:   []map[string]interface{}{{"id": "task-1", "table_id": "t-a", "due_date": time.Date(2026, 9, 7, 0, 0, 0, 0, time.UTC)}},
 	}
 	a := readAccessApp(&ws.fakeReadAccessStore)
 	a.Store.Workspace = ws
@@ -117,9 +117,9 @@ func TestGetAssignedToMeLoadsMoreAfterTheLastTaskShown(t *testing.T) {
 	ws := &fakeAssignedStore{
 		counts: []int{3},
 		rows: []map[string]interface{}{
-			{"id": "task-1", "table_id": "t-a", "due_date": int64(5)},
-			{"id": "task-2", "table_id": "t-a", "due_date": "9"},
-			{"id": "task-3", "table_id": "t-a", "due_date": int64(9)},
+			{"id": "task-1", "table_id": "t-a", "due_date": time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC)},
+			{"id": "task-2", "table_id": "t-a", "due_date": "2026-09-09"},
+			{"id": "task-3", "table_id": "t-a", "due_date": time.Date(2026, 9, 9, 0, 0, 0, 0, time.UTC)},
 		},
 	}
 	a := readAccessApp(&ws.fakeReadAccessStore)
@@ -139,8 +139,7 @@ func TestGetAssignedToMeLoadsMoreAfterTheLastTaskShown(t *testing.T) {
 	if appErr != nil {
 		t.Fatal(appErr)
 	}
-	due := int64(9)
-	after := model.RowsAfter("main.due_date", &due, "task-2")
+	after := model.RowsAfter("main.due_date", "2026-09-09", "task-2")
 	if !strings.HasSuffix(ws.lastPage.SQL, after.SQL) || !slices.Equal(ws.lastPage.Args[len(ws.lastPage.Args)-3:], after.Args) {
 		t.Errorf("next page read with %+v, want it to start after task-2", ws.lastPage)
 	}

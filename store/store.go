@@ -533,6 +533,7 @@ type MigrationStore interface {
 }
 
 type WorkspaceStore interface {
+	ConvertTaskDatesToDays() error
 	RenameTaskAndKanbanSectionTx(workspaceID, tableID, taskID, field, newName, oldName, linkedTableName, linkedTableID string) error
 	CreateTask(workspaceID, tableID, name, userID, parentTaskID, taskID string, timestamp int64, fields map[string]any) (*map[string]interface{}, error)
 	SyncTaskKanban(workspaceID, tableID, taskID string, selects map[string]string, task map[string]interface{}) error
@@ -550,8 +551,8 @@ type WorkspaceStore interface {
 	GetTableParentID(tableID string) string
 	GetLinkedTableIDByName(tableID, name string) string
 	GetTableColumnTypes(tableName string) ([]*sql.ColumnType, error)
-	GetTasksByDateRange(ctx context.Context, tableName string, from, to int64, filter model.SQLFilter, limit int) ([]map[string]interface{}, int, error)
-	GetTasksByCalendarRange(ctx context.Context, tableName string, from, to int64, filter model.SQLFilter) ([]map[string]interface{}, error)
+	GetTasksByDateRange(ctx context.Context, tableName string, from, to string, filter model.SQLFilter, limit int) ([]map[string]interface{}, int, error)
+	GetTasksByCalendarRange(ctx context.Context, tableName string, from, to string, filter model.SQLFilter) ([]map[string]interface{}, error)
 	GetLinkedRecordsLite(ctx context.Context, tableName, search string, ids []string, limit, offset int, access model.SQLFilter) ([]map[string]interface{}, error)
 	GetTaskAssignees(ctx context.Context, tableName string, taskIDs []string) (map[string]string, error)
 	GetTableRows(tableName string) ([]map[string]interface{}, error)

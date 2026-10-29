@@ -51,7 +51,7 @@ describe("getTimestampFromDateString", () => {
 describe("getDayOf", () => {
     beforeEach(() => setActivePinia(createPinia()));
 
-    it("gives the day of a day, or of a timestamp where the user is", () => {
+    it("gives the day of a day field, wherever the user is", () => {
         useUserStore().user = {
             ...useUserStore().user,
             timezone: { useAutomaticTimezone: "false", manualTimezone: "America/New_York" },
@@ -60,11 +60,41 @@ describe("getDayOf", () => {
 
         expect(getDayOf("2026-09-30")).toBe("2026-09-30");
         expect(getDayOf("2026-09-30T00:00:00Z")).toBe("2026-09-30");
-        // 03:00 UTC on 30 September is still the 29th in New York, in seconds
-        // or milliseconds.
-        expect(getDayOf(1790737200)).toBe("2026-09-29");
-        expect(getDayOf(1790737200000)).toBe("2026-09-29");
         expect(getDayOf("")).toBeNull();
         expect(getDayOf("soon")).toBeNull();
+    });
+});
+
+describe("formatDay", () => {
+    beforeEach(() => setActivePinia(createPinia()));
+
+    it("shows the same day wherever the user is", () => {
+        for (const timezone of ["America/Los_Angeles", "Europe/Riga", "Pacific/Auckland"]) {
+            useUserStore().user = {
+                ...useUserStore().user,
+                timezone: { useAutomaticTimezone: "false", manualTimezone: timezone },
+            };
+            const { formatDay } = useDateOperations();
+
+            expect(formatDay("2026-10-28")).toBe("28.10.2026");
+            expect(formatDay("2026-10-28T00:00:00Z")).toBe("28.10.2026");
+        }
+    });
+
+    it("gives nothing for an empty day", () => {
+        const { formatDay } = useDateOperations();
+
+        expect(formatDay("")).toBe("");
+        expect(formatDay(null)).toBe("");
+    });
+});
+
+describe("isDayField", () => {
+    it("counts start and due dates as days", () => {
+        const { isDayField } = useDateOperations();
+
+        expect(isDayField({ name: "due_date", header_type: "DATE" })).toBe(true);
+        expect(isDayField({ name: "start_date" })).toBe(true);
+        expect(isDayField({ name: "created_at", header_type: "BIGINT" })).toBe(false);
     });
 });

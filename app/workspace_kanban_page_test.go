@@ -164,8 +164,7 @@ func TestGetKanbanDataLoadsMoreAfterTheLastCardShown(t *testing.T) {
 	}
 
 	third := load(second.Next, card("c", 4))
-	created := int64(4)
-	after := model.RowsAfter("main.created_at", &created, "b")
+	after := model.RowsAfter("main.created_at", int64(4), "b")
 	if !strings.HasSuffix(ws.lastPage.SQL, after.SQL) || !slices.Equal(ws.lastPage.Args[len(ws.lastPage.Args)-3:], after.Args) {
 		t.Errorf("third page read with %+v, want it to start after b", ws.lastPage)
 	}

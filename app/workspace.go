@@ -476,18 +476,21 @@ func runItemWorkers(items []map[string]interface{}, maxWorkers int, mu *sync.Mut
 
 func sortItemsByDueDate(items []map[string]interface{}) {
 	sort.SliceStable(items, func(i, j int) bool {
-		di := parseInt64(items[i]["due_date"])
-		dj := parseInt64(items[j]["due_date"])
-		if di == 0 {
-			di = parseInt64(items[i]["created_at"])
-		}
-
-		if dj == 0 {
-			dj = parseInt64(items[j]["created_at"])
-		}
-
-		return di < dj
+		return dueSortKey(items[i]) < dueSortKey(items[j])
 	})
+}
+
+func dueSortKey(item map[string]interface{}) int64 {
+	switch due := item["due_date"].(type) {
+	case time.Time:
+		return due.Unix()
+	case string:
+		if day, err := time.Parse(time.DateOnly, due); err == nil {
+			return day.Unix()
+		}
+	}
+
+	return parseInt64(item["created_at"])
 }
 
 func normalizeStatusFilters(filters model.FilterPayload) model.FilterPayload {
@@ -821,30 +824,7 @@ func (a *App) getTableItems(tableName, tableID string) ([]map[string]interface{}
 
 	a.hydrateFileAttachments(context.Background(), items, headers, tableID)
 
-	sort.SliceStable(items, func(i, j int) bool {
-		var di, dj int64
-		if v, ok := items[i]["due_date"]; ok && v != nil {
-			di = parseInt64(v)
-		}
-
-		if v, ok := items[j]["due_date"]; ok && v != nil {
-			dj = parseInt64(v)
-		}
-
-		if di == 0 {
-			if v, ok := items[i]["created_at"]; ok && v != nil {
-				di = parseInt64(v)
-			}
-		}
-
-		if dj == 0 {
-			if v, ok := items[j]["created_at"]; ok && v != nil {
-				dj = parseInt64(v)
-			}
-		}
-
-		return di < dj
-	})
+	sortItemsByDueDate(items)
 
 	return items, headers, nil
 }
@@ -1265,15 +1245,15 @@ type assignedSection struct {
 // order the page shows them.
 func assignedSections(now time.Time) []assignedSection {
 	y, m, d := now.Date()
-	todayStart := time.Date(y, m, d, 0, 0, 0, 0, now.Location()).Unix()
-	tomorrow := time.Date(y, m, d+1, 0, 0, 0, 0, now.Location()).Unix()
-	weekEnd := time.Date(y, m, d+8, 0, 0, 0, 0, now.Location()).Unix()
+	today := time.Date(y, m, d, 0, 0, 0, 0, time.UTC).Format(time.DateOnly)
+	tomorrow := time.Date(y, m, d+1, 0, 0, 0, 0, time.UTC).Format(time.DateOnly)
+	weekEnd := time.Date(y, m, d+8, 0, 0, 0, 0, time.UTC).Format(time.DateOnly)
 	return []assignedSection{
-		{"overdue", model.SQLFilter{SQL: "(main.due_date > 0 AND main.due_date < ?)", Args: []any{todayStart}}},
-		{"today", model.SQLFilter{SQL: "(main.due_date >= ? AND main.due_date < ?)", Args: []any{todayStart, tomorrow}}},
+		{"overdue", model.SQLFilter{SQL: "main.due_date < ?", Args: []any{today}}},
+		{"today", model.SQLFilter{SQL: "(main.due_date >= ? AND main.due_date < ?)", Args: []any{today, tomorrow}}},
 		{"thisWeek", model.SQLFilter{SQL: "(main.due_date >= ? AND main.due_date < ?)", Args: []any{tomorrow, weekEnd}}},
 		{"upcoming", model.SQLFilter{SQL: "main.due_date >= ?", Args: []any{weekEnd}}},
-		{"noDueDate", model.SQLFilter{SQL: "(main.due_date IS NULL OR main.due_date = 0)"}},
+		{"noDueDate", model.SQLFilter{SQL: "main.due_date IS NULL"}},
 	}
 }
 
@@ -1362,7 +1342,7 @@ func (a *App) GetAssignedToMe(ctx context.Context, userID, timezone, section, cu
 			if len(rows) > limit {
 				rows = rows[:limit]
 				last := rows[limit-1]
-				result.Next = taskCursor{ID: fmt.Sprint(last["id"]), Value: cursorValue(last["due_date"])}.encode()
+				result.Next = taskCursor{ID: fmt.Sprint(last["id"]), Day: cursorDay(last["due_date"])}.encode()
 			}
 
 			result.Tasks = append(result.Tasks, rows...)
@@ -1543,9 +1523,15 @@ func safeLink(link string) bool {
 
 // Hydration is skipped intentionally: the frontend resolves single-select options
 // from the nav data_base, avoiding 40k+ N+1 queries for large tables.
-func (a *App) GetTasksByDateRange(ctx context.Context, workspaceID, tableID string, from, to int64, filters model.FilterPayload, user model.User) (*model.WorkspaceTable, *model.AppError) {
+func (a *App) GetTasksByDateRange(ctx context.Context, workspaceID, tableID string, from, to string, filters model.FilterPayload, user model.User) (*model.WorkspaceTable, *model.AppError) {
 	if !a.ProjectWorkspaceHasPermission(user, workspaceID, model.PermissionViewGantt) {
 		return nil, model.NewAppError("workspace.forbidden", http.StatusForbidden)
+	}
+
+	from, fromOK := taskDay(from)
+	to, toOK := taskDay(to)
+	if !fromOK || !toOK || from == "" || to == "" {
+		return nil, model.NewAppError("workspace.date_range_failed", http.StatusBadRequest)
 	}
 
 	ctx, cancel := a.dbCtx(ctx)
@@ -1599,9 +1585,15 @@ func (a *App) GetTasksByDateRange(ctx context.Context, workspaceID, tableID stri
 // The chart shows no more than this, and says so when there are more.
 const GanttTaskLimit = 500
 
-func (a *App) GetTasksByCalendarRange(ctx context.Context, workspaceID, tableID string, from, to int64, filters model.FilterPayload, user model.User) (*model.WorkspaceTable, *model.AppError) {
+func (a *App) GetTasksByCalendarRange(ctx context.Context, workspaceID, tableID string, from, to string, filters model.FilterPayload, user model.User) (*model.WorkspaceTable, *model.AppError) {
 	if !a.ProjectWorkspaceHasPermission(user, workspaceID, model.PermissionViewCalendar) {
 		return nil, model.NewAppError("workspace.forbidden", http.StatusForbidden)
+	}
+
+	from, fromOK := taskDay(from)
+	to, toOK := taskDay(to)
+	if !fromOK || !toOK || from == "" || to == "" {
+		return nil, model.NewAppError("workspace.calendar_range_invalid", http.StatusBadRequest)
 	}
 
 	ctx, cancel := a.dbCtx(ctx)
@@ -2309,6 +2301,19 @@ func (a *App) UpdateWorkspaceTask(ctx context.Context, workspaceID string, table
 
 	if fieldType == "url" && value != "" && !safeLink(value) {
 		return nil, model.NewAppError("request.invalid", http.StatusBadRequest)
+	}
+
+	if field == "start_date" || field == "due_date" {
+		day, ok := taskDay(value)
+		if !ok {
+			return nil, model.NewAppError("request.invalid", http.StatusBadRequest)
+		}
+
+		if appErr := a.checkTaskDatesInOrder(tableName, taskID, field, day); appErr != nil {
+			return nil, appErr
+		}
+
+		value = day
 	}
 
 	typedValue := resolveTaskFieldValue(value, isRelationship, fieldType)
@@ -3746,19 +3751,21 @@ func (a *App) newTaskValues(ctx context.Context, workspaceID, tableName string, 
 		}
 	}
 
-	if fields.StartDate < 0 || fields.DueDate < 0 {
+	startDate, startOK := taskDay(string(fields.StartDate))
+	dueDate, dueOK := taskDay(string(fields.DueDate))
+	if !startOK || !dueOK {
 		return nil, invalid
 	}
 
-	if fields.StartDate > 0 && fields.DueDate > 0 && fields.StartDate > fields.DueDate {
+	if startDate != "" && dueDate != "" && startDate > dueDate {
 		return nil, model.NewAppError("workspace.task_dates_reversed", http.StatusBadRequest)
 	}
 
-	if fields.StartDate > 0 && !set("start_date", fields.StartDate) {
+	if startDate != "" && !set("start_date", startDate) {
 		return nil, invalid
 	}
 
-	if fields.DueDate > 0 && !set("due_date", fields.DueDate) {
+	if dueDate != "" && !set("due_date", dueDate) {
 		return nil, invalid
 	}
 

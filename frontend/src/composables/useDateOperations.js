@@ -90,27 +90,30 @@ export default function useDateOperations() {
             .format("YYYY-MM-DD");
     };
 
-    // The day a task's date falls on, YYYY-MM-DD, whether it is stored as a day
-    // or as a timestamp, in seconds or milliseconds; null without one.
+    // The day a day field holds, YYYY-MM-DD, whether the server sends it alone
+    // or as midnight UTC; null without one.
     const getDayOf = (value) => {
         if (!value) return null;
         const s = String(value).trim();
 
-        if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
-        const n = Number(s);
+        return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : null;
+    };
 
-        if (!isNaN(n) && n > 0) {
-            const ms = n < 1e12 ? n * 1000 : n;
+    const formatDay = (value) => {
+        const day = getDayOf(value);
 
-            return moment(ms).tz(useUserStore().getTimezone).format("YYYY-MM-DD");
-        }
+        if (!day) return "";
 
-        return null;
+        const layout = useUserStore().getClockDisplay == "12h" ? "MM/DD/YYYY" : "DD.MM.YYYY";
+
+        return moment.utc(day, "YYYY-MM-DD").format(layout);
     };
 
     // A field holding a day rather than a moment, stored as YYYY-MM-DD.
     const isDayField = (header) =>
-        (header?.header_type || "").toUpperCase() === "DATE" || header?.header_usage === "date";
+        (header?.header_type || "").toUpperCase() === "DATE" ||
+        header?.header_usage === "date" ||
+        ["start_date", "due_date"].includes(header?.name);
 
     const isUnixMilliseconds = (timestamp) => {
         const ts = Number(timestamp);
@@ -126,6 +129,7 @@ export default function useDateOperations() {
         getTimestampFromDateString,
         getDateInputValue,
         getDayOf,
+        formatDay,
         isDayField,
         isUnixMilliseconds,
     };

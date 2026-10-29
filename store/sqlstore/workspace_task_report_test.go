@@ -21,13 +21,14 @@ func setupTaskReportTables(t *testing.T) []model.TaskSource {
 
 	for _, r := range []struct {
 		table, id, name string
-		due, created    int
+		due             any
+		created         int
 		priority        any
 	}{
-		{"zz_test_report_a", "a1", "apple", 300, 1, 2},
-		{"zz_test_report_a", "a2", "cherry", 0, 150, 1},
-		{"zz_test_report_b", "b1", "banana", 100, 2, nil},
-		{"zz_test_report_b", "b2", "date", 200, 3, nil},
+		{"zz_test_report_a", "a1", "apple", "2026-01-30", 1, 2},
+		{"zz_test_report_a", "a2", "cherry", nil, 150, 1},
+		{"zz_test_report_b", "b1", "banana", "2026-01-10", 2, nil},
+		{"zz_test_report_b", "b2", "date", "2026-01-20", 3, nil},
 	} {
 		if r.table == "zz_test_report_a" {
 			mustExec(t, "INSERT INTO `zz_test_report_a` (id, name, due_date, created_at, priority, deleted_at) VALUES (?, ?, ?, ?, ?, 0)", r.id, r.name, r.due, r.created, r.priority)

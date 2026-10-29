@@ -21,6 +21,7 @@ type fakeTaskWriteStore struct {
 	options map[string]bool
 	writes  int
 	written interface{}
+	stored  map[string]string
 	created map[string]any
 	field   *model.CreateFieldParams
 	tables  []createdTable
@@ -84,9 +85,12 @@ func (f *fakeTaskWriteStore) GetPersonFieldNamesForTable(string) ([]string, erro
 	return []string{"reviewer"}, nil
 }
 
-func (f *fakeTaskWriteStore) GetTaskFieldValue(_, taskID, _ string) (string, error) {
+func (f *fakeTaskWriteStore) GetTaskFieldValue(_, taskID, field string) (string, error) {
 	if taskID == "missing" {
 		return "", sql.ErrNoRows
+	}
+	if value, ok := f.stored[field]; ok {
+		return value, nil
 	}
 	return "a task", nil
 }
@@ -311,7 +315,7 @@ func TestCreatingATaskChecksItsParentAndSection(t *testing.T) {
 
 func TestCreatingATaskWithFieldsChecksEachOne(t *testing.T) {
 	admin := workspaceAdmin
-	all := model.NewTaskFields{Status: "todo", Assignee: "member", StartDate: 100, DueDate: 200, Description: "Notes"}
+	all := model.NewTaskFields{Status: "todo", Assignee: "member", StartDate: "2026-10-27", DueDate: "2026-10-28", Description: "Notes"}
 
 	for _, tc := range []struct {
 		name            string
@@ -324,8 +328,9 @@ func TestCreatingATaskWithFieldsChecksEachOne(t *testing.T) {
 		{"a status the table does not have", model.NewTaskFields{Status: "made-up"}, "", "", http.StatusBadRequest},
 		{"a status unlike the column it was added in", model.NewTaskFields{Status: "todo"}, "high", "status", http.StatusBadRequest},
 		{"someone who is not a member", model.NewTaskFields{Assignee: "stranger"}, "", "", http.StatusBadRequest},
-		{"a start after the due date", model.NewTaskFields{StartDate: 300, DueDate: 200}, "", "", http.StatusBadRequest},
-		{"a negative date", model.NewTaskFields{DueDate: -1}, "", "", http.StatusBadRequest},
+		{"a start after the due date", model.NewTaskFields{StartDate: "2026-10-29", DueDate: "2026-10-28"}, "", "", http.StatusBadRequest},
+		{"a negative date", model.NewTaskFields{DueDate: "-1"}, "", "", http.StatusBadRequest},
+		{"a date that is not a day", model.NewTaskFields{DueDate: "28.10.2026"}, "", "", http.StatusBadRequest},
 		{"a description too long for the column", model.NewTaskFields{Description: string(make([]byte, maxTaskDescription+1))}, "", "", http.StatusBadRequest},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -341,7 +346,7 @@ func TestCreatingATaskWithFieldsChecksEachOne(t *testing.T) {
 			if ws.writes != 1 {
 				t.Fatalf("error = %v after %d writes, want the task created", appErr, ws.writes)
 			}
-			want := map[string]any{"status": "todo", "assignee": "member", "start_date": int64(100), "due_date": int64(200), "description": "Notes"}
+			want := map[string]any{"status": "todo", "assignee": "member", "start_date": "2026-10-27", "due_date": "2026-10-28", "description": "Notes"}
 			if tc.section != "" {
 				want[tc.section] = tc.option
 			}

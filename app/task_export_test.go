@@ -28,9 +28,11 @@ func TestTaskExportCellsReadLikeTheReport(t *testing.T) {
 		value  interface{}
 		want   string
 	}{
-		{model.WorkspaceHeaders{Name: "due_date"}, "1790546400", "28.09.2026"},
+		{model.WorkspaceHeaders{Name: "due_date"}, time.Date(2026, 9, 28, 0, 0, 0, 0, time.UTC), "28.09.2026"},
+		{model.WorkspaceHeaders{Name: "due_date"}, "2026-09-28", "28.09.2026"},
 		{model.WorkspaceHeaders{Name: "updated_at"}, "1790546400000", "28.09.2026"},
-		{model.WorkspaceHeaders{Name: "due_date"}, "0", ""},
+		{model.WorkspaceHeaders{Name: "due_date"}, nil, ""},
+		{model.WorkspaceHeaders{Name: "due_date"}, time.Date(2028, 2, 29, 0, 0, 0, 0, time.UTC), "29.02.2028"},
 		{model.WorkspaceHeaders{Name: "deadline", HeaderUsage: "date", HeaderType: "DATE"}, "2026-10-05", "05.10.2026"},
 		{model.WorkspaceHeaders{Name: "deadline", HeaderUsage: "date", HeaderType: "DATE"}, time.Date(2026, 10, 5, 0, 0, 0, 0, time.UTC), "05.10.2026"},
 		{model.WorkspaceHeaders{Name: "assignee"}, "u1", "Anna Berzina"},
@@ -52,8 +54,11 @@ func TestTaskExportCellsReadLikeTheReport(t *testing.T) {
 	}
 
 	e.dateLayout = "01/02/2006"
-	if got := e.cell(model.WorkspaceHeaders{Name: "due_date"}, map[string]interface{}{"due_date": "1790546400"}, lookups); got != "09/28/2026" {
+	if got := e.cell(model.WorkspaceHeaders{Name: "due_date"}, map[string]interface{}{"due_date": time.Date(2026, 9, 28, 0, 0, 0, 0, time.UTC)}, lookups); got != "09/28/2026" {
 		t.Errorf("12h date = %q, want 09/28/2026", got)
+	}
+	if got := e.cell(model.WorkspaceHeaders{Name: "due_date"}, map[string]interface{}{"due_date": "2028-02-29"}, lookups); got != "02/29/2028" {
+		t.Errorf("12h leap day = %q, want 02/29/2028", got)
 	}
 }
 

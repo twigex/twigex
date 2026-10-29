@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/twigex/twigex/model"
 )
@@ -24,14 +25,14 @@ func setupTasksAcrossTables(t *testing.T) []model.TaskSource {
 		due                 any
 		deleted             int
 	}{
-		{"zz_test_across_a", "a1", "me", 100, 0},
-		{"zz_test_across_a", "a2", "me", 300, 0},
+		{"zz_test_across_a", "a1", "me", "2026-01-10", 0},
+		{"zz_test_across_a", "a2", "me", "2026-01-30", 0},
 		{"zz_test_across_a", "a3", "me", nil, 0},
-		{"zz_test_across_a", "a4", "someone", 150, 0},
-		{"zz_test_across_a", "a5", "me", 120, 1},
-		{"zz_test_across_b", "b1", "me", 200, 0},
-		{"zz_test_across_b", "b2", "me", 50, 0},
-		{"zz_test_across_b", "b3", "me", 0, 0},
+		{"zz_test_across_a", "a4", "someone", "2026-01-15", 0},
+		{"zz_test_across_a", "a5", "me", "2026-01-12", 1},
+		{"zz_test_across_b", "b1", "me", "2026-01-20", 0},
+		{"zz_test_across_b", "b2", "me", "2026-01-05", 0},
+		{"zz_test_across_b", "b3", "me", nil, 0},
 	} {
 		mustExec(t, "INSERT INTO `"+r.table+"` (id, name, assignee, due_date, deleted_at) VALUES (?, ?, ?, ?, ?)",
 			r.id, "task "+r.id, r.assignee, r.due, r.deleted)
@@ -52,21 +53,28 @@ func orderedIDs(rows []map[string]any) []string {
 	return ids
 }
 
-// rowValue reads a whole number column from a scanned row, as a cursor would.
-func rowValue(t *testing.T, v any) *int64 {
+// rowValue reads a whole number or a day column from a scanned row, as a
+// cursor would.
+func rowValue(t *testing.T, v any) any {
 	t.Helper()
 	switch v := v.(type) {
 	case nil:
 		return nil
 	case int64:
-		return &v
+		return v
+	case time.Time:
+		return v.Format(time.DateOnly)
 	case string:
+		if _, err := time.Parse(time.DateOnly, v); err == nil {
+			return v
+		}
+
 		n, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
 			t.Fatalf("value %q: %v", v, err)
 		}
 
-		return &n
+		return n
 	}
 	t.Fatalf("value %v of type %T", v, v)
 	return nil
@@ -122,9 +130,9 @@ func TestCountTasksAcrossTablesCountsEachTaskInItsFirstGroup(t *testing.T) {
 	w := &workspaceRepository{Db: testDB}
 
 	counts, err := w.CountTasksAcrossTables(context.Background(), sources, []model.SQLFilter{
-		{SQL: "main.due_date > 0 AND main.due_date < ?", Args: []any{150}},
-		{SQL: "main.due_date >= ?", Args: []any{100}},
-		{SQL: "(main.due_date IS NULL OR main.due_date = 0)"},
+		{SQL: "main.due_date < ?", Args: []any{"2026-01-15"}},
+		{SQL: "main.due_date >= ?", Args: []any{"2026-01-10"}},
+		{SQL: "main.due_date IS NULL"},
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -257,10 +265,10 @@ func TestStreamTableRowsHandsOverMatchingRowsInOrder(t *testing.T) {
 	requireDB(t)
 	createDynamicTable(t, "zz_test_stream", createTaskTable)
 	for _, r := range []struct {
-		id, status   string
-		due, deleted int
+		id, status, due string
+		deleted         int
 	}{
-		{"late", "open", 300, 0}, {"early", "open", 100, 0}, {"done", "done", 200, 0}, {"gone", "open", 50, 1},
+		{"late", "open", "2026-01-30", 0}, {"early", "open", "2026-01-10", 0}, {"done", "done", "2026-01-20", 0}, {"gone", "open", "2026-01-05", 1},
 	} {
 		mustExec(t, "INSERT INTO `zz_test_stream` (id, name, status, due_date, deleted_at) VALUES (?, ?, ?, ?, ?)", r.id, r.id, r.status, r.due, r.deleted)
 	}
