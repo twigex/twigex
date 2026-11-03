@@ -141,6 +141,7 @@ func managedProjectApp(ws *fakeManagedProjectStore) *App {
 				Features:  &model.Features{WorkspaceRoles: boolPtr(true), Groups: boolPtr(true)},
 			},
 		},
+		WorkspaceRoles: enterpriseRoles{},
 	}
 }
 

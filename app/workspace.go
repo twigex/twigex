@@ -80,6 +80,10 @@ func (a *App) GetProjectWorkspaceRoles(workspaceID string) ([]model.ProjectWorks
 }
 
 func (a *App) UpdateProjectWorkspaceRole(user model.User, workspaceID, roleID string, patch model.ProjectWorkspaceRolePatch) (*model.ProjectWorkspaceRole, *model.AppError) {
+	if appErr := a.RequireWorkspaceRoles(); appErr != nil {
+		return nil, appErr
+	}
+
 	if !a.ProjectWorkspaceHasPermission(user, workspaceID, model.PermissionUpdateRoles) {
 		return nil, model.NewAppError("workspace.forbidden", http.StatusForbidden)
 	}
@@ -127,6 +131,10 @@ func (a *App) UpdateProjectWorkspaceRole(user model.User, workspaceID, roleID st
 }
 
 func (a *App) CreateProjectWorkspaceRole(user model.User, workspaceID string, role model.ProjectWorkspaceRole) (*model.ProjectWorkspaceRole, *model.AppError) {
+	if appErr := a.RequireWorkspaceRoles(); appErr != nil {
+		return nil, appErr
+	}
+
 	if !a.ProjectWorkspaceHasPermission(user, workspaceID, model.PermissionCreateRoles) {
 		return nil, model.NewAppError("workspace.forbidden", http.StatusForbidden)
 	}
@@ -210,13 +218,19 @@ func (a *App) UpdateWorkspaceMemberRole(workspaceID string, memberID string, rol
 		return false, appErr
 	}
 
+	if appErr := a.keepProjectWorkspaceAdmin(workspaceID, memberID, role); appErr != nil {
+		return false, appErr
+	}
+
 	return a.setProjectWorkspaceMemberRole(workspaceID, memberID, role, user)
 }
 
 func (a *App) setProjectWorkspaceMemberRole(workspaceID, memberID, role string, user model.User) (bool, *model.AppError) {
 	// Allow clearing a role (role == "") so admins can remove restrictions after expiry.
-	if role != "" && !a.Server.License.HasWorkspaceRoles() {
-		return false, model.NewAppError("workspace.roles_license_required", http.StatusPaymentRequired)
+	if !onlyBuiltInWorkspaceRoles(strings.Fields(role)) {
+		if appErr := a.RequireWorkspaceRoles(); appErr != nil {
+			return false, appErr
+		}
 	}
 
 	roles, appErr := a.validProjectWorkspaceRoles(workspaceID, strings.Fields(role))
@@ -4548,6 +4562,10 @@ func (a *App) GetRoleTablePermissions(user model.User, workspaceID, roleID strin
 }
 
 func (a *App) UpdateRoleTablePermissions(user model.User, workspaceID, roleID string, perms []model.TablePermission) *model.AppError {
+	if appErr := a.RequireWorkspaceRoles(); appErr != nil {
+		return appErr
+	}
+
 	if !a.ProjectWorkspaceHasPermission(user, workspaceID, model.PermissionUpdateRoles) {
 		return model.NewAppError("workspace.forbidden", http.StatusForbidden)
 	}
@@ -5179,19 +5197,62 @@ func (a *App) buildAccessInputs(ctx context.Context, users []model.User, workspa
 	return inputs
 }
 
-type openAccess struct{}
+type basicAccess struct {
+	perTableMode    bool
+	assignedOnlyAll bool
+	workspacePerms  map[string]bool
+}
 
-func (openAccess) VisibleTables(tables []model.WorkspaceTable) []model.WorkspaceTable { return tables }
-func (openAccess) AssignedOnlyAll() bool                                              { return false }
-func (openAccess) AssignedOnly(_ string) bool                                         { return false }
-func (openAccess) CanPerformRowAction(_, _, _ string) bool                            { return true }
-func (openAccess) TableHasPermission(_, _ string) bool                                { return true }
+func newBasicAccess(in interfaces.AccessInput) basicAccess {
+	access := basicAccess{workspacePerms: map[string]bool{}}
+
+	for _, role := range in.Roles {
+		if role.PerTableMode {
+			access.perTableMode = true
+		}
+
+		for _, permission := range role.Permissions {
+			if permission == model.PermissionShowAssignedTasksOnly {
+				access.assignedOnlyAll = true
+			}
+
+			if !role.PerTableMode {
+				access.workspacePerms[permission] = true
+			}
+		}
+	}
+
+	return access
+}
+
+func (b basicAccess) VisibleTables(tables []model.WorkspaceTable) []model.WorkspaceTable {
+	if b.perTableMode {
+		return []model.WorkspaceTable{}
+	}
+
+	return tables
+}
+
+func (b basicAccess) AssignedOnlyAll() bool { return b.assignedOnlyAll }
+
+func (b basicAccess) AssignedOnly(_ string) bool { return b.assignedOnlyAll }
+
+func (b basicAccess) CanPerformRowAction(_, workspacePerm, _ string) bool {
+	if b.perTableMode {
+		return false
+	}
+
+	return b.workspacePerms[workspacePerm]
+}
+
+func (b basicAccess) TableHasPermission(_, _ string) bool { return !b.perTableMode }
+
 func (a *App) resolveAccess(in interfaces.AccessInput) interfaces.WorkspaceAccess {
 	if a.WorkspaceRoles != nil {
 		return a.WorkspaceRoles.Resolve(in)
 	}
 
-	return openAccess{}
+	return newBasicAccess(in)
 }
 
 func (a *App) buildAssignedOnlyMapFromInput(_ model.User, _ string, in interfaces.AccessInput) map[string]bool {

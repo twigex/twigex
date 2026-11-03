@@ -27,6 +27,15 @@ func (f *fakeProjectRoleGuardStore) GetUserByUserID(userID, _ string) (*model.Wo
 	return &model.WorkspaceMember{UserID: userID, Role: role}, nil
 }
 
+func (f *fakeProjectRoleGuardStore) GetMembers(_ string) ([]model.WorkspaceMember, error) {
+	members := make([]model.WorkspaceMember, 0, len(f.members))
+	for userID, role := range f.members {
+		members = append(members, model.WorkspaceMember{UserID: userID, Role: role})
+	}
+
+	return members, nil
+}
+
 func (f *fakeProjectRoleGuardStore) GetGroups(context.Context, string) ([]model.WorkspaceGroup, error) {
 	return f.groups, nil
 }
@@ -73,6 +82,7 @@ func projectRoleGuardApp() (*App, *fakeProjectRoleGuardStore) {
 	a.Store.Workspace = ws
 	a.Store.Groups = &fakeUserGroups{of: map[string][]string{"manager": {"mine"}}}
 	a.Server.License.Features.Groups = boolPtr(true)
+	a.WorkspaceRoles = enterpriseRoles{}
 
 	return a, ws
 }
@@ -151,5 +161,37 @@ func TestProjectRoleNamesStayUnique(t *testing.T) {
 
 	if appErr := a.checkProjectRoleNameFree("w1", "fresh"); appErr != nil {
 		t.Errorf("new name: %v", appErr)
+	}
+}
+
+func TestWithoutEnterpriseAdminsSwitchMembersBetweenTheBuiltInRoles(t *testing.T) {
+	a, ws := projectRoleGuardApp()
+	a.WorkspaceRoles = nil
+	a.Server.License = nil
+
+	if _, appErr := a.UpdateWorkspaceMemberRole("w1", "member", model.ProjectWorkspaceAdminRoleID, projectBoss); appErr != nil {
+		t.Fatalf("making a member admin: %v", appErr)
+	}
+
+	ws.members["member"] = model.ProjectWorkspaceAdminRoleID
+
+	if _, appErr := a.UpdateWorkspaceMemberRole("w1", "member", model.ProjectWorkspaceUserRoleID, projectBoss); appErr != nil {
+		t.Fatalf("making an admin a user again: %v", appErr)
+	}
+
+	ws.members["member"] = model.ProjectWorkspaceUserRoleID
+
+	_, appErr := a.UpdateWorkspaceMemberRole("w1", "member", "editor", projectBoss)
+	if appErr == nil || appErr.ID != "workspace.roles_license_required" {
+		t.Errorf("a custom role: want workspace.roles_license_required, got %v", appErr)
+	}
+}
+
+func TestTheLastAdminCannotGiveUpTheAdminRole(t *testing.T) {
+	a, _ := projectRoleGuardApp()
+
+	_, appErr := a.UpdateWorkspaceMemberRole("w1", "boss", model.ProjectWorkspaceUserRoleID, projectBoss)
+	if appErr == nil || appErr.ID != "workspace.last_admin" {
+		t.Errorf("want workspace.last_admin, got %v", appErr)
 	}
 }

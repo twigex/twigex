@@ -151,6 +151,7 @@ func (a *App) GetLicenseMap(licenseInfo bool) *map[string]interface{} {
 	// Overrides the licensed value with what this build can actually do, so the UI
 	// hides a role editor whose saves would be rejected.
 	m["collimato_roles"] = a.CollimatoRoles != nil && a.Server.License.HasCollimatoRoles()
+	m["workspace_roles"] = a.WorkspaceRoles != nil && a.Server.License.HasWorkspaceRoles()
 
 	return &m
 }

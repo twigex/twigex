@@ -24,6 +24,14 @@ func (f *fakeReadAccessStore) UserHasAnyGroupAccess(_, _ string) (bool, error) {
 	return f.groupMember, nil
 }
 
+func (f *fakeReadAccessStore) GetGroupRolesForUser(_, _ string) ([]string, error) {
+	if !f.groupMember {
+		return nil, nil
+	}
+
+	return []string{model.ProjectWorkspaceAdminRoleID}, nil
+}
+
 func (f *fakeReadAccessStore) GetTableWorkspaceID(_ context.Context, tableID string) (string, error) {
 	return f.tableOwner[tableID], nil
 }
@@ -192,16 +200,20 @@ func TestRowActionsNeedMembershipWithoutEnterpriseRoles(t *testing.T) {
 		groupMember bool
 		want        bool
 	}{
-		{"direct member", model.User{ID: "u1", Role: model.SystemUserRoleId}, "member", false, true},
+		{"direct member", model.User{ID: "u1", Role: model.SystemUserRoleId}, model.ProjectWorkspaceAdminRoleID, false, true},
 		{"group member", model.User{ID: "u1", Role: model.SystemUserRoleId}, "", true, true},
 		{"not a member", model.User{ID: "u1", Role: model.SystemUserRoleId}, "", false, false},
 		{"system admin outside the workspace", model.User{ID: "admin", Role: model.SystemAdminRoleId}, "", false, false},
-		{"system admin who is a member", model.User{ID: "admin", Role: model.SystemAdminRoleId}, "member", false, true},
+		{"system admin who is a member", model.User{ID: "admin", Role: model.SystemAdminRoleId}, model.ProjectWorkspaceAdminRoleID, false, true},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
+			admin := *model.MakeDefaultProjectWorkspaceRoles()[model.ProjectWorkspaceAdminRoleID]
 			ws := &fakeReadAccessStore{
-				fakeAccessWorkspaceStore: fakeAccessWorkspaceStore{memberRoleName: tc.memberRole},
-				groupMember:              tc.groupMember,
+				fakeAccessWorkspaceStore: fakeAccessWorkspaceStore{
+					memberRoleName: tc.memberRole,
+					roles:          []model.ProjectWorkspaceRole{admin},
+				},
+				groupMember: tc.groupMember,
 			}
 			a := readAccessApp(ws)
 

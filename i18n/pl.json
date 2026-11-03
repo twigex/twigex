@@ -1240,6 +1240,10 @@
     "translation": "Zarządzanie rolami w przestrzeni roboczej wymaga planu płatnego."
   },
   {
+    "id": "workspace.roles_enterprise_required",
+    "translation": "Zarządzanie rolami w przestrzeni roboczej wymaga wersji Twigex Enterprise."
+  },
+  {
     "id": "workspace.task_create_failed",
     "translation": "Nie udało się utworzyć zadania. Spróbuj ponownie."
   },

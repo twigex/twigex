@@ -1240,6 +1240,10 @@
     "translation": "Darbvietas lomu pārvaldībai nepieciešams maksas plāns."
   },
   {
+    "id": "workspace.roles_enterprise_required",
+    "translation": "Darbvietas lomu pārvaldībai nepieciešama Twigex Enterprise versija."
+  },
+  {
     "id": "workspace.task_create_failed",
     "translation": "Neizdevās izveidot uzdevumu. Lūdzu, mēģiniet vēlreiz."
   },

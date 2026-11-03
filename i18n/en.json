@@ -1304,6 +1304,10 @@
     "translation": "Managing workspace roles requires a paid plan."
   },
   {
+    "id": "workspace.roles_enterprise_required",
+    "translation": "Managing workspace roles requires the Twigex Enterprise edition."
+  },
+  {
     "id": "workspace.task_create_failed",
     "translation": "Failed to create task. Please try again."
   },

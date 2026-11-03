@@ -197,8 +197,28 @@ func (a *App) ProjectWorkspaceHasPermission(user model.User, workspaceId string,
 	return a.ProjectWorkspaceGrantPermission(user, workspaceId, permissionId)
 }
 
-// CanPerformRowAction asks for membership before resolving roles because,
-// without enterprise roles, resolving grants everything to anyone.
+func onlyBuiltInWorkspaceRoles(roles []string) bool {
+	for _, role := range roles {
+		if role != model.ProjectWorkspaceAdminRoleID && role != model.ProjectWorkspaceUserRoleID {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (a *App) RequireWorkspaceRoles() *model.AppError {
+	if !a.Server.License.HasWorkspaceRoles() {
+		return model.NewAppError("workspace.roles_license_required", http.StatusPaymentRequired)
+	}
+
+	if a.WorkspaceRoles == nil {
+		return model.NewAppError("workspace.roles_enterprise_required", http.StatusNotImplemented)
+	}
+
+	return nil
+}
+
 func (a *App) CanPerformRowAction(user model.User, workspaceID, tableID, workspacePerm, tableAction string) bool {
 	if !a.IsWorkspaceMemberOrGroupMember(workspaceID, user.ID) {
 		return false
