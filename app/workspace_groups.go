@@ -28,6 +28,12 @@ func (a *App) attachProjectWorkspaceGroups(user model.User, workspaceID string, 
 		return nil, model.NewAppError("groups.license_required", http.StatusPaymentRequired)
 	}
 
+	if !onlyBuiltInWorkspaceRoles(roles) {
+		if appErr := a.RequireWorkspaceRoles(); appErr != nil {
+			return nil, appErr
+		}
+	}
+
 	roles, appErr := a.validProjectWorkspaceRoles(workspaceID, roles)
 	if appErr != nil {
 		return nil, appErr
@@ -246,8 +252,10 @@ func (a *App) UpdateProjectWorkspaceGroupRoles(user model.User, workspaceID, gro
 
 func (a *App) setProjectWorkspaceGroupRoles(workspaceID, groupID string, roles []string) *model.AppError {
 	// Allow clearing all roles (len==0) so admins can remove restrictions after expiry.
-	if len(roles) > 0 && !a.Server.License.HasWorkspaceRoles() {
-		return model.NewAppError("workspace.roles_license_required", http.StatusPaymentRequired)
+	if !onlyBuiltInWorkspaceRoles(roles) {
+		if appErr := a.RequireWorkspaceRoles(); appErr != nil {
+			return appErr
+		}
 	}
 
 	roles, appErr := a.validProjectWorkspaceRoles(workspaceID, roles)

@@ -1240,6 +1240,10 @@
     "translation": "Жұмыс кеңістігі рөлдерін басқару ақылы жоспарды қажет етеді."
   },
   {
+    "id": "workspace.roles_enterprise_required",
+    "translation": "Жұмыс кеңістігі рөлдерін басқару үшін Twigex Enterprise нұсқасы қажет."
+  },
+  {
     "id": "workspace.task_create_failed",
     "translation": "Тапсырманы жасау сәтсіз аяқталды. Қайталап көріңіз."
   },

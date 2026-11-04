@@ -130,7 +130,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 
                         <template #actions="{ item }">
                             <button
-                                v-if="rolesLicensed"
                                 type="button"
                                 class="text-indigo-600 hover:text-indigo-500"
                                 @click="editMemberRoles(item)"
@@ -212,7 +211,6 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     </span>
                                 </div>
                                 <button
-                                    v-if="rolesLicensed"
                                     type="button"
                                     class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
                                     @click="editGroupRoles(group)"
@@ -281,20 +279,20 @@ SPDX-License-Identifier: AGPL-3.0-only
         <RoleDialog
             v-model="memberRoleDialog"
             :user="{ role: splitRoles(memberToEdit?.role).join(',') }"
-            :roles="details?.roles ?? []"
+            :roles="assignableRoles"
             scope="projects"
             @add="updateMemberRoles"
         />
         <RoleDialog
             v-model="groupRoleDialog"
             :user="{ role: (groupToEdit?.roles || []).join(',') }"
-            :roles="details?.roles ?? []"
+            :roles="assignableRoles"
             scope="projects"
             @add="updateGroupRoles"
         />
         <AddGroupDialog
             v-model="groupDialog"
-            :roles="details?.roles ?? []"
+            :roles="assignableRoles"
             scope="projects"
             @add="addGroups"
         />
@@ -353,7 +351,7 @@ import UserPickerDialog from "@/components/UserPickerDialog.vue";
 import GroupMembersDialog from "@/components/GroupMembersDialog.vue";
 import AddGroupDialog from "@/components/Collimato/Dialogs/AddGroupDialog.vue";
 import RoleDialog from "@/components/Collimato/Dialogs/RoleDialog.vue";
-import { roleLabel as labelForRole, roleNameLabel } from "@/utils/roleLabels";
+import { roleLabel as labelForRole, roleNameLabel, isBuiltInRole } from "@/utils/roleLabels";
 import { UserGroupIcon } from "@heroicons/vue/24/outline";
 import {
     CalendarIcon,
@@ -373,7 +371,15 @@ const settingsStore = useSettingsStore();
 const userStore = useUserStore();
 const { getDate } = useDateOperations();
 
-const rolesLicensed = computed(() => settingsStore.getLicenseFeature("workspace_roles"));
+const rolesAvailable = computed(() => settingsStore.getLicenseFeature("workspace_roles"));
+
+const assignableRoles = computed(() => {
+    const roles = details.value?.roles ?? [];
+
+    if (rolesAvailable.value) return roles;
+
+    return roles.filter((role) => isBuiltInRole(role.name, "projects"));
+});
 const hasGroups = computed(() => settingsStore.getLicenseFeature("groups"));
 
 const workspaceId = route.params.id;

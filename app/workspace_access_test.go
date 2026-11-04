@@ -3,9 +3,8 @@
 
 package app
 
-// OSS-build access-control tests: verify that without the enterprise binary
-// every call returns the permissive no-op (openAccess). Enforcement tests
-// live in cloud-ee alongside the implementation.
+// Access without the enterprise module: the built-in roles are enforced, and
+// per-table roles, which only the enterprise module can apply, give nothing.
 
 import (
 	"context"
@@ -14,9 +13,24 @@ import (
 	"testing"
 	"time"
 
+	"github.com/twigex/twigex/interfaces"
 	"github.com/twigex/twigex/model"
 	"github.com/twigex/twigex/store"
 )
+
+type openAccess struct{}
+
+func (openAccess) VisibleTables(tables []model.WorkspaceTable) []model.WorkspaceTable { return tables }
+func (openAccess) AssignedOnlyAll() bool                                              { return false }
+func (openAccess) AssignedOnly(_ string) bool                                         { return false }
+func (openAccess) CanPerformRowAction(_, _, _ string) bool                            { return true }
+func (openAccess) TableHasPermission(_, _ string) bool                                { return true }
+
+type enterpriseRoles struct{}
+
+func (enterpriseRoles) Resolve(interfaces.AccessInput) interfaces.WorkspaceAccess {
+	return openAccess{}
+}
 
 type fakeAccessWorkspaceStore struct {
 	store.WorkspaceStore
@@ -122,9 +136,8 @@ func twoTables() []model.WorkspaceTable {
 	return []model.WorkspaceTable{{ID: tbl1}, {ID: tbl2}}
 }
 
-// One fixture with every restriction the enterprise resolver would honour:
-// a per-table role, a hidden table, and an assigned-only table. Without the
-// enterprise binary all of it must be ignored.
+// A per-table role, a hidden table and an assigned-only table: rules only the
+// enterprise module can apply.
 func restrictedApp() *App {
 	return accessApp(&fakeAccessWorkspaceStore{
 		memberRoleName: "user restricted",
@@ -139,9 +152,30 @@ func restrictedApp() *App {
 	})
 }
 
-func TestOSSAccessIsAlwaysPermissive(t *testing.T) {
-	a := restrictedApp()
+func builtInRoleApp(roleName string) *App {
+	role := *model.MakeDefaultProjectWorkspaceRoles()[roleName]
+
+	return accessApp(&fakeAccessWorkspaceStore{
+		memberRoleName: role.Name,
+		roles:          []model.ProjectWorkspaceRole{role},
+	})
+}
+
+func TestWithoutEnterpriseTheUserRoleCannotDeleteTasks(t *testing.T) {
+	a := builtInRoleApp(model.ProjectWorkspaceUserRoleID)
 	user := accessUser()
+
+	if !a.CanPerformRowAction(user, wsID, tbl1, model.PermissionCreateTask, model.PermissionCreateTask) {
+		t.Error("create task: want allowed for the user role")
+	}
+
+	if !a.CanPerformRowAction(user, wsID, tbl1, model.PermissionUpdateTask, model.PermissionUpdateTask) {
+		t.Error("update task: want allowed for the user role")
+	}
+
+	if a.CanPerformRowAction(user, wsID, tbl1, model.PermissionDeleteTask, model.PermissionDeleteTask) {
+		t.Error("delete task: want refused for the user role")
+	}
 
 	in := a.buildAccessInput(user, wsID)
 
@@ -152,21 +186,94 @@ func TestOSSAccessIsAlwaysPermissive(t *testing.T) {
 	if assigned := a.buildAssignedOnlyMapFromInput(user, wsID, in); assigned["*"] || assigned[tbl1] {
 		t.Error("assigned-only: want no restriction")
 	}
+}
 
-	acc := a.resolveAccess(in)
-	if !acc.CanPerformRowAction(tbl1, "create_task", "create_task") {
-		t.Error("row actions: want allowed")
+func TestWithoutEnterpriseTheAdminRoleCanDeleteTasks(t *testing.T) {
+	a := builtInRoleApp(model.ProjectWorkspaceAdminRoleID)
+
+	if !a.CanPerformRowAction(accessUser(), wsID, tbl1, model.PermissionDeleteTask, model.PermissionDeleteTask) {
+		t.Error("delete task: want allowed for the admin role")
 	}
-	if !acc.TableHasPermission(tbl1, "manage_fields") {
-		t.Error("table permissions: want allowed")
+}
+
+func TestWithoutEnterpriseAPerTableRoleGivesNothing(t *testing.T) {
+	a := restrictedApp()
+	user := accessUser()
+
+	if a.CanPerformRowAction(user, wsID, tbl1, model.PermissionCreateTask, model.PermissionCreateTask) {
+		t.Error("row actions: want refused")
 	}
 
-	va := a.buildViewAccessStateFromInput(user, in)
-	if va.AssignedOnly(tbl1) {
-		t.Error("view access: want no assigned-only restriction")
+	if a.ProjectWorkspaceTableHasPermission(user, wsID, tbl1, "manage_views") {
+		t.Error("table permissions: want refused")
 	}
-	if got := va.VisibleTables(twoTables()); len(got) != 2 {
-		t.Errorf("view access tables: want all 2 visible, got %d", len(got))
+
+	in := a.buildAccessInput(user, wsID)
+
+	if got := a.filterTablesByPerTableModeFromInput(in, twoTables()); len(got) != 0 {
+		t.Errorf("tables: want none visible, got %d", len(got))
+	}
+}
+
+func TestWithoutEnterpriseShowAssignedTasksOnlyStillApplies(t *testing.T) {
+	role := workspaceRole("limited")
+	role.Permissions = append(role.Permissions, model.PermissionShowAssignedTasksOnly)
+
+	a := accessApp(&fakeAccessWorkspaceStore{
+		memberRoleName: role.Name,
+		roles:          []model.ProjectWorkspaceRole{role},
+	})
+	user := accessUser()
+
+	in := a.buildAccessInput(user, wsID)
+
+	if assigned := a.buildAssignedOnlyMapFromInput(user, wsID, in); !assigned["*"] {
+		t.Error("assigned-only: want every table restricted")
+	}
+}
+
+func TestWithoutEnterpriseANonMemberIsRefused(t *testing.T) {
+	a := accessApp(&fakeAccessWorkspaceStore{})
+
+	if a.CanPerformRowAction(accessUser(), wsID, tbl1, model.PermissionCreateTask, model.PermissionCreateTask) {
+		t.Error("row actions: want refused for a non-member")
+	}
+}
+
+func TestManagingRolesNeedsTheLicenceAndTheEnterpriseModule(t *testing.T) {
+	a := accessApp(&fakeAccessWorkspaceStore{})
+
+	if appErr := a.RequireWorkspaceRoles(); appErr == nil || appErr.Status != http.StatusNotImplemented {
+		t.Errorf("licence without the module: want 501, got %v", appErr)
+	}
+
+	a.WorkspaceRoles = enterpriseRoles{}
+
+	if appErr := a.RequireWorkspaceRoles(); appErr != nil {
+		t.Errorf("licence and module: want allowed, got %v", appErr)
+	}
+
+	a.Server.License = nil
+
+	if appErr := a.RequireWorkspaceRoles(); appErr == nil || appErr.Status != http.StatusPaymentRequired {
+		t.Errorf("module without a licence: want 402, got %v", appErr)
+	}
+}
+
+func TestWithoutEnterpriseRolesCannotBeCreatedOrEdited(t *testing.T) {
+	a := accessApp(&fakeAccessWorkspaceStore{})
+	user := accessUser()
+
+	if _, appErr := a.CreateProjectWorkspaceRole(user, wsID, model.ProjectWorkspaceRole{Name: "editor"}); appErr == nil || appErr.Status != http.StatusNotImplemented {
+		t.Errorf("create: want 501, got %v", appErr)
+	}
+
+	if _, appErr := a.UpdateProjectWorkspaceRole(user, wsID, "editor-id", model.ProjectWorkspaceRolePatch{}); appErr == nil || appErr.Status != http.StatusNotImplemented {
+		t.Errorf("update: want 501, got %v", appErr)
+	}
+
+	if appErr := a.UpdateRoleTablePermissions(user, wsID, "editor-id", nil); appErr == nil || appErr.Status != http.StatusNotImplemented {
+		t.Errorf("table permissions: want 501, got %v", appErr)
 	}
 }
 
@@ -233,5 +340,19 @@ func TestAPrivateViewOpensOnlyForItsCreatorAndThoseSharedWith(t *testing.T) {
 				t.Errorf("status = %d, want %d", got, tc.want)
 			}
 		})
+	}
+}
+
+func TestTheLicenceMapOffersWorkspaceRolesOnlyWithTheEnterpriseModule(t *testing.T) {
+	a := accessApp(&fakeAccessWorkspaceStore{})
+
+	if got := (*a.GetLicenseMap(false))["workspace_roles"]; got != false {
+		t.Errorf("licence without the module: want false, got %v", got)
+	}
+
+	a.WorkspaceRoles = enterpriseRoles{}
+
+	if got := (*a.GetLicenseMap(false))["workspace_roles"]; got != true {
+		t.Errorf("licence and module: want true, got %v", got)
 	}
 }

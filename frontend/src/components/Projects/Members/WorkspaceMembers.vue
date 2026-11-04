@@ -38,7 +38,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
                     <template #actions="{ item }">
                         <button
-                            v-if="rolesLicensed && canAssignUser(item.user_info)"
+                            v-if="canAssignUser(item.user_info)"
                             type="button"
                             class="text-indigo-600 hover:text-indigo-500"
                             @click="openRoleDialog(item.user_info)"
@@ -118,7 +118,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                     </template>
                 </DataTable>
 
-                <DataTable v-if="rolesLicensed" :columns="roleColumns" :items="roleRows">
+                <DataTable v-if="rolesAvailable" :columns="roleColumns" :items="roleRows">
                     <template #toolbar>
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <h2 class="text-sm font-semibold text-gray-900">
@@ -244,26 +244,22 @@ import AddMemberGroupDialog from "@/components/Projects/Members/AddMemberGroupDi
 import WorkspaceMemberListPopover from "@/components/Projects/Members/WorkspaceMemberListPopover.vue";
 import MemberRolesDialog from "@/components/Projects/Members/MemberRolesDialog.vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
-import { roleLabel, roleDescription, roleNameLabel } from "@/utils/roleLabels";
+import { roleLabel, roleDescription, roleNameLabel, isBuiltInRole } from "@/utils/roleLabels";
 const rolesStore = useWorkspaceRolesStore();
 const settingsStore = useSettingsStore();
 
 // Membership is not a paid feature, so only the role and group sections are gated.
-const rolesLicensed = computed(() => settingsStore.getLicenseFeature("workspace_roles"));
+const rolesAvailable = computed(() => settingsStore.getLicenseFeature("workspace_roles"));
 const groupsLicensed = computed(() => settingsStore.getLicenseFeature("groups"));
 
-const memberColumns = computed(() =>
-    rolesLicensed.value
-        ? [
-              {
-                  key: "role",
-                  label: t.value("members_table.roles"),
-                  sortable: true,
-                  hiddenBelow: "sm",
-              },
-          ]
-        : [],
-);
+const memberColumns = computed(() => [
+    {
+        key: "role",
+        label: t.value("members_table.roles"),
+        sortable: true,
+        hiddenBelow: "sm",
+    },
+]);
 
 const groupColumns = computed(() => [
     { key: "name", label: t.value("data_table.name"), sortable: true },
@@ -315,9 +311,13 @@ const goToCreateRole = () => {
 const selectedRoleGroup = ref(null);
 
 const assignableRoleOptions = computed(() => {
-    if (rolesStore.isWorkspaceAdmin) return roleOptions.value;
+    const options = rolesAvailable.value
+        ? roleOptions.value
+        : roleOptions.value.filter((name) => isBuiltInRole(name, "projects"));
 
-    return roleOptions.value.filter((name) => name !== "admin");
+    if (rolesStore.isWorkspaceAdmin) return options;
+
+    return options.filter((name) => name !== "admin");
 });
 
 function memberRoles(userId) {
@@ -347,9 +347,17 @@ function canEditRole(role) {
     return role.name !== "admin" && !rolesStore.roleNames.includes(role.name);
 }
 
+function assignableSelection(roles) {
+    const kept = rolesAvailable.value
+        ? roles
+        : roles.filter((role) => isBuiltInRole(role, "projects"));
+
+    return kept.length ? kept : ["user"];
+}
+
 const openGroupRoleDialog = (group) => {
     selectedRoleGroup.value = group;
-    selectedRoles.value = group.roles?.length ? [...group.roles] : ["user"];
+    selectedRoles.value = assignableSelection(group.roles ?? []);
     roleTitle.value = `${t.value("projects.workspace_members.change_roles_for")} ${group.name}`;
     roleMessage.value = `${t.value("projects.workspace_members.change_roles_for")} ${group.name} ${t.value("projects.workspace_members.in_workspace")} "${selectedWorkspace.value.title}"?`;
     showRoleConfirm.value = true;
@@ -375,7 +383,7 @@ const openRoleDialog = (user) => {
               .filter((r) => r)
         : ["user"];
 
-    selectedRoles.value = existingRoles;
+    selectedRoles.value = assignableSelection(existingRoles);
 
     roleMessage.value = `${t.value("projects.workspace_members.change_roles_for")} ${user.name} ${t.value("projects.workspace_members.in_workspace")} "${selectedWorkspace.value.title}"?`;
     roleTitle.value = `${t.value("projects.workspace_members.change_roles_for")} ${user.name}`;

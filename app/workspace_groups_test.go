@@ -93,6 +93,7 @@ func wsGroupApp(ws *fakeWSGroupWorkspaceStore) *App {
 				},
 			},
 		},
+		WorkspaceRoles: enterpriseRoles{},
 	}
 }
 
@@ -276,4 +277,25 @@ func (f *fakeGroupStoreWS) GetMembers(_ context.Context, _ string) ([]model.Grou
 
 func (f *fakeGroupStoreWS) GetIDsForUser(context.Context, string) ([]string, error) {
 	return nil, nil
+}
+
+func TestWithoutEnterpriseGroupsGetOnlyBuiltInRoles(t *testing.T) {
+	ws := wsUserWithPerm(model.PermissionAddMemberToWorkspace)
+	ws.roles = append(ws.roles,
+		model.ProjectWorkspaceRole{Name: model.ProjectWorkspaceUserRoleID},
+		model.ProjectWorkspaceRole{Name: "editor"},
+	)
+
+	a := wsGroupApp(ws)
+	a.WorkspaceRoles = nil
+	user := model.User{ID: "u1"}
+
+	_, appErr := a.attachProjectWorkspaceGroups(user, "w1", []string{"g1"}, []string{"editor"})
+	if appErr == nil || appErr.Status != http.StatusNotImplemented {
+		t.Errorf("a custom role: want 501, got %v", appErr)
+	}
+
+	if _, appErr := a.attachProjectWorkspaceGroups(user, "w1", []string{"g1"}, []string{model.ProjectWorkspaceUserRoleID}); appErr != nil {
+		t.Errorf("the user role: want allowed, got %v", appErr)
+	}
 }
