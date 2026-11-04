@@ -1448,7 +1448,11 @@ const canEditFields = computed(() => {
 
     if (rolesStore.perTableMode) return rolesStore.hasTablePermission(tableId, "edit_fields");
 
-    return permissions.includes("update_workspace_table") || permissions.includes("edit_fields");
+    return (
+        permissions.includes("update_workspace_table") ||
+        permissions.includes("edit_fields") ||
+        rolesStore.grantedOnTable(tableId, "edit_fields")
+    );
 });
 const canManageFields = computed(() => {
     const permissions = rolesStore.userPermissions;
@@ -1458,7 +1462,11 @@ const canManageFields = computed(() => {
 
     if (rolesStore.perTableMode) return rolesStore.hasTablePermission(tableId, "create_fields");
 
-    return permissions.includes("update_workspace_table") || permissions.includes("create_fields");
+    return (
+        permissions.includes("update_workspace_table") ||
+        permissions.includes("create_fields") ||
+        rolesStore.grantedOnTable(tableId, "create_fields")
+    );
 });
 const tableUniqueId = ref(`table-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
 

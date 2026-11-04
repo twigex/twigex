@@ -69,8 +69,13 @@ export const useWorkspaceRolesStore = defineStore("workspaceRoles", {
 
             return state.perTableMode
                 ? state.hasTablePermission(tableId, action)
-                : permissions.includes(action);
+                : permissions.includes(action) || state.grantedOnTable(tableId, action);
         },
+
+        grantedOnTable: (state) => (tableId, action) =>
+            (state.user?.table_permissions || []).some(
+                (p) => p.table_id === tableId && p.action === action,
+            ),
 
         // backward-compat: per_table_mode false → all table actions allowed
         hasTablePermission: (state) => (tableId, action) => {

@@ -136,8 +136,8 @@ func twoTables() []model.WorkspaceTable {
 	return []model.WorkspaceTable{{ID: tbl1}, {ID: tbl2}}
 }
 
-// A per-table role, a hidden table and an assigned-only table: rules only the
-// enterprise module can apply.
+// A workspace-level role next to a per-table role with a hidden table and an
+// assigned-only table.
 func restrictedApp() *App {
 	return accessApp(&fakeAccessWorkspaceStore{
 		memberRoleName: "user restricted",
@@ -196,8 +196,19 @@ func TestWithoutEnterpriseTheAdminRoleCanDeleteTasks(t *testing.T) {
 	}
 }
 
-func TestWithoutEnterpriseAPerTableRoleGivesNothing(t *testing.T) {
-	a := restrictedApp()
+func perTableOnlyApp() *App {
+	return accessApp(&fakeAccessWorkspaceStore{
+		memberRoleName: "restricted",
+		roles:          []model.ProjectWorkspaceRole{perTableRole("restricted")},
+		tablePerms: []model.TablePermission{
+			{TableID: tbl1, Action: "create_task"},
+			{TableID: tbl1, Action: "view"},
+		},
+	})
+}
+
+func TestWithoutEnterpriseOnlyAPerTableRoleGivesNothing(t *testing.T) {
+	a := perTableOnlyApp()
 	user := accessUser()
 
 	if a.CanPerformRowAction(user, wsID, tbl1, model.PermissionCreateTask, model.PermissionCreateTask) {
@@ -212,6 +223,30 @@ func TestWithoutEnterpriseAPerTableRoleGivesNothing(t *testing.T) {
 
 	if got := a.filterTablesByPerTableModeFromInput(in, twoTables()); len(got) != 0 {
 		t.Errorf("tables: want none visible, got %d", len(got))
+	}
+}
+
+func TestWithoutEnterpriseAWorkspaceRoleNextToAPerTableRoleStillApplies(t *testing.T) {
+	a := restrictedApp()
+	user := accessUser()
+
+	if !a.CanPerformRowAction(user, wsID, tbl2, model.PermissionCreateTask, model.PermissionCreateTask) {
+		t.Error("create task: want allowed by the workspace-level role")
+	}
+
+	if a.CanPerformRowAction(user, wsID, tbl2, model.PermissionDeleteTask, model.PermissionDeleteTask) {
+		t.Error("delete task: want refused, no role allows it")
+	}
+
+	in := a.buildAccessInput(user, wsID)
+
+	if got := a.filterTablesByPerTableModeFromInput(in, twoTables()); len(got) != 2 {
+		t.Errorf("tables: want both visible, got %d", len(got))
+	}
+
+	access := a.resolveAccess(in)
+	if !access.AssignedOnly(tbl1) || access.AssignedOnly(tbl2) {
+		t.Errorf("assigned-only: want only %s restricted", tbl1)
 	}
 }
 
