@@ -287,6 +287,7 @@ import {
 import { CheckCircleIcon } from "@heroicons/vue/24/solid";
 import DatePicker from "@/components/DatePicker/DatePicker.vue";
 import { t } from "@/i18n";
+import useDateOperations from "@/composables/useDateOperations.js";
 
 const props = defineProps({
     isFolder: {
@@ -327,7 +328,11 @@ function levelFromFlags(v) {
 const accessLevel = ref(levelFromFlags(props.modelValue));
 const passwordProtected = ref(props.modelValue.passwordProtected ?? false);
 const password = ref(props.modelValue.password ?? "");
-const expiryDate = ref(unixToDate(props.modelValue.expiration));
+const { getDateInputValue, getEndOfDayTimestamp } = useDateOperations();
+
+const savedExpiration = props.modelValue.expiration ?? 0;
+const savedExpiryDate = getDateInputValue(savedExpiration, false);
+const expiryDate = ref(savedExpiryDate);
 const maxDownloads = ref(props.modelValue.maxDownloads ?? 0);
 const message = ref(props.modelValue.message ?? "");
 const allowEdit = ref(props.modelValue.allowEdit ?? false);
@@ -373,16 +378,10 @@ const accessOptions = computed(() => {
     return options;
 });
 
-function unixToDate(seconds) {
-    if (!seconds) return "";
+function expiration() {
+    if (expiryDate.value === savedExpiryDate) return savedExpiration;
 
-    return new Date(seconds * 1000).toISOString().slice(0, 10);
-}
-
-function dateToUnix(date) {
-    if (!date) return 0;
-
-    return Math.floor(new Date(date).getTime() / 1000);
+    return getEndOfDayTimestamp(expiryDate.value);
 }
 
 watch(
@@ -397,7 +396,7 @@ watch(
             allowEdit: flags.allowView && allowEdit.value,
             passwordProtected: passwordProtected.value,
             password: password.value,
-            expiration: dateToUnix(expiryDate.value),
+            expiration: expiration(),
             maxDownloads: maxDownloads.value || 0,
             message: message.value,
         });

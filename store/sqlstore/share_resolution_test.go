@@ -310,6 +310,29 @@ func TestResolveEffectiveShare(t *testing.T) {
 		}
 	})
 
+	t.Run("an expired grant does not raise the level of a live one", func(t *testing.T) {
+		for _, live := range []int64{0, time.Now().Add(7 * 24 * time.Hour).Unix()} {
+			cleanTables(t, "files", "file_share", "group_members")
+			seedShareFile(t, "folder", owner, "root", storage, "inode/directory", true, 0)
+			seedShareFile(t, "f1", owner, "folder", storage, "text/plain", false, 0)
+			seedShareRow(t, "folder", model.SHARE_TYPE_USER, viewer, time.Now().Unix()-3600, model.AccessManager)
+			seedShareRow(t, "f1", model.SHARE_TYPE_USER, viewer, live, model.AccessViewer)
+
+			perms, err := repo.ResolveEffectiveShare(ctx, viewer, "f1")
+			if err != nil {
+				t.Fatalf("ResolveEffectiveShare: %v", err)
+			}
+
+			if len(perms) != 1 {
+				t.Fatalf("the live grant should keep access, got %+v", perms)
+			}
+
+			if perms[0].AccessLevel != model.AccessViewer || perms[0].Expiration != live {
+				t.Errorf("want viewer expiring at %d, got %v expiring at %d", live, perms[0].AccessLevel, perms[0].Expiration)
+			}
+		}
+	})
+
 	t.Run("a trashed target yields none even with a direct share", func(t *testing.T) {
 		cleanTables(t, "files", "file_share", "group_members")
 		seedShareFile(t, "f1", owner, "root", storage, "text/plain", false, 999) // trashed
