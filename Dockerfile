@@ -12,4 +12,9 @@ COPY templates ./templates
 COPY LICENSE ./LICENSE
 COPY i18n ./i18n
 
+RUN useradd --uid 1000 --user-group --create-home --shell /usr/sbin/nologin twigex \
+    && mkdir -p /app/data /app/config \
+    && chown twigex:twigex /app /app/data /app/config
+USER 1000:1000
+
 CMD ["./twigex", "start"]
