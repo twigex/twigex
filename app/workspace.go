@@ -4530,7 +4530,7 @@ func (a *App) GetWorkspaceCurrentUser(user model.User, workspaceID string) (*mod
 	// A workspace-level role grants full access regardless of any per-table roles.
 	workspaceUser.PerTableMode = hasPerTableRole && !hasWorkspaceLevelRole
 
-	if workspaceUser.PerTableMode {
+	if hasPerTableRole {
 		tablePerms, err := a.Store.Workspace.GetTablePermissionsForRoles(roleIDs, workspaceID)
 		if err != nil {
 			tlog.Errorw("Failed to get table permissions", "workspace_id", workspaceID, "user_id", user.ID, "error", err)
@@ -5198,17 +5198,26 @@ func (a *App) buildAccessInputs(ctx context.Context, users []model.User, workspa
 }
 
 type basicAccess struct {
-	perTableMode    bool
-	assignedOnlyAll bool
-	workspacePerms  map[string]bool
+	perTableMode       bool
+	assignedOnlyAll    bool
+	assignedOnlyTables map[string]bool
+	workspacePerms     map[string]bool
 }
 
 func newBasicAccess(in interfaces.AccessInput) basicAccess {
-	access := basicAccess{workspacePerms: map[string]bool{}}
+	access := basicAccess{
+		assignedOnlyTables: map[string]bool{},
+		workspacePerms:     map[string]bool{},
+	}
+
+	hasPerTableRole := false
+	hasWorkspaceLevelRole := false
 
 	for _, role := range in.Roles {
 		if role.PerTableMode {
-			access.perTableMode = true
+			hasPerTableRole = true
+		} else {
+			hasWorkspaceLevelRole = true
 		}
 
 		for _, permission := range role.Permissions {
@@ -5219,6 +5228,14 @@ func newBasicAccess(in interfaces.AccessInput) basicAccess {
 			if !role.PerTableMode {
 				access.workspacePerms[permission] = true
 			}
+		}
+	}
+
+	access.perTableMode = hasPerTableRole && !hasWorkspaceLevelRole
+
+	for _, permission := range in.TablePerms {
+		if permission.Action == model.PermissionShowAssignedTasksOnly {
+			access.assignedOnlyTables[permission.TableID] = true
 		}
 	}
 
@@ -5235,7 +5252,9 @@ func (b basicAccess) VisibleTables(tables []model.WorkspaceTable) []model.Worksp
 
 func (b basicAccess) AssignedOnlyAll() bool { return b.assignedOnlyAll }
 
-func (b basicAccess) AssignedOnly(_ string) bool { return b.assignedOnlyAll }
+func (b basicAccess) AssignedOnly(tableID string) bool {
+	return b.assignedOnlyAll || b.assignedOnlyTables[tableID]
+}
 
 func (b basicAccess) CanPerformRowAction(_, workspacePerm, _ string) bool {
 	if b.perTableMode {

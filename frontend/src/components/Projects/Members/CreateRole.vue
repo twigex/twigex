@@ -573,7 +573,8 @@ SPDX-License-Identifier: AGPL-3.0-only
             </button>
             <button
                 @click="createWorkspaceRole"
-                class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600"
+                :disabled="!hasChanges"
+                class="rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-indigo-600 hover:bg-indigo-500 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {{
                     route.params.rid == undefined && !createdRoleId
@@ -588,7 +589,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script setup>
 import { t } from "@/i18n/index.js";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
@@ -608,6 +609,19 @@ const workspaceFolders = ref([]);
 const errorDialog = ref(false);
 const error = ref("");
 const loaded = ref(false);
+const savedState = ref(null);
+
+function formState() {
+    return JSON.stringify({
+        name: name.value,
+        description: description.value,
+        permissions: [...permissions.value].sort(),
+        perTable: tableRestrictEnabled.value,
+        tablePerms: tablePerms.value.map((p) => `${p.table_id}:${p.action}`).sort(),
+    });
+}
+
+const hasChanges = computed(() => savedState.value === null || formState() !== savedState.value);
 const permissions = ref([]);
 const name = ref("");
 const description = ref("");
@@ -756,6 +770,8 @@ function toggleTablePerm(tableId, action, checked) {
     }
 }
 
+const setAsideTableActions = ref([]);
+
 // sync visibility section with per-table toggle
 watch(tableRestrictEnabled, (enabled) => {
     if (enabled) {
@@ -765,8 +781,14 @@ watch(tableRestrictEnabled, (enabled) => {
         if (!tableVisibilityCustom.value) {
             setTableVisibility(true);
         }
+
+        tablePerms.value = [...tablePerms.value, ...setAsideTableActions.value];
+        setAsideTableActions.value = [];
     } else {
         // Remove per-table action entries; preserve visibility (view/hidden) entries
+        setAsideTableActions.value = tablePerms.value.filter(
+            (p) => p.action !== "view" && p.action !== "hidden",
+        );
         tablePerms.value = tablePerms.value.filter(
             (p) => p.action === "view" || p.action === "hidden",
         );
@@ -979,5 +1001,10 @@ onMounted(async () => {
     }
 
     loaded.value = true;
+
+    if (route.params.rid !== undefined) {
+        await nextTick();
+        savedState.value = formState();
+    }
 });
 </script>

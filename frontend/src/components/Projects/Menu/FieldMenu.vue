@@ -92,7 +92,9 @@ function allowed(action) {
 
     return rolesStore.perTableMode
         ? rolesStore.hasTablePermission(route.params.tid, action)
-        : permissions.includes("update_workspace_table") || permissions.includes(action);
+        : permissions.includes("update_workspace_table") ||
+              permissions.includes(action) ||
+              rolesStore.grantedOnTable(route.params.tid, action);
 }
 
 const items = computed(() => {
