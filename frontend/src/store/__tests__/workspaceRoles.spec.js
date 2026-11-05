@@ -37,4 +37,16 @@ describe("canRowAction", () => {
         expect(roles.canRowAction("t1", "update_task")).toBe(true);
         expect(roles.canRowAction("t2", "update_task")).toBe(false);
     });
+
+    it("adds a per-table role's grants to the workspace role", () => {
+        roles.setUser({
+            permissions: ["create_task"],
+            per_table_mode: false,
+            table_permissions: [{ table_id: "t1", action: "delete_task" }],
+        });
+
+        expect(roles.canRowAction("t2", "create_task")).toBe(true);
+        expect(roles.canRowAction("t1", "delete_task")).toBe(true);
+        expect(roles.canRowAction("t2", "delete_task")).toBe(false);
+    });
 });
