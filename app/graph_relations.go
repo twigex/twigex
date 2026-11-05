@@ -52,7 +52,7 @@ func (a *App) GetGraphEntityRelations(ctx context.Context, user model.User, enti
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	source, found, err := a.graphSourceFor(ctx, entityType)
+	source, found, err := a.graphSourceFor(ctx, user, entityType)
 	if err != nil {
 		return nil, graphRelationsFailed(entityID, err)
 	}

@@ -13,7 +13,8 @@ import (
 // graphSource reads the entities of the types one source serves, as one user
 // sees them. Each source checks access the way its own app does, and answers
 // an entity the user may not see as not found. Another kind of source, such
-// as Projects tables, is another graphSource; the callers stay the same.
+// as Projects tables, is another graphSource, with a case in graphSourceIn and
+// in canSeeEntityType; the callers stay the same.
 type graphSource interface {
 	relations(ctx context.Context, user model.User, typeKey, id string) (*model.GraphEntityRelations, *model.AppError)
 
@@ -76,14 +77,16 @@ func (s graphDatasetSource) search(ctx context.Context, user model.User, typeKey
 	return s.app.dataEntitySearch(ctx, user, s.ontology, typeKey, search, after)
 }
 
-// graphOntology is the graph's entity and relation types, read once for a
-// request and handed down, so no step reads them again.
+// graphOntology is the graph's entity and relation types, read together and
+// handed down to the steps of a request.
 type graphOntology struct {
 	entityTypes   []model.GraphEntityType
 	relationTypes []model.GraphRelationType
 }
 
-func (a *App) loadGraphOntology(ctx context.Context) (*graphOntology, error) {
+// loadAllGraphTypes reads every type, for work no user asked for, such as a
+// rebuild. A user's request reads them with loadGraphOntology instead.
+func (a *App) loadAllGraphTypes(ctx context.Context) (*graphOntology, error) {
 	entityTypes, err := a.Store.Graph.GetAllEntityTypes(ctx)
 	if err != nil {
 		return nil, err
@@ -97,6 +100,52 @@ func (a *App) loadGraphOntology(ctx context.Context) (*graphOntology, error) {
 	return &graphOntology{entityTypes: entityTypes, relationTypes: relationTypes}, nil
 }
 
+// loadGraphOntology reads the types one user may see. Every user request
+// starts here, so a type left out is gone for everything after it: the type
+// list, its entities, search and the relations that lead to it.
+func (a *App) loadGraphOntology(ctx context.Context, user model.User) (*graphOntology, error) {
+	all, err := a.loadAllGraphTypes(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	visibility := a.newGraphTypeVisibility(user)
+
+	visible := &graphOntology{
+		entityTypes:   make([]model.GraphEntityType, 0, len(all.entityTypes)),
+		relationTypes: make([]model.GraphRelationType, 0, len(all.relationTypes)),
+	}
+
+	visibleByID := make(map[string]model.GraphEntityType, len(all.entityTypes))
+
+	for _, entityType := range all.entityTypes {
+		canSee, err := visibility.canSeeEntityType(ctx, entityType)
+		if err != nil {
+			return nil, err
+		}
+
+		if !canSee {
+			continue
+		}
+
+		visible.entityTypes = append(visible.entityTypes, entityType)
+		visibleByID[entityType.ID] = entityType
+	}
+
+	for _, relationType := range all.relationTypes {
+		canSee, err := visibility.canSeeRelationType(ctx, relationType, visibleByID)
+		if err != nil {
+			return nil, err
+		}
+
+		if canSee {
+			visible.relationTypes = append(visible.relationTypes, relationType)
+		}
+	}
+
+	return visible, nil
+}
+
 func (o *graphOntology) entityTypesByID() map[string]model.GraphEntityType {
 	byID := make(map[string]model.GraphEntityType, len(o.entityTypes))
 
@@ -107,9 +156,10 @@ func (o *graphOntology) entityTypesByID() map[string]model.GraphEntityType {
 	return byID
 }
 
-// graphSourceFor reads the types and finds the source of one of them.
-func (a *App) graphSourceFor(ctx context.Context, typeKey string) (graphSource, bool, error) {
-	ontology, err := a.loadGraphOntology(ctx)
+// graphSourceFor reads the types the user may see and finds the source of one
+// of them.
+func (a *App) graphSourceFor(ctx context.Context, user model.User, typeKey string) (graphSource, bool, error) {
+	ontology, err := a.loadGraphOntology(ctx, user)
 	if err != nil {
 		return nil, false, err
 	}
