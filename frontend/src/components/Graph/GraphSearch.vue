@@ -174,8 +174,8 @@ function cancelRunning() {
     running = null;
 }
 
-// Each type is searched on its own, as the user; a type the user may not
-// read just comes back empty.
+// Each type is searched on its own, as the user. Only the types the user may
+// see are listed, so each answers with its matches or an empty list.
 async function runSearch() {
     const text = search.value.trim();
     const types = props.entityTypes.map((entityType) => entityType.key).join(",");
@@ -217,9 +217,8 @@ async function runSearch() {
         return;
     }
 
-    // A type the user may not read answers with an empty list, not an error,
-    // so a failure here is a real problem and must not look like "nothing
-    // found".
+    // Each type answers with a list, empty when nothing matches, so a failure
+    // here is a real problem and must not look like "nothing found".
     failed.value = anyFailed;
     running = null;
     lastSearched = searchKey;

@@ -423,7 +423,7 @@ func (a *App) GetGraphRelationPage(ctx context.Context, user model.User, typeKey
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	source, found, err := a.graphSourceFor(ctx, typeKey)
+	source, found, err := a.graphSourceFor(ctx, user, typeKey)
 	if err != nil {
 		return nil, graphRelationsFailed(id, err)
 	}
@@ -498,8 +498,8 @@ func (a *App) dataRelationPage(ctx context.Context, user model.User, ontology *g
 // SearchGraphEntities lists entities of a user-defined type, 50 at a time in
 // key order, for picking where to start and for the Entities table. A search
 // keeps only names that contain it, and after is the key of the last entity
-// already shown. A user who may not read the dataset gets no results rather
-// than an error.
+// already shown. A type the user may not see is not found, and a read the
+// data rules refuse gives no results.
 func (a *App) SearchGraphEntities(ctx context.Context, user model.User, typeKey, search, after string) (*model.GraphEntityPage, *model.AppError) {
 	if !a.graphEnabled() {
 		return nil, model.NewAppError("graph.disabled", http.StatusNotFound)
@@ -508,7 +508,7 @@ func (a *App) SearchGraphEntities(ctx context.Context, user model.User, typeKey,
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	source, found, err := a.graphSourceFor(ctx, typeKey)
+	source, found, err := a.graphSourceFor(ctx, user, typeKey)
 	if err != nil {
 		return nil, graphRelationsFailed("", err)
 	}

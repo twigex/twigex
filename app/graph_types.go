@@ -47,9 +47,8 @@ func (a *App) guardGraphTypeChange(user model.User) *model.AppError {
 	return nil
 }
 
-// GetGraphTypes gives every signed-in user the type names for the type map.
-// Where a type's data comes from is only shown to those who manage types,
-// because it names datasets and fields the user may not be allowed to see.
+// GetGraphTypes gives each user the types they may see, for the type map.
+// Where a type's data comes from is only shown to those who manage types.
 func (a *App) GetGraphTypes(ctx context.Context, user model.User) (*model.GraphTypes, *model.AppError) {
 	if !a.graphEnabled() {
 		return nil, model.NewAppError("graph.disabled", http.StatusNotFound)
@@ -58,26 +57,21 @@ func (a *App) GetGraphTypes(ctx context.Context, user model.User) (*model.GraphT
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	entityTypes, err := a.Store.Graph.GetAllEntityTypes(ctx)
-	if err != nil {
-		return nil, graphTypesFailed(err)
-	}
-
-	relationTypes, err := a.Store.Graph.GetAllRelationTypes(ctx)
+	ontology, err := a.loadGraphOntology(ctx, user)
 	if err != nil {
 		return nil, graphTypesFailed(err)
 	}
 
 	if a.canManageGraph(user) {
-		return a.namedGraphTypes(ctx, entityTypes, relationTypes), nil
+		return a.namedGraphTypes(ctx, ontology.entityTypes, ontology.relationTypes), nil
 	}
 
 	namesOnly := &model.GraphTypes{
-		EntityTypes:   make([]model.GraphEntityType, 0, len(entityTypes)),
-		RelationTypes: make([]model.GraphRelationType, 0, len(relationTypes)),
+		EntityTypes:   make([]model.GraphEntityType, 0, len(ontology.entityTypes)),
+		RelationTypes: make([]model.GraphRelationType, 0, len(ontology.relationTypes)),
 	}
 
-	for _, entityType := range entityTypes {
+	for _, entityType := range ontology.entityTypes {
 		entityType.SourceID = ""
 		entityType.KeyProperty = ""
 		entityType.TitleProperty = ""
@@ -85,7 +79,7 @@ func (a *App) GetGraphTypes(ctx context.Context, user model.User) (*model.GraphT
 		namesOnly.EntityTypes = append(namesOnly.EntityTypes, entityType)
 	}
 
-	for _, relationType := range relationTypes {
+	for _, relationType := range ontology.relationTypes {
 		relationType.KindConfig = nil
 
 		namesOnly.RelationTypes = append(namesOnly.RelationTypes, relationType)
@@ -231,7 +225,7 @@ func (a *App) UpdateGraphEntityType(ctx context.Context, user model.User, id str
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	entityType, appErr := a.editableGraphEntityType(ctx, id)
+	entityType, appErr := a.editableGraphEntityType(ctx, user, id)
 	if appErr != nil {
 		return nil, appErr
 	}
@@ -289,7 +283,7 @@ func (a *App) DeleteGraphEntityType(ctx context.Context, user model.User, id str
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	entityType, appErr := a.editableGraphEntityType(ctx, id)
+	entityType, appErr := a.editableGraphEntityType(ctx, user, id)
 	if appErr != nil {
 		return appErr
 	}
@@ -384,7 +378,7 @@ func (a *App) UpdateGraphRelationType(ctx context.Context, user model.User, id s
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	relationType, appErr := a.editableGraphRelationType(ctx, id)
+	relationType, appErr := a.editableGraphRelationType(ctx, user, id)
 	if appErr != nil {
 		return nil, appErr
 	}
@@ -434,7 +428,7 @@ func (a *App) DeleteGraphRelationType(ctx context.Context, user model.User, id s
 	ctx, cancel := a.dbCtx(ctx)
 	defer cancel()
 
-	relationType, appErr := a.editableGraphRelationType(ctx, id)
+	relationType, appErr := a.editableGraphRelationType(ctx, user, id)
 	if appErr != nil {
 		return appErr
 	}
@@ -537,38 +531,52 @@ func (a *App) checkGraphEntityTypeUnused(ctx context.Context, id string) *model.
 	return nil
 }
 
-func (a *App) editableGraphEntityType(ctx context.Context, id string) (*model.GraphEntityType, *model.AppError) {
-	entityType, err := a.Store.Graph.GetEntityTypeByID(ctx, id)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, model.NewAppError("graph.type_not_found", http.StatusNotFound)
-	}
-
+// editableGraphEntityType finds a type among those the user may see, so a
+// manager can't change or delete a type built on data hidden from them.
+func (a *App) editableGraphEntityType(ctx context.Context, user model.User, id string) (*model.GraphEntityType, *model.AppError) {
+	ontology, err := a.loadGraphOntology(ctx, user)
 	if err != nil {
 		return nil, graphTypesFailed(err)
 	}
+
+	index := slices.IndexFunc(ontology.entityTypes, func(entityType model.GraphEntityType) bool {
+		return entityType.ID == id
+	})
+
+	if index == -1 {
+		return nil, model.NewAppError("graph.type_not_found", http.StatusNotFound)
+	}
+
+	entityType := ontology.entityTypes[index]
 
 	if entityType.BuiltIn {
 		return nil, model.NewAppError("graph.type_built_in", http.StatusBadRequest)
 	}
 
-	return entityType, nil
+	return &entityType, nil
 }
 
-func (a *App) editableGraphRelationType(ctx context.Context, id string) (*model.GraphRelationType, *model.AppError) {
-	relationType, err := a.Store.Graph.GetRelationTypeByID(ctx, id)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, model.NewAppError("graph.type_not_found", http.StatusNotFound)
-	}
-
+func (a *App) editableGraphRelationType(ctx context.Context, user model.User, id string) (*model.GraphRelationType, *model.AppError) {
+	ontology, err := a.loadGraphOntology(ctx, user)
 	if err != nil {
 		return nil, graphTypesFailed(err)
 	}
+
+	index := slices.IndexFunc(ontology.relationTypes, func(relationType model.GraphRelationType) bool {
+		return relationType.ID == id
+	})
+
+	if index == -1 {
+		return nil, model.NewAppError("graph.type_not_found", http.StatusNotFound)
+	}
+
+	relationType := ontology.relationTypes[index]
 
 	if relationType.BuiltIn {
 		return nil, model.NewAppError("graph.type_built_in", http.StatusBadRequest)
 	}
 
-	return relationType, nil
+	return &relationType, nil
 }
 
 // checkGraphTypeFields checks that every field belongs to the dataset and is a
@@ -624,12 +632,17 @@ func (a *App) checkGraphTypeFields(ctx context.Context, user model.User, dataset
 // the "to" type's dataset, and the optional from-property a field of the
 // "from" type's dataset. Both types must read their entities from datasets.
 func (a *App) checkGraphRelationProperties(ctx context.Context, user model.User, fromTypeID, toTypeID, property, fromProperty string) *model.AppError {
-	fromType, appErr := a.graphDatasetEntityType(ctx, fromTypeID)
+	ontology, err := a.loadGraphOntology(ctx, user)
+	if err != nil {
+		return graphTypesFailed(err)
+	}
+
+	fromType, appErr := graphDatasetEntityType(ontology, fromTypeID)
 	if appErr != nil {
 		return appErr
 	}
 
-	toType, appErr := a.graphDatasetEntityType(ctx, toTypeID)
+	toType, appErr := graphDatasetEntityType(ontology, toTypeID)
 	if appErr != nil {
 		return appErr
 	}
@@ -646,19 +659,20 @@ func (a *App) checkGraphRelationProperties(ctx context.Context, user model.User,
 	return a.checkGraphTypeFields(ctx, user, fromType.SourceID, fromProperty)
 }
 
-func (a *App) graphDatasetEntityType(ctx context.Context, id string) (*model.GraphEntityType, *model.AppError) {
-	entityType, err := a.Store.Graph.GetEntityTypeByID(ctx, id)
-	if errors.Is(err, sql.ErrNoRows) {
+func graphDatasetEntityType(ontology *graphOntology, id string) (*model.GraphEntityType, *model.AppError) {
+	index := slices.IndexFunc(ontology.entityTypes, func(entityType model.GraphEntityType) bool {
+		return entityType.ID == id
+	})
+
+	if index == -1 {
 		return nil, model.NewAppError("graph.type_not_found", http.StatusBadRequest)
 	}
 
-	if err != nil {
-		return nil, graphTypesFailed(err)
-	}
+	entityType := ontology.entityTypes[index]
 
 	if entityType.Source != model.GraphSourceDataset {
 		return nil, model.NewAppError("graph.relation_type_needs_dataset_types", http.StatusBadRequest)
 	}
 
-	return entityType, nil
+	return &entityType, nil
 }
