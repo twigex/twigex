@@ -42,6 +42,7 @@ type Store struct {
 	Jobs           JobsStore
 	OIDC           OIDCProviderStore
 	Groups         GroupStore
+	Graph          GraphStore
 }
 
 const (
@@ -191,6 +192,8 @@ func NewNewStore(c *model.ServerConfig) (*Store, error) {
 			return nil, err
 		}
 
+		graph := sqlstore.NewGraphRepository(db)
+
 		return &Store{
 			DB:             db,
 			File:           files,
@@ -215,6 +218,7 @@ func NewNewStore(c *model.ServerConfig) (*Store, error) {
 			Jobs:           jobs,
 			OIDC:           oidc,
 			Groups:         groups,
+			Graph:          graph,
 		}, nil
 	}
 
@@ -342,6 +346,24 @@ type CollimatoStore interface {
 	GetWorkspaceFile(workspaceID, name, fileType string) (*model.CollimatoWorkspaceFile, error)
 	UpdateWorkspaceFile(file model.CollimatoWorkspaceFile) (*model.CollimatoWorkspaceFile, error)
 	DeleteWorkspaceFile(workspaceID, name, fileType string) error
+}
+
+type GraphStore interface {
+	CreateOrUpdateEntityType(ctx context.Context, entityType model.GraphEntityType) error
+	GetAllEntityTypes(ctx context.Context) ([]model.GraphEntityType, error)
+	CreateOrUpdateRelationType(ctx context.Context, relationType model.GraphRelationType) error
+	GetAllRelationTypes(ctx context.Context) ([]model.GraphRelationType, error)
+	AddDatasets(ctx context.Context, datasets []model.GraphDataset) (int64, error)
+	GetAllDatasetsForWorkspace(ctx context.Context, workspaceID string) ([]model.GraphDataset, error)
+	DeleteDatasets(ctx context.Context, ids []string) error
+	AddDatasetFields(ctx context.Context, fields []model.GraphDatasetField) (int64, error)
+	GetAllDatasetFieldsForWorkspace(ctx context.Context, workspaceID string) ([]model.GraphDatasetField, error)
+	GetDatasetFieldsByNames(ctx context.Context, workspaceID string, names []string) ([]model.GraphDatasetField, error)
+	DeleteDatasetFields(ctx context.Context, ids []string) error
+	UpdateStructuredRelations(ctx context.Context, relationTypeID, fromTypeID, fromID, toTypeID string, toIDs []string) (int64, int64, error)
+	GetRelationsFrom(ctx context.Context, typeID, entityID string) ([]model.GraphRelation, error)
+	GetRelationsTo(ctx context.Context, typeID, entityID string) ([]model.GraphRelation, error)
+	DeleteEntityRelations(ctx context.Context, typeID string, entityIDs []string) error
 }
 
 type PreferencesStore interface {

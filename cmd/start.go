@@ -50,6 +50,10 @@ func startServer(cmd *cobra.Command, args []string) {
 
 	a.EnsureSystemRoles()
 
+	if *a.ConfigStore.Config.FeatureFlags.KnowledgeGraph {
+		a.EnsureGraphBuiltInTypes()
+	}
+
 	a.DoAppMigrations()
 
 	a.RecordVersion()
