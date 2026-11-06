@@ -24,6 +24,8 @@ type fakeGraphStore struct {
 	fields        []model.GraphDatasetField
 	unrelatedIDs  []string
 	chartFields   map[string][]string
+	// manualFields holds "chart>field" pairs whose relation a person made.
+	manualFields map[string]bool
 }
 
 func (f *fakeGraphStore) CreateOrUpdateEntityType(_ context.Context, entityType model.GraphEntityType) error {
@@ -160,8 +162,10 @@ func (f fakeGraphEngine) Meta(_ context.Context, workspaceID string) (*collimato
 
 type fakeGraphCollimatoStore struct {
 	store.CollimatoStore
-	workspaces []model.CollimatoWorkspace
-	charts     []model.Chart
+	workspaces  []model.CollimatoWorkspace
+	charts      []model.Chart
+	dashboards  []model.Dashboard
+	permissions []string
 }
 
 func (f *fakeGraphCollimatoStore) GetWorkspaces() ([]model.CollimatoWorkspace, error) {

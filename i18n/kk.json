@@ -120,6 +120,14 @@
     "translation": "Граф күйін оқу мүмкін болмады."
   },
   {
+    "id": "graph.entity_not_found",
+    "translation": "Нысан табылмады."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "Нысанның байланыстарын оқу мүмкін болмады."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Синхрондау аралығы 5 пен 1440 минут аралығында болуы керек."
   },

@@ -5,6 +5,9 @@ package sqlstore
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"slices"
 	"testing"
 
 	"github.com/twigex/twigex/model"
@@ -432,5 +435,89 @@ func TestDeleteEntityRelationsRemovesBothDirections(t *testing.T) {
 
 	if n := countWhere(t, "SELECT COUNT(*) FROM graph_relations WHERE from_id = 'c3'"); n != 1 {
 		t.Errorf("other relation: got %d rows, want 1", n)
+	}
+}
+
+func TestGetDatasetAndFieldByID(t *testing.T) {
+	db := requireDB(t)
+	resetGraphTables(t)
+
+	repo := &graphRepository{Db: db}
+	ctx := context.Background()
+
+	_, err := repo.AddDatasets(ctx, []model.GraphDataset{{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindCube}})
+	if err != nil {
+		t.Fatalf("AddDatasets: %v", err)
+	}
+
+	datasets, err := repo.GetAllDatasetsForWorkspace(ctx, "ws")
+	if err != nil {
+		t.Fatalf("GetAllDatasetsForWorkspace: %v", err)
+	}
+
+	_, err = repo.AddDatasetFields(ctx, []model.GraphDatasetField{{WorkspaceID: "ws", DatasetID: datasets[0].ID, Name: "orders.amount"}})
+	if err != nil {
+		t.Fatalf("AddDatasetFields: %v", err)
+	}
+
+	fields, err := repo.GetAllDatasetFieldsForWorkspace(ctx, "ws")
+	if err != nil {
+		t.Fatalf("GetAllDatasetFieldsForWorkspace: %v", err)
+	}
+
+	dataset, err := repo.GetDatasetByID(ctx, datasets[0].ID)
+	if err != nil || dataset.Name != "orders" {
+		t.Errorf("want the orders dataset, got %+v (%v)", dataset, err)
+	}
+
+	field, err := repo.GetDatasetFieldByID(ctx, fields[0].ID)
+	if err != nil || field.Name != "orders.amount" || field.DatasetID != datasets[0].ID {
+		t.Errorf("want orders.amount in orders, got %+v (%v)", field, err)
+	}
+
+	_, err = repo.GetDatasetByID(ctx, "missing")
+	if !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("want sql.ErrNoRows for a missing dataset, got %v", err)
+	}
+
+	_, err = repo.GetDatasetFieldByID(ctx, "missing")
+	if !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("want sql.ErrNoRows for a missing field, got %v", err)
+	}
+}
+
+func TestGetDashboardIDsForChartAndFilterColumn(t *testing.T) {
+	db := requireDB(t)
+	cleanTables(t, "collimato_dashboards", "collimato_dashboard_charts", "collimato_dashboard_filters")
+
+	for _, dashboard := range []struct{ id, workspaceID string }{{"d1", "ws"}, {"d2", "ws"}, {"other", "ws-b"}} {
+		mustExec(t, `INSERT INTO collimato_dashboards (id, title, owner_id, workspace_id, created_at)
+			VALUES (?, 'd', 'alice', ?, 0)`, dashboard.id, dashboard.workspaceID)
+	}
+
+	mustExec(t, `INSERT INTO collimato_dashboard_charts (id, dashboard_id, chart_id, created_by, position, created_at)
+		VALUES ('dc1', 'd1', 'c1', 'alice', '{}', 0), ('dc2', 'd2', 'c2', 'alice', '{}', 0)`)
+
+	mustExec(t, `INSERT INTO collimato_dashboard_filters (id, dashboard_id, column_name, operator)
+		VALUES ('f1', 'd2', 'orders.amount', 'equals'), ('f2', 'other', 'orders.amount', 'equals')`)
+
+	repo := &collimatoRepository{Db: db}
+
+	byChart, err := repo.GetDashboardIDsForChart("c1")
+	if err != nil {
+		t.Fatalf("GetDashboardIDsForChart: %v", err)
+	}
+
+	if !slices.Equal(byChart, []string{"d1"}) {
+		t.Errorf("want d1 for c1, got %v", byChart)
+	}
+
+	byFilter, err := repo.GetDashboardIDsForFilterColumn("ws", "orders.amount")
+	if err != nil {
+		t.Fatalf("GetDashboardIDsForFilterColumn: %v", err)
+	}
+
+	if !slices.Equal(byFilter, []string{"d2"}) {
+		t.Errorf("want only d2 from ws, got %v", byFilter)
 	}
 }
