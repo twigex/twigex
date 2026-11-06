@@ -52,6 +52,9 @@ func startServer(cmd *cobra.Command, args []string) {
 
 	if *a.ConfigStore.Config.FeatureFlags.KnowledgeGraph {
 		a.EnsureGraphBuiltInTypes()
+		a.QueueGraphRebuildIfNeeded()
+	} else {
+		a.ClearGraphBuilt()
 	}
 
 	a.DoAppMigrations()

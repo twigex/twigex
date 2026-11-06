@@ -10,6 +10,7 @@ const (
 	JobTypeLDAPSync      = "ldap_sync"
 	JobTypeCleanupJobs   = "cleanup_jobs"
 	JobTypeDeleteChannel = "delete_channel"
+	JobTypeGraphRebuild  = "graph_rebuild"
 
 	JobStatusPending   = "pending"
 	JobStatusRunning   = "running"
@@ -101,6 +102,21 @@ func (r *Job) GetAllFileIDs() ([]string, error) {
 	}
 
 	return result, nil
+}
+
+func (r *Job) GraphRebuildPayload() (*GraphRebuildResult, error) {
+	var payload GraphRebuildResult
+
+	if len(r.Payload) == 0 {
+		return &payload, nil
+	}
+
+	err := json.Unmarshal(r.Payload, &payload)
+	if err != nil {
+		return nil, err
+	}
+
+	return &payload, nil
 }
 
 type LDAPSyncJobPayload struct {

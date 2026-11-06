@@ -108,6 +108,7 @@ import { computed } from "vue";
 import { t } from "@/i18n/index";
 import { useRouter, useRoute } from "vue-router";
 import { useUserStore } from "@/store/user";
+import { useSettingsStore } from "@/store/settings";
 import { usePermissions } from "@/composables/usePermissions";
 import {
     ShieldCheckIcon,
@@ -128,6 +129,7 @@ import {
     DocumentCheckIcon,
     PresentationChartBarIcon,
     ClipboardDocumentListIcon,
+    ShareIcon,
 } from "@heroicons/vue/24/outline";
 
 defineProps({
@@ -140,6 +142,7 @@ defineProps({
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
+const settingsStore = useSettingsStore();
 const { can } = usePermissions();
 
 const isAdmin = computed(() => userStore.user?.role === "system_admin");
@@ -195,6 +198,14 @@ const adminNavigation = computed(() => {
             name: t.value("settings.navigation.collimato"),
             path: "collimato-settings",
             icon: PresentationChartBarIcon,
+        });
+    }
+
+    if (settingsStore.isFeatureEnabled("KnowledgeGraph") && can("manage_knowledge_graph")) {
+        items.push({
+            name: t.value("settings.navigation.knowledge_graph"),
+            path: "knowledge-graph-settings",
+            icon: ShareIcon,
         });
     }
 
