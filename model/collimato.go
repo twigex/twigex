@@ -255,6 +255,21 @@ type DataQuery struct {
 	TimeDimensions []QueryTimeDimension `json:"timeDimensions"`
 	Order          [][]string           `json:"order"`
 	Limit          int                  `json:"limit"`
+	// Ungrouped asks Cube for one result row per source row, without the
+	// GROUP BY it adds otherwise. Only Twigex's own row reads set it; see
+	// QueryData.
+	Ungrouped bool `json:"ungrouped,omitempty"`
+}
+
+// CollimatoRowsRequest describes rows to read from a dataset. OrderBy must be
+// one of Fields: it sorts the rows and is the paging key, so After asks for
+// the rows that come after the last one already shown.
+type CollimatoRowsRequest struct {
+	Fields  []string
+	Filters []QueryFilter
+	OrderBy string
+	After   string
+	Limit   int
 }
 
 func (q *DataQuery) SetLimit() {
