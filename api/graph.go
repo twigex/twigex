@@ -14,6 +14,9 @@ func (a *API) initGraph() {
 	a.BaseRoutes.Graph.HandleFunc("/rebuild", a.getGraphRebuildStatus).Methods("GET")
 	a.BaseRoutes.Graph.HandleFunc("/rebuild", a.rebuildGraph).Methods("POST")
 	a.BaseRoutes.Graph.HandleFunc("/entities/{type}/{id}/relations", a.getGraphEntityRelations).Methods("GET")
+	a.BaseRoutes.Graph.HandleFunc("/entities/{type}/relations", a.getGraphEntityRelationsByQuery).Methods("GET")
+	a.BaseRoutes.Graph.HandleFunc("/entities/{type}/relations/{relation_type}", a.getGraphRelationPage).Methods("GET")
+	a.BaseRoutes.Graph.HandleFunc("/types/{type}/entities", a.searchGraphEntities).Methods("GET")
 	a.BaseRoutes.Graph.HandleFunc("/types", a.getGraphTypes).Methods("GET")
 	a.BaseRoutes.Graph.HandleFunc("/entity-types", a.createGraphEntityType).Methods("POST")
 	a.BaseRoutes.Graph.HandleFunc("/entity-types/{id}", a.updateGraphEntityType).Methods("PUT")
@@ -74,6 +77,71 @@ func (a *API) getGraphEntityRelations(w http.ResponseWriter, r *http.Request) {
 	}
 
 	respondJSON(w, http.StatusOK, relations)
+}
+
+// getGraphEntityRelationsByQuery takes the entity's ID as ?id=, because a key
+// from another system can hold a "/" or other characters a path can't carry.
+func (a *API) getGraphEntityRelationsByQuery(w http.ResponseWriter, r *http.Request) {
+	user, appErr := a.app.GetCurrentUser(r)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	entityType := mux.Vars(r)["type"]
+	id := r.URL.Query().Get("id")
+
+	relations, appErr := a.app.GetGraphEntityRelations(r.Context(), *user, entityType, id)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	respondJSON(w, http.StatusOK, relations)
+}
+
+func (a *API) getGraphRelationPage(w http.ResponseWriter, r *http.Request) {
+	user, appErr := a.app.GetCurrentUser(r)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	vars := mux.Vars(r)
+	entityType := vars["type"]
+	relationType := vars["relation_type"]
+
+	params := r.URL.Query()
+	id := params.Get("id")
+	direction := params.Get("direction")
+	after := params.Get("after")
+
+	page, appErr := a.app.GetGraphRelationPage(r.Context(), *user, entityType, id, relationType, direction, after)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	respondJSON(w, http.StatusOK, page)
+}
+
+func (a *API) searchGraphEntities(w http.ResponseWriter, r *http.Request) {
+	user, appErr := a.app.GetCurrentUser(r)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	entityType := mux.Vars(r)["type"]
+	search := r.URL.Query().Get("search")
+
+	entities, appErr := a.app.SearchGraphEntities(r.Context(), *user, entityType, search)
+	if appErr != nil {
+		respondAppError(w, r, appErr)
+		return
+	}
+
+	respondJSON(w, http.StatusOK, entities)
 }
 
 func (a *API) getGraphTypes(w http.ResponseWriter, r *http.Request) {
