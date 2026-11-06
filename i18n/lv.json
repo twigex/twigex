@@ -128,6 +128,54 @@
     "translation": "Entītijas relācijas nevarēja nolasīt."
   },
   {
+    "id": "graph.types_failed",
+    "translation": "Grafa tipus nevarēja nolasīt vai saglabāt."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "Tips netika atrasts."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "Atslēgai jāsākas ar mazo burtu, un tajā drīkst būt tikai mazie burti, cipari un pasvītras, ne vairāk kā 64 rakstzīmes."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Ievadiet nosaukumu."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Šo atslēgu jau izmanto cits tips."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Iebūvētos tipus nevar mainīt vai dzēst."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "Datu kopa netika atrasta, vai jūs to nevarat redzēt."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "Izvēlētais lauks nepieder datu kopai."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "Izvēlētais lauks jums Collimato nav redzams. Primārās atslēgas ir paslēptas, ja vien datu kopa tās nerāda."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "Atslēgas, nosaukuma vai relācijas laukam jābūt dimensijai, nevis mēram."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "Šo tipu izmanto relācijas tips. Vispirms dzēsiet vai mainiet relācijas tipu."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Abiem relācijas galiem jābūt tipiem, kas savas entītijas ņem no datu kopas."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Sinhronizācijas intervālam jābūt no 5 līdz 1440 minūtēm."
   },

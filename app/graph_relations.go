@@ -18,8 +18,9 @@ import (
 const graphGroupItemLimit = 50
 
 type graphVisibleMeta struct {
-	datasets map[string]bool
-	fields   map[string]bool
+	datasets   map[string]bool
+	fields     map[string]bool
+	dimensions map[string]bool
 }
 
 func graphEntityNotFound() *model.AppError {
@@ -389,8 +390,9 @@ func (a *App) dashboardGraphRelations(ctx context.Context, user model.User, dash
 // workspace sees none of them.
 func (a *App) graphVisibleMeta(ctx context.Context, user model.User, workspaceID string) (*graphVisibleMeta, *model.AppError) {
 	visible := &graphVisibleMeta{
-		datasets: make(map[string]bool),
-		fields:   make(map[string]bool),
+		datasets:   make(map[string]bool),
+		fields:     make(map[string]bool),
+		dimensions: make(map[string]bool),
 	}
 
 	collection, appErr := a.GetWorkspaceMeta(ctx, user, workspaceID)
@@ -407,6 +409,7 @@ func (a *App) graphVisibleMeta(ctx context.Context, user model.User, workspaceID
 
 		for _, dimension := range cube.Dimensions {
 			visible.fields[dimension.Name] = true
+			visible.dimensions[dimension.Name] = true
 		}
 
 		for _, measure := range cube.Measures {

@@ -128,6 +128,54 @@
     "translation": "Нысанның байланыстарын оқу мүмкін болмады."
   },
   {
+    "id": "graph.types_failed",
+    "translation": "Граф түрлерін оқу немесе сақтау мүмкін болмады."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "Түр табылмады."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "Кілт кіші әріптен басталып, тек кіші әріптерден, сандардан және астын сызудан тұруы керек, 64 таңбаға дейін."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Атауын енгізіңіз."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Бұл кілтті басқа түр пайдаланып жатыр."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Кірістірілген түрлерді өзгертуге немесе жоюға болмайды."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "Деректер жиыны табылмады немесе сіз оны көре алмайсыз."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "Таңдалған өріс деректер жиынына жатпайды."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "Таңдалған өріс сізге Collimato-да көрінбейді. Деректер жиыны көрсетпесе, бастапқы кілттер жасырын болады."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "Кілт, атау немесе байланыс өрісі өлшем емес, дименсия болуы керек."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "Бұл түрді байланыс түрі пайдаланады. Алдымен байланыс түрін жойыңыз немесе өзгертіңіз."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Байланыстың екі ұшы да нысандарын деректер жиынынан алатын түрлер болуы керек."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Синхрондау аралығы 5 пен 1440 минут аралығында болуы керек."
   },
