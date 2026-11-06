@@ -151,6 +151,14 @@ const routes = [
                 ],
             },
             {
+                path: "graph",
+                name: "graph",
+                meta: {
+                    requireAuth: true,
+                },
+                component: () => import("@/views/Graph/GraphView.vue"),
+            },
+            {
                 path: "collimato",
                 name: "collimato",
                 meta: {
