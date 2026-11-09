@@ -109,8 +109,10 @@ func (a *App) OfficeSupportsFileType(fileType string) (bool, *model.AppError) {
 
 func (a *App) CreateOfficeURL(user model.User, wopiApp, fileID string) (string, *model.AppError) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"id":   user.ID,
+		"app":  wopiApp,
+		"file": fileID,
+		"exp":  time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, err := token.SignedString([]byte(*a.ConfigStore.Config.OfficeSettings.Secret))
@@ -175,13 +177,32 @@ func (a *App) GetOfficeFile(fileID string, accessToken string) (*model.File, *mo
 		return a.guestOfficeFile(shareToken, boundFile, fileID)
 	}
 
+	user, appErr := a.officeTokenUser(token, "files", fileID)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	return a.HasPermission(fileID, *user)
+}
+
+// officeTokenUser returns the user an office token was issued to, but only for
+// the document it was issued for. Callers must still check that the user has
+// access now, since the token outlives membership changes.
+func (a *App) officeTokenUser(token *jwt.Token, wopiApp, fileID string) (*model.User, *model.AppError) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil, model.NewAppError("office.token_invalid", http.StatusUnauthorized)
 	}
 
-	userID := claims["id"].(string)
-	_, err := a.Store.User.Get(userID)
+	userID, _ := claims["id"].(string)
+	tokenApp, _ := claims["app"].(string)
+	tokenFile, _ := claims["file"].(string)
+
+	if userID == "" || tokenApp != wopiApp || tokenFile != fileID {
+		return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
+	}
+
+	user, err := a.Store.User.Get(userID)
 	if err != nil {
 		tlog.Errorw("Failed to find user from office token",
 			"user_id", userID,
@@ -190,20 +211,28 @@ func (a *App) GetOfficeFile(fileID string, accessToken string) (*model.File, *mo
 		return nil, model.NewAppError("user.not_found", http.StatusInternalServerError)
 	}
 
-	file, err := a.Store.File.Get(fileID)
+	if user == nil {
+		return nil, model.NewAppError("user.not_found", http.StatusNotFound)
+	}
+
+	return user, nil
+}
+
+func (a *App) officeChatAttachment(fileID string, user model.User) (*model.PostFileAttachment, *model.AppError) {
+	attachment, err := a.Store.Posts.GetAttachmentByID(fileID)
 	if err != nil {
-		tlog.Errorw("Failed to retrieve office file",
+		tlog.Errorw("Failed to get chat attachment for office",
 			"file_id", fileID,
 			"error", err,
 		)
-		return nil, model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
+		return nil, model.NewAppError("channel.attachment_not_found", http.StatusInternalServerError)
 	}
 
-	if file == nil {
-		return nil, model.NewAppError("file.not_found", http.StatusNotFound)
+	if attachment == nil {
+		return nil, model.NewAppError("channel.attachment_not_found", http.StatusNotFound)
 	}
 
-	return file, nil
+	return a.GetChatFileAttachment(attachment.ChannelID, fileID, user)
 }
 
 func (a *App) CheckFileInfo(fileID, accessToken, wopiApp string) (*[]byte, *model.AppError) {
@@ -216,21 +245,9 @@ func (a *App) CheckFileInfo(fileID, accessToken, wopiApp string) (*[]byte, *mode
 		return a.guestCheckFileInfo(shareToken, boundFile, fileID, gid, name, ro)
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, model.NewAppError("office.token_invalid", http.StatusUnauthorized)
-	}
-
-	user, err := a.Store.User.Get(claims["id"].(string))
-	if err != nil {
-		tlog.Errorw("Failed to find user from office token",
-			"error", err,
-		)
-		return nil, model.NewAppError("user.not_found", http.StatusInternalServerError)
-	}
-
-	if user == nil {
-		return nil, model.NewAppError("user.not_found", http.StatusNotFound)
+	user, appErr := a.officeTokenUser(token, wopiApp, fileID)
+	if appErr != nil {
+		return nil, appErr
 	}
 
 	build := func(name string, size int64, owner string, canWrite bool) (*[]byte, *model.AppError) {
@@ -255,33 +272,17 @@ func (a *App) CheckFileInfo(fileID, accessToken, wopiApp string) (*[]byte, *mode
 
 	switch wopiApp {
 	case "chat":
-		f, err := a.Store.Posts.GetAttachmentByID(fileID)
-		if err != nil {
-			tlog.Errorw("Failed to get chat attachment for office",
-				"file_id", fileID,
-				"error", err,
-			)
-			return nil, model.NewAppError("channel.attachment_not_found", http.StatusInternalServerError)
-		}
-
-		if f == nil {
-			return nil, model.NewAppError("channel.attachment_not_found", http.StatusNotFound)
+		f, appErr := a.officeChatAttachment(fileID, *user)
+		if appErr != nil {
+			return nil, appErr
 		}
 
 		return build(f.Name, f.Size, f.UserID, false)
 
 	case "projects":
-		f, err := a.Store.Workspace.GetAttachmentByID(fileID)
-		if err != nil {
-			tlog.Errorw("Failed to get workspace attachment for office",
-				"file_id", fileID,
-				"error", err,
-			)
-			return nil, model.NewAppError("collimato.retrieval_failed", http.StatusInternalServerError)
-		}
-
-		if f == nil {
-			return nil, model.NewAppError("collimato.not_found", http.StatusNotFound)
+		f, appErr := a.GetUserWorkspaceAttachment(fileID, *user)
+		if appErr != nil {
+			return nil, appErr
 		}
 
 		return build(f.Name, f.Size, f.UserID, false)
@@ -658,17 +659,9 @@ func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadClos
 
 		f = file
 	} else {
-		file, err := a.Store.File.Get(fileID)
-		if err != nil {
-			tlog.Errorw("Failed to retrieve file",
-				"file_id", fileID,
-				"error", err,
-			)
-			return model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
-		}
-
-		if file == nil {
-			return model.NewAppError("file.not_found", http.StatusNotFound)
+		file, appErr := a.officeEditableFile(token, fileID)
+		if appErr != nil {
+			return appErr
 		}
 
 		f = file
@@ -732,6 +725,24 @@ func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadClos
 	return nil
 }
 
+func (a *App) officeEditableFile(token *jwt.Token, fileID string) (*model.File, *model.AppError) {
+	user, appErr := a.officeTokenUser(token, "files", fileID)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	file, appErr := a.HasPermission(fileID, *user)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	if !file.AccessLevel.CanEdit() {
+		return nil, model.NewAppError("office.readonly", http.StatusForbidden)
+	}
+
+	return file, nil
+}
+
 // recordGuestOfficeEdit logs a public-link edit. Attributed to the owner (the
 // activity join requires a real user_id and there is no authenticated editor);
 // the frontend renders it without an actor name.
@@ -762,6 +773,11 @@ func (a *App) openCollaboraFile(fileID string, user model.User, wopiApp string) 
 
 		if file == nil {
 			return nil, model.NewAppError("file.not_found", http.StatusNotFound)
+		}
+	case "chat":
+		_, appErr := a.officeChatAttachment(fileID, user)
+		if appErr != nil {
+			return nil, appErr
 		}
 	case "projects":
 		file, appErr := a.GetUserWorkspaceAttachment(fileID, user)
@@ -807,9 +823,9 @@ func (a *App) openEuroOfficeFile(fileID string, user model.User, wopiApp string)
 		modified = file.Modified
 
 	case "chat":
-		f, err := a.Store.Posts.GetAttachmentByID(fileID)
-		if err != nil || f == nil {
-			return nil, model.NewAppError("channel.attachment_not_found", http.StatusNotFound)
+		f, appErr := a.officeChatAttachment(fileID, user)
+		if appErr != nil {
+			return nil, appErr
 		}
 
 		fileName = f.Name
@@ -847,8 +863,10 @@ func (a *App) openEuroOfficeFile(fileID string, user model.User, wopiApp string)
 
 func (a *App) CreateEuroOfficeConfig(user model.User, wopiApp, fileID string, modified int64, canWrite bool, fileName, fileType string) (*model.EuroOfficeConfig, *model.AppError) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"id":   user.ID,
+		"app":  wopiApp,
+		"file": fileID,
+		"exp":  time.Now().Add(time.Hour * 24).Unix(),
 	})
 	tokenString, err := token.SignedString([]byte(*a.ConfigStore.Config.OfficeSettings.Secret))
 	if err != nil {
@@ -971,14 +989,9 @@ func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken string, body io.Re
 
 		f = file
 	} else {
-		file, err := a.Store.File.Get(fileID)
-		if err != nil {
-			tlog.Errorw("Failed to retrieve file for EuroOffice save", "file_id", fileID, "error", err)
-			return model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
-		}
-
-		if file == nil {
-			return model.NewAppError("file.not_found", http.StatusNotFound)
+		file, appErr := a.officeEditableFile(token, fileID)
+		if appErr != nil {
+			return appErr
 		}
 
 		f = file
@@ -1051,18 +1064,20 @@ func euroOfficeDocumentType(mimeType string) string {
 	}
 }
 
-func (a *App) ServeOfficeChatAttachment(id string, w io.Writer) *model.AppError {
-	file, err := a.Store.Posts.GetAttachmentByID(id)
-	if err != nil {
-		tlog.Errorw("Failed to get chat attachment",
-			"attachment_id", id,
-			"error", err,
-		)
-		return model.NewAppError("channel.attachment_not_found", http.StatusInternalServerError)
+func (a *App) ServeOfficeChatAttachment(id string, accessToken string, w io.Writer) *model.AppError {
+	token, appErr := a.VerifyOfficeToken(accessToken)
+	if appErr != nil {
+		return appErr
 	}
 
-	if file == nil {
-		return model.NewAppError("channel.attachment_not_found", http.StatusNotFound)
+	user, appErr := a.officeTokenUser(token, "chat", id)
+	if appErr != nil {
+		return appErr
+	}
+
+	file, appErr := a.officeChatAttachment(id, *user)
+	if appErr != nil {
+		return appErr
 	}
 
 	if file.StorageID != "" {
@@ -1126,18 +1141,20 @@ func (a *App) ServeOfficeChatAttachment(id string, w io.Writer) *model.AppError 
 	return nil
 }
 
-func (a *App) ServeOfficeWorkspaceAttachment(id string, w io.Writer) *model.AppError {
-	attachment, err := a.Store.Workspace.GetAttachmentByID(id)
-	if err != nil {
-		tlog.Errorw("Failed to get workspace attachment",
-			"attachment_id", id,
-			"error", err,
-		)
-		return model.NewAppError("collimato.retrieval_failed", http.StatusInternalServerError)
+func (a *App) ServeOfficeWorkspaceAttachment(id string, accessToken string, w io.Writer) *model.AppError {
+	token, appErr := a.VerifyOfficeToken(accessToken)
+	if appErr != nil {
+		return appErr
 	}
 
-	if attachment == nil {
-		return model.NewAppError("collimato.not_found", http.StatusNotFound)
+	user, appErr := a.officeTokenUser(token, "projects", id)
+	if appErr != nil {
+		return appErr
+	}
+
+	attachment, appErr := a.GetUserWorkspaceAttachment(id, *user)
+	if appErr != nil {
+		return appErr
 	}
 
 	fileExt := filepath.Ext(attachment.Name)
@@ -1167,7 +1184,7 @@ func (a *App) ServeOfficeWorkspaceAttachment(id string, w io.Writer) *model.AppE
 		}
 
 		defer rc.Close()
-		if _, err = io.Copy(w, rc); err != nil {
+		if _, err := io.Copy(w, rc); err != nil {
 			tlog.Errorw("Failed to stream workspace attachment", "attachment_id", id, "error", err)
 			return model.NewAppError("office.open_failed", http.StatusInternalServerError)
 		}

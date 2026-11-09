@@ -99,13 +99,13 @@ func (a *API) officeGetFile(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case "chat":
-		appErr := a.app.ServeOfficeChatAttachment(id, w)
+		appErr := a.app.ServeOfficeChatAttachment(id, tokenString, w)
 		if appErr != nil {
 			respondAppError(w, r, appErr)
 		}
 
 	case "projects":
-		appErr := a.app.ServeOfficeWorkspaceAttachment(id, w)
+		appErr := a.app.ServeOfficeWorkspaceAttachment(id, tokenString, w)
 		if appErr != nil {
 			respondAppError(w, r, appErr)
 		}
