@@ -93,6 +93,7 @@ func (a *App) EnsureGraphBuiltInTypes() {
 			FromTypeID:  fromTypeID,
 			ToTypeID:    toTypeID,
 			Kind:        builtIn.Kind,
+			Cardinality: builtIn.Cardinality,
 			BuiltIn:     true,
 		}
 

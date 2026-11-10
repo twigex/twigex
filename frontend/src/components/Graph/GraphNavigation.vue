@@ -93,5 +93,7 @@ defineProps({
 const route = useRoute();
 
 const isExplore = computed(() => route.name === "graph-explore");
-const isOntology = computed(() => route.name === "graph-ontology");
+const isOntology = computed(() => {
+    return route.name === "graph-ontology" || route.name === "graph-ontology-type";
+});
 </script>

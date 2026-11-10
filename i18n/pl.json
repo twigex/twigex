@@ -144,6 +144,10 @@
     "translation": "Wpisz nazwę."
   },
   {
+    "id": "graph.type_name_too_long",
+    "translation": "Nazwa może mieć najwyżej 255 znaków."
+  },
+  {
     "id": "graph.type_key_taken",
     "translation": "Inny typ używa już tego klucza."
   },
@@ -174,6 +178,22 @@
   {
     "id": "graph.relation_type_needs_dataset_types",
     "translation": "Oba końce relacji muszą być typami, które pobierają encje ze zbioru danych."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "Status musi mieć wartość: eksperymentalny, aktywny lub przestarzały."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Wybierz jeden z proponowanych kolorów."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "Nazwa ikony może zawierać tylko małe litery, cyfry i myślniki."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Wybierz: jeden do jednego, jeden do wielu, wiele do jednego lub wiele do wielu."
   },
   {
     "id": "ldap.invalid_sync_interval",

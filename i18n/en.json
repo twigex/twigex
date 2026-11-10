@@ -144,6 +144,10 @@
     "translation": "Enter a name."
   },
   {
+    "id": "graph.type_name_too_long",
+    "translation": "A name can be at most 255 characters long."
+  },
+  {
     "id": "graph.type_key_taken",
     "translation": "Another type already uses this key."
   },
@@ -174,6 +178,22 @@
   {
     "id": "graph.relation_type_needs_dataset_types",
     "translation": "Both ends of a relation must be types that read their entities from a dataset."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "The status must be experimental, active or deprecated."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Choose one of the offered colours."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "The icon name may only use lowercase letters, digits and hyphens."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Choose one to one, one to many, many to one or many to many."
   },
   {
     "id": "ldap.invalid_sync_interval",

@@ -20,8 +20,8 @@ type graphRepository struct {
 }
 
 const (
-	graphEntityTypeColumns   = "id, `key`, name, source, source_id, key_property, title_property, description, built_in, created_by, created_at, updated_at"
-	graphRelationTypeColumns = "id, `key`, name, reverse_name, from_type_id, to_type_id, kind, kind_config, description, built_in, created_by, created_at, updated_at"
+	graphEntityTypeColumns   = "id, `key`, name, source, source_id, key_property, title_property, description, built_in, created_by, created_at, updated_at, plural_name, icon, color, status, updated_by"
+	graphRelationTypeColumns = "id, `key`, name, reverse_name, from_type_id, to_type_id, kind, kind_config, description, built_in, created_by, created_at, updated_at, cardinality, updated_by"
 	graphRelationColumns     = "id, relation_type_id, from_type_id, from_id, to_type_id, to_id, origin, created_by, created_at"
 	graphDatasetColumns      = "id, workspace_id, name, kind, created_at"
 	graphDatasetFieldColumns = "id, workspace_id, dataset_id, name, created_at"
@@ -38,7 +38,7 @@ func (g *graphRepository) CreateOrUpdateEntityType(ctx context.Context, entityTy
 
 	_, err := g.Db.ExecContext(ctx,
 		"INSERT INTO graph_entity_types ("+graphEntityTypeColumns+`)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		 ON DUPLICATE KEY UPDATE
 		     name = VALUES(name),
 		     source = VALUES(source),
@@ -47,7 +47,11 @@ func (g *graphRepository) CreateOrUpdateEntityType(ctx context.Context, entityTy
 		     title_property = VALUES(title_property),
 		     description = VALUES(description),
 		     built_in = VALUES(built_in),
-		     updated_at = VALUES(updated_at)`,
+		     updated_at = VALUES(updated_at),
+		     plural_name = VALUES(plural_name),
+		     icon = VALUES(icon),
+		     color = VALUES(color),
+		     status = VALUES(status)`,
 		model.NewID(),
 		entityType.Key,
 		entityType.Name,
@@ -60,6 +64,11 @@ func (g *graphRepository) CreateOrUpdateEntityType(ctx context.Context, entityTy
 		nullableString(entityType.CreatedBy),
 		now,
 		now,
+		nullableString(entityType.PluralName),
+		nullableString(entityType.Icon),
+		nullableString(entityType.Color),
+		graphStatusValue(entityType.Status),
+		nullableString(entityType.UpdatedBy),
 	)
 
 	return err
@@ -91,7 +100,7 @@ func (g *graphRepository) CreateOrUpdateRelationType(ctx context.Context, relati
 
 	_, err := g.Db.ExecContext(ctx,
 		"INSERT INTO graph_relation_types ("+graphRelationTypeColumns+`)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		 ON DUPLICATE KEY UPDATE
 		     name = VALUES(name),
 		     reverse_name = VALUES(reverse_name),
@@ -100,7 +109,8 @@ func (g *graphRepository) CreateOrUpdateRelationType(ctx context.Context, relati
 		     kind = VALUES(kind),
 		     description = VALUES(description),
 		     built_in = VALUES(built_in),
-		     updated_at = VALUES(updated_at)`,
+		     updated_at = VALUES(updated_at),
+		     cardinality = VALUES(cardinality)`,
 		model.NewID(),
 		relationType.Key,
 		relationType.Name,
@@ -114,6 +124,8 @@ func (g *graphRepository) CreateOrUpdateRelationType(ctx context.Context, relati
 		nullableString(relationType.CreatedBy),
 		now,
 		now,
+		nullableString(relationType.Cardinality),
+		nullableString(relationType.UpdatedBy),
 	)
 
 	return err
@@ -148,7 +160,7 @@ func (g *graphRepository) GetEntityTypeByID(ctx context.Context, id string) (*mo
 
 func (g *graphRepository) CreateEntityType(ctx context.Context, entityType model.GraphEntityType) error {
 	_, err := g.Db.ExecContext(ctx,
-		"INSERT INTO graph_entity_types ("+graphEntityTypeColumns+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO graph_entity_types ("+graphEntityTypeColumns+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		entityType.ID,
 		entityType.Key,
 		entityType.Name,
@@ -161,6 +173,11 @@ func (g *graphRepository) CreateEntityType(ctx context.Context, entityType model
 		nullableString(entityType.CreatedBy),
 		entityType.CreatedAt,
 		entityType.UpdatedAt,
+		nullableString(entityType.PluralName),
+		nullableString(entityType.Icon),
+		nullableString(entityType.Color),
+		graphStatusValue(entityType.Status),
+		nullableString(entityType.UpdatedBy),
 	)
 
 	return graphKeyTaken(err)
@@ -169,7 +186,8 @@ func (g *graphRepository) CreateEntityType(ctx context.Context, entityType model
 func (g *graphRepository) UpdateEntityType(ctx context.Context, entityType model.GraphEntityType) error {
 	_, err := g.Db.ExecContext(ctx,
 		`UPDATE graph_entity_types
-		 SET name = ?, source_id = ?, key_property = ?, title_property = ?, description = ?, updated_at = ?
+		 SET name = ?, source_id = ?, key_property = ?, title_property = ?, description = ?, updated_at = ?,
+		     plural_name = ?, icon = ?, color = ?, status = ?, updated_by = ?
 		 WHERE id = ? AND built_in = 0`,
 		entityType.Name,
 		nullableString(entityType.SourceID),
@@ -177,6 +195,11 @@ func (g *graphRepository) UpdateEntityType(ctx context.Context, entityType model
 		nullableString(entityType.TitleProperty),
 		nullableString(entityType.Description),
 		entityType.UpdatedAt,
+		nullableString(entityType.PluralName),
+		nullableString(entityType.Icon),
+		nullableString(entityType.Color),
+		graphStatusValue(entityType.Status),
+		nullableString(entityType.UpdatedBy),
 		entityType.ID,
 	)
 
@@ -202,7 +225,7 @@ func (g *graphRepository) CreateRelationType(ctx context.Context, relationType m
 	}
 
 	_, err = g.Db.ExecContext(ctx,
-		"INSERT INTO graph_relation_types ("+graphRelationTypeColumns+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO graph_relation_types ("+graphRelationTypeColumns+") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		relationType.ID,
 		relationType.Key,
 		relationType.Name,
@@ -216,6 +239,8 @@ func (g *graphRepository) CreateRelationType(ctx context.Context, relationType m
 		nullableString(relationType.CreatedBy),
 		relationType.CreatedAt,
 		relationType.UpdatedAt,
+		nullableString(relationType.Cardinality),
+		nullableString(relationType.UpdatedBy),
 	)
 
 	return graphKeyTaken(err)
@@ -242,13 +267,16 @@ func (g *graphRepository) UpdateRelationType(ctx context.Context, relationType m
 
 	_, err = g.Db.ExecContext(ctx,
 		`UPDATE graph_relation_types
-		 SET name = ?, reverse_name = ?, kind_config = ?, description = ?, updated_at = ?
+		 SET name = ?, reverse_name = ?, kind_config = ?, description = ?, updated_at = ?,
+		     cardinality = ?, updated_by = ?
 		 WHERE id = ? AND built_in = 0`,
 		relationType.Name,
 		relationType.ReverseName,
 		kindConfig,
 		nullableString(relationType.Description),
 		relationType.UpdatedAt,
+		nullableString(relationType.Cardinality),
+		nullableString(relationType.UpdatedBy),
 		relationType.ID,
 	)
 
@@ -259,6 +287,15 @@ func (g *graphRepository) DeleteRelationType(ctx context.Context, id string) err
 	_, err := g.Db.ExecContext(ctx, "DELETE FROM graph_relation_types WHERE id = ? AND built_in = 0", id)
 
 	return err
+}
+
+// A type saved without a status is active, as the column's default says.
+func graphStatusValue(status string) string {
+	if status == "" {
+		return model.GraphStatusActive
+	}
+
+	return status
 }
 
 // graphKindConfigValue saves the field IDs only, leaving out the names a
@@ -580,6 +617,7 @@ type graphRowScanner interface {
 func scanGraphEntityType(row graphRowScanner) (*model.GraphEntityType, error) {
 	var entityType model.GraphEntityType
 	var sourceID, keyProperty, titleProperty, description, createdBy sql.NullString
+	var pluralName, icon, color, updatedBy sql.NullString
 
 	err := row.Scan(
 		&entityType.ID,
@@ -594,6 +632,11 @@ func scanGraphEntityType(row graphRowScanner) (*model.GraphEntityType, error) {
 		&createdBy,
 		&entityType.CreatedAt,
 		&entityType.UpdatedAt,
+		&pluralName,
+		&icon,
+		&color,
+		&entityType.Status,
+		&updatedBy,
 	)
 	if err != nil {
 		return nil, err
@@ -604,6 +647,10 @@ func scanGraphEntityType(row graphRowScanner) (*model.GraphEntityType, error) {
 	entityType.TitleProperty = titleProperty.String
 	entityType.Description = description.String
 	entityType.CreatedBy = createdBy.String
+	entityType.PluralName = pluralName.String
+	entityType.Icon = icon.String
+	entityType.Color = color.String
+	entityType.UpdatedBy = updatedBy.String
 
 	return &entityType, nil
 }
@@ -611,6 +658,7 @@ func scanGraphEntityType(row graphRowScanner) (*model.GraphEntityType, error) {
 func scanGraphRelationType(row graphRowScanner) (*model.GraphRelationType, error) {
 	var relationType model.GraphRelationType
 	var kindConfig, description, createdBy sql.NullString
+	var cardinality, updatedBy sql.NullString
 
 	err := row.Scan(
 		&relationType.ID,
@@ -626,6 +674,8 @@ func scanGraphRelationType(row graphRowScanner) (*model.GraphRelationType, error
 		&createdBy,
 		&relationType.CreatedAt,
 		&relationType.UpdatedAt,
+		&cardinality,
+		&updatedBy,
 	)
 	if err != nil {
 		return nil, err
@@ -633,6 +683,8 @@ func scanGraphRelationType(row graphRowScanner) (*model.GraphRelationType, error
 
 	relationType.Description = description.String
 	relationType.CreatedBy = createdBy.String
+	relationType.Cardinality = cardinality.String
+	relationType.UpdatedBy = updatedBy.String
 
 	if kindConfig.Valid {
 		relationType.KindConfig = &model.GraphRelationKindConfig{}
