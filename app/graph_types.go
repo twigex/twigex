@@ -9,6 +9,7 @@ import (
 	"errors"
 	"net/http"
 	"regexp"
+	"slices"
 	"strings"
 	"time"
 
@@ -63,7 +64,7 @@ func (a *App) GetGraphTypes(ctx context.Context, user model.User) (*model.GraphT
 	}
 
 	if a.canManageGraph(user) {
-		return &model.GraphTypes{EntityTypes: entityTypes, RelationTypes: relationTypes}, nil
+		return a.namedGraphTypes(ctx, entityTypes, relationTypes), nil
 	}
 
 	namesOnly := &model.GraphTypes{
@@ -86,6 +87,68 @@ func (a *App) GetGraphTypes(ctx context.Context, user model.User) (*model.GraphT
 	}
 
 	return namesOnly, nil
+}
+
+// namedGraphTypes copies the types with the dataset and field names behind
+// their IDs added, for the screen. A dataset or field that no longer exists
+// just gets no name; the list itself still loads.
+func (a *App) namedGraphTypes(ctx context.Context, storedEntityTypes []model.GraphEntityType, storedRelationTypes []model.GraphRelationType) *model.GraphTypes {
+	entityTypes := slices.Clone(storedEntityTypes)
+	relationTypes := slices.Clone(storedRelationTypes)
+
+	names := make(map[string]string)
+
+	fieldName := func(fieldID string) string {
+		if fieldID == "" {
+			return ""
+		}
+
+		name, known := names[fieldID]
+		if known {
+			return name
+		}
+
+		name, err := a.graphFieldName(ctx, fieldID)
+		if err != nil && !errors.Is(err, errGraphTypeBroken) {
+			tlog.Warnw("Failed to read a graph type's field name", "field_id", fieldID, "error", err)
+		}
+
+		names[fieldID] = name
+
+		return name
+	}
+
+	for i := range entityTypes {
+		if entityTypes[i].SourceID == "" {
+			continue
+		}
+
+		dataset, err := a.Store.Graph.GetDatasetByID(ctx, entityTypes[i].SourceID)
+		if err != nil && !errors.Is(err, sql.ErrNoRows) {
+			tlog.Warnw("Failed to read a graph type's dataset name", "dataset_id", entityTypes[i].SourceID, "error", err)
+		}
+
+		if err == nil {
+			entityTypes[i].SourceName = dataset.Name
+		}
+
+		entityTypes[i].KeyPropertyName = fieldName(entityTypes[i].KeyProperty)
+		entityTypes[i].TitlePropertyName = fieldName(entityTypes[i].TitleProperty)
+	}
+
+	for i := range relationTypes {
+		if relationTypes[i].KindConfig == nil {
+			continue
+		}
+
+		kindConfig := *relationTypes[i].KindConfig
+		kindConfig.PropertyName = fieldName(kindConfig.Property)
+		kindConfig.FromPropertyName = fieldName(kindConfig.FromProperty)
+
+		relationTypes[i].KindConfig = &kindConfig
+	}
+
+	return &model.GraphTypes{EntityTypes: entityTypes, RelationTypes: relationTypes}
 }
 
 func (a *App) CreateGraphEntityType(ctx context.Context, user model.User, input model.GraphEntityTypeInput) (*model.GraphEntityType, *model.AppError) {

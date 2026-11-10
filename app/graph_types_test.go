@@ -437,3 +437,53 @@ func TestEnsureGraphBuiltInTypesLeavesAUserTypeWithTheSameKeyAlone(t *testing.T)
 		t.Errorf("want the missing built-in reported, not the user's type used in its place")
 	}
 }
+
+func TestGetGraphTypesNamesTheSourcesForAdminsOnly(t *testing.T) {
+	g := newGraphTypesTestApp()
+
+	company, order := createCompanyAndOrderTypes(t, g)
+
+	_, appErr := g.app.CreateGraphRelationType(context.Background(), graphTypeAdmin, placesInput(company, order))
+	if appErr != nil {
+		t.Fatalf("CreateGraphRelationType: %v", appErr)
+	}
+
+	forAdmin, appErr := g.app.GetGraphTypes(context.Background(), graphTypeAdmin)
+	if appErr != nil {
+		t.Fatalf("GetGraphTypes: %v", appErr)
+	}
+
+	companyIndex := slices.IndexFunc(forAdmin.EntityTypes, func(entityType model.GraphEntityType) bool {
+		return entityType.ID == company.ID
+	})
+	named := forAdmin.EntityTypes[companyIndex]
+
+	if named.SourceName != "companies" || named.KeyPropertyName != "companies.key" || named.TitlePropertyName != "companies.name" {
+		t.Errorf("want the dataset and field names, got %+v", named)
+	}
+
+	placesIndex := slices.IndexFunc(forAdmin.RelationTypes, func(relationType model.GraphRelationType) bool {
+		return relationType.Key == "company_places_order"
+	})
+
+	if forAdmin.RelationTypes[placesIndex].KindConfig.PropertyName != "orders.company_id" {
+		t.Errorf("want the property name, got %+v", forAdmin.RelationTypes[placesIndex].KindConfig)
+	}
+
+	for _, stored := range g.graph.relationTypes {
+		if stored.KindConfig != nil && stored.KindConfig.PropertyName != "" {
+			t.Errorf("want the stored relation type left without names, got %+v", stored.KindConfig)
+		}
+	}
+
+	forMember, appErr := g.app.GetGraphTypes(context.Background(), graphTypeMember)
+	if appErr != nil {
+		t.Fatalf("GetGraphTypes for a member: %v", appErr)
+	}
+
+	for _, entityType := range forMember.EntityTypes {
+		if entityType.SourceName != "" || entityType.KeyPropertyName != "" {
+			t.Errorf("want no names for a member, got %+v", entityType)
+		}
+	}
+}

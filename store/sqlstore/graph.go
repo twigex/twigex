@@ -261,12 +261,19 @@ func (g *graphRepository) DeleteRelationType(ctx context.Context, id string) err
 	return err
 }
 
+// graphKindConfigValue saves the field IDs only, leaving out the names a
+// listing adds for the screen.
 func graphKindConfigValue(kindConfig *model.GraphRelationKindConfig) (any, error) {
 	if kindConfig == nil {
 		return nil, nil
 	}
 
-	raw, err := json.Marshal(kindConfig)
+	saved := model.GraphRelationKindConfig{
+		Property:     kindConfig.Property,
+		FromProperty: kindConfig.FromProperty,
+	}
+
+	raw, err := json.Marshal(saved)
 	if err != nil {
 		return nil, err
 	}
