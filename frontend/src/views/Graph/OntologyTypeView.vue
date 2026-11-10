@@ -59,6 +59,24 @@ SPDX-License-Identifier: AGPL-3.0-only
                             <span class="font-mono text-xs">{{ entityType.key }}</span>
                         </p>
                     </div>
+                    <div v-if="canEditType" class="flex shrink-0 gap-x-2">
+                        <BaseButton
+                            variant="secondary"
+                            size="small"
+                            :prepend-icon="PencilSquareIcon"
+                            @click="editing.editType(entityType)"
+                        >
+                            {{ t("common.button.edit") }}
+                        </BaseButton>
+                        <BaseButton
+                            variant="secondary"
+                            size="small"
+                            :prepend-icon="TrashIcon"
+                            @click="editing.askDelete('type', entityType)"
+                        >
+                            {{ t("common.button.delete") }}
+                        </BaseButton>
+                    </div>
                 </div>
 
                 <div class="border-b border-gray-200">
@@ -134,6 +152,18 @@ SPDX-License-Identifier: AGPL-3.0-only
                 </section>
 
                 <section v-else class="overflow-hidden rounded-xl bg-white ring-1 ring-gray-200">
+                    <div
+                        v-if="canAddRelationType"
+                        class="flex justify-end border-b border-gray-100 px-4 py-3"
+                    >
+                        <BaseButton
+                            size="small"
+                            :prepend-icon="PlusIcon"
+                            @click="editing.newRelationType(entityType.id)"
+                        >
+                            {{ t("graph.form.relation.new_title") }}
+                        </BaseButton>
+                    </div>
                     <p v-if="relations.length === 0" class="p-6 text-sm text-gray-500">
                         {{ t("graph.ontology.no_relation_types") }}
                     </p>
@@ -150,6 +180,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 </th>
                                 <th scope="col" class="px-4 py-3">
                                     {{ t("graph.ontology.column.kind") }}
+                                </th>
+                                <th v-if="editing.canEdit.value" scope="col" class="px-4 py-3">
+                                    <span class="sr-only">{{ t("graph.form.actions") }}</span>
                                 </th>
                             </tr>
                         </thead>
@@ -184,26 +217,84 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         {{ ontology.kindLabel(relation.relationType) }}
                                     </span>
                                 </td>
+                                <td
+                                    v-if="editing.canEdit.value"
+                                    class="whitespace-nowrap px-4 py-3 text-right text-sm font-medium"
+                                >
+                                    <template v-if="!relation.relationType.built_in">
+                                        <button
+                                            type="button"
+                                            class="text-indigo-600 hover:text-indigo-500"
+                                            @click="editing.editRelationType(relation.relationType)"
+                                        >
+                                            {{ t("common.button.edit") }}
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="ml-4 text-red-600 hover:text-red-500"
+                                            @click="
+                                                editing.askDelete('relation', relation.relationType)
+                                            "
+                                        >
+                                            {{ t("common.button.delete") }}
+                                        </button>
+                                    </template>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </section>
             </template>
         </div>
+
+        <TypeFormDialog
+            :open="editing.typeForm.value.open"
+            :entity-type="editing.typeForm.value.entityType"
+            @saved="editing.saved()"
+            @close="editing.closeForms()"
+        />
+        <RelationTypeFormDialog
+            :open="editing.relationTypeForm.value.open"
+            :relation-type="editing.relationTypeForm.value.relationType"
+            :entity-types="ontology.types.value.entity_types"
+            :from-type-id="editing.relationTypeForm.value.fromTypeId"
+            @saved="editing.saved()"
+            @close="editing.closeForms()"
+        />
+        <ConfirmDialog
+            :open="editing.deleting.value.open"
+            :title="t('graph.form.delete.title')"
+            :message="editing.deleteMessage.value"
+            :confirm-label="t('common.button.delete')"
+            @confirm="confirmDelete"
+            @close="editing.cancelDelete()"
+        />
     </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
-import { ChevronLeftIcon, LockClosedIcon } from "@heroicons/vue/20/solid";
+import {
+    ChevronLeftIcon,
+    LockClosedIcon,
+    PencilSquareIcon,
+    PlusIcon,
+    TrashIcon,
+} from "@heroicons/vue/20/solid";
 import { t } from "@/i18n/index.js";
 import { useOntology } from "@/composables/graph/useOntology.js";
 import { relationsOf } from "@/utils/graph/relations.js";
+import { useTypeEditing } from "@/composables/graph/useTypeEditing.js";
+import BaseButton from "@/components/BaseButton.vue";
+import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import TypeFormDialog from "@/components/Graph/TypeFormDialog.vue";
+import RelationTypeFormDialog from "@/components/Graph/RelationTypeFormDialog.vue";
 
 const route = useRoute();
 const router = useRouter();
 const ontology = useOntology();
+const editing = useTypeEditing();
 
 const loaded = ref(false);
 
@@ -285,6 +376,26 @@ const relations = computed(() => {
         ontology.typeByID.value,
     );
 });
+
+// Built-in types can't be changed, and relation types only join types that
+// read their entities from a dataset.
+const canEditType = computed(() => {
+    return editing.canEdit.value && !entityType.value.built_in;
+});
+
+const canAddRelationType = computed(() => {
+    return editing.canEdit.value && entityType.value.source === "dataset";
+});
+
+// Deleting the type itself leaves its page, which no longer exists.
+async function confirmDelete() {
+    const deletingType = editing.deleting.value.kind === "type";
+    const deleted = await editing.confirmDelete();
+
+    if (deleted && deletingType) {
+        router.push({ name: "graph-ontology" });
+    }
+}
 
 function showTab(tab) {
     router.replace({ query: { ...route.query, tab: tab } });

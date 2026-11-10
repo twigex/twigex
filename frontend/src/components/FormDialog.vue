@@ -34,10 +34,16 @@ SPDX-License-Identifier: AGPL-3.0-only
                         <DialogPanel
                             :class="[
                                 'relative w-full transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:p-6',
+                                scrollable
+                                    ? 'flex max-h-[calc(100vh-2rem)] flex-col sm:max-h-[calc(100vh-4rem)]'
+                                    : '',
                                 width,
                             ]"
                         >
-                            <form @submit.prevent="submit">
+                            <form
+                                :class="scrollable ? 'flex min-h-0 flex-1 flex-col' : ''"
+                                @submit.prevent="submit"
+                            >
                                 <DialogTitle
                                     as="h3"
                                     class="text-base font-semibold leading-6 text-gray-900"
@@ -45,7 +51,14 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     {{ title }}
                                 </DialogTitle>
 
-                                <div class="mt-4">
+                                <div
+                                    :class="[
+                                        scrollable
+                                            ? '-mx-1 min-h-0 flex-1 overflow-y-auto px-1 pb-1'
+                                            : '',
+                                        'mt-4',
+                                    ]"
+                                >
                                     <slot />
                                 </div>
 
@@ -106,6 +119,8 @@ const props = defineProps({
     destructive: { type: Boolean, default: false },
     width: { type: String, default: "sm:max-w-lg" },
     secondaryLabel: { type: String, default: "" },
+    // A long form scrolls inside, keeping the title and buttons in view.
+    scrollable: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["confirm", "close", "secondary"]);

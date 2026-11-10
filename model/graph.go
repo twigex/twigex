@@ -153,6 +153,22 @@ type GraphRelationTypeInput struct {
 	Cardinality  string `json:"cardinality"`
 }
 
+// GraphDatasetChoice is a dataset someone setting up types may choose, with
+// the fields of it they can see and may use as a key, name or property.
+type GraphDatasetChoice struct {
+	ID            string             `json:"id"`
+	Name          string             `json:"name"`
+	WorkspaceID   string             `json:"workspace_id"`
+	WorkspaceName string             `json:"workspace_name"`
+	Fields        []GraphFieldChoice `json:"fields"`
+}
+
+type GraphFieldChoice struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Title string `json:"title,omitempty"`
+}
+
 type GraphTypes struct {
 	EntityTypes   []GraphEntityType   `json:"entity_types"`
 	RelationTypes []GraphRelationType `json:"relation_types"`

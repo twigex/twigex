@@ -25,7 +25,9 @@ export function provideGraphTypes() {
         }
     }
 
-    const shared = { types: types, errorMessage: errorMessage, ready: read() };
+    // After a type is saved or deleted, the list is read again so every page
+    // and the sidebar show the change.
+    const shared = { types: types, errorMessage: errorMessage, ready: read(), reload: read };
 
     provide(GRAPH_TYPES, shared);
 

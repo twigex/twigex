@@ -16,6 +16,34 @@ const graphService = {
         return axios.get("/graph/types");
     },
 
+    getDatasetChoices() {
+        return axios.get("/graph/datasets");
+    },
+
+    createEntityType(input) {
+        return axios.post("/graph/entity-types", input);
+    },
+
+    updateEntityType(id, input) {
+        return axios.put(`/graph/entity-types/${encodeURIComponent(id)}`, input);
+    },
+
+    deleteEntityType(id) {
+        return axios.delete(`/graph/entity-types/${encodeURIComponent(id)}`);
+    },
+
+    createRelationType(input) {
+        return axios.post("/graph/relation-types", input);
+    },
+
+    updateRelationType(id, input) {
+        return axios.put(`/graph/relation-types/${encodeURIComponent(id)}`, input);
+    },
+
+    deleteRelationType(id) {
+        return axios.delete(`/graph/relation-types/${encodeURIComponent(id)}`);
+    },
+
     searchEntities(type, search, signal) {
         const path = `/graph/types/${encodeURIComponent(type)}/entities`;
 
