@@ -116,7 +116,7 @@ type graphBuiltInIDs struct {
 }
 
 func (a *App) loadGraphBuiltInIDs(ctx context.Context) (*graphBuiltInIDs, error) {
-	ontology, err := a.loadGraphOntology(ctx)
+	ontology, err := a.loadAllGraphTypes(ctx)
 	if err != nil {
 		return nil, err
 	}

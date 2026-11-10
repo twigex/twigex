@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/twigex/twigex/collimato"
 	"github.com/twigex/twigex/model"
 )
 
@@ -55,6 +56,31 @@ func (f *fakeTableEngine) Query(_ context.Context, _ string, query model.DataQue
 	}
 
 	return map[string]any{"data": data}, nil
+}
+
+// Meta describes each table with every column its rows hold visible.
+func (f *fakeTableEngine) Meta(_ context.Context, _ string) (*collimato.CubeCollection, error) {
+	collection := &collimato.CubeCollection{}
+
+	for name, rows := range f.tables {
+		cube := collimato.Cube{Name: name, Type: "cube"}
+		seen := make(map[string]bool)
+
+		for _, row := range rows {
+			for column := range row {
+				if seen[column] {
+					continue
+				}
+
+				seen[column] = true
+				cube.Dimensions = append(cube.Dimensions, collimato.Dimension{Name: column})
+			}
+		}
+
+		collection.Cubes = append(collection.Cubes, cube)
+	}
+
+	return collection, nil
 }
 
 func fakeRowMatches(row map[string]any, filters []model.QueryFilter) bool {
@@ -392,9 +418,9 @@ func TestSearchGraphEntitiesFindsByName(t *testing.T) {
 		t.Errorf("want no next page, got %q", found.Next)
 	}
 
-	outside, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "outsider"}, "company", "", "")
-	if appErr != nil || len(outside.Items) != 0 {
-		t.Errorf("want no results for a user outside the workspace, got %+v (%v)", outside, appErr)
+	_, appErr = g.app.SearchGraphEntities(context.Background(), model.User{ID: "outsider"}, "company", "", "")
+	if appErr == nil || appErr.ID != "graph.entity_not_found" {
+		t.Errorf("want the type unknown to a user outside the workspace, got %v", appErr)
 	}
 }
 
