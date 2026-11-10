@@ -204,7 +204,7 @@ async function runSearch() {
                     controller.signal,
                 );
 
-                return [entityType.key, response.data];
+                return [entityType.key, response.data.items];
             } catch {
                 anyFailed = true;
 

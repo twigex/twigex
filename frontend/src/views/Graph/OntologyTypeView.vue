@@ -59,23 +59,33 @@ SPDX-License-Identifier: AGPL-3.0-only
                             <span class="font-mono text-xs">{{ entityType.key }}</span>
                         </p>
                     </div>
-                    <div v-if="canEditType" class="flex shrink-0 gap-x-2">
-                        <BaseButton
-                            variant="secondary"
-                            size="small"
-                            :prepend-icon="PencilSquareIcon"
-                            @click="editing.editType(entityType)"
+                    <div class="flex shrink-0 flex-wrap justify-end gap-2">
+                        <RouterLink
+                            v-if="entityType.source === 'dataset'"
+                            :to="{ name: 'graph-entities', params: { key: entityType.key } }"
+                            class="inline-flex items-center gap-x-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                         >
-                            {{ t("common.button.edit") }}
-                        </BaseButton>
-                        <BaseButton
-                            variant="secondary"
-                            size="small"
-                            :prepend-icon="TrashIcon"
-                            @click="editing.askDelete('type', entityType)"
-                        >
-                            {{ t("common.button.delete") }}
-                        </BaseButton>
+                            <ListBulletIcon class="size-4 text-gray-400" aria-hidden="true" />
+                            {{ t("graph.entities.view") }}
+                        </RouterLink>
+                        <template v-if="canEditType">
+                            <BaseButton
+                                variant="secondary"
+                                size="small"
+                                :prepend-icon="PencilSquareIcon"
+                                @click="editing.editType(entityType)"
+                            >
+                                {{ t("common.button.edit") }}
+                            </BaseButton>
+                            <BaseButton
+                                variant="secondary"
+                                size="small"
+                                :prepend-icon="TrashIcon"
+                                @click="editing.askDelete('type', entityType)"
+                            >
+                                {{ t("common.button.delete") }}
+                            </BaseButton>
+                        </template>
                     </div>
                 </div>
 
@@ -277,6 +287,7 @@ import { ref, computed, onMounted } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import {
     ChevronLeftIcon,
+    ListBulletIcon,
     LockClosedIcon,
     PencilSquareIcon,
     PlusIcon,

@@ -32,6 +32,29 @@ SPDX-License-Identifier: AGPL-3.0-only
                 </li>
                 <li>
                     <RouterLink
+                        :to="{ name: 'graph-entities' }"
+                        :aria-current="isEntities ? 'page' : undefined"
+                        :class="[
+                            isEntities
+                                ? 'bg-gray-50 text-indigo-600'
+                                : 'text-gray-700 hover:bg-gray-50 hover:text-indigo-600',
+                            'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
+                        ]"
+                    >
+                        <ListBulletIcon
+                            :class="[
+                                isEntities
+                                    ? 'text-indigo-600'
+                                    : 'text-gray-400 group-hover:text-indigo-600',
+                                'h-6 w-6 shrink-0',
+                            ]"
+                            aria-hidden="true"
+                        />
+                        {{ t("graph.navigation.entities") }}
+                    </RouterLink>
+                </li>
+                <li>
+                    <RouterLink
                         :to="{ name: 'graph-ontology' }"
                         :aria-current="isOntology ? 'page' : undefined"
                         :class="[
@@ -76,7 +99,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script setup>
 import { computed } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { ShareIcon, Squares2X2Icon } from "@heroicons/vue/24/outline";
+import { ShareIcon, ListBulletIcon, Squares2X2Icon } from "@heroicons/vue/24/outline";
 import { t } from "@/i18n/index.js";
 
 defineProps({
@@ -93,6 +116,7 @@ defineProps({
 const route = useRoute();
 
 const isExplore = computed(() => route.name === "graph-explore");
+const isEntities = computed(() => route.name === "graph-entities");
 const isOntology = computed(() => {
     return route.name === "graph-ontology" || route.name === "graph-ontology-type";
 });

@@ -134,15 +134,18 @@ func (a *API) searchGraphEntities(w http.ResponseWriter, r *http.Request) {
 	}
 
 	entityType := mux.Vars(r)["type"]
-	search := r.URL.Query().Get("search")
 
-	entities, appErr := a.app.SearchGraphEntities(r.Context(), *user, entityType, search)
+	params := r.URL.Query()
+	search := params.Get("search")
+	after := params.Get("after")
+
+	page, appErr := a.app.SearchGraphEntities(r.Context(), *user, entityType, search, after)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
 
-	respondJSON(w, http.StatusOK, entities)
+	respondJSON(w, http.StatusOK, page)
 }
 
 func (a *API) getGraphDatasetChoices(w http.ResponseWriter, r *http.Request) {

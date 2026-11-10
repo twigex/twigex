@@ -2541,5 +2541,20 @@
     "graph.form.relation.read_from": "read from {field}",
     "graph.form.delete.title": "Delete?",
     "graph.form.delete.type_message": "Delete the entity type \"{name}\"? Its data stays where it is; only the type is removed.",
-    "graph.form.delete.relation_message": "Delete the relation type \"{name}\"? Its data stays where it is; only the relation type is removed."
+    "graph.form.delete.relation_message": "Delete the relation type \"{name}\"? Its data stays where it is; only the relation type is removed.",
+    "graph.entities.title": "Entities",
+    "graph.entities.description": "Every entity of a type, read live from its dataset. Pick one to see it on the graph.",
+    "graph.entities.no_types": "No entity types yet",
+    "graph.entities.no_types_help": "Entities come from entity types read from a dataset. Create one in Ontology.",
+    "graph.entities.open_ontology": "Open Ontology",
+    "graph.entities.type_not_found": "This entity type was not found.",
+    "graph.entities.type_details": "Type details",
+    "graph.entities.search": "Search by name",
+    "graph.entities.column.name": "Name",
+    "graph.entities.show_on_graph": "Show on graph",
+    "graph.entities.shown": "Shown: {count}",
+    "graph.entities.load_more": "Load more",
+    "graph.entities.none": "This type has no entities you can see.",
+    "graph.entities.none_found": "No entities match this name.",
+    "graph.entities.view": "View entities"
 }

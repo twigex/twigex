@@ -21,6 +21,12 @@ type graphSource interface {
 	relationPage(ctx context.Context, user model.User, typeKey, id, relationTypeKey, direction, after string) (*model.GraphRelationPage, *model.AppError)
 }
 
+// graphSearchableSource is a source whose entities can be listed and searched
+// by name, a page at a time.
+type graphSearchableSource interface {
+	search(ctx context.Context, user model.User, typeKey, search, after string) (*model.GraphEntityPage, *model.AppError)
+}
+
 // graphBuiltInSource serves Collimato's own types: datasets, their fields,
 // charts and dashboards.
 type graphBuiltInSource struct {
@@ -64,6 +70,10 @@ func (s graphDatasetSource) relations(ctx context.Context, user model.User, type
 
 func (s graphDatasetSource) relationPage(ctx context.Context, user model.User, typeKey, id, relationTypeKey, direction, after string) (*model.GraphRelationPage, *model.AppError) {
 	return s.app.dataRelationPage(ctx, user, s.ontology, typeKey, id, relationTypeKey, direction, after)
+}
+
+func (s graphDatasetSource) search(ctx context.Context, user model.User, typeKey, search, after string) (*model.GraphEntityPage, *model.AppError) {
+	return s.app.dataEntitySearch(ctx, user, s.ontology, typeKey, search, after)
 }
 
 // graphOntology is the graph's entity and relation types, read once for a
