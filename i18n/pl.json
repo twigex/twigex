@@ -1740,6 +1740,82 @@
     "translation": "Masz nowe powiadomienie"
   },
   {
+    "id": "email.notification.subject.default",
+    "translation": "Nowe powiadomienie z Twigex"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "Dodano nowy plik lub folder"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "Zmieniono nazwę pliku lub folderu"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Udostępniono Ci element"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "Usunięto plik lub folder"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "Przywrócono plik lub folder"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Twój plik został pobrany"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "Pobrano plik przez Twój link"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "Utworzono nowe zadanie"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "Usunięto projekt"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "Dodano Cię do projektu"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "Usunięto zadanie"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "Przypisano Ci zadanie"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "Zmienił się status Twojego zadania"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "Nowy komentarz do zadania"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "Wspomniano o Tobie na czacie"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "Zaplanowano spotkanie"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "Zmieniono spotkanie"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "Odwołano spotkanie"
+  },
+  {
     "id": "email.notification.action_open",
     "translation": "Otwórz"
   },

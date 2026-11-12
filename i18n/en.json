@@ -1800,6 +1800,82 @@
     "translation": "You have a new notification"
   },
   {
+    "id": "email.notification.subject.default",
+    "translation": "New notification from Twigex"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "A new file or folder was added"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "A file or folder was renamed"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Something was shared with you"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "A file or folder was deleted"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "A file or folder was restored"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Your file was downloaded"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "A file was downloaded through your link"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "A new task was created"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "A project was deleted"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "You were added to a project"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "A task was deleted"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "A task was assigned to you"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "The status of your task changed"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "New comment on a task"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "You were mentioned in Chat"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "A meeting was scheduled"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "A meeting was changed"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "A meeting was cancelled"
+  },
+  {
     "id": "email.notification.action_open",
     "translation": "Open"
   },

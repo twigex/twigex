@@ -1740,6 +1740,82 @@
     "translation": "Сізде жаңа хабарландыру бар"
   },
   {
+    "id": "email.notification.subject.default",
+    "translation": "Twigex-тен жаңа хабарландыру"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "Жаңа файл немесе қалта қосылды"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "Файл немесе қалта қайта аталды"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Сізбен бір нәрсе бөлісілді"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "Файл немесе қалта жойылды"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "Файл немесе қалта қалпына келтірілді"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Сіздің файлыңыз жүктелді"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "Сіздің сілтемеңіз арқылы файл жүктелді"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "Жаңа тапсырма жасалды"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "Жоба жойылды"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "Сіз жобаға қосылдыңыз"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "Тапсырма жойылды"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "Сізге тапсырма берілді"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "Тапсырмаңыздың күйі өзгерді"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "Тапсырмаға жаңа пікір"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "Сізді чатта атап өтті"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "Кездесу жоспарланды"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "Кездесу өзгертілді"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "Кездесу тоқтатылды"
+  },
+  {
     "id": "email.notification.action_open",
     "translation": "Ашу"
   },
