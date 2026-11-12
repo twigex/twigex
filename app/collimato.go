@@ -6,6 +6,8 @@ package app
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -1673,11 +1675,8 @@ func (a *App) GetCubeSchemaFiles(workspaceID string) ([]model.CubeSchemaFile, *m
 	return out, nil
 }
 
-// GetCubeSchemaVersion returns the latest modification time across a workspace's
-// cube and view files. The shared Cube.js server polls this via schemaVersion and
-// hot-reloads the data model whenever the value changes, so no restart is needed.
-func (a *App) GetCubeSchemaVersion(workspaceID string) (int64, *model.AppError) {
-	var version int64
+func (a *App) GetCubeSchemaVersion(workspaceID string) (string, *model.AppError) {
+	schemaFiles := []model.CollimatoWorkspaceFile{}
 
 	for _, fileType := range []string{model.CollimatoFileTypeCube, model.CollimatoFileTypeView} {
 		files, err := a.Store.Collimato.GetWorkspaceFiles(workspaceID, fileType)
@@ -1687,17 +1686,35 @@ func (a *App) GetCubeSchemaVersion(workspaceID string) (int64, *model.AppError) 
 				"file_type", fileType,
 				"error", err,
 			)
-			return 0, model.NewAppError("collimato.retrieval_failed", http.StatusInternalServerError)
+			return "", model.NewAppError("collimato.retrieval_failed", http.StatusInternalServerError)
 		}
 
-		for _, f := range files {
-			if f.UpdatedAt > version {
-				version = f.UpdatedAt
-			}
+		schemaFiles = append(schemaFiles, files...)
+	}
+
+	return schemaFingerprint(schemaFiles), nil
+}
+
+func schemaFingerprint(files []model.CollimatoWorkspaceFile) string {
+	sorted := slices.Clone(files)
+
+	slices.SortFunc(sorted, func(first, second model.CollimatoWorkspaceFile) int {
+		if first.FileType != second.FileType {
+			return strings.Compare(first.FileType, second.FileType)
+		}
+
+		return strings.Compare(first.Name, second.Name)
+	})
+
+	hash := sha256.New()
+
+	for _, file := range sorted {
+		for _, value := range []string{file.FileType, file.Name, file.Content} {
+			fmt.Fprintf(hash, "%d:%s", len(value), value)
 		}
 	}
 
-	return version, nil
+	return hex.EncodeToString(hash.Sum(nil))
 }
 
 // GetCubeConnection resolves the database connection a Cube.js dataSource maps to.
