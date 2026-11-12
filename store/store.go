@@ -591,6 +591,7 @@ type WorkspaceStore interface {
 	GetLinkedTableID(tableID, fieldName string) (string, error)
 	IsTableSingleSelect(tableID string) (bool, error)
 	IsOptionTableOf(ctx context.Context, tableID, optionTableID string) (bool, error)
+	GetOptionTableField(ctx context.Context, optionTableID string) (string, string, error)
 	GetKanbanStatusOptions(tableName string) ([]model.KanbanStatusOption, error)
 	GetTaskFieldValue(tableName, taskID, fieldName string) (string, error)
 	GetColumnNames(ctx context.Context, tableName string) ([]string, error)

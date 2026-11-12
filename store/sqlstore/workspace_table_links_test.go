@@ -338,6 +338,34 @@ func linkTableOf(t *testing.T, tableID, fieldName string) string {
 	return id
 }
 
+func TestAnOptionTableKnowsItsTableAndField(t *testing.T) {
+	w := seedLinkWorkspace(t)
+	ctx := context.Background()
+
+	own := createLinkTestTable(t, w, "own", "")
+	other := createLinkTestTable(t, w, "other", "")
+	createLinkTestField(t, w, own, "phase", "single select", "", false)
+	createLinkTestField(t, w, own, "to_other", "link", other, false)
+
+	for _, tc := range []struct {
+		name, optionTable, wantTable, wantField string
+	}{
+		{"the status options", linkTableOf(t, own, "status"), own, "status"},
+		{"the options of a select field added later", linkTableOf(t, own, "phase"), own, "phase"},
+		{"a link table, which holds no options", linkTableOf(t, own, "to_other"), "", ""},
+		{"an ordinary table", own, "", ""},
+	} {
+		table, field, err := w.GetOptionTableField(ctx, tc.optionTable)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if table != tc.wantTable || field != tc.wantField {
+			t.Errorf("%s: got table %q field %q, want table %q field %q", tc.name, table, field, tc.wantTable, tc.wantField)
+		}
+	}
+}
+
 func TestOnlyATablesOwnOptionTableCountsAsItsOptions(t *testing.T) {
 	w := seedLinkWorkspace(t)
 	ctx := context.Background()

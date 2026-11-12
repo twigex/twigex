@@ -1396,6 +1396,10 @@
     "translation": "Tej opcji statusu nie można zmienić nazwy."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "Tej opcji statusu nie można usunąć."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "Nie znaleziono pasującej relacji dla tego pola."
   },

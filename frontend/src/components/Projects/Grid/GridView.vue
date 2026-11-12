@@ -631,6 +631,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                         <button
                                                             v-if="
                                                                 isDialog &&
+                                                                canEditRow &&
                                                                 getHeaderType(colIndex)
                                                                     .header_name === 'name' &&
                                                                 !isProtectedStatus(colIndex, item)
@@ -901,7 +902,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                         </div>
                     </div>
 
-                    <div class="new-task-row-sticky">
+                    <div v-if="canAddRow" class="new-task-row-sticky">
                         <div :class="!isAddingTask ? 'grid-row empty-row' : 'grid-row'">
                             <div
                                 class="grid-item-text"
@@ -1437,9 +1438,18 @@ const userStore = useUserStore();
 const workspaceStore = useWorkspaceStore();
 const { loadTablePreset, storeTablePreset } = useTableFilters();
 const rolesStore = useWorkspaceRolesStore();
-const canEditRow = computed(() =>
-    rolesStore.canRowAction(props.isDialog ? dialogTableID.value : route.params.tid, "update_task"),
-);
+const canManageOptions = computed(() => rolesStore.canManageOptions(route.params.tid));
+const canAddRow = computed(() => !props.isSingleSelect || canManageOptions.value);
+const canEditRow = computed(() => {
+    if (props.isDialog && props.isSingleSelect) {
+        return canManageOptions.value;
+    }
+
+    return rolesStore.canRowAction(
+        props.isDialog ? dialogTableID.value : route.params.tid,
+        "update_task",
+    );
+});
 const canEditFields = computed(() => {
     const permissions = rolesStore.userPermissions;
 
