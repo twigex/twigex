@@ -1396,6 +1396,10 @@
     "translation": "Šo statusa opciju nevar pārdēvēt."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "Šo statusa opciju nevar dzēst."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "Šim laukam netika atrasta atbilstoša saistība."
   },

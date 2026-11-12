@@ -1396,6 +1396,10 @@
     "translation": "Бұл күй опциясының атауын өзгерту мүмкін емес."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "Бұл күй опциясын жою мүмкін емес."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "Бұл өріс үшін сәйкес байланыс табылмады."
   },
