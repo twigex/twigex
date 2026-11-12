@@ -229,6 +229,7 @@
     "channels.empty_state.description": "Бар арнаға қосылыңыз, тікелей хабарлама бастаңыз немесе жаңасын жасаңыз.",
     "channels.navigation.channels": "Арналар",
     "channels.navigation.direct_messages": "Тікелей хабарламалар",
+    "channels.navigation.archived": "Мұрағатталған",
     "channels.navigation.no_direct_messages": "Әзірге тікелей хабарламалар жоқ",
     "channels.navigation.add_channels": "Арналар қосу",
     "channels.navigation.menu.create_channel": "Арна жасау",

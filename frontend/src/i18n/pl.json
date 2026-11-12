@@ -229,6 +229,7 @@
     "channels.empty_state.description": "Dołącz do istniejącego kanału, rozpocznij wiadomość bezpośrednią lub utwórz nowy.",
     "channels.navigation.channels": "Kanały",
     "channels.navigation.direct_messages": "Wiadomości bezpośrednie",
+    "channels.navigation.archived": "Zarchiwizowane",
     "channels.navigation.no_direct_messages": "Brak wiadomości bezpośrednich",
     "channels.navigation.add_channels": "Dodaj kanały",
     "channels.navigation.menu.create_channel": "Utwórz kanał",

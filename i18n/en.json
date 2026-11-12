@@ -1981,7 +1981,7 @@
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": "Only public channels can be archived."
+    "translation": "Direct messages can't be archived."
   },
   {
     "id": "channel.delete_type_invalid",
