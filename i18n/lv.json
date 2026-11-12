@@ -1744,6 +1744,82 @@
     "translation": "Jums ir jauns paziņojums"
   },
   {
+    "id": "email.notification.subject.default",
+    "translation": "Jauns paziņojums no Twigex"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "Pievienots jauns fails vai mape"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "Fails vai mape tika pārdēvēta"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Ar jums kaut kas tika kopīgots"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "Fails vai mape tika izdzēsta"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "Fails vai mape tika atjaunota"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Jūsu fails tika lejupielādēts"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "Caur jūsu saiti tika lejupielādēts fails"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "Izveidots jauns uzdevums"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "Projekts tika dzēsts"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "Jūs tikāt pievienots projektam"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "Uzdevums tika dzēsts"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "Jums tika piešķirts uzdevums"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "Jūsu uzdevuma statuss mainījās"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "Jauns komentārs uzdevumam"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "Jūs pieminēja tērzēšanā"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "Ieplānota sapulce"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "Sapulce tika mainīta"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "Sapulce tika atcelta"
+  },
+  {
     "id": "email.notification.action_open",
     "translation": "Atvērt"
   },
