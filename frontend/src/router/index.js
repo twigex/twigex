@@ -766,7 +766,7 @@ router.beforeEach((to, from, next) => {
         return next({ path: "/" });
     }
 
-    if (to.meta.requireAdmin && userStore.user?.role !== "system_admin") {
+    if (to.meta.requireAdmin && userStore.user && userStore.user.role !== "system_admin") {
         return next({ name: "profile" });
     }
 
