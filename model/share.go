@@ -59,18 +59,19 @@ type Request struct {
 }
 
 type PublicFile struct {
-	ID            string
-	Name          string
-	Size          int64
-	Type          string
-	IsFolder      bool
-	Message       string
-	Children      []PublicFile
-	User          UserInfo
-	AllowView     bool
-	AllowDownload bool
-	AllowUpload   bool
-	AllowEdit     bool
+	ID                   string
+	Name                 string
+	Size                 int64
+	Type                 string
+	IsFolder             bool
+	Message              string
+	Children             []PublicFile
+	User                 UserInfo
+	AllowView            bool
+	AllowDownload        bool
+	AllowUpload          bool
+	AllowEdit            bool
+	DownloadLimitReached bool
 }
 
 type UserInfo struct {

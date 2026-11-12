@@ -135,7 +135,23 @@ func (s *shareRepository) IncrementAccessed(ctx context.Context, token string) e
 	return err
 }
 
-func (s *shareRepository) IncrementDownloaded(ctx context.Context, token string) error {
-	_, err := s.Db.ExecContext(ctx, `UPDATE external_share SET downloaded=downloaded+1, last_accessed_at=? WHERE share_token=?`, time.Now().Unix(), token)
-	return err
+func (s *shareRepository) CountDownloadIfAllowed(ctx context.Context, token string) (bool, error) {
+	result, err := s.Db.ExecContext(ctx,
+		`UPDATE external_share
+		 SET downloaded = COALESCE(downloaded, 0) + 1, last_accessed_at = ?
+		 WHERE share_token = ?
+		   AND (max_downloads = 0 OR COALESCE(downloaded, 0) < max_downloads)`,
+		time.Now().Unix(),
+		token,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	counted, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	return counted > 0, nil
 }

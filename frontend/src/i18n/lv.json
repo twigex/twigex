@@ -2203,6 +2203,7 @@
     "files.share_dialog.link.message_placeholder": "Pievienot ziņojumu, kas redzams saņēmējiem.",
     "public_share.loading": "Atver koplietoto saiti...",
     "public_share.error_title": "Saite nav pieejama",
+    "public_share.download_limit_reached": "Šī saite ir sasniegusi lejupielāžu limitu, tāpēc tās failus vairs nevar lejupielādēt.",
     "public_share.password_title": "Aizsargāta saite",
     "public_share.password_subtitle": "Ievadiet paroli, lai atvērtu šo saiti.",
     "public_share.password_placeholder": "Parole",
