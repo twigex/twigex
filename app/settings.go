@@ -286,47 +286,57 @@ func (a *App) UpdateChatSettings(user model.User, settings model.ChatSettings) *
 		return model.NewAppError("session.not_authorized", http.StatusForbidden)
 	}
 
-	if a.ConfigStore.EnvLocked.Video || a.ConfigStore.EnvLocked.GIF || a.ConfigStore.EnvLocked.LinkPreview {
+	locked := a.ConfigStore.EnvLocked
+	if locked.Video && locked.GIF && locked.LinkPreview {
 		return model.NewAppError("settings.env_locked", http.StatusForbidden)
 	}
 
 	encryptKey := *a.ConfigStore.Config.ServerSettings.AtRestEncryptKey
+	batch := map[string]string{}
 
-	batch := map[string]string{
-		"channel.enabled":       strconv.FormatBool(settings.VideoSettings.Enabled),
-		"channel.host":          settings.VideoSettings.Host,
-		"channel.link_previews": strconv.FormatBool(settings.LinkPreviewSettings.Enabled),
-		"channel.gif_enabled":   strconv.FormatBool(settings.GIFSettings.Enabled),
-	}
+	if !locked.Video {
+		batch["channel.enabled"] = strconv.FormatBool(settings.VideoSettings.Enabled)
+		batch["channel.host"] = settings.VideoSettings.Host
 
-	if settings.VideoSettings.Key != "" {
-		encryptedKey, err := crypto.Encrypt(encryptKey, settings.VideoSettings.Key)
-		if err != nil {
-			tlog.Errorw("Failed to encrypt Livekit key", "error", err)
-			return model.NewAppError("settings.encrypt_failed", http.StatusInternalServerError)
+		if settings.VideoSettings.Key != "" {
+			encryptedKey, err := crypto.Encrypt(encryptKey, settings.VideoSettings.Key)
+			if err != nil {
+				tlog.Errorw("Failed to encrypt Livekit key", "error", err)
+				return model.NewAppError("settings.encrypt_failed", http.StatusInternalServerError)
+			}
+
+			batch["channel.key"] = encryptedKey
 		}
 
-		batch["channel.key"] = encryptedKey
+		if settings.VideoSettings.Secret != "" {
+			encryptedSecret, err := crypto.Encrypt(encryptKey, settings.VideoSettings.Secret)
+			if err != nil {
+				tlog.Errorw("Failed to encrypt Livekit secret", "error", err)
+				return model.NewAppError("settings.encrypt_failed", http.StatusInternalServerError)
+			}
+
+			batch["channel.secret"] = encryptedSecret
+		}
 	}
 
-	if settings.VideoSettings.Secret != "" {
-		encryptedSecret, err := crypto.Encrypt(encryptKey, settings.VideoSettings.Secret)
-		if err != nil {
-			tlog.Errorw("Failed to encrypt Livekit secret", "error", err)
-			return model.NewAppError("settings.encrypt_failed", http.StatusInternalServerError)
-		}
-
-		batch["channel.secret"] = encryptedSecret
+	if !locked.LinkPreview {
+		batch["channel.link_previews"] = strconv.FormatBool(settings.LinkPreviewSettings.Enabled)
 	}
 
-	if settings.GIFSettings.APIKey != "" {
-		encryptedAPIKey, err := crypto.Encrypt(encryptKey, strings.TrimSpace(settings.GIFSettings.APIKey))
-		if err != nil {
-			tlog.Errorw("Failed to encrypt GIF API key", "error", err)
-			return model.NewAppError("settings.encrypt_failed", http.StatusInternalServerError)
-		}
+	newGIFKey := strings.TrimSpace(settings.GIFSettings.APIKey)
 
-		batch["channel.gif_api_key"] = encryptedAPIKey
+	if !locked.GIF {
+		batch["channel.gif_enabled"] = strconv.FormatBool(settings.GIFSettings.Enabled)
+
+		if newGIFKey != "" {
+			encryptedAPIKey, err := crypto.Encrypt(encryptKey, newGIFKey)
+			if err != nil {
+				tlog.Errorw("Failed to encrypt GIF API key", "error", err)
+				return model.NewAppError("settings.encrypt_failed", http.StatusInternalServerError)
+			}
+
+			batch["channel.gif_api_key"] = encryptedAPIKey
+		}
 	}
 
 	if err := a.Store.SystemSettings.UpdateBatch(batch); err != nil {
@@ -336,31 +346,40 @@ func (a *App) UpdateChatSettings(user model.User, settings model.ChatSettings) *
 		return model.NewAppError("settings.update_failed", http.StatusInternalServerError)
 	}
 
-	// Update in-memory config immediately
-	*a.ConfigStore.Config.ChannelSettings.Enabled = settings.VideoSettings.Enabled
-	*a.ConfigStore.Config.ChannelSettings.Host = settings.VideoSettings.Host
-	*a.ConfigStore.Config.ChannelSettings.LinkPreviews = settings.LinkPreviewSettings.Enabled
-	*a.ConfigStore.Config.ChannelSettings.KlipyGIF.Enabled = settings.GIFSettings.Enabled
+	channelSettings := a.ConfigStore.Config.ChannelSettings
 
-	if settings.VideoSettings.Key != "" {
-		*a.ConfigStore.Config.ChannelSettings.Key = settings.VideoSettings.Key
+	if !locked.Video {
+		*channelSettings.Enabled = settings.VideoSettings.Enabled
+		*channelSettings.Host = settings.VideoSettings.Host
+
+		if settings.VideoSettings.Key != "" {
+			*channelSettings.Key = settings.VideoSettings.Key
+		}
+
+		if settings.VideoSettings.Secret != "" {
+			*channelSettings.Secret = settings.VideoSettings.Secret
+		}
 	}
 
-	if settings.VideoSettings.Secret != "" {
-		*a.ConfigStore.Config.ChannelSettings.Secret = settings.VideoSettings.Secret
+	if !locked.LinkPreview {
+		*channelSettings.LinkPreviews = settings.LinkPreviewSettings.Enabled
 	}
 
-	if settings.GIFSettings.APIKey != "" {
-		*a.ConfigStore.Config.ChannelSettings.KlipyGIF.APIKey = strings.TrimSpace(settings.GIFSettings.APIKey)
-	}
+	if !locked.GIF {
+		*channelSettings.KlipyGIF.Enabled = settings.GIFSettings.Enabled
 
-	// Update GIF client in memory immediately
-	if settings.GIFSettings.Enabled {
-		key := strings.TrimSpace(settings.GIFSettings.APIKey)
-		if a.GIF == nil {
-			a.GIF = klipy.New(key)
-		} else {
-			a.GIF.APIKey = key
+		if newGIFKey != "" {
+			*channelSettings.KlipyGIF.APIKey = newGIFKey
+		}
+
+		if settings.GIFSettings.Enabled {
+			savedKey := *channelSettings.KlipyGIF.APIKey
+
+			if a.GIF == nil {
+				a.GIF = klipy.New(savedKey)
+			} else {
+				a.GIF.APIKey = savedKey
+			}
 		}
 	}
 
