@@ -736,11 +736,23 @@ func (a *App) officeEditableFile(token *jwt.Token, fileID string) (*model.File, 
 		return nil, appErr
 	}
 
+	if !isOfficeDocument(file) {
+		return nil, model.NewAppError("file.not_found", http.StatusNotFound)
+	}
+
 	if !file.AccessLevel.CanEdit() {
 		return nil, model.NewAppError("office.readonly", http.StatusForbidden)
 	}
 
 	return file, nil
+}
+
+func isOfficeDocument(file *model.File) bool {
+	if file == nil || file.IsFolder {
+		return false
+	}
+
+	return file.Type != "cloud#drive"
 }
 
 // recordGuestOfficeEdit logs a public-link edit. Attributed to the owner (the
@@ -771,7 +783,7 @@ func (a *App) openCollaboraFile(fileID string, user model.User, wopiApp string) 
 			return nil, appErr
 		}
 
-		if file == nil {
+		if !isOfficeDocument(file) {
 			return nil, model.NewAppError("file.not_found", http.StatusNotFound)
 		}
 	case "chat":
@@ -813,7 +825,7 @@ func (a *App) openEuroOfficeFile(fileID string, user model.User, wopiApp string)
 			return nil, appErr
 		}
 
-		if file == nil {
+		if !isOfficeDocument(file) {
 			return nil, model.NewAppError("file.not_found", http.StatusNotFound)
 		}
 

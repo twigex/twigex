@@ -580,6 +580,11 @@ func (a *App) CreateDocument(user model.User, d model.FileCrateRequest) (*model.
 		return nil, appErr
 	}
 
+	appErr = requireEditAccess(file)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	owner := newFileOwner(*file, user)
 
 	var src string
@@ -727,6 +732,11 @@ func (a *App) CreateFolder(user model.User, name string, id string) (*model.File
 		return nil, appErr
 	}
 
+	appErr = requireEditAccess(file)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	owner := newFileOwner(*file, user)
 
 	hasSpace, err := a.ownerHasSpace(owner, user, 0)
@@ -803,19 +813,24 @@ func (a *App) GetFileToDownload(user model.User, id string) (*model.File, *model
 	return file, nil
 }
 
-func (a *App) MoveFile(ctx context.Context, user model.User, fileIDS []string, target string) (*model.MoveFileResult, *model.AppError) {
-	targetDir, err := a.Store.File.Get(target)
-	if err != nil {
-		tlog.Errorw("Failed to retrieve target directory",
-			"target_id", target,
-			"user_id", user.ID,
-			"error", err,
-		)
-		return nil, model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
+func (a *App) moveTarget(target string, user model.User) (*model.File, *model.AppError) {
+	targetDir, appErr := a.HasPermission(target, user)
+	if appErr != nil {
+		return nil, appErr
 	}
 
-	if targetDir == nil {
-		return nil, model.NewAppError("file.not_found", http.StatusNotFound)
+	appErr = requireEditAccess(targetDir)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	return targetDir, nil
+}
+
+func (a *App) MoveFile(ctx context.Context, user model.User, fileIDS []string, target string) (*model.MoveFileResult, *model.AppError) {
+	targetDir, appErr := a.moveTarget(target, user)
+	if appErr != nil {
+		return nil, appErr
 	}
 
 	isDifferentDisk := false
@@ -853,17 +868,9 @@ func (a *App) MoveFile(ctx context.Context, user model.User, fileIDS []string, t
 }
 
 func (a *App) MoveFileWithinDisk(ctx context.Context, user model.User, fileIDS []string, target string) (*model.FileMove, *model.AppError) {
-	targetDir, err := a.Store.File.Get(target)
-	if err != nil {
-		tlog.Errorw("Failed to retrieve target directory",
-			"target_id", target,
-			"error", err,
-		)
-		return nil, model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
-	}
-
-	if targetDir == nil {
-		return nil, model.NewAppError("file.not_found", http.StatusNotFound)
+	targetDir, appErr := a.moveTarget(target, user)
+	if appErr != nil {
+		return nil, appErr
 	}
 
 	fileMove := model.FileMove{
@@ -911,6 +918,11 @@ func (a *App) MoveFileWithinDisk(ctx context.Context, user model.User, fileIDS [
 		}
 
 		if user.ID != file.Owner {
+			appErr = requireEditAccess(file)
+			if appErr != nil {
+				return nil, appErr
+			}
+
 			allowed, err := a.Store.File.MoveAllowedWithinShare(ctx, user.ID, v, targetDir.ID)
 			if err != nil {
 				tlog.Errorw("Failed to authorize shared move",
@@ -972,7 +984,7 @@ func (a *App) MoveFileWithinDisk(ctx context.Context, user model.User, fileIDS [
 		})
 	}
 
-	if err = a.Store.File.UpdateParentID(rootIDS, subfileIDS, targetDir.ID, targetDir.Storage); err != nil {
+	if err := a.Store.File.UpdateParentID(rootIDS, subfileIDS, targetDir.ID, targetDir.Storage); err != nil {
 		tlog.Errorw("Failed to update file parent IDs",
 			"target_id", targetDir.ID,
 			"error", err,
@@ -984,7 +996,7 @@ func (a *App) MoveFileWithinDisk(ctx context.Context, user model.User, fileIDS [
 }
 
 func (a *App) enqueueMoveFileJob(ctx context.Context, user model.User, fileIDS []string, target string) (*model.Job, *model.AppError) {
-	targetDir, appErr := a.HasPermission(target, user)
+	targetDir, appErr := a.moveTarget(target, user)
 	if appErr != nil {
 		return nil, appErr
 	}
@@ -1397,6 +1409,10 @@ func (a *App) DeleteFile(user model.User, id []string) *model.AppError {
 			return model.NewAppError("file.locked", http.StatusForbidden)
 		}
 
+		if file.Type == "cloud#drive" && file.IsOwner(user.ID) {
+			return model.NewAppError("file.forbidden", http.StatusForbidden)
+		}
+
 		if file.IsOwner(user.ID) {
 			if file.IsFolder {
 				subFiles, err := a.Store.File.GetSubFilesByFolder(file.ID, file.Storage)
@@ -1429,12 +1445,22 @@ func (a *App) DeleteFile(user model.User, id []string) *model.AppError {
 				return appErr
 			}
 		} else {
+			action, appErr := a.nonOwnerDeleteAction(user, *file)
+			if appErr != nil {
+				return appErr
+			}
+
+			if action != removeFromSharedItems {
+				return model.NewAppError("file.forbidden", http.StatusForbidden)
+			}
+
 			if err := a.Store.File.RemoveUserFromShare(file.ID, user.ID); err != nil {
 				tlog.Errorw("Failed to remove user from shared file",
 					"file_id", file.ID,
 					"user_id", user.ID,
 					"error", err,
 				)
+				return model.NewAppError("file.delete_failed", http.StatusInternalServerError)
 			}
 		}
 	}
@@ -1542,7 +1568,8 @@ func (a *App) Restore(user model.User, id []string) *model.AppError {
 			continue
 		}
 
-		if f == nil {
+		restored := f != nil && f.Owner == user.ID && f.DeletedAt == 0
+		if !restored {
 			continue
 		}
 
@@ -1558,69 +1585,56 @@ func (a *App) Restore(user model.User, id []string) *model.AppError {
 }
 
 func (a *App) Trash(user model.User, IDS []string) *model.AppError {
-	files, err := a.Store.File.GetByIDs(user, IDS)
-	if err != nil {
-		tlog.Errorw("Failed to retrieve files",
-			"user_id", user.ID,
-			"error", err,
-		)
-		return model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
+	files, appErr := a.filesToTrash(user, IDS)
+	if appErr != nil {
+		return appErr
 	}
 
-	if files == nil {
-		return model.NewAppError("file.not_found", http.StatusNotFound)
-	}
-
-	filesToTrash := make([]model.File, 0)
-	subFiles := make([]model.File, 0)
+	trashByOwner := map[string][]model.File{}
+	subFilesByOwner := map[string][]model.File{}
 	filesToUnshare := make([]model.File, 0)
 
 	for _, v := range files {
-		if v.IsOwner(user.ID) {
-			if v.IsLocked() {
-				return model.NewAppError("file.locked", http.StatusForbidden)
+		if !v.IsOwner(user.ID) {
+			action, appErr := a.nonOwnerDeleteAction(user, v)
+			if appErr != nil {
+				return appErr
 			}
 
-			filesToTrash = append(filesToTrash, v)
-			if v.IsFolder {
-				f, err := a.Store.File.GetSubFilesByFolder(v.ID, v.Storage)
-				if err != nil {
-					tlog.Errorw("Failed to retrieve subfiles for folder",
-						"file_id", v.ID,
-						"error", err,
-					)
-					return model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
-				}
-
-				for _, sf := range f {
-					if sf.ID != v.ID { // exclude the parent folder itself
-						// Reject if a descendant is locked (mid-edit or held by a
-						// running job like a cross-disk move): skipping strands a
-						// live file under a trashed folder, forcing it corrupts
-						// the lock holder.
-						if sf.IsLocked() {
-							return model.NewAppError("file.locked", http.StatusForbidden)
-						}
-
-						subFiles = append(subFiles, sf)
-					}
-				}
+			if action == removeFromSharedItems {
+				filesToUnshare = append(filesToUnshare, v)
+				continue
 			}
-		} else {
-			filesToUnshare = append(filesToUnshare, v)
 		}
+
+		if v.Type == "cloud#drive" {
+			return model.NewAppError("file.forbidden", http.StatusForbidden)
+		}
+
+		if v.IsLocked() {
+			return model.NewAppError("file.locked", http.StatusForbidden)
+		}
+
+		subFiles, appErr := a.unlockedSubFiles(v)
+		if appErr != nil {
+			return appErr
+		}
+
+		trashByOwner[v.Owner] = append(trashByOwner[v.Owner], v)
+		subFilesByOwner[v.Owner] = append(subFilesByOwner[v.Owner], subFiles...)
 	}
 
-	if len(filesToTrash) > 0 {
-		if err = a.Store.File.Trash(user.ID, filesToTrash, subFiles); err != nil {
+	for owner, ownerFiles := range trashByOwner {
+		if err := a.Store.File.Trash(owner, ownerFiles, subFilesByOwner[owner]); err != nil {
 			tlog.Errorw("Failed to trash files",
 				"user_id", user.ID,
+				"owner_id", owner,
 				"error", err,
 			)
 			return model.NewAppError("file.delete_failed", http.StatusInternalServerError)
 		}
 
-		for _, v := range filesToTrash {
+		for _, v := range ownerFiles {
 			a.RecordActivity(user.ID, model.AppFiles, model.ActivityFileDelete, v.Parent, v.ID, map[string]any{
 				"name": v.DisplayName,
 				"type": v.Type,
@@ -1638,31 +1652,109 @@ func (a *App) Trash(user model.User, IDS []string) *model.AppError {
 			)
 			return model.NewAppError("file.delete_failed", http.StatusInternalServerError)
 		}
-
-		if v.IsFolder {
-			f, err := a.Store.File.GetSubFilesByFolder(v.ID, v.Storage)
-			if err != nil {
-				tlog.Errorw("Failed to retrieve subfiles for folder",
-					"file_id", v.ID,
-					"error", err,
-				)
-				return model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
-			}
-
-			for i := range f {
-				if err := a.Store.File.RemoveUserFromShare(f[i].ID, user.ID); err != nil {
-					tlog.Errorw("Failed to remove user from shared subfile",
-						"file_id", f[i].ID,
-						"user_id", user.ID,
-						"error", err,
-					)
-					return model.NewAppError("file.delete_failed", http.StatusInternalServerError)
-				}
-			}
-		}
 	}
 
 	return nil
+}
+
+func (a *App) filesToTrash(user model.User, IDS []string) ([]model.File, *model.AppError) {
+	files := []model.File{}
+
+	for _, id := range IDS {
+		alreadyListed := slices.ContainsFunc(files, func(f model.File) bool { return f.ID == id })
+		if alreadyListed {
+			continue
+		}
+
+		file, appErr := a.HasPermission(id, user)
+		if appErr != nil {
+			return nil, appErr
+		}
+
+		if file.DeletedAt != 0 {
+			return nil, model.NewAppError("file.not_found", http.StatusNotFound)
+		}
+
+		files = append(files, *file)
+	}
+
+	if len(files) == 0 {
+		return nil, model.NewAppError("file.not_found", http.StatusNotFound)
+	}
+
+	return files, nil
+}
+
+// unlockedSubFiles returns everything inside a folder, refusing when any of it
+// is locked (mid-edit or held by a running job like a cross-disk move):
+// skipping strands a live file under a trashed folder, forcing it corrupts the
+// lock holder.
+func (a *App) unlockedSubFiles(folder model.File) ([]model.File, *model.AppError) {
+	if !folder.IsFolder {
+		return []model.File{}, nil
+	}
+
+	all, err := a.Store.File.GetSubFilesByFolder(folder.ID, folder.Storage)
+	if err != nil {
+		tlog.Errorw("Failed to retrieve subfiles for folder",
+			"file_id", folder.ID,
+			"error", err,
+		)
+		return nil, model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
+	}
+
+	subFiles := []model.File{}
+
+	for _, sf := range all {
+		if sf.ID == folder.ID {
+			continue
+		}
+
+		if sf.IsLocked() {
+			return nil, model.NewAppError("file.locked", http.StatusForbidden)
+		}
+
+		subFiles = append(subFiles, sf)
+	}
+
+	return subFiles, nil
+}
+
+type nonOwnerDelete int
+
+const (
+	removeFromSharedItems nonOwnerDelete = iota
+	moveToOwnersTrash
+)
+
+func (a *App) nonOwnerDeleteAction(user model.User, file model.File) (nonOwnerDelete, *model.AppError) {
+	ctx, cancel := a.dbCtx(context.Background())
+	defer cancel()
+
+	shareTypes, err := a.Store.File.GetDirectShareTypes(ctx, user.ID, file.ID)
+	if err != nil {
+		tlog.Errorw("Failed to check how a file is shared",
+			"file_id", file.ID,
+			"user_id", user.ID,
+			"error", err,
+		)
+		return 0, model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
+	}
+
+	if slices.Contains(shareTypes, model.SHARE_TYPE_USER) {
+		return removeFromSharedItems, nil
+	}
+
+	if slices.Contains(shareTypes, model.SHARE_TYPE_GROUP) {
+		return 0, model.NewAppError("file.forbidden", http.StatusForbidden)
+	}
+
+	appErr := requireEditAccess(&file)
+	if appErr != nil {
+		return 0, appErr
+	}
+
+	return moveToOwnersTrash, nil
 }
 
 func (a *App) StartUploadSession(
@@ -1692,6 +1784,11 @@ func (a *App) StartUploadSession(
 	}
 
 	parentFile, appErr := a.HasPermission(parentID, user)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	appErr = requireEditAccess(parentFile)
 	if appErr != nil {
 		return nil, appErr
 	}
@@ -1765,6 +1862,11 @@ func (a *App) uploadSingleFile(
 	ctx := r.Context()
 
 	parentFile, appErr := a.HasPermission(r.FormValue("parent_id"), user)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	appErr = requireEditAccess(parentFile)
 	if appErr != nil {
 		return nil, appErr
 	}
@@ -2162,6 +2264,11 @@ func (a *App) finishUpload(
 		return nil, appErr
 	}
 
+	appErr = requireEditAccess(parentFile)
+	if appErr != nil {
+		return nil, appErr
+	}
+
 	owner := newFileOwner(*parentFile, user)
 	if hasSpace, err := a.ownerHasSpace(owner, user, session.TotalSize); err != nil || !hasSpace {
 		if err := a.FileStorageObjects[session.Storage].RemoveFile(r.Context(), completePath); err != nil {
@@ -2288,6 +2395,11 @@ func (a *App) createImageThumbnail(ctx context.Context, file model.File) error {
 
 func (a *App) Rename(user model.User, id string, newName string) *model.AppError {
 	file, appErr := a.HasPermission(id, user)
+	if appErr != nil {
+		return appErr
+	}
+
+	appErr = requireEditAccess(file)
 	if appErr != nil {
 		return appErr
 	}

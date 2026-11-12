@@ -91,6 +91,10 @@ func (a *App) CreateLink(ctx context.Context, user model.User, req model.Request
 		return nil, appErr
 	}
 
+	if file.Type == "cloud#drive" {
+		return nil, model.NewAppError("file.share_forbidden", http.StatusForbidden)
+	}
+
 	if file.Owner != user.ID && !file.AccessLevel.CanShare() {
 		return nil, model.NewAppError("file.share_forbidden", http.StatusForbidden)
 	}

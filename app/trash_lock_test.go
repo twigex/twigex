@@ -24,16 +24,6 @@ type fakeTrashFileStore struct {
 
 func (f *fakeTrashFileStore) Get(id string) (*model.File, error) { return f.byID[id], nil }
 
-func (f *fakeTrashFileStore) GetByIDs(_ model.User, ids []string) ([]model.File, error) {
-	out := []model.File{}
-	for _, id := range ids {
-		if v := f.byID[id]; v != nil {
-			out = append(out, *v)
-		}
-	}
-	return out, nil
-}
-
 func (f *fakeTrashFileStore) GetSubFilesByFolder(folderID, _ string) ([]model.File, error) {
 	subs := f.subtree[folderID]
 	return subs, nil

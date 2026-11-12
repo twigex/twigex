@@ -22,6 +22,10 @@ func (a *App) Share(user model.User, req model.FileShare) (*model.ShareResponse,
 		return nil, appErr
 	}
 
+	if f.Type == "cloud#drive" {
+		return nil, model.NewAppError("file.share_forbidden", http.StatusForbidden)
+	}
+
 	if f.Owner != user.ID && !f.AccessLevel.CanShare() {
 		return nil, model.NewAppError("file.share_forbidden", http.StatusForbidden)
 	}

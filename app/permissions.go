@@ -26,10 +26,6 @@ func (a *App) HasPermission(fileID string, user model.User) (*model.File, *model
 		return nil, model.NewAppError("file.not_found", http.StatusNotFound)
 	}
 
-	if file.Type == "cloud#drive" {
-		return file, nil
-	}
-
 	if file.Owner == user.ID {
 		file.AccessLevel = model.AccessManager
 		return file, nil
@@ -69,6 +65,14 @@ func (a *App) HasPermission(fileID string, user model.User) (*model.File, *model
 	}
 
 	return file, nil
+}
+
+func requireEditAccess(file *model.File) *model.AppError {
+	if !file.AccessLevel.CanEdit() {
+		return model.NewAppError("file.forbidden", http.StatusForbidden)
+	}
+
+	return nil
 }
 
 func (a *App) CollimatoHasPermissionToFields(user model.User, workspaceID string, query *model.DataQuery) (bool, *model.AppError) {
