@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/twigex/twigex/model"
@@ -203,6 +204,11 @@ func (a *API) downloadPublicFile(w http.ResponseWriter, r *http.Request) {
 
 	file, appErr := a.app.PublicDownloadTarget(r.Context(), token, childID, publicAccessToken(r, token))
 	if appErr != nil {
+		if isPageNavigation(r) {
+			http.Redirect(w, r, "/share/"+url.PathEscape(token), http.StatusSeeOther)
+			return
+		}
+
 		respondAppError(w, r, appErr)
 		return
 	}
@@ -351,4 +357,12 @@ func publicAccessToken(r *http.Request, token string) string {
 	}
 
 	return c.Value
+}
+
+func isPageNavigation(r *http.Request) bool {
+	if r.Header.Get("Sec-Fetch-Mode") == "navigate" {
+		return true
+	}
+
+	return strings.Contains(r.Header.Get("Accept"), "text/html")
 }
