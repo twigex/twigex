@@ -262,6 +262,7 @@ type FileStore interface {
 	GetShared(userID string) ([]model.File, error)
 	UpdateSize(size int64, fileID string) error
 	RemoveUserFromShare(fileID string, userID string) error
+	GetDirectShareTypes(ctx context.Context, userID string, fileID string) ([]int, error)
 	RemoveGroupFromShare(ctx context.Context, fileID, groupID string) error
 	GetRecents(ctx context.Context, userID string) ([]model.File, error)
 	UpdateUserPermission(p model.FileSharePatch) error
