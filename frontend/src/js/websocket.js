@@ -545,12 +545,12 @@ function handlePresence(msg) {
 function handleChannelUpdate(msg) {
     for (let i = 0; i < channelsStore.channels.length; i++) {
         if (channelsStore.channels[i].id == msg.data.channel.id) {
-            channelsStore.channels[i] = msg.data.channel;
+            channelsStore.channels[i] = { ...channelsStore.channels[i], ...msg.data.channel };
 
             const current = getCurrentChannel(route.params.chatId);
 
             if (current && current.id == msg.data.channel.id) {
-                channelsStore.setCurrentChannel(msg.data.channel);
+                channelsStore.setCurrentChannel(channelsStore.channels[i]);
             }
 
             break;

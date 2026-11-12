@@ -2001,7 +2001,7 @@
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": "Arhivēt var tikai publiskus kanālus."
+    "translation": "Tiešās ziņas nevar arhivēt."
   },
   {
     "id": "channel.delete_type_invalid",

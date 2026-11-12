@@ -193,7 +193,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                     </section>
 
                     <SectionCard
-                        v-if="can('archive_channels') || can('delete_channels')"
+                        v-if="can('archive_channels') || (isPublic && can('delete_channels'))"
                         :title="t('settings.channel_settings.actions.title')"
                     >
                         <div class="divide-y divide-gray-100">
@@ -237,7 +237,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                             </div>
 
                             <div
-                                v-if="can('delete_channels')"
+                                v-if="isPublic && can('delete_channels')"
                                 class="flex items-center justify-between gap-x-6 px-4 py-3"
                             >
                                 <div>
@@ -311,6 +311,8 @@ import DropdownMenu from "@/components/DropdownMenu.vue";
 import chatService from "@/services/chatService";
 import { usePermissions } from "@/composables/usePermissions";
 import { useAlertStore } from "@/store/alerts";
+import { extractErrorMessage } from "@/utils/errors";
+import { channelTypes } from "@/constants/channels";
 import DeleteChannelDialog from "@/components/Chat/Dialogs/DeleteChannelDialog.vue";
 import SectionCard from "@/components/SectionCard.vue";
 import ArchiveChannelDialog from "@/components/Chat/Dialogs/ArchiveChannelDialog.vue";
@@ -328,24 +330,35 @@ const channel = ref(null);
 const deleteChannelDialog = ref(false);
 const archiveDialog = ref(false);
 const archived = computed(() => !!channel.value?.deleted);
+const isPublic = computed(() => channel.value?.type === channelTypes.Public);
 
 function setArchivedAt(at) {
     channel.value.deleted = at;
     oldChannel.value.deleted = at;
 }
 
+function showError(error) {
+    useAlertStore().showError(extractErrorMessage(error));
+}
+
 function confirmArchive() {
     if (channel.value.deleted) {
-        chatService.unarchiveChannel(channel.value.id).then(() => {
-            setArchivedAt(0);
-        });
+        chatService
+            .unarchiveChannel(channel.value.id)
+            .then(() => {
+                setArchivedAt(0);
+            })
+            .catch(showError);
 
         return;
     }
 
-    chatService.archiveChannel(channel.value.id).then(() => {
-        setArchivedAt(Math.floor(Date.now() / 1000));
-    });
+    chatService
+        .archiveChannel(channel.value.id)
+        .then(() => {
+            setArchivedAt(Math.floor(Date.now() / 1000));
+        })
+        .catch(showError);
 }
 
 const { can } = usePermissions();
@@ -353,10 +366,13 @@ const { can } = usePermissions();
 // Deleting archives the channel and hands the rest to a job, so the row is
 // still listed, as archived, until that finishes.
 function confirmDeleteChannel() {
-    chatService.deleteChannel(channel.value.id).then(() => {
-        useAlertStore().showSuccess(t.value("settings.channel_settings.delete.started"));
-        router.push({ name: "channels" });
-    });
+    chatService
+        .deleteChannel(channel.value.id)
+        .then(() => {
+            useAlertStore().showSuccess(t.value("settings.channel_settings.delete.started"));
+            router.push({ name: "channels" });
+        })
+        .catch(showError);
 }
 
 // Trigger a lazy load so member names resolve in the list.

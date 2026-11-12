@@ -5,6 +5,8 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import chatService from "@/services/chatService";
 import { useChannelsStore } from "@/store/channels";
+import { useAlertStore } from "@/store/alerts";
+import { extractErrorMessage } from "@/utils/errors";
 
 export function useChannelManagement() {
     const router = useRouter();
@@ -59,12 +61,18 @@ export function useChannelManagement() {
         channelToArchive.value = null;
         if (!channel) return;
 
-        chatService.archiveChannel(channel.id).then(() => {
-            channelsStore.channels = channelsStore.channels.filter((c) => c.id !== channel.id);
-            if (channelsStore.currentChannel?.id === channel.id) {
-                router.push({ name: "chat" });
-            }
-        });
+        chatService
+            .archiveChannel(channel.id)
+            .then(() => {
+                const archived = channelsStore.channels.find((c) => c.id === channel.id);
+
+                if (archived) {
+                    archived.deleted = Math.floor(Date.now() / 1000);
+                }
+            })
+            .catch((error) => {
+                useAlertStore().showError(extractErrorMessage(error));
+            });
     }
 
     function leaveChannel(channel) {

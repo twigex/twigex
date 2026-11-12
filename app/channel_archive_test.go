@@ -46,6 +46,14 @@ func (f *fakeArchiveChannelStore) UpdateArchived(_ context.Context, _ string, ar
 	return nil
 }
 
+type fakeArchiveUserStore struct {
+	store.UserStore
+}
+
+func (f fakeArchiveUserStore) Get(string) (*model.User, error) {
+	return nil, nil
+}
+
 type fakeArchiveRoleStore struct {
 	store.RoleStore
 	permissions []string
@@ -62,6 +70,7 @@ func archiveApp(channel model.Channel, members []model.ChannelMember, perms ...s
 		Store: store.Store{
 			Channels: s,
 			Roles:    fakeArchiveRoleStore{permissions: perms},
+			User:     fakeArchiveUserStore{},
 		},
 		ConfigStore: config.ConfigStore{
 			Config: &model.ServerConfig{
@@ -264,5 +273,37 @@ func TestChangeUserRolePromotesADirectMember(t *testing.T) {
 
 	if appErr := a.ChangeUserRole(userWith(channelAdminID), archiveChannelID, plainMemberID, model.ChannelRoleAdmin); appErr != nil {
 		t.Fatalf("a direct member must be promotable, got %v", appErr)
+	}
+}
+
+func TestChannelAdminCanArchiveAPrivateChannel(t *testing.T) {
+	private := openChannel()
+	private.Type = model.ChannelTypePrivate
+
+	a, s := archiveApp(private, adminMembers())
+
+	appErr := a.ArchiveChannel(t.Context(), userWith(channelAdminID), archiveChannelID)
+	if appErr != nil {
+		t.Fatalf("want the private channel archived, got %v", appErr)
+	}
+
+	if !s.archiveSet || s.archivedTo == 0 {
+		t.Error("want the archive time stored")
+	}
+}
+
+func TestPlainMemberCannotArchiveAPrivateChannel(t *testing.T) {
+	private := openChannel()
+	private.Type = model.ChannelTypePrivate
+
+	a, s := archiveApp(private, adminMembers())
+
+	appErr := a.ArchiveChannel(t.Context(), userWith(plainMemberID), archiveChannelID)
+	if appErr == nil || appErr.Status != http.StatusForbidden {
+		t.Fatalf("a plain member must not archive, got %v", appErr)
+	}
+
+	if s.archiveSet {
+		t.Error("the store was written to despite the refusal")
 	}
 }

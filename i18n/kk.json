@@ -2001,7 +2001,7 @@
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": "Тек ашық арналарды мұрағаттауға болады."
+    "translation": "Тікелей хабарламаларды мұрағаттауға болмайды."
   },
   {
     "id": "channel.delete_type_invalid",
