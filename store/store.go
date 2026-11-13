@@ -42,6 +42,7 @@ type Store struct {
 	Jobs           JobsStore
 	OIDC           OIDCProviderStore
 	Groups         GroupStore
+	Graph          GraphStore
 }
 
 const (
@@ -191,6 +192,8 @@ func NewNewStore(c *model.ServerConfig) (*Store, error) {
 			return nil, err
 		}
 
+		graph := sqlstore.NewGraphRepository(db)
+
 		return &Store{
 			DB:             db,
 			File:           files,
@@ -215,6 +218,7 @@ func NewNewStore(c *model.ServerConfig) (*Store, error) {
 			Jobs:           jobs,
 			OIDC:           oidc,
 			Groups:         groups,
+			Graph:          graph,
 		}, nil
 	}
 
@@ -309,6 +313,8 @@ type CollimatoStore interface {
 	DeleteChart(id string) error
 	GetDashboards(workspaceID string) ([]model.Dashboard, error)
 	GetDashboardByID(id string) (*model.Dashboard, error)
+	GetDashboardIDsForChart(chartID string) ([]string, error)
+	GetDashboardIDsForFilterColumn(workspaceID, column string) ([]string, error)
 	CreateDashboard(dashboard model.Dashboard) (*model.Dashboard, error)
 	UpdateDashboard(dashboard model.Dashboard) (*model.Dashboard, error)
 	DeleteDashboard(id string) error
@@ -342,6 +348,34 @@ type CollimatoStore interface {
 	GetWorkspaceFile(workspaceID, name, fileType string) (*model.CollimatoWorkspaceFile, error)
 	UpdateWorkspaceFile(file model.CollimatoWorkspaceFile) (*model.CollimatoWorkspaceFile, error)
 	DeleteWorkspaceFile(workspaceID, name, fileType string) error
+}
+
+type GraphStore interface {
+	CreateOrUpdateEntityType(ctx context.Context, entityType model.GraphEntityType) error
+	GetAllEntityTypes(ctx context.Context) ([]model.GraphEntityType, error)
+	CreateOrUpdateRelationType(ctx context.Context, relationType model.GraphRelationType) error
+	GetAllRelationTypes(ctx context.Context) ([]model.GraphRelationType, error)
+	GetEntityTypeByID(ctx context.Context, id string) (*model.GraphEntityType, error)
+	CreateEntityType(ctx context.Context, entityType model.GraphEntityType) error
+	UpdateEntityType(ctx context.Context, entityType model.GraphEntityType) error
+	DeleteEntityType(ctx context.Context, id string) error
+	GetRelationTypeByID(ctx context.Context, id string) (*model.GraphRelationType, error)
+	CreateRelationType(ctx context.Context, relationType model.GraphRelationType) error
+	UpdateRelationType(ctx context.Context, relationType model.GraphRelationType) error
+	DeleteRelationType(ctx context.Context, id string) error
+	AddDatasets(ctx context.Context, datasets []model.GraphDataset) (int64, error)
+	GetAllDatasetsForWorkspace(ctx context.Context, workspaceID string) ([]model.GraphDataset, error)
+	GetDatasetByID(ctx context.Context, id string) (*model.GraphDataset, error)
+	DeleteDatasets(ctx context.Context, ids []string) error
+	AddDatasetFields(ctx context.Context, fields []model.GraphDatasetField) (int64, error)
+	GetAllDatasetFieldsForWorkspace(ctx context.Context, workspaceID string) ([]model.GraphDatasetField, error)
+	GetDatasetFieldsByNames(ctx context.Context, workspaceID string, names []string) ([]model.GraphDatasetField, error)
+	GetDatasetFieldByID(ctx context.Context, id string) (*model.GraphDatasetField, error)
+	DeleteDatasetFields(ctx context.Context, ids []string) error
+	UpdateStructuredRelations(ctx context.Context, relationTypeID, fromTypeID, fromID, toTypeID string, toIDs []string) (int64, int64, error)
+	GetRelationsFrom(ctx context.Context, typeID, entityID string) ([]model.GraphRelation, error)
+	GetRelationsTo(ctx context.Context, typeID, entityID string) ([]model.GraphRelation, error)
+	DeleteEntityRelations(ctx context.Context, typeID string, entityIDs []string) error
 }
 
 type PreferencesStore interface {
@@ -590,6 +624,7 @@ type WorkspaceStore interface {
 	GetLinkedTableID(tableID, fieldName string) (string, error)
 	IsTableSingleSelect(tableID string) (bool, error)
 	IsOptionTableOf(ctx context.Context, tableID, optionTableID string) (bool, error)
+	GetOptionTableField(ctx context.Context, optionTableID string) (string, string, error)
 	GetKanbanStatusOptions(tableName string) ([]model.KanbanStatusOption, error)
 	GetTaskFieldValue(tableName, taskID, fieldName string) (string, error)
 	GetColumnNames(ctx context.Context, tableName string) ([]string, error)

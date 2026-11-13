@@ -46,6 +46,10 @@ func (f *fakeAccessWorkspaceStore) isMember(userID string) bool {
 	return f.memberRoleName != "" && (f.onlyMember == "" || f.onlyMember == userID)
 }
 
+func (f *fakeAccessWorkspaceStore) GetOptionTableField(context.Context, string) (string, string, error) {
+	return "", "", nil
+}
+
 func (f *fakeAccessWorkspaceStore) GetViewVisibility(_ context.Context, _ string) (bool, string, error) {
 	return true, "", nil
 }

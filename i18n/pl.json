@@ -100,6 +100,102 @@
     "translation": "Nie udało się rozpocząć synchronizacji."
   },
   {
+    "id": "graph.disabled",
+    "translation": "Graf wiedzy nie jest włączony."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "Nie masz uprawnień do zarządzania grafem wiedzy."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "Przebudowa grafu jest już w toku."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "Nie udało się rozpocząć przebudowy grafu."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "Nie udało się odczytać stanu grafu."
+  },
+  {
+    "id": "graph.entity_not_found",
+    "translation": "Nie znaleziono encji."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "Nie udało się odczytać relacji encji."
+  },
+  {
+    "id": "graph.types_failed",
+    "translation": "Nie udało się odczytać ani zapisać typów grafu."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "Nie znaleziono typu."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "Klucz musi zaczynać się od małej litery i zawierać tylko małe litery, cyfry i podkreślenia, maksymalnie 64 znaki."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Wpisz nazwę."
+  },
+  {
+    "id": "graph.type_name_too_long",
+    "translation": "Nazwa może mieć najwyżej 255 znaków."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Inny typ używa już tego klucza."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Typów wbudowanych nie można zmieniać ani usuwać."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "Nie znaleziono zbioru danych lub nie masz do niego dostępu."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "Wybrane pole nie należy do zbioru danych."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "Wybrane pole nie jest dla Ciebie widoczne w Collimato. Klucze główne są ukryte, chyba że zbiór danych je pokazuje."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "Pole klucza, nazwy lub relacji musi być wymiarem, a nie miarą."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "Ten typ jest używany przez typ relacji. Najpierw usuń lub zmień typ relacji."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Oba końce relacji muszą być typami, które pobierają encje ze zbioru danych."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "Status musi mieć wartość: eksperymentalny, aktywny lub przestarzały."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Wybierz jeden z proponowanych kolorów."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "Nazwa ikony może zawierać tylko małe litery, cyfry i myślniki."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Wybierz: jeden do jednego, jeden do wielu, wiele do jednego lub wiele do wielu."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Interwał synchronizacji musi wynosić od 5 do 1440 minut."
   },
@@ -1394,6 +1490,10 @@
   {
     "id": "workspace.task_update_protected",
     "translation": "Tej opcji statusu nie można zmienić nazwy."
+  },
+  {
+    "id": "workspace.task_delete_protected",
+    "translation": "Tej opcji statusu nie można usunąć."
   },
   {
     "id": "workspace.relationship_not_found",
