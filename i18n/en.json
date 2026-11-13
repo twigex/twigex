@@ -1552,6 +1552,10 @@
     "translation": "This status option cannot be renamed."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "This status option cannot be deleted."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "No matching relationship found for this field."
   },

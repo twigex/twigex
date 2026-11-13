@@ -221,6 +221,7 @@ SPDX-License-Identifier: AGPL-3.0-only
             </draggable>
 
             <button
+                v-if="rolesStore.canManageOptions(route.params.tid)"
                 @click="openSectionDialog"
                 style="margin: 11px"
                 type="button"
