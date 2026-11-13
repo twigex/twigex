@@ -285,6 +285,12 @@ onMounted(async () => {
             }),
         ]);
 
+        const needsAdmin = route.matched.some((r) => r.meta.requireAdmin);
+
+        if (needsAdmin && userStore.user?.role !== "system_admin") {
+            await router.replace({ name: "profile" });
+        }
+
         const currentSection = route.matched.find((r) => sectionGuards[r.name]);
 
         if (
