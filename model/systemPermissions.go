@@ -6,6 +6,8 @@ package model
 const (
 	PermissionScopeSystem    = "system_scope"
 	PermissionScopeCollimato = "collimato_scope"
+
+	KnowledgeGraphPermissionSectionID = "knowledge_graph"
 )
 
 type SystemFilePermissions struct {
@@ -55,6 +57,12 @@ type SystemProjectPermissions struct {
 }
 
 var ProjectSectionPermissions SystemProjectPermissions
+
+type SystemKnowledgeGraphPermissions struct {
+	PermissionManageKnowledgeGraph *SystemPermission
+}
+
+var KnowledgeGraphPermissions SystemKnowledgeGraphPermissions
 
 type PermissionSection struct {
 	ID          string              `json:"id"`
@@ -114,6 +122,13 @@ func GetSystemPermissionSections() []PermissionSection {
 				ProjectSectionPermissions.PermissionViewProjects,
 				ProjectSectionPermissions.PermissionCreateProject,
 				ProjectSectionPermissions.PermissionManageProjects,
+			},
+		},
+		{
+			ID:   KnowledgeGraphPermissionSectionID,
+			Name: "Knowledge graph",
+			Permissions: []*SystemPermission{
+				KnowledgeGraphPermissions.PermissionManageKnowledgeGraph,
 			},
 		},
 	}
@@ -319,6 +334,15 @@ func initializePermissions() {
 			"manage_projects",
 			"Manage project workspaces",
 			"View and manage every project workspace from Settings",
+			PermissionScopeSystem,
+		},
+	}
+
+	KnowledgeGraphPermissions = SystemKnowledgeGraphPermissions{
+		PermissionManageKnowledgeGraph: &SystemPermission{
+			"manage_knowledge_graph",
+			"Manage knowledge graph",
+			"Rebuild the knowledge graph from Settings",
 			PermissionScopeSystem,
 		},
 	}

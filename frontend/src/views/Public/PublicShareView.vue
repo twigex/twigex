@@ -17,6 +17,14 @@ SPDX-License-Identifier: AGPL-3.0-only
             </span>
         </header>
 
+        <p
+            v-if="state === 'ready' && share?.DownloadLimitReached"
+            class="shrink-0 border-b border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm text-amber-800 sm:px-6"
+            role="status"
+        >
+            {{ t("public_share.download_limit_reached") }}
+        </p>
+
         <div class="min-h-0 flex-1">
             <div
                 v-if="!showBrowser"

@@ -151,6 +151,10 @@ func (a *App) InitJobs() error {
 		handlers = append(handlers, a.LDAPAuth.SyncJob())
 	}
 
+	if a.graphEnabled() {
+		handlers = append(handlers, jobs.NewGraphRebuildJob(a, a.Store.Jobs))
+	}
+
 	jobs.NewRegistry(a.Store.Jobs, handlers...).Start(a.ctx)
 	a.startUserInactivityMonitor()
 

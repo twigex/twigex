@@ -50,3 +50,38 @@ describe("canRowAction", () => {
         expect(roles.canRowAction("t2", "delete_task")).toBe(false);
     });
 });
+
+describe("canManageOptions", () => {
+    let roles;
+
+    beforeEach(() => {
+        setActivePinia(createPinia());
+        roles = useWorkspaceRolesStore();
+    });
+
+    it("refuses the default User role, which may edit fields but not create them", () => {
+        roles.setUser({ permissions: ["create_task", "update_task", "edit_fields"] });
+
+        expect(roles.canManageOptions("t1")).toBe(false);
+    });
+
+    it("allows a role that may create fields", () => {
+        roles.setUser({ permissions: ["create_fields"] });
+
+        expect(roles.canManageOptions("t1")).toBe(true);
+    });
+
+    it("follows the table's own permissions in per-table mode", () => {
+        roles.setUser({
+            permissions: ["update_task"],
+            per_table_mode: true,
+            table_permissions: [
+                { table_id: "t1", action: "create_fields" },
+                { table_id: "t2", action: "update_task" },
+            ],
+        });
+
+        expect(roles.canManageOptions("t1")).toBe(true);
+        expect(roles.canManageOptions("t2")).toBe(false);
+    });
+});
