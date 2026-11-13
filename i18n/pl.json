@@ -2097,7 +2097,7 @@
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": "Archiwizować można tylko kanały publiczne."
+    "translation": "Wiadomości bezpośrednich nie można archiwizować."
   },
   {
     "id": "channel.delete_type_invalid",

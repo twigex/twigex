@@ -229,6 +229,7 @@
     "channels.empty_state.description": "Pievienojieties esošam kanālam, sāciet tiešo saraksti vai izveidojiet jaunu.",
     "channels.navigation.channels": "Kanāli",
     "channels.navigation.direct_messages": "Tiešās ziņas",
+    "channels.navigation.archived": "Arhivētie",
     "channels.navigation.no_direct_messages": "Vēl nav tiešo ziņu",
     "channels.navigation.add_channels": "Pievienot kanālus",
     "channels.navigation.menu.create_channel": "Izveidot kanālu",

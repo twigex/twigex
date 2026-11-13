@@ -425,7 +425,7 @@ func (a *App) ArchiveChannel(ctx context.Context, user model.User, channelID str
 		return appErr
 	}
 
-	if channel.Type != model.ChannelTypePublic {
+	if channel.Type == model.ChannelTypeDirect {
 		return model.NewAppError("channel.archive_type_invalid", http.StatusBadRequest)
 	}
 
@@ -442,7 +442,19 @@ func (a *App) ArchiveChannel(ctx context.Context, user model.User, channelID str
 		return model.NewAppError("channel.archive_failed", http.StatusInternalServerError)
 	}
 
+	a.sendChannelArchiveChange(channelID, user)
+
 	return nil
+}
+
+func (a *App) sendChannelArchiveChange(channelID string, user model.User) {
+	channel, err := a.Store.Channels.Get(channelID)
+	if err != nil || channel == nil {
+		tlog.Errorw("Failed to load channel after archive change", "channel_id", channelID, "error", err)
+		return
+	}
+
+	a.CreateChannelUpdateNotification(*channel, user, model.NOTIFICATION_CHANNEL_UPDATE)
 }
 
 func (a *App) UnarchiveChannel(ctx context.Context, user model.User, channelID string) *model.AppError {
@@ -468,6 +480,8 @@ func (a *App) UnarchiveChannel(ctx context.Context, user model.User, channelID s
 		tlog.Errorw("Failed to unarchive channel", "channel_id", channelID, "error", err)
 		return model.NewAppError("channel.unarchive_failed", http.StatusInternalServerError)
 	}
+
+	a.sendChannelArchiveChange(channelID, user)
 
 	return nil
 }

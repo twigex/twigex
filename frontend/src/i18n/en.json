@@ -229,6 +229,7 @@
     "channels.empty_state.description": "Join an existing channel, start a direct message, or create a new one.",
     "channels.navigation.channels": "Channels",
     "channels.navigation.direct_messages": "Direct Messages",
+    "channels.navigation.archived": "Archived",
     "channels.navigation.no_direct_messages": "No direct messages yet",
     "channels.navigation.add_channels": "Add channels",
     "channels.navigation.menu.create_channel": "Create Channel",

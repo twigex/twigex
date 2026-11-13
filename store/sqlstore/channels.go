@@ -126,8 +126,7 @@ func (c *channelsRepository) GetAllForUser(userID string) ([]model.Channel, erro
 	results, err := c.Db.Query(`SELECT channels.*
 								FROM channels, channel_members
 								WHERE channel_members.user_id=?
-								AND channels.id=channel_members.channel_id
-								AND channels.deleted_at=0`, userID)
+								AND channels.id=channel_members.channel_id`, userID)
 	if err != nil {
 		return nil, err
 	}
