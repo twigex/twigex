@@ -35,6 +35,8 @@ export const useChannelsStore = defineStore("channels", {
             let totalUnread = 0;
 
             state.channels.forEach((channel) => {
+                if (channel.deleted) return;
+
                 channel.channel_members.forEach((member) => {
                     if (member.user_id === userId) {
                         totalUnread += channel.msg_count - member.msg_count;
@@ -67,6 +69,8 @@ export const useChannelsStore = defineStore("channels", {
 
         getUnreadChannelsCount: (state) => (userId) => {
             return state.channels.filter((channel) => {
+                if (channel.deleted) return false;
+
                 const member = channel.channel_members.find((m) => m.user_id === userId);
 
                 return member && channel.msg_count > member.msg_count;

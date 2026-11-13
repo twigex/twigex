@@ -8,6 +8,7 @@ import {
     ChartPieIcon,
     ChatBubbleLeftEllipsisIcon,
     SquaresPlusIcon,
+    ShareIcon,
 } from "@heroicons/vue/24/outline";
 import { useUserStore } from "@/store/user";
 import { useSettingsStore } from "@/store/settings";
@@ -39,6 +40,12 @@ const SECTIONS = [
         icon: SquaresPlusIcon,
         path: "projects-home",
     },
+    {
+        name: "graph",
+        displayname: "Graph",
+        icon: ShareIcon,
+        path: "graph",
+    },
 ];
 
 export const sectionGuards = {
@@ -58,6 +65,10 @@ export function useSections() {
 
     function show(item) {
         if (item.name === "collimato" && settingsStore.collimatoStatus != true) {
+            return false;
+        }
+
+        if (item.name === "graph" && !settingsStore.isFeatureEnabled("KnowledgeGraph")) {
             return false;
         }
 

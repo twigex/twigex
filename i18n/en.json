@@ -100,6 +100,102 @@
     "translation": "The synchronisation could not be started."
   },
   {
+    "id": "graph.disabled",
+    "translation": "The knowledge graph is not turned on."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "You don't have permission to manage the knowledge graph."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "A graph rebuild is already in progress."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "The graph rebuild could not be started."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "The graph status could not be read."
+  },
+  {
+    "id": "graph.entity_not_found",
+    "translation": "The entity was not found."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "The entity's relations could not be read."
+  },
+  {
+    "id": "graph.types_failed",
+    "translation": "The graph types could not be read or saved."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "The type was not found."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "The key must start with a lowercase letter and use only lowercase letters, digits and underscores, up to 64 characters."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Enter a name."
+  },
+  {
+    "id": "graph.type_name_too_long",
+    "translation": "A name can be at most 255 characters long."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Another type already uses this key."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Built-in types can't be changed or deleted."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "The dataset was not found, or you can't see it."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "A chosen field doesn't belong to the dataset."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "A chosen field isn't visible to you in Collimato. Primary keys are hidden unless the dataset shows them."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "A key, name or relation field must be a dimension, not a measure."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "A relation type uses this type. Delete or change the relation type first."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Both ends of a relation must be types that read their entities from a dataset."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "The status must be experimental, active or deprecated."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Choose one of the offered colours."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "The icon name may only use lowercase letters, digits and hyphens."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Choose one to one, one to many, many to one or many to many."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "The synchronisation interval must be between 5 and 1440 minutes."
   },
@@ -1456,6 +1552,10 @@
     "translation": "This status option cannot be renamed."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "This status option cannot be deleted."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "No matching relationship found for this field."
   },
@@ -1800,6 +1900,82 @@
     "translation": "You have a new notification"
   },
   {
+    "id": "email.notification.subject.default",
+    "translation": "New notification from Twigex"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "A new file or folder was added"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "A file or folder was renamed"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Something was shared with you"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "A file or folder was deleted"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "A file or folder was restored"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Your file was downloaded"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "A file was downloaded through your link"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "A new task was created"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "A project was deleted"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "You were added to a project"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "A task was deleted"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "A task was assigned to you"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "The status of your task changed"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "New comment on a task"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "You were mentioned in Chat"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "A meeting was scheduled"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "A meeting was changed"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "A meeting was cancelled"
+  },
+  {
     "id": "email.notification.action_open",
     "translation": "Open"
   },
@@ -1981,7 +2157,7 @@
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": "Only public channels can be archived."
+    "translation": "Direct messages can't be archived."
   },
   {
     "id": "channel.delete_type_invalid",

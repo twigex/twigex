@@ -18,7 +18,7 @@ export function useChatNavigation() {
 
     const channelsUnreadCount = computed(() =>
         channelsStore.channels
-            .filter((c) => c.type !== "D")
+            .filter((c) => c.type !== "D" && !c.deleted)
             .reduce(
                 (sum, c) => sum + channelsStore.getChannelUnreadPosts(c.id, userStore.user.id),
                 0,
@@ -37,7 +37,13 @@ export function useChatNavigation() {
     // Channels alphabetically; DMs by most recent activity.
     const regularChannels = computed(() =>
         channelsStore.channels
-            .filter((c) => c.type !== "D")
+            .filter((c) => c.type !== "D" && !c.deleted)
+            .sort((a, b) => (a.displayname || "").localeCompare(b.displayname || "")),
+    );
+
+    const archivedChannels = computed(() =>
+        channelsStore.channels
+            .filter((c) => c.type !== "D" && c.deleted)
             .sort((a, b) => (a.displayname || "").localeCompare(b.displayname || "")),
     );
 
@@ -105,6 +111,7 @@ export function useChatNavigation() {
         channelsUnreadCount,
         dmsUnreadCount,
         regularChannels,
+        archivedChannels,
         directMessages,
         unreadByChannel,
         mentionsByChannel,

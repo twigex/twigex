@@ -65,8 +65,9 @@ func TestChannelListsAttachEachChannelsMembers(t *testing.T) {
 	wantMine := map[string]string{
 		direct:   sortedJoin(me, bob),
 		viaGroup: sortedJoin(me, carol),
+		deleted:  sortedJoin(me),
 	}
-	if got := memberUsersByChannel(t, mine); len(got) != len(wantMine) || got[direct] != wantMine[direct] || got[viaGroup] != wantMine[viaGroup] {
+	if got := memberUsersByChannel(t, mine); len(got) != len(wantMine) || got[direct] != wantMine[direct] || got[viaGroup] != wantMine[viaGroup] || got[deleted] != wantMine[deleted] {
 		t.Errorf("GetAllForUser members = %v, want %v", got, wantMine)
 	}
 

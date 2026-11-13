@@ -15,6 +15,7 @@ const PUBLIC_ENDPOINTS = [
     "/password/reset", // this checks /password/reset/{token}
     "/password/policy",
     "/guest", // a guest has no session to expire, so a 401 must not sign them out
+    "/public", // a share link answers 401 to ask for its password, not to sign anyone out
 ];
 
 function isPublicAuthCall(url = "") {

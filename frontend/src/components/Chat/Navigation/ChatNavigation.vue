@@ -22,6 +22,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                     <li>
                         <ChatNavigationDirectMessages />
                     </li>
+                    <li v-if="archivedChannels.length">
+                        <ChatNavigationArchived />
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -55,6 +58,8 @@ import ChatNavigationMeetings from "@/components/Chat/Navigation/ChatNavigationM
 import ChatNavigationChannels from "@/components/Chat/Navigation/ChatNavigationChannels.vue";
 import ChatNavigationDirectMessages from "@/components/Chat/Navigation/ChatNavigationDirectMessages.vue";
 import ChatNavigationMini from "@/components/Chat/Navigation/ChatNavigationMini.vue";
+import ChatNavigationArchived from "@/components/Chat/Navigation/ChatNavigationArchived.vue";
+import { useChatNavigation } from "@/composables/chat/useChatNavigation";
 import { useUsers } from "@/composables/useUser";
 import { useChannelsStore } from "@/store/channels";
 import { useMeetingsStore } from "@/store/meetings";
@@ -68,6 +73,7 @@ defineProps({
 });
 
 const channelsStore = useChannelsStore();
+const { archivedChannels } = useChatNavigation();
 
 // Trigger a lazy load so direct-message counterpart names/avatars resolve.
 useUsers(() =>

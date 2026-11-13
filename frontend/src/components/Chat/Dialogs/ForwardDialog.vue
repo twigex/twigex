@@ -241,7 +241,9 @@ const selectedUsers = ref([]);
 const channels = computed(() => {
     return channelStore.channels.filter(
         (channel) =>
-            channel.type != channelTypes.Direct && channel.id != channelStore.currentChannel.id,
+            channel.type != channelTypes.Direct &&
+            !channel.deleted &&
+            channel.id != channelStore.currentChannel.id,
     );
 });
 
