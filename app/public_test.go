@@ -22,7 +22,17 @@ func (f *fakePublicShareStore) GetByToken(_ context.Context, _ string) (*model.E
 	return f.link, nil
 }
 
-func (f *fakePublicShareStore) IncrementDownloaded(_ context.Context, _ string) error { return nil }
+func (f *fakePublicShareStore) IncrementAccessed(_ context.Context, _ string) error { return nil }
+
+func (f *fakePublicShareStore) CountDownloadIfAllowed(_ context.Context, _ string) (bool, error) {
+	if f.link.MaxDownloads > 0 && f.link.Downloaded >= f.link.MaxDownloads {
+		return false, nil
+	}
+
+	f.link.Downloaded++
+
+	return true, nil
+}
 
 type fakePublicFileStore struct {
 	store.FileStore
@@ -253,4 +263,27 @@ func TestPublicDownloadTarget_DownloadLimitReached(t *testing.T) {
 
 	_, appErr := a.PublicDownloadTarget(context.Background(), "tok", "child-1", "")
 	requireAppErr(t, appErr, "link.download_limit", http.StatusForbidden)
+}
+
+func TestPublicShareSaysWhenTheDownloadLimitIsUsedUp(t *testing.T) {
+	link, root, subtree := folderShareFixture()
+	link.MaxDownloads = 2
+	link.Downloaded = 2
+	owner := &model.User{ID: link.Owner, Name: "Anna"}
+	a := newPublicApp(link, root, subtree, owner)
+
+	share, appErr := a.GetPublicShare(context.Background(), "tok", "", "")
+	if appErr != nil {
+		t.Fatalf("GetPublicShare: %v", appErr)
+	}
+
+	if share.AllowDownload || !share.DownloadLimitReached {
+		t.Errorf("want downloads off and the limit reported, got allow=%v reached=%v", share.AllowDownload, share.DownloadLimitReached)
+	}
+
+	for _, child := range share.Children {
+		if child.AllowDownload {
+			t.Errorf("want %s not downloadable once the limit is used up", child.ID)
+		}
+	}
 }

@@ -2207,6 +2207,7 @@
     "files.share_dialog.link.message_placeholder": "Dodaj wiadomość widoczną dla odbiorców.",
     "public_share.loading": "Otwieranie udostępnionego linku...",
     "public_share.error_title": "Link niedostępny",
+    "public_share.download_limit_reached": "Ten link osiągnął limit pobrań, więc jego plików nie można już pobrać.",
     "public_share.password_title": "Chroniony link",
     "public_share.password_subtitle": "Wprowadź hasło, aby otworzyć ten link.",
     "public_share.password_placeholder": "Hasło",

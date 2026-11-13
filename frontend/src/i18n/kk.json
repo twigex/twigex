@@ -2207,6 +2207,7 @@
     "files.share_dialog.link.message_placeholder": "Алушыларға көрсетілетін хабарлама қосыңыз.",
     "public_share.loading": "Ортақ сілтеме ашылуда...",
     "public_share.error_title": "Сілтеме қолжетімсіз",
+    "public_share.download_limit_reached": "Бұл сілтеме жүктеп алу шегіне жетті, сондықтан оның файлдарын енді жүктеп алу мүмкін емес.",
     "public_share.password_title": "Қорғалған сілтеме",
     "public_share.password_subtitle": "Осы сілтемені ашу үшін құпия сөзді енгізіңіз.",
     "public_share.password_placeholder": "Құпия сөз",

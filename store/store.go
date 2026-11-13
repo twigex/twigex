@@ -398,7 +398,7 @@ type ShareStore interface {
 	GetActiveForFile(ctx context.Context, fileID string) ([]model.ExternalShare, error)
 	DeactivateForFile(ctx context.Context, fileID string) error
 	IncrementAccessed(ctx context.Context, token string) error
-	IncrementDownloaded(ctx context.Context, token string) error
+	CountDownloadIfAllowed(ctx context.Context, token string) (bool, error)
 }
 
 type UserPhotoStore interface {

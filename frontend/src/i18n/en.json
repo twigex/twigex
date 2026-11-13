@@ -2207,6 +2207,7 @@
     "files.share_dialog.link.message_placeholder": "Add a message shown to recipients.",
     "public_share.loading": "Opening shared link...",
     "public_share.error_title": "Link unavailable",
+    "public_share.download_limit_reached": "This link has reached its download limit, so its files can no longer be downloaded.",
     "public_share.password_title": "Protected link",
     "public_share.password_subtitle": "Enter the password to open this link.",
     "public_share.password_placeholder": "Password",

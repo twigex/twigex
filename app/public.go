@@ -365,18 +365,21 @@ func (a *App) GetPublicShare(ctx context.Context, token, childID, accessToken st
 		id = target.ID
 	}
 
+	limitReached := downloadLimitReached(link)
+
 	pf := &model.PublicFile{
-		ID:            id,
-		Name:          target.DisplayName,
-		Size:          target.Size,
-		Type:          target.Type,
-		IsFolder:      target.IsFolder,
-		Message:       link.Message,
-		AllowView:     link.AllowView,
-		AllowDownload: link.AllowDownload,
-		AllowUpload:   link.AllowUpload,
-		AllowEdit:     link.AllowEdit,
-		User:          model.UserInfo{Name: owner.Name, LastName: owner.LastName},
+		ID:                   id,
+		Name:                 target.DisplayName,
+		Size:                 target.Size,
+		Type:                 target.Type,
+		IsFolder:             target.IsFolder,
+		Message:              link.Message,
+		AllowView:            link.AllowView,
+		AllowDownload:        link.AllowDownload && !limitReached,
+		AllowUpload:          link.AllowUpload,
+		AllowEdit:            link.AllowEdit,
+		DownloadLimitReached: link.AllowDownload && limitReached,
+		User:                 model.UserInfo{Name: owner.Name, LastName: owner.LastName},
 	}
 
 	if target.IsFolder && link.AllowView {
@@ -415,11 +418,15 @@ func (a *App) publicFolderChildren(folder model.File, link *model.ExternalShare)
 			Type:          sub.Type,
 			IsFolder:      sub.IsFolder,
 			AllowView:     link.AllowView,
-			AllowDownload: link.AllowDownload,
+			AllowDownload: link.AllowDownload && !downloadLimitReached(link),
 		})
 	}
 
 	return children, nil
+}
+
+func downloadLimitReached(link *model.ExternalShare) bool {
+	return link.MaxDownloads > 0 && link.Downloaded >= link.MaxDownloads
 }
 
 // PublicDownloadTarget validates a public download and returns the target, which
@@ -434,12 +441,14 @@ func (a *App) PublicDownloadTarget(ctx context.Context, token, childID, accessTo
 		return nil, model.NewAppError("link.download_forbidden", http.StatusForbidden)
 	}
 
-	if link.MaxDownloads > 0 && link.Downloaded >= link.MaxDownloads {
-		return nil, model.NewAppError("link.download_limit", http.StatusForbidden)
+	counted, err := a.Store.Share.CountDownloadIfAllowed(ctx, link.ShareToken)
+	if err != nil {
+		tlog.Errorw("Failed to count a share link download", "share_token", link.ShareToken, "error", err)
+		return nil, model.NewAppError("link.retrieval_failed", http.StatusInternalServerError)
 	}
 
-	if err := a.Store.Share.IncrementDownloaded(ctx, link.ShareToken); err != nil {
-		tlog.Warnw("Failed to increment share download count", "share_token", link.ShareToken)
+	if !counted {
+		return nil, model.NewAppError("link.download_limit", http.StatusForbidden)
 	}
 
 	owner, err := a.Store.User.Get(link.Owner)
