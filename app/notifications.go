@@ -1513,12 +1513,11 @@ func (a *App) generateEmail(message model.NotificationMessage) error {
 		}
 
 		siteURL := *a.ConfigStore.Config.ServerSettings.SiteURL
-		if message.NotificationType == model.NOTIFICATION_FILE_SHARE {
-			link = siteURL + "/files/shared?file=" + file.ID
-		} else if parentFile, appErr := a.HasPermission(file.Parent, *user); appErr == nil {
-			if parentFile.Type == "cloud#drive" {
-				link = siteURL + "/files/shared?file=" + file.ID
-			} else {
+		link = siteURL + "/files/shared?file=" + file.ID
+
+		if message.NotificationType != model.NOTIFICATION_FILE_SHARE {
+			parentFile, appErr := a.HasPermission(file.Parent, *user)
+			if appErr == nil && parentFile.Type != "cloud#drive" {
 				link = siteURL + "/files/" + parentFile.ID + "?file=" + file.ID
 			}
 		}

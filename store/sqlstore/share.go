@@ -290,3 +290,33 @@ func (s *fileRepository) DeleteShares(fileID string) error {
 
 	return nil
 }
+
+func (s *fileRepository) GetDirectShareTypes(ctx context.Context, userID string, fileID string) ([]int, error) {
+	shareJoin, shareArgs := effectiveShareSubquery(userID)
+	args := append(shareArgs, fileID, time.Now().Unix())
+
+	rows, err := s.Db.QueryContext(ctx, `
+		SELECT DISTINCT efs.share_type
+		FROM `+shareJoin+`
+		WHERE efs.file_id = ?
+		  AND (efs.expiration = 0 OR efs.expiration > ?)`, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	shareTypes := []int{}
+
+	for rows.Next() {
+		var shareType int
+
+		err := rows.Scan(&shareType)
+		if err != nil {
+			return nil, err
+		}
+
+		shareTypes = append(shareTypes, shareType)
+	}
+
+	return shareTypes, rows.Err()
+}
