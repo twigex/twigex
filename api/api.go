@@ -42,6 +42,7 @@ type Routes struct {
 	OIDC              *mux.Router // 'api/oidc'
 	Guest             *mux.Router // 'api/guest'
 	Groups            *mux.Router // 'api/groups'
+	Graph             *mux.Router // 'api/graph'
 	LinkPreview       *mux.Router // 'api/link-preview'
 	CubeInternal      *mux.Router // 'api/internal/cube'
 }
@@ -76,6 +77,7 @@ func InitAPI(a *app.App) {
 	api.BaseRoutes.Jobs = api.BaseRoutes.APIRoot.PathPrefix("/jobs").Subrouter()
 	api.BaseRoutes.Guest = api.BaseRoutes.APIRoot.PathPrefix("/guest").Subrouter()
 	api.BaseRoutes.Groups = api.BaseRoutes.APIRoot.PathPrefix("/groups").Subrouter()
+	api.BaseRoutes.Graph = api.BaseRoutes.APIRoot.PathPrefix("/graph").Subrouter()
 	api.BaseRoutes.LinkPreview = api.BaseRoutes.APIRoot.PathPrefix("/link-preview").Subrouter()
 	api.BaseRoutes.CubeInternal = api.BaseRoutes.APIRoot.PathPrefix("/internal/cube").Subrouter()
 
@@ -100,6 +102,7 @@ func InitAPI(a *app.App) {
 	api.initWorkspaces()
 	api.initJobs()
 	api.initGroups()
+	api.initGraph()
 	api.initLinkPreview()
 
 	if !config.IsDev {

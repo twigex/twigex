@@ -870,6 +870,8 @@ func (a *App) CreateChart(user model.User, workspaceID string, chart model.NewCh
 		return nil, model.NewAppError("chart.create_failed", http.StatusInternalServerError)
 	}
 
+	a.graphChartSaved(*c)
+
 	return c, nil
 }
 
@@ -1013,6 +1015,8 @@ func (a *App) UpdateChart(user model.User, workspaceID, id string, chartPatch mo
 		return nil, model.NewAppError("chart.update_failed", http.StatusInternalServerError)
 	}
 
+	a.graphChartSaved(*updatedChart)
+
 	return updatedChart, nil
 }
 
@@ -1043,6 +1047,8 @@ func (a *App) DeleteChart(user model.User, workspaceID, id string) *model.AppErr
 		)
 		return model.NewAppError("chart.delete_failed", http.StatusInternalServerError)
 	}
+
+	a.graphChartDeleted(id)
 
 	return nil
 }
@@ -1600,7 +1606,16 @@ func (a *App) GetWorkspaceSQL(ctx context.Context, user model.User, workspaceID 
 	return body, nil
 }
 
+// QueryData runs a query sent by the browser. Ungrouped is always switched
+// off here: with it, a measure such as an average salary would come back as
+// each person's own value, row by row. Only Twigex's own row reads use it.
 func (a *App) QueryData(ctx context.Context, user model.User, workspaceID string, query model.DataQuery) (map[string]any, *model.AppError) {
+	query.Ungrouped = false
+
+	return a.queryData(ctx, user, workspaceID, query)
+}
+
+func (a *App) queryData(ctx context.Context, user model.User, workspaceID string, query model.DataQuery) (map[string]any, *model.AppError) {
 	if !a.canQueryWorkspaceData(user, workspaceID) {
 		return nil, model.NewAppError("collimato.forbidden", http.StatusForbidden)
 	}
@@ -2014,6 +2029,8 @@ func (a *App) SaveCubeFile(user model.User, name, content, fileType, workspaceID
 		return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
 
+	a.graphDataModelChanged(workspaceID)
+
 	return &model.CubeFile{
 		Name:    name,
 		Content: content,
@@ -2266,6 +2283,8 @@ func (a *App) BuildCubeFile(user model.User, workspaceID, fileType string, m mod
 		return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
 
+	a.graphDataModelChanged(workspaceID)
+
 	return &model.CubeFile{
 		Name:         name,
 		Content:      content,
@@ -2369,6 +2388,8 @@ func (a *App) BuildViewFile(user model.User, workspaceID string, m model.View, o
 		)
 		return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
+
+	a.graphDataModelChanged(workspaceID)
 
 	return &model.CubeFile{
 		Name:         name,
@@ -2484,6 +2505,8 @@ func (a *App) DeleteCubeFile(user model.User, name, filetype, workspaceID string
 		)
 		return model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 	}
+
+	a.graphDataModelChanged(workspaceID)
 
 	return nil
 }
@@ -2810,6 +2833,8 @@ func (a *App) GenerateCubeFiles(user model.User, m map[string]interface{}, works
 			)
 			return nil, model.NewAppError("collimato.roles_update_failed", http.StatusInternalServerError)
 		}
+
+		a.graphDataModelChanged(workspaceID)
 	}
 
 	return result, nil

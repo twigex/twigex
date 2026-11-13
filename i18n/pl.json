@@ -100,6 +100,102 @@
     "translation": "Nie udało się rozpocząć synchronizacji."
   },
   {
+    "id": "graph.disabled",
+    "translation": "Graf wiedzy nie jest włączony."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "Nie masz uprawnień do zarządzania grafem wiedzy."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "Przebudowa grafu jest już w toku."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "Nie udało się rozpocząć przebudowy grafu."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "Nie udało się odczytać stanu grafu."
+  },
+  {
+    "id": "graph.entity_not_found",
+    "translation": "Nie znaleziono encji."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "Nie udało się odczytać relacji encji."
+  },
+  {
+    "id": "graph.types_failed",
+    "translation": "Nie udało się odczytać ani zapisać typów grafu."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "Nie znaleziono typu."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "Klucz musi zaczynać się od małej litery i zawierać tylko małe litery, cyfry i podkreślenia, maksymalnie 64 znaki."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Wpisz nazwę."
+  },
+  {
+    "id": "graph.type_name_too_long",
+    "translation": "Nazwa może mieć najwyżej 255 znaków."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Inny typ używa już tego klucza."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Typów wbudowanych nie można zmieniać ani usuwać."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "Nie znaleziono zbioru danych lub nie masz do niego dostępu."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "Wybrane pole nie należy do zbioru danych."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "Wybrane pole nie jest dla Ciebie widoczne w Collimato. Klucze główne są ukryte, chyba że zbiór danych je pokazuje."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "Pole klucza, nazwy lub relacji musi być wymiarem, a nie miarą."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "Ten typ jest używany przez typ relacji. Najpierw usuń lub zmień typ relacji."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Oba końce relacji muszą być typami, które pobierają encje ze zbioru danych."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "Status musi mieć wartość: eksperymentalny, aktywny lub przestarzały."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Wybierz jeden z proponowanych kolorów."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "Nazwa ikony może zawierać tylko małe litery, cyfry i myślniki."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Wybierz: jeden do jednego, jeden do wielu, wiele do jednego lub wiele do wielu."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Interwał synchronizacji musi wynosić od 5 do 1440 minut."
   },
@@ -1396,6 +1492,10 @@
     "translation": "Tej opcji statusu nie można zmienić nazwy."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "Tej opcji statusu nie można usunąć."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "Nie znaleziono pasującej relacji dla tego pola."
   },
@@ -1738,6 +1838,82 @@
   {
     "id": "email.notification.intro",
     "translation": "Masz nowe powiadomienie"
+  },
+  {
+    "id": "email.notification.subject.default",
+    "translation": "Nowe powiadomienie z Twigex"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "Dodano nowy plik lub folder"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "Zmieniono nazwę pliku lub folderu"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Udostępniono Ci element"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "Usunięto plik lub folder"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "Przywrócono plik lub folder"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Twój plik został pobrany"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "Pobrano plik przez Twój link"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "Utworzono nowe zadanie"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "Usunięto projekt"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "Dodano Cię do projektu"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "Usunięto zadanie"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "Przypisano Ci zadanie"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "Zmienił się status Twojego zadania"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "Nowy komentarz do zadania"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "Wspomniano o Tobie na czacie"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "Zaplanowano spotkanie"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "Zmieniono spotkanie"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "Odwołano spotkanie"
   },
   {
     "id": "email.notification.action_open",

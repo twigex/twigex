@@ -599,6 +599,25 @@ func (w *workspaceRepository) IsOptionTableOf(ctx context.Context, tableID, opti
 	return count > 0, err
 }
 
+func (w *workspaceRepository) GetOptionTableField(ctx context.Context, optionTableID string) (string, string, error) {
+	var tableID string
+	var fieldName string
+
+	err := w.Db.QueryRowContext(ctx, `SELECT r.table_id, r.table_name FROM workspace_relationships r
+		JOIN workspace_tables o ON o.id = r.linked_table_id
+		WHERE r.linked_table_id = ? AND o.single_select = 1 AND o.deleted_at = 0 AND r.deleted_at = 0
+		LIMIT 1`, optionTableID).Scan(&tableID, &fieldName)
+	if err == sql.ErrNoRows {
+		return "", "", nil
+	}
+
+	if err != nil {
+		return "", "", err
+	}
+
+	return tableID, fieldName, nil
+}
+
 func (w *workspaceRepository) IsTableSingleSelect(tableID string) (bool, error) {
 	var singleSelect bool
 	err := w.Db.QueryRow("SELECT single_select FROM workspace_tables WHERE id = ?", tableID).Scan(&singleSelect)

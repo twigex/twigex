@@ -100,6 +100,102 @@
     "translation": "Синхрондауды бастау мүмкін болмады."
   },
   {
+    "id": "graph.disabled",
+    "translation": "Білім графы қосылмаған."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "Сізде білім графын басқаруға рұқсат жоқ."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "Графты қайта құру қазір жүріп жатыр."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "Графты қайта құруды бастау мүмкін болмады."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "Граф күйін оқу мүмкін болмады."
+  },
+  {
+    "id": "graph.entity_not_found",
+    "translation": "Нысан табылмады."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "Нысанның байланыстарын оқу мүмкін болмады."
+  },
+  {
+    "id": "graph.types_failed",
+    "translation": "Граф түрлерін оқу немесе сақтау мүмкін болмады."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "Түр табылмады."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "Кілт кіші әріптен басталып, тек кіші әріптерден, сандардан және астын сызудан тұруы керек, 64 таңбаға дейін."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Атауын енгізіңіз."
+  },
+  {
+    "id": "graph.type_name_too_long",
+    "translation": "Атау 255 таңбадан аспауы керек."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Бұл кілтті басқа түр пайдаланып жатыр."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Кірістірілген түрлерді өзгертуге немесе жоюға болмайды."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "Деректер жиыны табылмады немесе сіз оны көре алмайсыз."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "Таңдалған өріс деректер жиынына жатпайды."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "Таңдалған өріс сізге Collimato-да көрінбейді. Деректер жиыны көрсетпесе, бастапқы кілттер жасырын болады."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "Кілт, атау немесе байланыс өрісі өлшем емес, дименсия болуы керек."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "Бұл түрді байланыс түрі пайдаланады. Алдымен байланыс түрін жойыңыз немесе өзгертіңіз."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Байланыстың екі ұшы да нысандарын деректер жиынынан алатын түрлер болуы керек."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "Күйі эксперименттік, белсенді немесе ескірген болуы керек."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Ұсынылған түстердің бірін таңдаңыз."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "Белгіше атауында тек кіші әріптер, сандар және сызықшалар болуы мүмкін."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Біреуі біреуге, біреуі көпке, көбі біреуге немесе көбі көпке таңдаңыз."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Синхрондау аралығы 5 пен 1440 минут аралығында болуы керек."
   },
@@ -1396,6 +1492,10 @@
     "translation": "Бұл күй опциясының атауын өзгерту мүмкін емес."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "Бұл күй опциясын жою мүмкін емес."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "Бұл өріс үшін сәйкес байланыс табылмады."
   },
@@ -1738,6 +1838,82 @@
   {
     "id": "email.notification.intro",
     "translation": "Сізде жаңа хабарландыру бар"
+  },
+  {
+    "id": "email.notification.subject.default",
+    "translation": "Twigex-тен жаңа хабарландыру"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "Жаңа файл немесе қалта қосылды"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "Файл немесе қалта қайта аталды"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Сізбен бір нәрсе бөлісілді"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "Файл немесе қалта жойылды"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "Файл немесе қалта қалпына келтірілді"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Сіздің файлыңыз жүктелді"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "Сіздің сілтемеңіз арқылы файл жүктелді"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "Жаңа тапсырма жасалды"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "Жоба жойылды"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "Сіз жобаға қосылдыңыз"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "Тапсырма жойылды"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "Сізге тапсырма берілді"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "Тапсырмаңыздың күйі өзгерді"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "Тапсырмаға жаңа пікір"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "Сізді чатта атап өтті"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "Кездесу жоспарланды"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "Кездесу өзгертілді"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "Кездесу тоқтатылды"
   },
   {
     "id": "email.notification.action_open",

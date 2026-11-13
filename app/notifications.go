@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"maps"
 	"net/http"
 	"regexp"
 	"strings"
@@ -904,11 +905,10 @@ func (a *App) createProjectNotification(workspaceID string, creator model.User, 
 				return
 			}
 
-			data["message"] = m.ToMap()
 			go a.notifyUser(*user, model.WebsocketEvent{
 				Event: notificationType,
 				App:   model.AppProjects,
-				Data:  data,
+				Data:  projectNotificationPayload(data, m.ToMap()),
 			})
 		}
 
@@ -960,13 +960,19 @@ func (a *App) createProjectNotification(workspaceID string, creator model.User, 
 			continue
 		}
 
-		data["message"] = m.ToMap()
 		go a.notifyUser(user, model.WebsocketEvent{
 			Event: notificationType,
 			App:   model.AppProjects,
-			Data:  data,
+			Data:  projectNotificationPayload(data, m.ToMap()),
 		})
 	}
+}
+
+func projectNotificationPayload(data map[string]any, message map[string]any) map[string]any {
+	payload := maps.Clone(data)
+	payload["message"] = message
+
+	return payload
 }
 
 func (a *App) CreateFileDownloadNotification(file model.File, creator model.User, notificationType string, props map[string]any) {
@@ -1423,6 +1429,36 @@ func GetDate(timestamp int64) string {
 	return fullDate
 }
 
+var notificationEmailSubjects = map[string]string{
+	model.NOTIFICATION_FILE_CREATE:                 "email.notification.subject.file_create",
+	model.NOTIFICATION_FILE_RENAME:                 "email.notification.subject.file_rename",
+	model.NOTIFICATION_FILE_SHARE:                  "email.notification.subject.file_share",
+	model.NOTIFICATION_FILE_DELETE:                 "email.notification.subject.file_delete",
+	model.NOTIFICATION_FILE_RESTORE:                "email.notification.subject.file_restore",
+	model.NOTIFICATION_FILE_DOWNLOAD:               "email.notification.subject.file_download",
+	model.NOTIFICATION_FILE_PUBLIC_DOWNLOAD:        "email.notification.subject.file_public_download",
+	model.NOTIFICATION_PROJECT_TASK_CREATED:        "email.notification.subject.task_created",
+	model.NOTIFICATION_PROJECT_DELETED:             "email.notification.subject.project_deleted",
+	model.NOTIFICATION_PROJECT_INVITE:              "email.notification.subject.project_invite",
+	model.NOTIFICATION_PROJECT_TASK_DELETED:        "email.notification.subject.task_deleted",
+	model.NOTIFICATION_PROJECT_TASK_ASSIGNED:       "email.notification.subject.task_assigned",
+	model.NOTIFICATION_PROJECT_TASK_STATUS_CHANGED: "email.notification.subject.task_status_changed",
+	model.NOTIFICATION_TASK_COMMENT:                "email.notification.subject.task_comment",
+	model.NOTIFICATION_CHANNEL_MEETING_SCHEDULED:   "email.notification.subject.meeting_scheduled",
+	model.NOTIFICATION_CHANNEL_MEETING_UPDATED:     "email.notification.subject.meeting_updated",
+	model.NOTIFICATION_CHANNEL_MEETING_CANCELLED:   "email.notification.subject.meeting_cancelled",
+	model.NOTIFICATION_CHANNEL_MENTION:             "email.notification.subject.post_mention",
+}
+
+func notificationEmailSubject(locale string, notificationType string) string {
+	key, known := notificationEmailSubjects[notificationType]
+	if !known {
+		key = "email.notification.subject.default"
+	}
+
+	return i18n.T(locale, key)
+}
+
 func (a *App) generateEmail(message model.NotificationMessage) error {
 	if !a.emailEnabled() {
 		return nil
@@ -1510,6 +1546,8 @@ func (a *App) generateEmail(message model.NotificationMessage) error {
 	}
 
 	locale := a.emailLocale(user.ID)
+	subject := notificationEmailSubject(locale, message.NotificationType)
+
 	nt, err := template.New("notification.html").Funcs(template.FuncMap{
 		"getDate": GetDate,
 		"T":       func(id string) string { return i18n.T(locale, id) },
@@ -1536,7 +1574,7 @@ func (a *App) generateEmail(message model.NotificationMessage) error {
 		Link              string
 	}{
 		Logo:              *a.ConfigStore.Config.ServerSettings.SiteURL + "/logo.png",
-		NotificationTitle: message.Subject,
+		NotificationTitle: subject,
 		NotificationText:  i18n.T(locale, "email.notification.intro"),
 		Message:           constructMessage(locale, *sender, message),
 		Action:            i18n.T(locale, "email.notification.action_open"),
@@ -1555,7 +1593,7 @@ func (a *App) generateEmail(message model.NotificationMessage) error {
 		return err
 	}
 
-	msg, err := a.newEmail(user.Email, message.Subject)
+	msg, err := a.newEmail(user.Email, subject)
 	if err != nil {
 		tlog.Errorw("Failed to compose email",
 			"receiver_id", user.ID,
