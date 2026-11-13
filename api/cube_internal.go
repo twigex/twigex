@@ -57,7 +57,7 @@ func (a *API) cubeSchemaVersion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, http.StatusOK, map[string]int64{"version": version})
+	respondJSON(w, http.StatusOK, map[string]string{"version": version})
 }
 
 func (a *API) cubeConnection(w http.ResponseWriter, r *http.Request) {
