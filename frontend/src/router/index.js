@@ -44,6 +44,7 @@ import LanguageView from "@/views/Settings/LanguageView.vue";
 import AuthorizationView from "@/views/Settings/AuthorizationView.vue";
 import OfficeView from "@/views/Settings/OfficeView.vue";
 import StorageView from "@/views/Settings/StorageView.vue";
+import KnowledgeGraphView from "@/views/Settings/KnowledgeGraphView.vue";
 import RolesView from "@/views/Settings/RolesView.vue";
 import RoleEditView from "@/views/Settings/RoleEditView.vue";
 import CollimatoMainView from "@/views/Collimato/CollimatoMainView.vue";
@@ -146,6 +147,50 @@ const routes = [
                             requireAuth: true,
                         },
                         component: FilesView,
+                    },
+                ],
+            },
+            {
+                path: "graph",
+                name: "graph",
+                meta: {
+                    requireAuth: true,
+                },
+                component: () => import("@/views/Graph/GraphSectionView.vue"),
+                // Keeps ?type=…&id=…, so a /graph address that names an entity opens it.
+                redirect: (to) => ({ name: "graph-explore", query: to.query }),
+                children: [
+                    {
+                        path: "explore",
+                        name: "graph-explore",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/GraphView.vue"),
+                    },
+                    {
+                        path: "entities/:key?",
+                        name: "graph-entities",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/EntitiesView.vue"),
+                    },
+                    {
+                        path: "ontology",
+                        name: "graph-ontology",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/OntologyView.vue"),
+                    },
+                    {
+                        path: "ontology/types/:key",
+                        name: "graph-ontology-type",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/Graph/OntologyTypeView.vue"),
                     },
                 ],
             },
@@ -458,6 +503,15 @@ const routes = [
                             requireAdmin: true,
                         },
                         component: StorageView,
+                    },
+                    {
+                        path: "knowledge-graph",
+                        name: "knowledge-graph-settings",
+                        meta: {
+                            requireAuth: true,
+                            requirePermission: "manage_knowledge_graph",
+                        },
+                        component: KnowledgeGraphView,
                     },
                     {
                         path: "roles",

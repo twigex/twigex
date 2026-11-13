@@ -620,6 +620,49 @@ func (c *collimatoRepository) GetDashboardByID(id string) (*model.Dashboard, err
 	return dashboard, nil
 }
 
+func (c *collimatoRepository) GetDashboardIDsForChart(chartID string) ([]string, error) {
+	rows, err := c.Db.Query("SELECT DISTINCT dashboard_id FROM collimato_dashboard_charts WHERE chart_id = ? ORDER BY dashboard_id", chartID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	return scanDashboardIDs(rows)
+}
+
+func (c *collimatoRepository) GetDashboardIDsForFilterColumn(workspaceID, column string) ([]string, error) {
+	rows, err := c.Db.Query(`
+		SELECT DISTINCT collimato_dashboard_filters.dashboard_id
+		FROM collimato_dashboard_filters
+		INNER JOIN collimato_dashboards ON collimato_dashboards.id = collimato_dashboard_filters.dashboard_id
+		WHERE collimato_dashboards.workspace_id = ?
+			AND collimato_dashboard_filters.column_name = ?
+		ORDER BY collimato_dashboard_filters.dashboard_id`, workspaceID, column)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	return scanDashboardIDs(rows)
+}
+
+func scanDashboardIDs(rows *sql.Rows) ([]string, error) {
+	ids := make([]string, 0)
+	for rows.Next() {
+		var id string
+		err := rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
+
+		ids = append(ids, id)
+	}
+
+	return ids, rows.Err()
+}
+
 func (c *collimatoRepository) CreateDashboard(dashboard model.Dashboard) (*model.Dashboard, error) {
 	t := time.Now().Unix()
 	id := model.NewID()

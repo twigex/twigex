@@ -100,6 +100,102 @@
     "translation": "Sinhronizāciju nevarēja sākt."
   },
   {
+    "id": "graph.disabled",
+    "translation": "Zināšanu grafs nav ieslēgts."
+  },
+  {
+    "id": "graph.forbidden",
+    "translation": "Jums nav atļaujas pārvaldīt zināšanu grafu."
+  },
+  {
+    "id": "graph.rebuild_already_running",
+    "translation": "Grafa pārbūve jau notiek."
+  },
+  {
+    "id": "graph.rebuild_enqueue_failed",
+    "translation": "Grafa pārbūvi nevarēja sākt."
+  },
+  {
+    "id": "graph.status_failed",
+    "translation": "Grafa statusu nevarēja nolasīt."
+  },
+  {
+    "id": "graph.entity_not_found",
+    "translation": "Entītija netika atrasta."
+  },
+  {
+    "id": "graph.relations_failed",
+    "translation": "Entītijas relācijas nevarēja nolasīt."
+  },
+  {
+    "id": "graph.types_failed",
+    "translation": "Grafa tipus nevarēja nolasīt vai saglabāt."
+  },
+  {
+    "id": "graph.type_not_found",
+    "translation": "Tips netika atrasts."
+  },
+  {
+    "id": "graph.type_key_invalid",
+    "translation": "Atslēgai jāsākas ar mazo burtu, un tajā drīkst būt tikai mazie burti, cipari un pasvītras, ne vairāk kā 64 rakstzīmes."
+  },
+  {
+    "id": "graph.type_name_required",
+    "translation": "Ievadiet nosaukumu."
+  },
+  {
+    "id": "graph.type_name_too_long",
+    "translation": "Nosaukumā var būt ne vairāk kā 255 rakstzīmes."
+  },
+  {
+    "id": "graph.type_key_taken",
+    "translation": "Šo atslēgu jau izmanto cits tips."
+  },
+  {
+    "id": "graph.type_built_in",
+    "translation": "Iebūvētos tipus nevar mainīt vai dzēst."
+  },
+  {
+    "id": "graph.type_dataset_not_found",
+    "translation": "Datu kopa netika atrasta, vai jūs to nevarat redzēt."
+  },
+  {
+    "id": "graph.type_field_not_found",
+    "translation": "Izvēlētais lauks nepieder datu kopai."
+  },
+  {
+    "id": "graph.type_field_not_visible",
+    "translation": "Izvēlētais lauks jums Collimato nav redzams. Primārās atslēgas ir paslēptas, ja vien datu kopa tās nerāda."
+  },
+  {
+    "id": "graph.type_field_is_measure",
+    "translation": "Atslēgas, nosaukuma vai relācijas laukam jābūt dimensijai, nevis mēram."
+  },
+  {
+    "id": "graph.type_in_use",
+    "translation": "Šo tipu izmanto relācijas tips. Vispirms dzēsiet vai mainiet relācijas tipu."
+  },
+  {
+    "id": "graph.relation_type_needs_dataset_types",
+    "translation": "Abiem relācijas galiem jābūt tipiem, kas savas entītijas ņem no datu kopas."
+  },
+  {
+    "id": "graph.type_status_invalid",
+    "translation": "Statusam jābūt: eksperimentāls, aktīvs vai novecojis."
+  },
+  {
+    "id": "graph.type_color_invalid",
+    "translation": "Izvēlieties vienu no piedāvātajām krāsām."
+  },
+  {
+    "id": "graph.type_icon_invalid",
+    "translation": "Ikonas nosaukumā drīkst būt tikai mazie burti, cipari un defises."
+  },
+  {
+    "id": "graph.relation_type_cardinality_invalid",
+    "translation": "Izvēlieties: viens pret vienu, viens pret daudziem, daudzi pret vienu vai daudzi pret daudziem."
+  },
+  {
     "id": "ldap.invalid_sync_interval",
     "translation": "Sinhronizācijas intervālam jābūt no 5 līdz 1440 minūtēm."
   },
@@ -1396,6 +1492,10 @@
     "translation": "Šo statusa opciju nevar pārdēvēt."
   },
   {
+    "id": "workspace.task_delete_protected",
+    "translation": "Šo statusa opciju nevar dzēst."
+  },
+  {
     "id": "workspace.relationship_not_found",
     "translation": "Šim laukam netika atrasta atbilstoša saistība."
   },
@@ -1740,6 +1840,82 @@
     "translation": "Jums ir jauns paziņojums"
   },
   {
+    "id": "email.notification.subject.default",
+    "translation": "Jauns paziņojums no Twigex"
+  },
+  {
+    "id": "email.notification.subject.file_create",
+    "translation": "Pievienots jauns fails vai mape"
+  },
+  {
+    "id": "email.notification.subject.file_rename",
+    "translation": "Fails vai mape tika pārdēvēta"
+  },
+  {
+    "id": "email.notification.subject.file_share",
+    "translation": "Ar jums kaut kas tika kopīgots"
+  },
+  {
+    "id": "email.notification.subject.file_delete",
+    "translation": "Fails vai mape tika izdzēsta"
+  },
+  {
+    "id": "email.notification.subject.file_restore",
+    "translation": "Fails vai mape tika atjaunota"
+  },
+  {
+    "id": "email.notification.subject.file_download",
+    "translation": "Jūsu fails tika lejupielādēts"
+  },
+  {
+    "id": "email.notification.subject.file_public_download",
+    "translation": "Caur jūsu saiti tika lejupielādēts fails"
+  },
+  {
+    "id": "email.notification.subject.task_created",
+    "translation": "Izveidots jauns uzdevums"
+  },
+  {
+    "id": "email.notification.subject.project_deleted",
+    "translation": "Projekts tika dzēsts"
+  },
+  {
+    "id": "email.notification.subject.project_invite",
+    "translation": "Jūs tikāt pievienots projektam"
+  },
+  {
+    "id": "email.notification.subject.task_deleted",
+    "translation": "Uzdevums tika dzēsts"
+  },
+  {
+    "id": "email.notification.subject.task_assigned",
+    "translation": "Jums tika piešķirts uzdevums"
+  },
+  {
+    "id": "email.notification.subject.task_status_changed",
+    "translation": "Jūsu uzdevuma statuss mainījās"
+  },
+  {
+    "id": "email.notification.subject.task_comment",
+    "translation": "Jauns komentārs uzdevumam"
+  },
+  {
+    "id": "email.notification.subject.post_mention",
+    "translation": "Jūs pieminēja tērzēšanā"
+  },
+  {
+    "id": "email.notification.subject.meeting_scheduled",
+    "translation": "Ieplānota sapulce"
+  },
+  {
+    "id": "email.notification.subject.meeting_updated",
+    "translation": "Sapulce tika mainīta"
+  },
+  {
+    "id": "email.notification.subject.meeting_cancelled",
+    "translation": "Sapulce tika atcelta"
+  },
+  {
     "id": "email.notification.action_open",
     "translation": "Atvērt"
   },
@@ -1921,7 +2097,7 @@
   },
   {
     "id": "channel.archive_type_invalid",
-    "translation": "Arhivēt var tikai publiskus kanālus."
+    "translation": "Tiešās ziņas nevar arhivēt."
   },
   {
     "id": "channel.delete_type_invalid",
