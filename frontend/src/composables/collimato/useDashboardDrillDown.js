@@ -6,7 +6,7 @@ import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { drillDownFilters, filterMembers } from "@/utils/collimato/charts/drillDown.js";
 import { useChartDisplay } from "@/composables/collimato/useChartDisplay.js";
 
-export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, pollLoad }) {
+export function useDashboardDrillDown({ charts, widgets, dataModels, contextMenu, loadQuery }) {
     const { chartDisplay } = useChartDisplay();
     const drillDownQuery = ref(null);
     const drillDownData = ref(null);
@@ -48,20 +48,17 @@ export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, poll
             });
         });
 
-        const cubes = meta.value?.cubes ?? [];
-        const root = cubes.find((cube) => cube.name === names[0]);
+        const models = dataModels.value ?? [];
+        const root = models.find((model) => model.name === names[0]);
 
         if (!root) {
             return [];
         }
 
-        const related =
-            root.connectedComponent > 0
-                ? cubes.filter((cube) => cube.connectedComponent === root.connectedComponent)
-                : [root];
+        const related = root.join > 0 ? models.filter((model) => model.join === root.join) : [root];
 
-        related.forEach((cube) => {
-            (cube.dimensions ?? []).forEach((dimension) => {
+        related.forEach((model) => {
+            (model.dimensions ?? []).forEach((dimension) => {
                 if (!used.includes(dimension.name)) {
                     dimensions.push(dimension);
                 }
@@ -76,13 +73,13 @@ export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, poll
 
         widgets.value[chartIndex]?.setBusy(true);
 
-        pollLoad(query, {
-            onSuccess: (result) => {
+        loadQuery(query, {
+            onSuccess: (data) => {
                 const display = chartDisplay();
 
                 drillDownData.value = transformData(
                     chart.chart_type,
-                    result.data,
+                    data,
                     chart.configuration,
                     display,
                 );
@@ -110,13 +107,13 @@ export function useDashboardDrillDown({ charts, widgets, meta, contextMenu, poll
 
         widgets.value[chartIndex]?.setBusy(true);
 
-        pollLoad(query, {
-            onSuccess: (result) => {
+        loadQuery(query, {
+            onSuccess: (data) => {
                 const display = chartDisplay();
 
                 drillDownData.value = transformData(
                     currentChart.value.chart_type,
-                    result.data,
+                    data,
                     currentChart.value.configuration,
                     display,
                 );

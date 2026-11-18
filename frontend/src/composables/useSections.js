@@ -64,10 +64,6 @@ export function useSections() {
     const permissionsStore = usePermissionsStore();
 
     function show(item) {
-        if (item.name === "collimato" && settingsStore.collimatoStatus != true) {
-            return false;
-        }
-
         if (item.name === "graph" && !settingsStore.isFeatureEnabled("KnowledgeGraph")) {
             return false;
         }

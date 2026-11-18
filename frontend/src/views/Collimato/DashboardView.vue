@@ -31,7 +31,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                 :open-filters="openFilters"
                 :filter-search="filterSearch"
                 :filter-to-edit="filterToEdit"
-                :data-models="meta?.cubes ?? []"
+                :data-models="dataModels"
                 :charts="charts"
                 @toggle-sidebar="toggleSidebar"
                 @add-filter="addFilter"
@@ -58,6 +58,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                         :chart="chart"
                         :id="`widget-${chart.id}`"
                         :active-filters="activeFilters(chart.id)"
+                        :yes-no-fields="yesNoFields"
                         ref="widgets"
                         @right-click="showContextMenu"
                         @drill-down="handleDrillDown"
@@ -90,7 +91,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { t } from "@/i18n/index.js";
 import ChartWidget from "@/components/Collimato/Widget/ChartWidget.vue";
@@ -102,6 +103,8 @@ import { useCollimatoStore } from "@/store/collimato";
 import { useAlertStore } from "@/store/alerts";
 import { extractErrorMessage } from "@/utils/errors";
 import collimatoService from "@/services/collimatoService.js";
+import { toDataModels } from "@/utils/collimato/dataModels.js";
+import { yesNoFieldsOf } from "@/utils/collimato/yesNo.js";
 import { ChartBarIcon } from "@heroicons/vue/24/outline";
 import { useDashboardQueries } from "@/composables/collimato/useDashboardQueries.js";
 import { useDashboardGrid } from "@/composables/collimato/useDashboardGrid.js";
@@ -118,10 +121,11 @@ const dashboard = ref({});
 const charts = ref([]);
 const availableCharts = ref([]);
 const loaded = ref(false);
-const meta = ref(null);
+const dataModels = ref([]);
+const yesNoFields = computed(() => yesNoFieldsOf(dataModels.value));
 const sidebarOpen = ref(true);
 
-const { pollLoad, loadMapLayer, loadChartData, loadData } = useDashboardQueries({ widgets });
+const { loadQuery, loadMapLayer, loadChartData, loadData } = useDashboardQueries({ widgets });
 
 const {
     edit,
@@ -163,10 +167,10 @@ const {
     closeCrossFilter,
     editFilter,
     loadFilterValues,
-} = useDashboardFilters({ charts, pollLoad, loadData });
+} = useDashboardFilters({ charts, loadQuery, loadData });
 
 const { contextMenuDimensions, showContextMenu, handleDrillDown, handleDrillBy } =
-    useDashboardDrillDown({ charts, widgets, meta, contextMenu, pollLoad });
+    useDashboardDrillDown({ charts, widgets, dataModels, contextMenu, loadQuery });
 
 function toggleSidebar() {
     sidebarOpen.value = !sidebarOpen.value;
@@ -181,8 +185,8 @@ onMounted(async () => {
     }
 
     try {
-        await collimatoService.meta(route.params.workspaceId).then((response) => {
-            meta.value = response.data;
+        await collimatoService.fieldList(route.params.workspaceId).then((response) => {
+            dataModels.value = toDataModels(response.data);
         });
 
         if (collimatoStore.hasPermissionToViewCharts) {

@@ -581,8 +581,8 @@ func (a *App) editableGraphRelationType(ctx context.Context, user model.User, id
 
 // checkGraphTypeFields checks that every field belongs to the dataset and is a
 // dimension the user can see in Collimato. That one check covers both rules:
-// nobody builds a type on data they may not see, and a primary key Cube hides
-// (it does so by default) can't be used as a key.
+// nobody builds a type on data they may not see, and a hidden primary key
+// (primary keys are hidden by default) can't be used as a key.
 func (a *App) checkGraphTypeFields(ctx context.Context, user model.User, datasetID string, fieldIDs ...string) *model.AppError {
 	dataset, err := a.Store.Graph.GetDatasetByID(ctx, datasetID)
 	if errors.Is(err, sql.ErrNoRows) {

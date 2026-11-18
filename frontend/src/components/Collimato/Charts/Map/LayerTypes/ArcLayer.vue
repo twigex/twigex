@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
     <LatLong
         :coordinates="config.source"
-        :cubes="filteredCubes"
+        :data-models="filteredDataModels"
         :title="t('collimato.charts.new_chart.map.arc.source')"
         :description="t('collimato.charts.new_chart.map.arc.source_description')"
         @update:coordinates="$emit('update:fields', { source: $event })"
@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-only
     <LatLong
         class="mt-5"
         :coordinates="config.target"
-        :cubes="filteredCubes"
+        :data-models="filteredDataModels"
         :title="t('collimato.charts.new_chart.map.arc.target')"
         :description="t('collimato.charts.new_chart.map.arc.target_description')"
         @update:coordinates="$emit('update:fields', { target: $event })"
@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
     <FillColor
         :config="config"
-        :cubes="valueCubes"
+        :data-models="valueDataModels"
         color-key="source_color"
         field-key="source_color_field"
         scheme-key="source_color_scheme"
@@ -34,7 +34,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
     <FillColor
         :config="config"
-        :cubes="valueCubes"
+        :data-models="valueDataModels"
         color-key="target_color"
         field-key="target_color_field"
         scheme-key="target_color_scheme"
@@ -88,7 +88,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                 <ListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                 >
-                    <template v-for="(d, index) in valueCubes" :key="index">
+                    <template v-for="(d, index) in valueDataModels" :key="index">
                         <li
                             class="cursor-default select-none bg-gray-100 py-2 pl-3 pr-9 text-left font-semibold text-gray-900"
                         >
@@ -212,11 +212,11 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headless
 import { XMarkIcon } from "@heroicons/vue/20/solid";
 
 const props = defineProps({
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },
-    selectedCube: {
+    selectedDataModel: {
         type: String,
         default: null,
     },
@@ -228,25 +228,25 @@ const props = defineProps({
 
 const emit = defineEmits(["update:config", "update:fields"]);
 
-const filteredCubes = computed(() =>
+const filteredDataModels = computed(() =>
     joinableDataModels(
-        props.cubes,
-        props.cubes.find((cube) => cube.table === props.selectedCube) ?? null,
+        props.dataModels,
+        props.dataModels.find((dataModel) => dataModel.table === props.selectedDataModel) ?? null,
     ),
 );
 
-const valueCubes = computed(() =>
+const valueDataModels = computed(() =>
     withCountMeasure(
-        filteredCubes.value,
-        props.selectedCube,
+        filteredDataModels.value,
+        props.selectedDataModel,
         t.value("collimato.charts.new_chart.map.count"),
     ),
 );
 
 const widthField = computed(
     () =>
-        valueCubes.value
-            .flatMap((cube) => cube.dimensions)
+        valueDataModels.value
+            .flatMap((dataModel) => dataModel.dimensions)
             .find((d) => d.name === props.config.width_field) ?? null,
 );
 

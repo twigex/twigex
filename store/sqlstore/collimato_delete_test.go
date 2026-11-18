@@ -34,7 +34,7 @@ func TestDeleteCollimatoWorkspaceRemovesGroupsAndFiles(t *testing.T) {
 			model.NewID(), ws, model.NewID(), model.NewID(), now)
 		mustExec(t,
 			`INSERT INTO collimato_workspace_files (id, workspace_id, name, file_type, content, encrypted, created_at, updated_at)
-			 VALUES (?, ?, 'orders.yml', 'model', 'cubes: []', 1, ?, ?)`,
+			 VALUES (?, ?, 'orders', 'dataset', '', 1, ?, ?)`,
 			model.NewID(), ws, now, now)
 	}
 

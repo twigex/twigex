@@ -20,10 +20,8 @@ var (
 var CollimatoDataFolder = "data/collimato/data"
 
 var (
-	CollimatoFileTypeCube   = "cube"
-	CollimatoFileTypeView   = "view"
-	CollimatoFileTypeEnv    = "env"
-	CollimatoFileTypeCubejs = "cubejs"
+	CollimatoFileTypeDataset = "dataset"
+	CollimatoFileTypeView    = "view"
 )
 
 const CollimatoMaxQueryLimit = 50000
@@ -70,6 +68,9 @@ const (
 	SSLModeVerifyCA   = "verify-ca"
 	SSLModeVerifyFull = "verify-full"
 )
+
+// ConnectionCACertKey is where a connection's config keeps its CA certificate.
+const ConnectionCACertKey = "ca_cert"
 
 func SSLModeSupported(mode string) bool {
 	switch mode {
@@ -255,9 +256,8 @@ type DataQuery struct {
 	TimeDimensions []QueryTimeDimension `json:"timeDimensions"`
 	Order          [][]string           `json:"order"`
 	Limit          int                  `json:"limit"`
-	// Ungrouped asks Cube for one result row per source row, without the
-	// GROUP BY it adds otherwise. Only Twigex's own row reads set it; see
-	// QueryData.
+	// Ungrouped asks for one result row per source row, without adding rows
+	// up. Only Twigex's own row reads set it; see QueryData.
 	Ungrouped bool `json:"ungrouped,omitempty"`
 }
 
@@ -492,10 +492,13 @@ type DSN struct {
 }
 
 type DatabaseTable struct {
-	ID       string      `json:"id"`
-	Name     string      `json:"name"`
-	Database string      `json:"database"`
-	Tables   []TableName `json:"tables"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Database string `json:"database"`
+
+	// Type is the connection's database type, such as mysql or postgres.
+	Type   string      `json:"type"`
+	Tables []TableName `json:"tables"`
 }
 
 type TableName struct {
@@ -506,6 +509,10 @@ type TableName struct {
 type ColumnDetail struct {
 	Name string `json:"name"`
 	Type string `json:"type"`
+
+	// SuggestedType is the builder's type for the column, or empty when it
+	// cannot be a field.
+	SuggestedType string `json:"suggested_type,omitempty"`
 }
 
 type GenerateModelsResult struct {
@@ -514,24 +521,25 @@ type GenerateModelsResult struct {
 	SkippedColumns map[string][]string `json:"skipped_columns"`
 }
 
-type CubeFile struct {
+// DataModelFile is a saved data model: one made in the builder, with its
+// BuilderModel, or an old one written by hand, with only its Content.
+type DataModelFile struct {
 	Name         string  `json:"name"`
-	Content      string  `json:"content"`
-	Path         string  `json:"path"`
+	Content      string  `json:"content,omitempty"`
 	Type         string  `json:"type"`
 	BuilderModel *string `json:"builder_model,omitempty"`
 }
 
 type Dataset struct {
-	Name         string          `json:"name"`
-	SqlTable     string          `json:"sql_table"`
-	ConnectionID string          `json:"connection_id"`
-	Dimensions   []CubeDimension `json:"dimensions"`
-	Measures     []CubeMeasure   `json:"measures"`
-	Joins        []CubeJoin      `json:"joins,omitempty"`
+	Name         string             `json:"name"`
+	SqlTable     string             `json:"sql_table"`
+	ConnectionID string             `json:"connection_id"`
+	Dimensions   []DatasetDimension `json:"dimensions"`
+	Measures     []DatasetMeasure   `json:"measures"`
+	Joins        []DatasetJoin      `json:"joins,omitempty"`
 }
 
-type CubeDimension struct {
+type DatasetDimension struct {
 	Name       string `json:"name"`
 	SQL        string `json:"sql"`
 	Type       string `json:"type"`
@@ -542,7 +550,7 @@ type CubeDimension struct {
 	Custom bool `json:"custom,omitempty"`
 }
 
-type CubeMeasure struct {
+type DatasetMeasure struct {
 	Name   string `json:"name"`
 	Type   string `json:"type"`
 	SQL    string `json:"sql,omitempty"`
@@ -552,7 +560,7 @@ type CubeMeasure struct {
 	Custom bool `json:"custom,omitempty"`
 }
 
-type CubeJoin struct {
+type DatasetJoin struct {
 	Name         string `json:"name"`
 	Relationship string `json:"relationship"`
 	// ThisColumn/OtherColumn are the structured condition the builder uses; the
@@ -564,36 +572,16 @@ type CubeJoin struct {
 }
 
 type View struct {
-	Name  string        `json:"name"`
-	Cubes []ViewCubeRef `json:"cubes"`
+	Name  string     `json:"name"`
+	Parts []ViewPart `json:"parts"`
 }
 
-type ViewCubeRef struct {
-	// JoinPath is the base cube name, or a dotted path following joins
-	// ("files.channels"). Includes lists member names, or a single "*" for all.
+type ViewPart struct {
+	// JoinPath is the base dataset's name, or a dotted path following joins
+	// ("files.channels"). Includes lists field names, or a single "*" for all.
 	JoinPath string   `json:"join_path"`
 	Includes []string `json:"includes"`
 	Prefix   bool     `json:"prefix,omitempty"`
-}
-
-type CubeSchemaFile struct {
-	FileName string `json:"fileName"`
-	Content  string `json:"content"`
-}
-
-// CubeConnection is the database connection Cube.js resolves at query time via
-// its driverFactory for a given workspace and dataSource.
-type CubeConnection struct {
-	Type     string `json:"type"`
-	Host     string `json:"host"`
-	Port     string `json:"port"`
-	Database string `json:"database"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-	// SSLMode and SSLCA are passed through rather than translated here: the
-	// shape a driver wants for TLS belongs with the engine that talks to it.
-	SSLMode string `json:"ssl_mode"`
-	SSLCA   string `json:"ssl_ca,omitempty"`
 }
 
 func (c *Connection) UsesCACertificate() bool {

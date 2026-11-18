@@ -5,24 +5,15 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"slices"
-	"time"
 
 	"github.com/twigex/twigex/model"
 	"github.com/twigex/twigex/tlog"
 )
 
-// Cube may hold each request open for a few seconds before answering "Continue
-// wait", so the limit is a length of time, not a number of tries.
-const collimatoWaitLimit = 30 * time.Second
-
-var collimatoWaitInterval = 500 * time.Millisecond
-
-// emptyDataQuery starts every query with empty lists, because Cube rejects a
-// whole query when a list is null, and a Go slice that was never filled is
-// sent as null.
+// emptyDataQuery starts every query with empty lists, so the query reads the
+// same as one the browser sends.
 func emptyDataQuery() model.DataQuery {
 	return model.DataQuery{
 		Measures:       make([]string, 0),
@@ -35,14 +26,13 @@ func emptyDataQuery() model.DataQuery {
 
 // CollimatoGetRows reads rows of a dataset as the user, through the same
 // checks as a chart: the user's workspace role, then the data rules, which
-// also add the row filters, and only then Cube.
+// also add the row filters, and only then the query.
 //
-// The rows are read ungrouped. Cube groups a query that has fields but no
-// measures, which makes the database sort the whole group before returning a
-// page: 3.5 s instead of 0.05 s for one company with a million orders.
+// The rows are read ungrouped: grouping makes the database sort the whole
+// group before returning a page, 3.5 s instead of 0.05 s for a million rows.
 func (a *App) CollimatoGetRows(ctx context.Context, user model.User, workspaceID string, request model.CollimatoRowsRequest) ([]map[string]any, *model.AppError) {
 	// Without a limit Collimato's maximum of 50,000 rows would apply, and a
-	// sort field that isn't read is refused by Cube with a vaguer error.
+	// sort field that isn't read is refused with a vaguer error.
 	if request.Limit <= 0 || !slices.Contains(request.Fields, request.OrderBy) {
 		tlog.Errorw("A row read needs a limit and a sort field among its fields", "workspace_id", workspaceID)
 
@@ -64,63 +54,31 @@ func (a *App) CollimatoGetRows(ctx context.Context, user model.User, workspaceID
 		query.Filters = append(query.Filters, after)
 	}
 
-	data, appErr := a.runCollimatoQuery(ctx, user, workspaceID, query)
+	answer, appErr := a.queryData(ctx, user, workspaceID, query)
 	if appErr != nil {
-		return nil, appErr
+		return nil, rowReadError(workspaceID, appErr)
 	}
 
-	rows := make([]map[string]any, 0, len(data))
-	for _, item := range data {
-		row, ok := item.(map[string]any)
-		if ok {
-			rows = append(rows, row)
-		}
-	}
-
-	return rows, nil
+	return answer.Rows, nil
 }
 
-// runCollimatoQuery waits while Cube answers "Continue wait", which it does
-// while it is still preparing a query; the chart screens poll the same way.
-// Cube reports any other failure inside a normal answer, and reading that as
-// "no rows" would make an entity look missing.
-func (a *App) runCollimatoQuery(ctx context.Context, user model.User, workspaceID string, query model.DataQuery) ([]any, *model.AppError) {
-	started := time.Now()
+// rowReadError keeps a refusal (the user may not read these rows), a
+// connection failure and the time limit as they are. Anything else the
+// engine or the database refused is a failed read, not a refusal: the graph
+// reads an error below 500 as "you may not see this" and would quietly show
+// nothing.
+func rowReadError(workspaceID string, appErr *model.AppError) *model.AppError {
+	isRequestRefused := appErr.Status == http.StatusBadRequest
+	isDatabaseMessage := appErr.Raw
 
-	for time.Since(started) < collimatoWaitLimit {
-		body, appErr := a.queryData(ctx, user, workspaceID, query)
-		if appErr != nil {
-			return nil, appErr
-		}
-
-		message, failed := body["error"]
-		if !failed {
-			data, _ := body["data"].([]any)
-
-			return data, nil
-		}
-
-		if message != "Continue wait" {
-			return nil, cubeQueryError(fmt.Sprint(message))
-		}
-
-		select {
-		case <-ctx.Done():
-			return nil, model.NewAppError("collimato.request_failed", http.StatusInternalServerError)
-		case <-time.After(collimatoWaitInterval):
-		}
+	if !isRequestRefused && !isDatabaseMessage {
+		return appErr
 	}
 
-	tlog.Errorw("Cube kept asking to wait", "workspace_id", workspaceID)
+	tlog.Errorw("A row read failed",
+		"workspace_id", workspaceID,
+		"error", appErr.Message,
+	)
 
-	return nil, model.NewAppError("collimato.query_failed", http.StatusInternalServerError)
-}
-
-func cubeQueryError(message string) *model.AppError {
-	id := CubeErrorID(message)
-	if id == "" {
-		id = "collimato.query_failed"
-	}
-
-	return model.NewAppError(id, http.StatusInternalServerError)
+	return model.NewAppError("collimato.query_failed", http.StatusInternalServerError)
 }

@@ -7,7 +7,6 @@ export const useSettingsStore = defineStore("settings", {
     state: () => {
         return {
             metadata: [],
-            collimatoStatus: "false",
             chatSettings: {},
             config: null,
             license: null,
@@ -44,10 +43,6 @@ export const useSettingsStore = defineStore("settings", {
     actions: {
         setMetadata(metadata) {
             this.metadata = metadata;
-        },
-
-        setCollimatoStatus(status) {
-            this.collimatoStatus = status;
         },
 
         setChatSettings(settings) {

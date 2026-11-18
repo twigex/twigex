@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 	"slices"
+	"strconv"
 
 	"github.com/twigex/twigex/model"
 	"github.com/twigex/twigex/tlog"
@@ -48,9 +49,16 @@ func (relation graphPropertyRelation) fromMatchField() string {
 	return relation.from.keyField
 }
 
+// graphText writes a value read from a dataset as text. Numbers come as
+// float64, which fmt would write as 1.234567e+06 for an ID of 1234567.
 func graphText(value any) string {
 	if value == nil {
 		return ""
+	}
+
+	number, isNumber := value.(float64)
+	if isNumber {
+		return strconv.FormatFloat(number, 'f', -1, 64)
 	}
 
 	return fmt.Sprint(value)

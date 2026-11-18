@@ -18,6 +18,20 @@ var appMigrations = []appMigration{
 	{name: "task_dates_as_days", run: func(a *App) error {
 		return a.Store.Workspace.ConvertTaskDatesToDays()
 	}},
+	{name: "datasets_instead_of_cubes", run: func(a *App) error {
+		keptOldName, err := a.Store.Collimato.RenameCubesToDatasets()
+		if err != nil {
+			return err
+		}
+
+		if len(keptOldName) > 0 {
+			tlog.Infow("Data models that kept their old name, because a file of the plain name exists",
+				"files", keptOldName,
+			)
+		}
+
+		return nil
+	}},
 }
 
 func (a *App) DoAppMigrations() {

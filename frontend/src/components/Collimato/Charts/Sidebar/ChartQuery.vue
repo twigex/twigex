@@ -204,14 +204,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 
             <MeasureDialog
                 :open="measureDialog"
-                :data="cubes"
+                :data="dataModels"
                 @add="$emit('add-measure', $event)"
                 @close="measureDialog = false"
             />
 
             <DimensionDialog
                 :open="dimensionDialog"
-                :data="cubes"
+                :data="dataModels"
                 @add="$emit('add-dimension', $event)"
                 @close="dimensionDialog = false"
             />
@@ -231,7 +231,7 @@ import MeasureDialog from "@/components/Collimato/Dialogs/MeasureDialog.vue";
 import DimensionDialog from "@/components/Collimato/Dialogs/DimensionDialog.vue";
 
 defineProps({
-    cubes: { type: Array, default: () => [] },
+    dataModels: { type: Array, default: () => [] },
     measures: { type: Array, default: () => [] },
     dimensions: { type: Array, default: () => [] },
     orders: { type: Array, default: () => [] },

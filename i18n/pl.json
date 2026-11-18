@@ -508,10 +508,6 @@
     "translation": "Nie masz uprawnień do zarządzania połączeniami."
   },
   {
-    "id": "connection.not_found",
-    "translation": "Nie znaleziono żądanego połączenia."
-  },
-  {
     "id": "connection.ssl_mode_unsupported",
     "translation": "Ten tryb szyfrowania nie jest rozpoznawany. Wybierz jeden z wymienionych poziomów weryfikacji."
   },
@@ -677,11 +673,7 @@
   },
   {
     "id": "datamodel.delete_has_dependents",
-    "translation": "Tej kostki nie można usunąć, ponieważ inne kostki lub widoki nadal od niej zależą."
-  },
-  {
-    "id": "datamodel.file_create_failed",
-    "translation": "Nie udało się utworzyć pliku modelu danych. Spróbuj ponownie."
+    "translation": "Tego zbioru danych nie można usunąć, ponieważ inne zbiory danych lub widoki nadal od niego zależą."
   },
   {
     "id": "datamodel.file_read_failed",
@@ -2110,5 +2102,57 @@
   {
     "id": "channel.role_invalid",
     "translation": "To nie jest prawidłowa rola w kanale."
+  },
+  {
+    "id": "collimato.query.unknown_field",
+    "translation": "Ten wykres używa pola {{.Detail}}, którego nie ma już w modelu danych."
+  },
+  {
+    "id": "collimato.query.unsupported_model",
+    "translation": "Ten wykres używa pola {{.Detail}} z modelu danych napisanego dla poprzedniego silnika analitycznego, który nie jest już obsługiwany. Utwórz model danych ponownie w kreatorze modeli danych."
+  },
+  {
+    "id": "collimato.query.model_error",
+    "translation": "Model danych {{.Detail}} zawiera błąd. Otwórz go w kreatorze modeli danych, aby go poprawić."
+  },
+  {
+    "id": "collimato.query.needs_primary_key",
+    "translation": "Ten wykres wymaga klucza głównego w modelu danych {{.Detail}}. Oznacz jedno z jego pól jako klucz główny w kreatorze modeli danych."
+  },
+  {
+    "id": "collimato.query.no_join_path",
+    "translation": "Pola tego wykresu pochodzą z modeli danych, które nie są połączone. Dodaj połączenie w kreatorze modeli danych."
+  },
+  {
+    "id": "collimato.query.different_connections",
+    "translation": "Pola tego wykresu pochodzą z różnych połączeń z bazą danych, których nie można połączyć na jednym wykresie."
+  },
+  {
+    "id": "collimato.query.view_mixed",
+    "translation": "Pól z widoku nie można łączyć z polami z innych modeli danych na jednym wykresie."
+  },
+  {
+    "id": "collimato.query.connection_missing",
+    "translation": "Połączenie z bazą danych, z którego pochodzą dane tego wykresu, już nie istnieje lub jego typ bazy danych nie jest obsługiwany."
+  },
+  {
+    "id": "collimato.query.time_limit",
+    "translation": "Zapytanie trwało dłużej niż 10 minut i zostało zatrzymane."
+  },
+  {
+    "id": "collimato.query.invalid_request",
+    "translation": "Nie udało się zamienić ustawień tego wykresu na zapytanie ({{.Detail}})."
+  },
+  {
+    "id": "collimato.model.written_by_hand",
+    "translation": "{{.Name}} został napisany ręcznie dla poprzedniego silnika analitycznego i nie jest już obsługiwany. Utwórz go ponownie w kreatorze modeli danych."
+  },
+  {
+    "id": "collimato.model.cannot_read",
+    "translation": "Nie udało się odczytać {{.Name}}: {{.Detail}}"
+  },
+  {
+    "id": "collimato.model.has_errors",
+    "translation": "{{.Name}} zawiera błędy i nie można go używać, dopóki nie zostaną poprawione: {{.Detail}}"
   }
 ]

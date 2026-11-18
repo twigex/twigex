@@ -145,7 +145,9 @@ describe("map configuration", () => {
 
 describe("layer config and coordinates", () => {
     function layerSetup() {
-        const loadData = vi.fn(() => Promise.resolve({ data: { data: [{ row: 1 }] } }));
+        const loadData = vi.fn(() =>
+            Promise.resolve({ data: { columns: [], rows: [{ row: 1 }], dateRanges: [] } }),
+        );
         const builder = useChartBuilder("map", { loadData });
 
         builder.dataModels.value = [
@@ -261,7 +263,9 @@ describe("layer lifecycle", () => {
     const HEATMAP = "heatmap";
 
     function lifecycleSetup() {
-        const loadData = vi.fn(() => Promise.resolve({ data: { data: [{ row: 1 }] } }));
+        const loadData = vi.fn(() =>
+            Promise.resolve({ data: { columns: [], rows: [{ row: 1 }], dateRanges: [] } }),
+        );
         const builder = useChartBuilder("map", { loadData });
 
         builder.dataModels.value = [

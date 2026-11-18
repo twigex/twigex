@@ -27,13 +27,12 @@ type ServerConfig struct {
 	RedisSettings  RedisSettings
 	FileSettings   FileSettings
 
-	OfficeSettings    OfficeSettings
-	ChannelSettings   ChannelSettings
-	EmailSettings     EmailSettings
-	AuthSettings      AuthSettings
-	LDAPSettings      LDAPSettings
-	PasswordSettings  PasswordSettings
-	CollimatoSettings CollimatoSettings
+	OfficeSettings   OfficeSettings
+	ChannelSettings  ChannelSettings
+	EmailSettings    EmailSettings
+	AuthSettings     AuthSettings
+	LDAPSettings     LDAPSettings
+	PasswordSettings PasswordSettings
 
 	FeatureFlags FeatureFlags
 }
@@ -491,36 +490,6 @@ func (s *PasswordSettings) SetDefaults() {
 	}
 }
 
-// CollimatoSettings configures the shared Cube.js analytics backend used by
-// Collimato. A single Cube.js deployment serves every workspace and resolves
-// each workspace's schema and database connections at request time, so no
-// per-workspace provisioning is required.
-type CollimatoSettings struct {
-	// CubeAPIURL is the base URL of the shared Cube.js API, e.g.
-	// "http://cube:4000". Twigex proxies workspace queries to it.
-	CubeAPIURL *string
-	// CubeAPISecret is the shared secret used to sign the JWT that Twigex
-	// sends to Cube.js. It must match Cube.js CUBEJS_API_SECRET.
-	CubeAPISecret *string
-	// CubeCallbackSecret authenticates Cube.js when it calls back into
-	// Twigex's internal endpoints to fetch schema files and connections.
-	CubeCallbackSecret *string
-}
-
-func (s *CollimatoSettings) SetDefaults() {
-	if s.CubeAPIURL == nil {
-		s.CubeAPIURL = NewString("")
-	}
-
-	if s.CubeAPISecret == nil {
-		s.CubeAPISecret = NewString("")
-	}
-
-	if s.CubeCallbackSecret == nil {
-		s.CubeCallbackSecret = NewString("")
-	}
-}
-
 type FeatureFlags struct {
 	KnowledgeGraph *bool
 }
@@ -565,7 +534,6 @@ func (c *ServerConfig) SetDefaults() {
 	c.AuthSettings.SetDefaults()
 	c.LDAPSettings.SetDefaults()
 	c.PasswordSettings.SetDefaults()
-	c.CollimatoSettings.SetDefaults()
 
 	c.FeatureFlags.SetDefaults()
 }

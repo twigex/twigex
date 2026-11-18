@@ -19,5 +19,5 @@ type CollimatoRoles interface {
 	AssignGroupRoles(workspaceID, groupID string, roles []string) *model.AppError
 
 	HasPermissionToFields(roles []model.CollimatoRole, query *model.DataQuery) (bool, error)
-	FilterMeta(roles []model.CollimatoRole, cubeCollection collimato.CubeCollection) *collimato.CubeCollection
+	FilterFieldList(roles []model.CollimatoRole, fieldList collimato.FieldList) *collimato.FieldList
 }

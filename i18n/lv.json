@@ -508,10 +508,6 @@
     "translation": "Jums nav atļaujas pārvaldīt savienojumus."
   },
   {
-    "id": "connection.not_found",
-    "translation": "Pieprasīto savienojumu neizdevās atrast."
-  },
-  {
     "id": "connection.ssl_mode_unsupported",
     "translation": "Šis šifrēšanas režīms nav atpazīts. Izvēlieties kādu no norādītajiem pārbaudes līmeņiem."
   },
@@ -677,11 +673,7 @@
   },
   {
     "id": "datamodel.delete_has_dependents",
-    "translation": "Šo kubu nevar dzēst, jo citi kubi vai skati joprojām no tā ir atkarīgi."
-  },
-  {
-    "id": "datamodel.file_create_failed",
-    "translation": "Neizdevās izveidot datu modeļa failu. Lūdzu, mēģiniet vēlreiz."
+    "translation": "Šo datu kopu nevar dzēst, jo citas datu kopas vai skati joprojām no tās ir atkarīgi."
   },
   {
     "id": "datamodel.file_read_failed",
@@ -2110,5 +2102,57 @@
   {
     "id": "channel.role_invalid",
     "translation": "Šī nav derīga kanāla loma."
+  },
+  {
+    "id": "collimato.query.unknown_field",
+    "translation": "Šis grafiks izmanto lauku {{.Detail}}, kura datu modelī vairs nav."
+  },
+  {
+    "id": "collimato.query.unsupported_model",
+    "translation": "Šis grafiks izmanto lauku {{.Detail}} no datu modeļa, kas rakstīts iepriekšējam analītikas dzinējam un vairs netiek atbalstīts. Izveidojiet datu modeli no jauna datu modeļu veidotājā."
+  },
+  {
+    "id": "collimato.query.model_error",
+    "translation": "Datu modelī {{.Detail}} ir kļūda. Atveriet to datu modeļu veidotājā, lai to izlabotu."
+  },
+  {
+    "id": "collimato.query.needs_primary_key",
+    "translation": "Šim grafikam datu modelim {{.Detail}} nepieciešama primārā atslēga. Datu modeļu veidotājā atzīmējiet kādu no tā laukiem kā primāro atslēgu."
+  },
+  {
+    "id": "collimato.query.no_join_path",
+    "translation": "Šī grafika lauki ir no datu modeļiem, kas nav savienoti. Pievienojiet savienojumu datu modeļu veidotājā."
+  },
+  {
+    "id": "collimato.query.different_connections",
+    "translation": "Šī grafika lauki ir no dažādiem datubāzes savienojumiem, kurus nevar apvienot vienā grafikā."
+  },
+  {
+    "id": "collimato.query.view_mixed",
+    "translation": "Skata laukus nevar apvienot ar citu datu modeļu laukiem vienā grafikā."
+  },
+  {
+    "id": "collimato.query.connection_missing",
+    "translation": "Datubāzes savienojums, no kura nāk šī grafika dati, vairs nepastāv, vai arī tā datubāzes veids netiek atbalstīts."
+  },
+  {
+    "id": "collimato.query.time_limit",
+    "translation": "Vaicājums ilga vairāk nekā 10 minūtes un tika apturēts."
+  },
+  {
+    "id": "collimato.query.invalid_request",
+    "translation": "Šī grafika iestatījumus nevarēja pārvērst vaicājumā ({{.Detail}})."
+  },
+  {
+    "id": "collimato.model.written_by_hand",
+    "translation": "{{.Name}} tika rakstīts ar roku iepriekšējam analītikas dzinējam un vairs netiek atbalstīts. Izveidojiet to no jauna datu modeļu veidotājā."
+  },
+  {
+    "id": "collimato.model.cannot_read",
+    "translation": "{{.Name}} nevarēja nolasīt: {{.Detail}}"
+  },
+  {
+    "id": "collimato.model.has_errors",
+    "translation": "{{.Name}} ir kļūdas, un to nevar izmantot, kamēr tās nav izlabotas: {{.Detail}}"
   }
 ]

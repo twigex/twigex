@@ -113,6 +113,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             "
                                             v-model="selectedValues"
                                             :values="values"
+                                            :yes-no="selectedColumn?.type === 'boolean'"
                                             :error="v$.selectedValues.$error"
                                         />
 
@@ -223,7 +224,7 @@ import FilterFieldSelect from "@/components/Collimato/Dialogs/CrossFilter/Filter
 import DateField from "@/components/Collimato/Dialogs/CrossFilter/DateField.vue";
 import FilterScope from "@/components/Collimato/Dialogs/CrossFilter/FilterScope.vue";
 import FilterValuePicker from "@/components/Collimato/Dialogs/CrossFilter/FilterValuePicker.vue";
-import { pollQuery } from "@/utils/collimato/queryPolling.js";
+import { fetchChartData, filterValueOf } from "@/utils/collimato/chartData.js";
 
 const filteredCharts = computed(() => {
     //if chart type is not map
@@ -355,12 +356,12 @@ async function queryData() {
     };
 
     try {
-        const result = await pollQuery(
+        const data = await fetchChartData(
             (q) => collimatoService.loadData(route.params.workspaceId, q),
             query,
         );
 
-        values.value = result.data.data.map((row) => row[selectedColumn.value.name]);
+        values.value = data.rows.map((row) => filterValueOf(row[selectedColumn.value.name]));
     } catch (error) {
         useAlertStore().showError(extractErrorMessage(error));
     }

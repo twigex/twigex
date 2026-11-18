@@ -298,6 +298,7 @@ type ActivityStore interface {
 }
 
 type CollimatoStore interface {
+	RenameCubesToDatasets() ([]string, error)
 	CreateConnection(connection model.NewConnection) (*model.Connection, error)
 	GetConnections(workspace string) ([]model.Connection, error)
 	GetConnectionByID(id string) (*model.Connection, error)

@@ -5,7 +5,7 @@ import { ref, computed } from "vue";
 import { buildQuery, joinableDataModels, ORDER_NONE } from "@/utils/collimato/chartQuery.js";
 import { layerQuery } from "@/utils/collimato/mapQuery.js";
 import { maxMeasuresFor } from "@/utils/collimato/charts/chartTypes.js";
-import { pollQuery } from "@/utils/collimato/queryPolling.js";
+import { fetchChartData } from "@/utils/collimato/chartData.js";
 import {
     defaultLayerConfig,
     layerTypeValue,
@@ -63,9 +63,6 @@ function withoutModelScopedFields(config) {
 
     return next;
 }
-
-const MAX_LAYER_RETRIES = 30;
-const LAYER_RETRY_MS = 2000;
 
 export function useChartBuilder(initialChartType, io = {}) {
     const { loadData } = io;
@@ -443,13 +440,9 @@ export function useChartBuilder(initialChartType, io = {}) {
         const query = layerQuery(layer);
 
         try {
-            const result = await pollQuery(loadData, query, {
-                signal: controller.signal,
-                retryLimit: MAX_LAYER_RETRIES,
-                retryMs: LAYER_RETRY_MS,
-            });
+            const data = await fetchChartData(loadData, query, { signal: controller.signal });
 
-            const rows = result.data.data;
+            const rows = data.rows;
 
             layer.config.data = rows;
             layerTruncated.value[id] = rows.length >= query.limit;

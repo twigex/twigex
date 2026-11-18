@@ -151,7 +151,7 @@ func TestAddDatasetsKeepsExistingRows(t *testing.T) {
 	ctx := context.Background()
 
 	added, err := repo.AddDatasets(ctx, []model.GraphDataset{
-		{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindCube},
+		{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindDataset},
 	})
 	if err != nil {
 		t.Fatalf("first AddDatasets: %v", err)
@@ -167,7 +167,7 @@ func TestAddDatasetsKeepsExistingRows(t *testing.T) {
 	}
 
 	added, err = repo.AddDatasets(ctx, []model.GraphDataset{
-		{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindCube},
+		{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindDataset},
 		{WorkspaceID: "ws", Name: "sales_view", Kind: model.GraphDatasetKindView},
 	})
 	if err != nil {
@@ -204,8 +204,8 @@ func TestDeleteDatasetsRemovesTheirFields(t *testing.T) {
 	ctx := context.Background()
 
 	_, err := repo.AddDatasets(ctx, []model.GraphDataset{
-		{WorkspaceID: "ws", Name: "customers", Kind: model.GraphDatasetKindCube},
-		{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindCube},
+		{WorkspaceID: "ws", Name: "customers", Kind: model.GraphDatasetKindDataset},
+		{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindDataset},
 	})
 	if err != nil {
 		t.Fatalf("AddDatasets: %v", err)
@@ -446,7 +446,7 @@ func TestGetDatasetAndFieldByID(t *testing.T) {
 	repo := &graphRepository{Db: db}
 	ctx := context.Background()
 
-	_, err := repo.AddDatasets(ctx, []model.GraphDataset{{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindCube}})
+	_, err := repo.AddDatasets(ctx, []model.GraphDataset{{WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindDataset}})
 	if err != nil {
 		t.Fatalf("AddDatasets: %v", err)
 	}

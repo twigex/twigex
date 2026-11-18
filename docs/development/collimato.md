@@ -5,9 +5,8 @@ on the screen.
 
 ## Words
 
-- **Dataset**: the data a chart uses, for example `sales`. Older code
-  and screens call it a *data model*, *model* or *cube*. It is the
-  same thing.
+- **Dataset**: the data a chart uses, for example `sales`. Some code
+  and screens call it a *data model* or *model*. It is the same thing.
 - **Option**: the object ECharts draws a chart from.
 
 ## Where things are
@@ -77,7 +76,10 @@ All of it is in `drillDown.js`:
 
 ## Good to know
 
-- Cube sends numbers as text, like `"10.00"`.
+- The server answers a chart with `columns` (each field's key, title,
+  type and date step), `rows` and `dateRanges`. Numbers are numbers,
+  except very long ones (`BIGINT` and `DECIMAL` fields), which are text so
+  no digit is lost. Dates are in UTC, like `2025-03-01T00:00:00Z`.
 - `null` means "no data here". A real 0 stays 0.
 
 ## Adding a chart type

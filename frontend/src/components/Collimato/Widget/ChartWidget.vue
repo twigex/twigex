@@ -174,6 +174,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    yesNoFields: {
+        type: Set,
+        default: () => new Set(),
+    },
 });
 
 const emits = defineEmits(["right-click", "drill-down"]);
@@ -212,7 +216,9 @@ const updatePosition = () => {
     props.chart.position.h = parseInt(h);
 };
 
-const breadcrumbs = computed(() => drillDownBreadcrumbs(drillQueries.value, props.chart.name));
+const breadcrumbs = computed(() =>
+    drillDownBreadcrumbs(drillQueries.value, props.chart.name, props.yesNoFields),
+);
 
 function onBreadcrumbClick(query, index) {
     drillQueries.value = drillQueries.value.slice(0, index + 1);

@@ -83,8 +83,8 @@ const chartOption = transformData("bar", {
         dimensions: ["orders.status"],
         timeDimensions: [],
     },
-    annotation: { measures: { "orders.count": { title: "Count" } } },
-    data: [{ "orders.status": "new", "orders.count": 5 }],
+    titles: { "orders.count": "Count" },
+    rows: [{ "orders.status": "new", "orders.count": 5 }],
 });
 
 describe("useEcharts", () => {

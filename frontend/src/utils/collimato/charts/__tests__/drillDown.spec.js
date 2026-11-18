@@ -13,10 +13,8 @@ import {
 
 const result = (dimensions, measures, rows, titles) => ({
     query: { measures, dimensions, timeDimensions: [] },
-    annotation: {
-        measures: Object.fromEntries(measures.map((m) => [m, { title: titles[m] }])),
-    },
-    data: rows,
+    titles: Object.fromEntries(measures.map((m) => [m, titles[m]])),
+    rows: rows,
 });
 
 describe("drillDownFilters", () => {
@@ -137,12 +135,10 @@ describe("drillDownValuesFor against real labels", () => {
                     },
                 ],
             },
-            annotation: {
-                measures: { "w.count": { title: "Count" }, "w.total": { title: "Total" } },
-            },
-            data: [
+            titles: { "w.count": "Count", "w.total": "Total" },
+            rows: [
                 {
-                    "w.created.day": "2026-01-01T00:00:00.000",
+                    "w.created": "2026-01-01T00:00:00.000",
                     "w.weather": "rain",
                     "w.count": 5,
                     "w.total": 9,
@@ -321,6 +317,26 @@ describe("drill down breadcrumbs", () => {
         const crumbs = breadcrumbsFor([{ dimensions: [], filters: [] }], "Sales by month");
 
         expect(crumbs[0].name).toBe("Sales by month");
+    });
+
+    it("names a yes/no field's value as Yes", () => {
+        const trail = [
+            { dimensions: ["orders.is_large"], filters: [] },
+            { dimensions: ["orders.country"], filters: [filter("orders.is_large", "true")] },
+        ];
+
+        const crumbs = drillDownBreadcrumbs(trail, "Chart", new Set(["orders.is_large"]));
+
+        expect(crumbs[1].value).toBe("Yes");
+    });
+
+    it("keeps the text of a field that is not yes/no", () => {
+        const crumbs = breadcrumbsFor([
+            { dimensions: ["w.answer"], filters: [] },
+            { dimensions: ["w.borough"], filters: [filter("w.answer", "true")] },
+        ]);
+
+        expect(crumbs[1].value).toBe("true");
     });
 
     it("shows (empty) for a value that was NULL", () => {

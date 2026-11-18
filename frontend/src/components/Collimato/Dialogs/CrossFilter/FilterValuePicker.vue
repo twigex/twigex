@@ -30,7 +30,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                     <span
                         class="inline-flex items-center rounded bg-gray-100 px-2 py-1 text-sm font-medium text-gray-700"
                     >
-                        {{ value }}
+                        {{ shown(value) }}
                         <button
                             type="button"
                             class="ml-1 rounded-full bg-gray-200 p-0.5 text-gray-600 hover:bg-gray-300 focus:outline-none"
@@ -90,7 +90,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                         ]"
                     >
                         <span :class="['block truncate', selected && 'font-semibold']">
-                            {{ value }}
+                            {{ shown(value) }}
                         </span>
                         <span
                             v-if="selected"
@@ -124,6 +124,7 @@ import {
     ComboboxOptions,
 } from "@headlessui/vue";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/vue/20/solid";
+import { yesNoLabel } from "@/utils/collimato/yesNo.js";
 
 const props = defineProps({
     modelValue: {
@@ -138,18 +139,30 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    yesNo: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
 const search = ref("");
 
+function shown(value) {
+    if (props.yesNo) {
+        return yesNoLabel(value);
+    }
+
+    return value;
+}
+
 const available = computed(() =>
     props.values.filter(
         (value) =>
             !props.modelValue.includes(value) &&
             (search.value === "" ||
-                String(value).toLowerCase().includes(search.value.toLowerCase())),
+                String(shown(value)).toLowerCase().includes(search.value.toLowerCase())),
     ),
 );
 

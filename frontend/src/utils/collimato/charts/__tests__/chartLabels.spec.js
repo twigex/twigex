@@ -2,7 +2,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 import { describe, it, expect } from "vitest";
-import { shortNumber } from "@/utils/collimato/charts/chartLabels.js";
+import { labelOf, shortNumber } from "@/utils/collimato/charts/chartLabels.js";
+
+describe("labelOf", () => {
+    it("names yes/no values as Yes and No", () => {
+        expect(labelOf(true)).toBe("Yes");
+        expect(labelOf(false)).toBe("No");
+    });
+
+    it("keeps text that only reads like yes/no", () => {
+        expect(labelOf("true")).toBe("true");
+        expect(labelOf(0)).toBe("0");
+    });
+});
 
 describe("shortNumber", () => {
     it("leaves numbers below a thousand as they are", () => {

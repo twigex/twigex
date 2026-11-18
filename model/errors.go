@@ -10,6 +10,9 @@ type AppError struct {
 	Message string
 	Status  int
 	Raw     bool
+
+	// Values fill the translation's {{.Name}} places, when it has any.
+	Values map[string]any
 }
 
 func NewAppError(id string, status int) *AppError {
@@ -33,6 +36,10 @@ func NewAppErrorRaw(id string, status int) *AppError {
 func (a *AppError) Translate(locale string) string {
 	if a.Raw {
 		return a.Message
+	}
+
+	if a.Values != nil {
+		return i18n.Tf(locale, a.ID, a.Values)
 	}
 
 	msg := i18n.T(locale, a.ID)

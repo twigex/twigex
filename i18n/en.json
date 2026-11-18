@@ -508,10 +508,6 @@
     "translation": "You do not have permission to manage connections."
   },
   {
-    "id": "connection.not_found",
-    "translation": "The requested connection could not be found."
-  },
-  {
     "id": "connection.ssl_mode_unsupported",
     "translation": "That encryption mode is not recognised. Choose one of the listed verification levels."
   },
@@ -681,11 +677,7 @@
   },
   {
     "id": "datamodel.delete_has_dependents",
-    "translation": "This cube cannot be deleted because other cubes or views still depend on it."
-  },
-  {
-    "id": "datamodel.file_create_failed",
-    "translation": "Failed to create data model file. Please try again."
+    "translation": "This dataset cannot be deleted because other datasets or views still depend on it."
   },
   {
     "id": "datamodel.file_read_failed",
@@ -2170,5 +2162,57 @@
   {
     "id": "channel.role_invalid",
     "translation": "That is not a valid channel role."
+  },
+  {
+    "id": "collimato.query.unknown_field",
+    "translation": "This chart uses {{.Detail}}, which the data model no longer has."
+  },
+  {
+    "id": "collimato.query.unsupported_model",
+    "translation": "This chart uses {{.Detail}}, from a data model written for the previous analytics engine, which is no longer supported. Recreate the data model in the data model builder."
+  },
+  {
+    "id": "collimato.query.model_error",
+    "translation": "The data model {{.Detail}} has an error. Open it in the data model builder to fix it."
+  },
+  {
+    "id": "collimato.query.needs_primary_key",
+    "translation": "The data model {{.Detail}} needs a primary key for this chart. Mark one of its fields as the primary key in the data model builder."
+  },
+  {
+    "id": "collimato.query.no_join_path",
+    "translation": "The fields in this chart come from data models that are not joined. Add a join in the data model builder."
+  },
+  {
+    "id": "collimato.query.different_connections",
+    "translation": "The fields in this chart come from different database connections, which cannot be combined in one chart."
+  },
+  {
+    "id": "collimato.query.view_mixed",
+    "translation": "Fields from a view cannot be combined with fields from other data models in one chart."
+  },
+  {
+    "id": "collimato.query.connection_missing",
+    "translation": "The database connection this chart's data comes from no longer exists, or its database type is not supported."
+  },
+  {
+    "id": "collimato.query.time_limit",
+    "translation": "The query took longer than 10 minutes and was stopped."
+  },
+  {
+    "id": "collimato.query.invalid_request",
+    "translation": "This chart's settings could not be turned into a query ({{.Detail}})."
+  },
+  {
+    "id": "collimato.model.written_by_hand",
+    "translation": "{{.Name}} was written by hand for the previous analytics engine and is no longer supported. Recreate it in the data model builder."
+  },
+  {
+    "id": "collimato.model.cannot_read",
+    "translation": "{{.Name}} could not be read: {{.Detail}}"
+  },
+  {
+    "id": "collimato.model.has_errors",
+    "translation": "{{.Name}} has errors and cannot be used until they are fixed: {{.Detail}}"
   }
 ]

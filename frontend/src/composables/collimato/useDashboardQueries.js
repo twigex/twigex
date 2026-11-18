@@ -7,29 +7,28 @@ import collimatoService from "@/services/collimatoService.js";
 import { extractErrorMessage } from "@/utils/errors";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
 import { useChartDisplay } from "@/composables/collimato/useChartDisplay.js";
-import { pollQuery } from "@/utils/collimato/queryPolling.js";
+import { fetchChartData } from "@/utils/collimato/chartData.js";
 import { layerQuery } from "@/utils/collimato/mapQuery.js";
 
 export function useDashboardQueries({ widgets }) {
     const route = useRoute();
     const { chartDisplay } = useChartDisplay();
 
-    const pollAborts = new Set();
+    const loadAborts = new Set();
 
     onUnmounted(() => {
-        pollAborts.forEach((controller) => controller.abort());
-        pollAborts.clear();
+        loadAborts.forEach((controller) => controller.abort());
+        loadAborts.clear();
     });
 
-    // pollLoad runs a Cube query and handles Cube's "Continue wait" long-poll with a
-    // bounded, delayed retry (matching DataView/NewChartView), routing the real
-    // result or a real error message to the caller's handlers.
-    function pollLoad(query, { onSuccess, onError }) {
+    // loadQuery loads a query's data and gives it, or the reason it failed, to
+    // the caller's handlers. Leaving the dashboard stops every load.
+    function loadQuery(query, { onSuccess, onError }) {
         const controller = new AbortController();
 
-        pollAborts.add(controller);
+        loadAborts.add(controller);
 
-        pollQuery(
+        fetchChartData(
             (q, signal) => collimatoService.loadData(route.params.workspaceId, q, signal),
             query,
             { signal: controller.signal },
@@ -39,15 +38,15 @@ export function useDashboardQueries({ widgets }) {
                 if (controller.signal.aborted) return;
                 onError(extractErrorMessage(error));
             })
-            .finally(() => pollAborts.delete(controller));
+            .finally(() => loadAborts.delete(controller));
     }
 
     function loadMapLayer(layer, lastWidgetIndex, item) {
         const mapQuery = layerQuery(layer);
 
-        pollLoad(mapQuery, {
-            onSuccess: (result) => {
-                layer.config.data = result.data.data;
+        loadQuery(mapQuery, {
+            onSuccess: (data) => {
+                layer.config.data = data.rows;
                 widgets.value[lastWidgetIndex]?.updateChart(null, item.configuration.layers);
             },
             onError: (message) => widgets.value[lastWidgetIndex]?.showError(message),
@@ -55,17 +54,12 @@ export function useDashboardQueries({ widgets }) {
     }
 
     function loadChartData(item, lastWidgetIndex) {
-        pollLoad(item.data.query, {
-            onSuccess: (result) => {
+        loadQuery(item.data.query, {
+            onSuccess: (data) => {
                 const display = chartDisplay();
-                const data = transformData(
-                    item.chart_type,
-                    result.data,
-                    item.configuration,
-                    display,
-                );
+                const option = transformData(item.chart_type, data, item.configuration, display);
 
-                widgets.value[lastWidgetIndex]?.updateChart(item.data.query, data);
+                widgets.value[lastWidgetIndex]?.updateChart(item.data.query, option);
             },
             onError: (message) => widgets.value[lastWidgetIndex]?.showError(message),
         });
@@ -80,7 +74,7 @@ export function useDashboardQueries({ widgets }) {
     }
 
     return {
-        pollLoad,
+        loadQuery,
         loadMapLayer,
         loadChartData,
         loadData,

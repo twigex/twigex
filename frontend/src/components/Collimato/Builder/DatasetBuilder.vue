@@ -88,10 +88,10 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     </div>
                                     <div>
                                         <label :class="labelClass">{{
-                                            t("collimato.builder.cube_name")
+                                            t("collimato.builder.dataset_name")
                                         }}</label>
                                         <input
-                                            v-model="cubeName"
+                                            v-model="datasetName"
                                             type="text"
                                             :disabled="isEdit"
                                             :class="[
@@ -485,7 +485,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         <button
                                             type="button"
                                             class="text-sm font-medium text-indigo-600 hover:text-indigo-500 disabled:text-gray-300"
-                                            :disabled="!availableJoinCubes.length"
+                                            :disabled="!availableJoinDatasets.length"
                                             @click="addJoin"
                                         >
                                             +
@@ -497,10 +497,10 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     </p>
 
                                     <p
-                                        v-if="!availableJoinCubes.length"
+                                        v-if="!availableJoinDatasets.length"
                                         class="text-sm text-gray-400"
                                     >
-                                        {{ t("collimato.builder.no_cubes_to_join") }}
+                                        {{ t("collimato.builder.no_datasets_to_join") }}
                                     </p>
 
                                     <div v-else-if="joins.length">
@@ -508,7 +508,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             class="grid grid-cols-12 gap-2 px-1 pb-1 text-xs font-medium text-gray-500"
                                         >
                                             <div class="col-span-3">
-                                                {{ t("collimato.builder.target_cube") }}
+                                                {{ t("collimato.builder.target_dataset") }}
                                             </div>
                                             <div class="col-span-3">
                                                 {{ t("collimato.builder.relationship") }}
@@ -529,9 +529,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             <div class="col-span-3">
                                                 <BaseSelect
                                                     v-model="j.target"
-                                                    :options="availableJoinCubes"
+                                                    :options="availableJoinDatasets"
                                                     :placeholder="
-                                                        t('collimato.builder.target_cube')
+                                                        t('collimato.builder.target_dataset')
                                                     "
                                                     @update:modelValue="onJoinTargetChange(j)"
                                                 />
@@ -629,9 +629,9 @@ import { t } from "@/i18n/index.js";
 const props = defineProps({
     show: { type: Boolean, default: false },
     workspaceId: { type: String, required: true },
-    // Existing cube names (no extension) available as join targets.
-    existingCubes: { type: Array, default: () => [] },
-    // Existing file to edit (must carry builder_model); null for a new cube.
+    // Existing datasets available as join targets: { name, model }.
+    existingDatasets: { type: Array, default: () => [] },
+    // Existing file to edit (must carry builder_model); null for a new dataset.
     editFile: { type: Object, default: null },
 });
 const emit = defineEmits(["close", "saved"]);
@@ -662,7 +662,7 @@ const relationshipOptions = computed(() => [
 const databases = ref([]); // [{ database: connId, name: label, tables: [...] }]
 const connectionId = ref("");
 const tableName = ref("");
-const cubeName = ref("");
+const datasetName = ref("");
 const columns = ref([]); // [{ name, type, include, primaryKey, public, title }]
 const customDimensions = ref([]); // raw-SQL dimensions [{ name, sql, type, title }]
 const measures = ref([]); // column-based measures (count is implicit)
@@ -691,19 +691,19 @@ const tablesForConnection = computed(() => {
 });
 const tableOptions = computed(() => tablesForConnection.value.map((tbl) => tbl.name));
 const columnOptions = computed(() => columns.value.map((c) => c.name));
-const availableJoinCubes = computed(() =>
-    props.existingCubes.filter((c) => c.name !== cubeName.value).map((c) => c.name),
+const availableJoinDatasets = computed(() =>
+    props.existingDatasets.filter((d) => d.name !== datasetName.value).map((d) => d.name),
 );
 
-// targetColumns resolves the joined cube's table columns (via its stored model)
-// so the "other column" can be a dropdown. Returns null when unknown (e.g. a
-// hand-written cube with no builder model), in which case we fall back to text.
+// targetColumns gives the joined dataset's table columns, from its saved model,
+// so the "other column" can be a dropdown. Null for a model written by hand,
+// whose columns are unknown: the field is then typed in.
 function targetColumns(targetName) {
-    const cube = props.existingCubes.find((c) => c.name === targetName);
+    const target = props.existingDatasets.find((d) => d.name === targetName);
 
-    if (!cube || !cube.model) return null;
-    const db = databases.value.find((d) => d.database === cube.model.connection_id);
-    const tbl = db?.tables.find((t) => t.name === cube.model.sql_table);
+    if (!target || !target.model) return null;
+    const db = databases.value.find((d) => d.database === target.model.connection_id);
+    const tbl = db?.tables.find((t) => t.name === target.model.sql_table);
 
     return tbl ? tbl.columns.map((c) => c.name) : null;
 }
@@ -713,7 +713,7 @@ function onJoinTargetChange(j) {
 }
 
 const nameError = computed(
-    () => cubeName.value !== "" && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(cubeName.value),
+    () => datasetName.value !== "" && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(datasetName.value),
 );
 
 const duplicateNames = computed(() => {
@@ -751,31 +751,19 @@ const canSave = computed(
     () =>
         !!connectionId.value &&
         !!tableName.value &&
-        !!cubeName.value &&
+        !!datasetName.value &&
         !nameError.value &&
         duplicateNames.value.size === 0 &&
         (columns.value.some((c) => c.include) ||
             customDimensions.value.some((d) => d.name && d.sql)),
 );
 
-function cubeType(sqlType) {
-    const s = (sqlType || "").toLowerCase();
-
-    if (/^(varchar|text|char|tinytext|mediumtext|longtext|character)/.test(s)) return "string";
-    if (/^(int|tinyint|smallint|mediumint|bigint|float|double|numeric|decimal|real)/.test(s))
-        return "number";
-    if (/^(timestamp|datetime|date|time)/.test(s)) return "time";
-    if (/^(bool|boolean)/.test(s)) return "boolean";
-
-    return "string";
-}
-
 function loadColumnsForTable() {
     const tbl = tablesForConnection.value.find((t) => t.name === tableName.value);
 
     columns.value = (tbl?.columns || []).map((c) => ({
         name: c.name,
-        type: cubeType(c.type),
+        type: c.suggested_type || "string",
         include: true,
         primaryKey: c.name === "id",
         public: false,
@@ -795,7 +783,9 @@ function onConnectionChange() {
 }
 
 function onTableChange() {
-    if (!isEdit.value) cubeName.value = tableName.value;
+    // A table in another Postgres schema has a dot, which a dataset name
+    // cannot have: archive.regions becomes archive_regions.
+    if (!isEdit.value) datasetName.value = tableName.value.replaceAll(".", "_");
     loadColumnsForTable();
 }
 
@@ -833,7 +823,7 @@ function addJoin() {
 function reset() {
     connectionId.value = "";
     tableName.value = "";
-    cubeName.value = "";
+    datasetName.value = "";
     columns.value = [];
     customDimensions.value = [];
     measures.value = [];
@@ -863,7 +853,7 @@ async function initialize() {
 function hydrateFromModel(model) {
     connectionId.value = model.connection_id;
     tableName.value = model.sql_table;
-    cubeName.value = model.name;
+    datasetName.value = model.name;
     loadColumnsForTable();
 
     const dims = model.dimensions || [];
@@ -881,13 +871,19 @@ function hydrateFromModel(model) {
         }
     });
 
+    // A field whose column the table list does not have, such as one typed
+    // by hand in another case, is kept as written instead of dropped.
+    const listed = new Set(columns.value.map((col) => col.name));
+
     customDimensions.value = dims
-        .filter((d) => d.custom)
+        .filter((d) => d.custom || !listed.has(d.name))
         .map((d) => ({
             name: d.name,
             sql: d.sql || "",
             type: d.type || "string",
             title: d.title || "",
+            primaryKey: !!d.primary_key,
+            public: !!d.public,
         }));
 
     const ms = model.measures || [];
@@ -922,7 +918,7 @@ async function save() {
     saving.value = true;
 
     const model = {
-        name: cubeName.value,
+        name: datasetName.value,
         sql_table: tableName.value,
         connection_id: connectionId.value,
         dimensions: [
@@ -942,6 +938,8 @@ async function save() {
                     name: d.name,
                     sql: d.sql,
                     type: d.type,
+                    primary_key: d.primaryKey || undefined,
+                    public: (d.primaryKey && d.public) || undefined,
                     title: d.title || undefined,
                     custom: true,
                 })),
@@ -978,7 +976,6 @@ async function save() {
 
     try {
         const res = await collimatoService.build(props.workspaceId, {
-            type: "cube",
             model,
             overwrite: isEdit.value,
         });

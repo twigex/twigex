@@ -8,7 +8,7 @@ import { useCollimatoStore } from "@/store/collimato";
 import { extractErrorMessage } from "@/utils/errors";
 import { toTableData } from "@/utils/collimato/tableData.js";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
-import { pollQuery } from "@/utils/collimato/queryPolling.js";
+import { fetchChartData, withoutDateAxisInFields } from "@/utils/collimato/chartData.js";
 import { useChartDisplay } from "@/composables/collimato/useChartDisplay.js";
 
 export function useChartEditorQuery({ query, chartType, chartOptions, onError }) {
@@ -36,7 +36,7 @@ export function useChartEditorQuery({ query, chartType, chartOptions, onError })
 
     let loadAbort = null;
 
-    // The DB query keeps running server-side until CUBEJS_DB_QUERY_TIMEOUT.
+    // Cancelling the request also stops the query in the database.
     function cancelLoad() {
         if (loadAbort) loadAbort.abort();
         loading.value = false;
@@ -47,21 +47,21 @@ export function useChartEditorQuery({ query, chartType, chartOptions, onError })
         loadAbort = new AbortController();
 
         try {
-            const result = await pollQuery(
+            const data = await fetchChartData(
                 (q, signal) => collimatoService.loadData(route.params.workspaceId, q, signal),
                 query.value,
                 { signal: loadAbort.signal },
             );
 
-            queryResult.value = result.data;
-            tableData.value = toTableData(result.data);
+            queryResult.value = data;
+            tableData.value = toTableData(data);
 
             if (!collimatoStore.hasPermissionToViewDataModels) return;
 
             collimatoService
-                .previewSql(route.params.workspaceId, query.value)
+                .previewSql(route.params.workspaceId, withoutDateAxisInFields(query.value))
                 .then((response) => {
-                    sqlPreview.value = response.data.sql.sql[0];
+                    sqlPreview.value = response.data.sql;
                 })
                 .catch((error) => {
                     console.error(error?.response?.data ?? error);

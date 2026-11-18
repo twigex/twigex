@@ -58,7 +58,7 @@ Open an issue with:
 1. **Version:** the version the server reports, or the release tarball name
    (e.g. `twigex-0.15.0-linux-amd64`). For a source build, the commit hash.
 2. **Deployment:** single binary, Docker Compose or Helm chart, and which optional services are
-   configured (LiveKit, Cube.js, EuroOffice/Collabora).
+   configured (LiveKit, EuroOffice/Collabora).
 3. **Environment:** MariaDB or MySQL and its version, Redis version, storage
    backend (local disk or S3).
 4. **Steps to reproduce**, what you expected, and what happened instead.
@@ -89,9 +89,9 @@ first; those are the parts that are expensive to change after release.
 | MariaDB (or MySQL 8) | required                                |
 | Redis                | required, used for sessions             |
 
-The server will not start without a reachable database and Redis. LiveKit,
-Cube.js and EuroOffice/Collabora are only contacted when their feature is used,
-so leave them out until you need them.
+The server will not start without a reachable database and Redis. LiveKit and
+EuroOffice/Collabora are only contacted when their feature is used, so leave
+them out until you need them.
 
 ### Build and run
 
@@ -146,7 +146,6 @@ crypto/      encryption and hashing helpers
 safehttp/    SSRF-hardened HTTP client for outbound requests
 tlog/        structured logger
 templates/   email templates and blank office documents
-deploy/      deployment extras, such as the shared Cube.js setup
 docs/        developer guidelines
 ```
 

@@ -64,7 +64,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 import { t } from "@/i18n/index.js";
 
 defineProps({
-    // Selectable member names, or null when the source cube's members are unknown.
+    // Selectable field names, or null when the source dataset's fields are unknown.
     members: { type: Array, default: null },
     selected: { type: Array, default: () => [] },
 });

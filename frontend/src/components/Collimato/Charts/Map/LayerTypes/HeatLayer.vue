@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
     <LatLong
         :coordinates="config.coordinates"
-        :cubes="filteredCubes"
+        :data-models="filteredDataModels"
         @update:coordinates="$emit('update:coordinates', $event)"
     />
 
@@ -65,7 +65,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                 <ListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                 >
-                    <template v-for="(d, index) in valueCubes" :key="index">
+                    <template v-for="(d, index) in valueDataModels" :key="index">
                         <li
                             class="cursor-default select-none bg-gray-100 py-2 pl-3 pr-9 text-left font-semibold text-gray-900"
                         >
@@ -196,11 +196,11 @@ import { Listbox, ListboxOptions, ListboxOption, ListboxButton } from "@headless
 import { CheckIcon, XMarkIcon } from "@heroicons/vue/20/solid";
 
 const props = defineProps({
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },
-    selectedCube: {
+    selectedDataModel: {
         type: String,
         default: null,
     },
@@ -216,24 +216,26 @@ const props = defineProps({
 
 const emit = defineEmits(["update:config", "update:coordinates"]);
 
-const selectedCube = computed(
-    () => props.cubes.find((c) => c.table === props.selectedCube) ?? null,
+const selectedDataModel = computed(
+    () => props.dataModels.find((c) => c.table === props.selectedDataModel) ?? null,
 );
 
-const filteredCubes = computed(() => joinableDataModels(props.cubes, selectedCube.value));
+const filteredDataModels = computed(() =>
+    joinableDataModels(props.dataModels, selectedDataModel.value),
+);
 
-const valueCubes = computed(() =>
+const valueDataModels = computed(() =>
     withCountMeasure(
-        filteredCubes.value,
-        props.selectedCube,
+        filteredDataModels.value,
+        props.selectedDataModel,
         t.value("collimato.charts.new_chart.map.count"),
     ),
 );
 
 const weight = computed(
     () =>
-        valueCubes.value
-            .flatMap((cube) => cube.dimensions)
+        valueDataModels.value
+            .flatMap((dataModel) => dataModel.dimensions)
             .find((d) => d.name === props.config.weight) ?? null,
 );
 

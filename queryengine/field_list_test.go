@@ -5,6 +5,7 @@ package queryengine
 
 import (
 	"slices"
+	"strings"
 	"testing"
 )
 
@@ -283,3 +284,42 @@ func TestListFieldsKeepsEachSameNamedDatasetsOwnProblems(t *testing.T) {
 	}
 }
 
+// Datasets named like the tables the engine makes inside its own queries, or
+// too long for Postgres to keep whole, cannot be used.
+func TestListFieldsForDatasetsWithReservedOrTooLongNames(t *testing.T) {
+	cases := []struct {
+		name     string
+		wantCode ErrorCode
+	}{
+		{"all_groups", ErrorReservedName},
+		{"distinct_rows", ErrorReservedName},
+		{"part_1", ErrorReservedName},
+		{"part_12", ErrorReservedName},
+		{strings.Repeat("x", 64), ErrorNameTooLong},
+	}
+
+	for _, testCase := range cases {
+		dataset := storesDataset()
+		dataset.Name = testCase.name
+
+		list := ListFields(Models{Datasets: []Dataset{dataset}})
+		got := findDataset(t, list, testCase.name)
+
+		want := []ModelError{{Code: testCase.wantCode, Source: testCase.name}}
+		if !slices.Equal(got.Errors, want) {
+			t.Errorf("%s: want errors %v, got %v", testCase.name, want, got.Errors)
+		}
+	}
+
+	for _, allowedName := range []string{"part", "part_one", "parts_1", strings.Repeat("x", 63)} {
+		dataset := storesDataset()
+		dataset.Name = allowedName
+
+		list := ListFields(Models{Datasets: []Dataset{dataset}})
+		got := findDataset(t, list, allowedName)
+
+		if len(got.Errors) > 0 {
+			t.Errorf("%s: want no errors, got %v", allowedName, got.Errors)
+		}
+	}
+}

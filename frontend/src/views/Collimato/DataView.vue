@@ -54,7 +54,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                     'flex w-full items-center px-4 py-2 text-sm font-medium',
                                                 ]"
                                             >
-                                                {{ t("collimato.builder.new_cube_visual") }}
+                                                {{ t("collimato.builder.new_dataset_visual") }}
                                             </button>
                                         </MenuItem>
                                         <MenuItem v-slot="{ active }">
@@ -69,40 +69,6 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                 ]"
                                             >
                                                 {{ t("collimato.view_builder.new_view_visual") }}
-                                            </button>
-                                        </MenuItem>
-                                        <MenuItem v-slot="{ active }">
-                                            <button
-                                                @click="
-                                                    fileType = 'cube';
-                                                    newFileDialog = true;
-                                                "
-                                                type="button"
-                                                :class="[
-                                                    active
-                                                        ? 'bg-gray-100 text-gray-900'
-                                                        : 'text-gray-700',
-                                                    'flex w-full items-center px-4 py-2 text-sm',
-                                                ]"
-                                            >
-                                                {{ t("collimato.data_view.new_cube") }}
-                                            </button>
-                                        </MenuItem>
-                                        <MenuItem v-slot="{ active }">
-                                            <button
-                                                @click="
-                                                    fileType = 'view';
-                                                    newFileDialog = true;
-                                                "
-                                                type="button"
-                                                :class="[
-                                                    active
-                                                        ? 'bg-gray-100 text-gray-900'
-                                                        : 'text-gray-700',
-                                                    'flex w-full items-center px-4 py-2 text-sm',
-                                                ]"
-                                            >
-                                                {{ t("collimato.data_view.new_view") }}
                                             </button>
                                         </MenuItem>
                                     </div>
@@ -125,14 +91,20 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     ]"
                                 >
                                     <span class="flex-1 truncate">{{ item.name }}</span>
+                                    <ExclamationTriangleIcon
+                                        v-if="warningOf(item)"
+                                        class="h-4 w-4 shrink-0 text-amber-500"
+                                        :title="warningOf(item)"
+                                        aria-hidden="true"
+                                    />
                                     <span
                                         :class="[
-                                            item.type === 'cube'
+                                            item.type === 'dataset'
                                                 ? 'bg-indigo-100 text-indigo-700'
                                                 : 'bg-emerald-100 text-emerald-700',
                                             'shrink-0 rounded-full px-1.5 py-0.5 text-xs font-medium',
                                         ]"
-                                        >{{ item.type === "cube" ? "dataset" : item.type }}</span
+                                        >{{ item.type }}</span
                                     >
                                 </button>
                                 <button
@@ -163,71 +135,38 @@ SPDX-License-Identifier: AGPL-3.0-only
 
                 <!-- Main content -->
                 <div class="flex flex-col flex-1 min-w-0 overflow-hidden p-2 gap-2">
-                    <!-- Model summary (builder-made cubes/views): a collapsible
+                    <!-- Model summary (datasets and views made in the builder): a collapsible
                          pane mirroring the editor disclosure. -->
                     <ModelSummary
                         v-if="selectedFile && selectedFile.builder_model"
                         v-model:open="modelOpen"
                         :file="selectedFile"
                         :editable="collimatoStore.hasPermissionToEditDataModels"
+                        :model-error="modelErrorOf(selectedFile)"
+                        :name-problems="selectedNameProblems"
                         class="flex flex-col border rounded-md overflow-hidden"
                         :class="modelOpen ? 'flex-1 min-h-0' : 'shrink-0'"
                         @edit="editSelectedInBuilder"
+                        @fix-names="useDatabaseNames"
                     />
 
-                    <!-- Editor pane (hand-written / legacy files) -->
+                    <!-- An old model written by hand: shown read-only, to copy from
+                         when making it again in the builder. -->
                     <div
-                        v-show="selectedFile && !selectedFile.builder_model"
-                        class="flex flex-col border rounded-md overflow-hidden"
-                        :class="editorOpen ? 'flex-1 min-h-0' : 'shrink-0'"
+                        v-if="selectedFile && !selectedFile.builder_model"
+                        class="flex flex-col flex-1 min-h-0 border rounded-md overflow-hidden"
                     >
-                        <div
-                            class="flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 cursor-pointer select-none shrink-0"
-                            @click="editorOpen = !editorOpen"
-                        >
-                            <div class="flex items-center gap-x-2">
-                                <ChevronRightIcon
-                                    class="h-4 w-4 text-gray-400 transition-transform duration-200"
-                                    :class="editorOpen ? 'rotate-90' : ''"
-                                    aria-hidden="true"
-                                />
-                                <span
-                                    class="text-xs font-semibold uppercase tracking-wide text-gray-500"
-                                >
-                                    {{ t("collimato.data_view.editor") }}
-                                </span>
-                            </div>
-                            <button
-                                v-if="collimatoStore.hasPermissionToEditDataModels"
-                                type="button"
-                                :disabled="disableSave"
-                                @click.stop="save"
-                                :class="[
-                                    disableSave
-                                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-indigo-600 text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
-                                    'inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1 text-xs font-semibold shadow-sm transition-colors',
-                                ]"
-                            >
-                                <div
-                                    v-if="saving"
-                                    class="loader h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin"
-                                ></div>
-                                {{
-                                    saving
-                                        ? t("collimato.data_view.button.saving")
-                                        : t("common.button.save")
-                                }}
-                            </button>
+                        <div class="shrink-0 border-b bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                            {{ modelErrorOf(selectedFile)?.message }}
                         </div>
-                        <div v-show="editorOpen" class="flex-1 min-h-0">
-                            <div ref="aceEditor" class="h-full rounded overflow-hidden"></div>
-                        </div>
+                        <pre
+                            class="min-h-0 flex-1 overflow-auto bg-gray-900 p-3 font-mono text-xs text-gray-100"
+                            >{{ selectedFile.content }}</pre>
                     </div>
 
                     <!-- Data preview disclosure -->
                     <div
-                        v-if="collimatoStore.canQueryData"
+                        v-if="collimatoStore.canQueryData && selectedFile?.builder_model"
                         class="flex flex-col border rounded-md overflow-hidden"
                         :class="!primaryOpen && tableOpen ? 'flex-1 min-h-0' : 'shrink-0'"
                     >
@@ -327,108 +266,11 @@ SPDX-License-Identifier: AGPL-3.0-only
                             class="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                             <PlusIcon class="-ml-0.5 h-4 w-4" aria-hidden="true" />
-                            {{ t("collimato.builder.new_cube_visual") }}
+                            {{ t("collimato.builder.new_dataset_visual") }}
                         </button>
                     </div>
                 </div>
             </div>
-
-            <!-- New file dialog -->
-            <Teleport to="body">
-                <TransitionRoot as="template" :show="newFileDialog">
-                    <Dialog class="relative z-10" @close="newFileDialog = false">
-                        <TransitionChild
-                            as="template"
-                            enter="ease-out duration-300"
-                            enter-from="opacity-0"
-                            enter-to="opacity-100"
-                            leave="ease-in duration-200"
-                            leave-from="opacity-100"
-                            leave-to="opacity-0"
-                        >
-                            <div class="fixed inset-0 bg-gray-500/75 transition-opacity" />
-                        </TransitionChild>
-                        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-                            <div
-                                class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
-                            >
-                                <TransitionChild
-                                    as="template"
-                                    enter="ease-out duration-300"
-                                    enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                    enter-to="opacity-100 translate-y-0 sm:scale-100"
-                                    leave="ease-in duration-200"
-                                    leave-from="opacity-100 translate-y-0 sm:scale-100"
-                                    leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                >
-                                    <DialogPanel
-                                        class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6"
-                                    >
-                                        <DialogTitle
-                                            as="h3"
-                                            class="text-base font-semibold text-gray-900"
-                                        >
-                                            {{ newFileDialogTitle }}
-                                        </DialogTitle>
-                                        <div class="mt-4">
-                                            <label
-                                                for="new-file-name"
-                                                class="block text-sm font-medium leading-6 text-gray-900"
-                                            >
-                                                {{ t("collimato.data_view.filename") }}
-                                            </label>
-                                            <div class="mt-1">
-                                                <input
-                                                    v-model="filename"
-                                                    type="text"
-                                                    id="new-file-name"
-                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
-                                                    :placeholder="
-                                                        t(
-                                                            'collimato.data_view.filename_placeholder',
-                                                        )
-                                                    "
-                                                    @keydown.enter="createNewFile()"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div class="mt-5 flex flex-row-reverse gap-2">
-                                            <button
-                                                :disabled="saving || !filename.trim()"
-                                                type="button"
-                                                @click="createNewFile()"
-                                                :class="[
-                                                    saving || !filename.trim()
-                                                        ? 'bg-gray-300 cursor-not-allowed'
-                                                        : 'bg-indigo-600 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600',
-                                                    'inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm',
-                                                ]"
-                                            >
-                                                <div
-                                                    v-if="saving"
-                                                    class="loader h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin"
-                                                ></div>
-                                                {{
-                                                    saving
-                                                        ? t("collimato.data_view.button.creating")
-                                                        : t("common.button.create")
-                                                }}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                class="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                                @click="newFileDialog = false"
-                                            >
-                                                {{ t("common.button.cancel") }}
-                                            </button>
-                                        </div>
-                                    </DialogPanel>
-                                </TransitionChild>
-                            </div>
-                        </div>
-                    </Dialog>
-                </TransitionRoot>
-            </Teleport>
 
             <FileDeleteDialog
                 v-model="deleteDialog"
@@ -437,10 +279,10 @@ SPDX-License-Identifier: AGPL-3.0-only
                 @delete="deleteFile(deleteItem)"
             />
 
-            <CubeBuilder
+            <DatasetBuilder
                 :show="builderOpen"
                 :workspace-id="route.params.workspaceId"
-                :existing-cubes="existingCubes"
+                :existing-datasets="existingDatasets"
                 :edit-file="builderEditFile"
                 @close="builderOpen = false"
                 @saved="handleBuilderSaved"
@@ -449,7 +291,7 @@ SPDX-License-Identifier: AGPL-3.0-only
             <ViewBuilder
                 :show="viewBuilderOpen"
                 :workspace-id="route.params.workspaceId"
-                :existing-cubes="existingCubes"
+                :existing-datasets="existingDatasets"
                 :edit-file="viewBuilderEditFile"
                 @close="viewBuilderOpen = false"
                 @saved="handleBuilderSaved"
@@ -459,121 +301,175 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { t } from "@/i18n/index.js";
 import { useRoute } from "vue-router";
 import FileDeleteDialog from "@/components/Collimato/Dialogs/FileDeleteDialog.vue";
 import Table from "@/components/Collimato/ResultTable.vue";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    TransitionChild,
-    TransitionRoot,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-} from "@headlessui/vue";
-import { DocumentIcon, TrashIcon, CircleStackIcon } from "@heroicons/vue/24/outline";
+    DocumentIcon,
+    TrashIcon,
+    CircleStackIcon,
+    ExclamationTriangleIcon,
+} from "@heroicons/vue/24/outline";
 import { PlusIcon, ChevronRightIcon } from "@heroicons/vue/20/solid";
-import CubeBuilder from "@/components/Collimato/Builder/CubeBuilder.vue";
+import DatasetBuilder from "@/components/Collimato/Builder/DatasetBuilder.vue";
 import ViewBuilder from "@/components/Collimato/Builder/ViewBuilder.vue";
 import ModelSummary from "@/components/Collimato/Builder/ModelSummary.vue";
 import { toTableData } from "@/utils/collimato/tableData.js";
+import { fetchChartData } from "@/utils/collimato/chartData.js";
+import { modelNameProblems, withDatabaseNames } from "@/utils/collimato/modelNames.js";
 import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartQuery.js";
 import collimatoService from "@/services/collimatoService.js";
 import { useCollimatoStore } from "@/store/collimato";
 import { useAlertStore } from "@/store/alerts";
 import { extractErrorMessage } from "@/utils/errors";
-import ace from "ace-builds";
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-dracula";
-import "ace-builds/src-noconflict/ext-language_tools";
 
 const loaded = ref(false);
 const loading = ref(false);
 const collimatoStore = useCollimatoStore();
 const alertStore = useAlertStore();
 const route = useRoute();
-const aceEditor = ref(null);
-let editor = null;
 const files = ref([]);
 const selectedFile = ref(null);
-const disableSave = ref(true);
 const saving = ref(false);
 const deleteDialog = ref(false);
 const deleteItem = ref(null);
+const tableData = ref({});
+const tableOpen = ref(false);
+const modelOpen = ref(true);
 
-// deleteDependents lists the builder-made cubes/views that reference the cube
-// pending deletion, so the dialog can block a delete that would break Cube
-// compilation (mirrors the backend guard).
+// The field list says which models cannot be used, and which fields the
+// preview can show.
+const fieldList = ref({ datasets: [], modelErrors: [] });
+
+// The database's tables, to check the names in saved models. Loaded only for
+// people who can edit models, who can fix them.
+const databases = ref([]);
+
+// A saved model's name without the extension an old one written by hand has.
+function dataModelName(fileName) {
+    return fileName.replace(/\.(ya?ml|js)$/, "");
+}
+
+function parsedModel(file) {
+    try {
+        return file?.builder_model ? JSON.parse(file.builder_model) : null;
+    } catch {
+        return null;
+    }
+}
+
+// modelErrorOf finds why a model cannot be used: by its file name for a file
+// written by hand or one that cannot be read, by its own name for one with
+// errors.
+function modelErrorOf(file) {
+    const ownName = parsedModel(file)?.name;
+
+    return (fieldList.value.modelErrors ?? []).find(
+        (modelError) => modelError.name === file.name || modelError.name === ownName,
+    );
+}
+
+function nameProblemsOf(file) {
+    const model = parsedModel(file);
+
+    if (!model || file.type !== "dataset") return [];
+
+    const database = databases.value.find((d) => d.database === model.connection_id);
+
+    if (!database) return [];
+
+    return modelNameProblems(model, database.tables, database.type);
+}
+
+const selectedNameProblems = computed(() => nameProblemsOf(selectedFile.value));
+
+// warningOf says why a model in the list is marked: it cannot be used, or
+// some of its names are not in the database as written.
+function warningOf(file) {
+    const modelError = modelErrorOf(file);
+
+    if (modelError) {
+        return modelError.message;
+    }
+
+    if (nameProblemsOf(file).length > 0) {
+        return t.value("collimato.data_view.name_problem_mark");
+    }
+
+    return null;
+}
+
+// deleteDependents lists the builder models that use the dataset pending
+// deletion, so the dialog can refuse a delete that would leave them broken
+// (as the server does).
 const deleteDependents = computed(() => {
     const item = deleteItem.value;
 
-    if (!item || item.type !== "cube") return [];
-    const cubeName = item.name.replace(/\.(ya?ml|js)$/, "");
-    const deps = [];
+    if (!item || item.type !== "dataset") return [];
+    const datasetName = dataModelName(item.name);
+    const dependents = [];
 
-    for (const f of files.value) {
-        if (f === item || !f.builder_model) continue;
-        let m;
+    for (const file of files.value) {
+        if (file === item || !file.builder_model) continue;
+        const model = parsedModel(file);
 
-        try {
-            m = JSON.parse(f.builder_model);
-        } catch {
-            continue;
-        }
+        if (!model) continue;
 
-        if (f.type === "cube") {
-            if ((m.joins || []).some((j) => j.name === cubeName)) deps.push(f.name);
-        } else if (f.type === "view") {
-            if ((m.cubes || []).some((c) => (c.join_path || "").split(".").includes(cubeName)))
-                deps.push(f.name);
+        if (file.type === "dataset") {
+            if ((model.joins || []).some((j) => j.name === datasetName)) {
+                dependents.push(file.name);
+            }
+        } else if (file.type === "view") {
+            const usesIt = (model.parts || []).some((part) =>
+                (part.join_path || "").split(".").includes(datasetName),
+            );
+
+            if (usesIt) dependents.push(file.name);
         }
     }
 
-    return deps;
-});
-const newFileDialog = ref(false);
-const filename = ref("");
-const fileType = ref("");
-const tableData = ref({});
-const tableOpen = ref(false);
-const editorOpen = ref(true);
-const modelOpen = ref(true);
-
-watch(editorOpen, (open) => {
-    if (open && editor) nextTick(() => editor.resize());
+    return dependents;
 });
 
-// primaryOpen tracks whichever top pane is active for the selected file (the
-// model summary for builder files, the code editor for legacy ones), so the
-// data preview below expands when that pane is collapsed.
-const primaryOpen = computed(() =>
-    selectedFile.value?.builder_model ? modelOpen.value : editorOpen.value,
-);
+// primaryOpen is whether the model summary above the data preview is open,
+// so the preview takes the room when it is closed.
+const primaryOpen = computed(() => modelOpen.value);
 
-const newFileDialogTitle = computed(() =>
-    fileType.value === "cube"
-        ? t.value("collimato.data_view.new_cube")
-        : t.value("collimato.data_view.new_view"),
-);
-
-let loadDataTimeout = null;
 let loadAbort = null;
 
 onUnmounted(() => {
-    clearTimeout(loadDataTimeout);
     if (loadAbort) loadAbort.abort();
 });
 
-// cancelLoad stops the in-flight request and the retry polling, and clears the
-// spinner. The DB query keeps running server-side until CUBEJS_DB_QUERY_TIMEOUT.
+// cancelLoad stops the request, which also stops the query in the database.
 function cancelLoad() {
-    clearTimeout(loadDataTimeout);
     if (loadAbort) loadAbort.abort();
     loading.value = false;
+}
+
+function loadFieldList() {
+    return collimatoService
+        .fieldList(route.params.workspaceId)
+        .then((response) => {
+            fieldList.value = response.data;
+        })
+        .catch((error) => alertStore.showError(extractErrorMessage(error)));
+}
+
+function loadDatabases() {
+    if (!collimatoStore.hasPermissionToEditDataModels) return;
+
+    collimatoService
+        .tables(route.params.workspaceId)
+        .then((response) => {
+            databases.value = response.data || [];
+        })
+        .catch(() => {
+            databases.value = [];
+        });
 }
 
 onMounted(() => {
@@ -582,6 +478,9 @@ onMounted(() => {
 
         return;
     }
+
+    loadFieldList();
+    loadDatabases();
 
     collimatoService
         .workspaceFiles(route.params.workspaceId)
@@ -599,48 +498,17 @@ onMounted(() => {
         });
 });
 
-// ensureEditor lazily creates the Ace instance the first time a code-editable
-// (legacy) file is shown; builder-made files never mount it. Idempotent.
-function ensureEditor() {
-    if (editor) return true;
-    if (!aceEditor.value) return false;
-    editor = ace.edit(aceEditor.value);
-    editor.setTheme("ace/theme/dracula");
-    editor.getSession().setMode("ace/mode/javascript");
-    editor.setFontSize(14);
-    editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableSnippets: true,
-        enableLiveAutocompletion: true,
-        useWorker: false,
-    });
-    editor.on("change", handleEditorChange);
-
-    return true;
-}
-
 const builderOpen = ref(false);
 const builderEditFile = ref(null);
 const viewBuilderOpen = ref(false);
 const viewBuilderEditFile = ref(null);
 
-// Existing cubes offered as join targets in the builder, each with its parsed
-// structured model (when built visually) so the builder can resolve the target's
-// columns for the join dropdown.
-const existingCubes = computed(() =>
+// Existing datasets offered as join targets in the builder, each with its
+// builder model when it has one, so the builder can list the target's columns.
+const existingDatasets = computed(() =>
     files.value
-        .filter((f) => f.type === "cube")
-        .map((f) => {
-            let model;
-
-            try {
-                model = f.builder_model ? JSON.parse(f.builder_model) : null;
-            } catch {
-                model = null;
-            }
-
-            return { name: f.name.replace(/\.(yml|js)$/, ""), model };
-        }),
+        .filter((file) => file.type === "dataset")
+        .map((file) => ({ name: dataModelName(file.name), model: parsedModel(file) })),
 );
 
 function openBuilder(file) {
@@ -654,6 +522,8 @@ function openViewBuilder(file) {
 }
 
 function handleBuilderSaved(saved) {
+    loadFieldList();
+
     collimatoService
         .workspaceFiles(route.params.workspaceId)
         .then((response) => {
@@ -670,21 +540,8 @@ function handleBuilderSaved(saved) {
 }
 
 function switchFile(file) {
-    // Selecting a file only loads it. Builder-made files render as a read-only
-    // model summary (edited via the visual builder); hand-written/legacy files
-    // load into the Ace editor.
     selectedFile.value = file;
-    disableSave.value = true;
     tableData.value = {};
-    if (file.builder_model) return;
-
-    nextTick(() => {
-        if (!ensureEditor()) return;
-        editor.setValue(file.content, 1);
-        editor.clearSelection();
-        editor.setReadOnly(!collimatoStore.hasPermissionToEditDataModels);
-        editor.resize();
-    });
 }
 
 function editSelectedInBuilder() {
@@ -695,53 +552,19 @@ function editSelectedInBuilder() {
     else openBuilder(file);
 }
 
-function createNewFile() {
-    if (!filename.value.trim()) return;
-    saving.value = true;
-    collimatoService
-        .newCubeFile(route.params.workspaceId, {
-            filetype: fileType.value,
-            filename: filename.value,
-        })
-        .then((response) => {
-            saving.value = false;
-            newFileDialog.value = false;
-            filename.value = "";
-            files.value.push(response.data);
-            selectedFile.value = files.value[files.value.length - 1];
-            switchFile(files.value[files.value.length - 1]);
-        })
-        .catch((error) => {
-            saving.value = false;
-            newFileDialog.value = false;
-            alertStore.showError(extractErrorMessage(error));
-        });
-}
+// useDatabaseNames saves the selected dataset with the names the database has
+// in another case, such as orderdate for OrderDate.
+function useDatabaseNames() {
+    const model = parsedModel(selectedFile.value);
+    const fixed = withDatabaseNames(model, selectedNameProblems.value);
 
-function save() {
     saving.value = true;
-    disableSave.value = true;
 
     collimatoService
-        .saveFile(route.params.workspaceId, {
-            name: selectedFile.value.name,
-            content: editor.getValue(),
-            type: selectedFile.value.type,
-        })
-        .then((response) => {
-            for (const file of files.value) {
-                if (file.name === selectedFile.value.name) {
-                    file.content = response.data.content;
-                    break;
-                }
-            }
-
-            disableSave.value = true;
-            saving.value = false;
-            alertStore.showSuccess(t.value("collimato.data_view.success.file_saved"));
-        })
-        .catch((error) => {
-            alertStore.showError(extractErrorMessage(error));
+        .build(route.params.workspaceId, { model: fixed, overwrite: true })
+        .then((response) => handleBuilderSaved(response.data))
+        .catch((error) => alertStore.showError(extractErrorMessage(error)))
+        .finally(() => {
             saving.value = false;
         });
 }
@@ -766,6 +589,7 @@ function deleteFile(file) {
 
             deleteDialog.value = false;
             saving.value = false;
+            loadFieldList();
         })
         .catch((error) => {
             deleteDialog.value = false;
@@ -774,136 +598,58 @@ function deleteFile(file) {
         });
 }
 
-// legacyQuery regex-parses a hand-written JS cube (all dimensions + count) for
-// files that have no structured builder model.
-function legacyQuery(content) {
-    const tableMatch = content.match(/sql_table:\s*`(\w+)`/);
-    const sqlTable = tableMatch ? tableMatch[1] : null;
-    const dimensionBlockMatch = content.match(/dimensions:\s*{([\s\S]*?)},\n\s*measures:/);
-    const dimensions = [];
+// previewQuery asks for every field of the selected dataset or view, as the
+// field list names them.
+function previewQuery() {
+    const name = parsedModel(selectedFile.value)?.name;
+    const dataset = fieldList.value.datasets.find((d) => d.name === name);
 
-    if (sqlTable && dimensionBlockMatch) {
-        for (const m of dimensionBlockMatch[1].matchAll(/^\s*(\w+):\s*{/gm)) {
-            dimensions.push(`${sqlTable}.${m[1]}`);
-        }
-    }
+    if (!dataset) return null;
 
-    return { dimensions, measures: sqlTable ? [`${sqlTable}.count`] : [] };
-}
+    const fieldsOfKind = (kind) =>
+        dataset.fields.filter((field) => field.kind === kind).map((field) => field.key);
 
-// buildPreviewQuery resolves a cube/view's queryable members from Cube meta
-// (fully-qualified names, so views and prefixes resolve correctly). YAML files
-// can't be regex-parsed like the old JS format, so builder files rely on this.
-async function buildPreviewQuery() {
-    const file = selectedFile.value;
-    const base = {
+    return {
+        dimensions: fieldsOfKind("dimension"),
+        measures: fieldsOfKind("measure"),
         order: [],
         filters: [],
         timeDimensions: [],
         limit: MAX_QUERY_LIMIT,
     };
-
-    let entityName = null;
-
-    if (file.builder_model) {
-        try {
-            entityName = JSON.parse(file.builder_model)?.name || null;
-        } catch {
-            entityName = null;
-        }
-    } else {
-        const m = file.content.match(/sql_table:\s*`(\w+)`/);
-
-        entityName = m ? m[1] : null;
-    }
-
-    if (entityName) {
-        const res = await collimatoService.meta(route.params.workspaceId);
-
-        if (!res.data?.error && Array.isArray(res.data?.cubes)) {
-            const entry = res.data.cubes.find((c) => c.name === entityName);
-
-            if (entry) {
-                return {
-                    ...base,
-                    dimensions: (entry.dimensions || []).map((d) => d.name),
-                    measures: (entry.measures || []).map((m) => m.name),
-                };
-            }
-        }
-    }
-
-    return { ...base, ...legacyQuery(file.content) };
 }
 
 async function loadData() {
+    const query = previewQuery();
+
+    if (!query || (!query.dimensions.length && !query.measures.length)) {
+        alertStore.showError(
+            modelErrorOf(selectedFile.value)?.message ??
+                t.value("collimato.data_view.error.load_data_failed"),
+        );
+
+        return;
+    }
+
     loading.value = true;
     loadAbort = new AbortController();
 
-    let query;
-
     try {
-        query = await buildPreviewQuery();
+        const data = await fetchChartData(
+            (q, signal) => collimatoService.loadData(route.params.workspaceId, q, signal),
+            query,
+            { signal: loadAbort.signal },
+        );
+
+        tableData.value = toTableData(data);
+        tableOpen.value = true;
     } catch (error) {
-        loading.value = false;
+        const cancelled = error?.code === "ERR_CANCELED" || error?.name === "AbortError";
+
+        if (cancelled) return;
         alertStore.showError(extractErrorMessage(error));
-
-        return;
-    }
-
-    if (!query.dimensions.length && !query.measures.length) {
+    } finally {
         loading.value = false;
-        alertStore.showError(t.value("collimato.data_view.error.load_data_failed"));
-
-        return;
     }
-
-    runQuery(query, 0);
-}
-
-function runQuery(query, retryCount) {
-    const MAX_RETRIES = 30;
-
-    collimatoService
-        .loadData(route.params.workspaceId, query, loadAbort?.signal)
-        .then((result) => {
-            if (result.data.error === "Continue wait") {
-                if (retryCount >= MAX_RETRIES) {
-                    loading.value = false;
-                    alertStore.showError(t.value("collimato.data_view.error.load_data_failed"));
-
-                    return;
-                }
-
-                loadDataTimeout = setTimeout(() => runQuery(query, retryCount + 1), 2000);
-
-                return;
-            }
-
-            // Cube reports real query errors in a 200 body via an "error" field;
-            // surface it and stop the spinner instead of trying to render it.
-            if (result.data.error !== undefined) {
-                loading.value = false;
-                alertStore.showError(
-                    result.data.error || t.value("collimato.data_view.error.load_data_failed"),
-                );
-
-                return;
-            }
-
-            tableData.value = toTableData(result.data);
-            loading.value = false;
-            tableOpen.value = true;
-        })
-        .catch((error) => {
-            if (error?.code === "ERR_CANCELED") return; // cancelled by the user
-            loading.value = false;
-            alertStore.showError(extractErrorMessage(error));
-        });
-}
-
-function handleEditorChange() {
-    if (!editor || !selectedFile.value) return;
-    disableSave.value = editor.getValue() === selectedFile.value.content;
 }
 </script>

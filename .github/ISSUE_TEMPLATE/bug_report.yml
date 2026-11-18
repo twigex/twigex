@@ -45,7 +45,6 @@ body:
       description: Only services whose feature is in use matter; leave all unchecked otherwise.
       options:
         - label: LiveKit (voice/video)
-        - label: Cube.js (Collimato)
         - label: EuroOffice or Collabora (document editing)
         - label: S3-compatible storage
 

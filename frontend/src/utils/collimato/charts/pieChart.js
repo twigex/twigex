@@ -26,7 +26,7 @@ export function pieChart(data) {
     const measure = measures[0];
     const measureTitle = measureTitleOf(data, measure);
 
-    data.data.forEach((item) => {
+    data.rows.forEach((item) => {
         const value = item[measure];
 
         if (value == null || value === "") {

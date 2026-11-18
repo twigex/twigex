@@ -11,7 +11,7 @@ import (
 )
 
 type fakeDashboardChartsStore struct {
-	fakeMetaCollimatoStore
+	fakeFieldListCollimatoStore
 	saved bool
 }
 
@@ -30,12 +30,12 @@ func (f *fakeDashboardChartsStore) AddDashboardCharts(string, string, []model.Da
 
 func TestUpdateDashboardChartsRefusesChartsFromAnotherWorkspace(t *testing.T) {
 	collimato := &fakeDashboardChartsStore{
-		fakeMetaCollimatoStore: fakeMetaCollimatoStore{
+		fakeFieldListCollimatoStore: fakeFieldListCollimatoStore{
 			permissions: []string{model.CollimatoPermissions.PermissionEditDashboards.Id},
 		},
 	}
 
-	a := metaApp()
+	a := fieldListApp()
 	a.Store.Collimato = collimato
 
 	patch := []model.DashboardChartPatch{{ID: "own"}, {ID: "foreign"}}

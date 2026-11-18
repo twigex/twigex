@@ -99,22 +99,27 @@ var graphTypeAdmin = model.User{ID: "admin", Role: model.SystemAdminRoleId}
 
 var graphTypeMember = model.User{ID: "anna"}
 
-// newGraphTypesTestApp builds a workspace with "companies" and "orders", the
-// way Cube describes them: companies.id is the primary key, so Cube leaves it
-// out of the field list, and companies.key is a visible copy of it.
+// newGraphTypesTestApp builds a workspace with "companies" and "orders", as the
+// field list describes them: companies.id is a hidden primary key, so it is
+// not in the field list, and companies.key is a visible copy of it.
 func newGraphTypesTestApp() *graphTestApp {
 	g := newGraphTestApp(true)
 
 	g.collimato.permissions = graphViewerPermissions
 
-	companies := collimato.Cube{Name: "companies", Type: "cube"}
-	companies.Dimensions = []collimato.Dimension{{Name: "companies.key"}, {Name: "companies.name"}}
+	companies := collimato.DatasetFields{Name: "companies", Fields: []collimato.Field{
+		{Key: "companies.key", Kind: collimato.FieldKindDimension},
+		{Key: "companies.name", Kind: collimato.FieldKindDimension},
+	}}
 
-	orders := collimato.Cube{Name: "orders", Type: "cube"}
-	orders.Dimensions = []collimato.Dimension{{Name: "orders.key"}, {Name: "orders.number"}, {Name: "orders.company_id"}}
-	orders.Measures = []collimato.Measure{{Name: "orders.count"}}
+	orders := collimato.DatasetFields{Name: "orders", Fields: []collimato.Field{
+		{Key: "orders.key", Kind: collimato.FieldKindDimension},
+		{Key: "orders.number", Kind: collimato.FieldKindDimension},
+		{Key: "orders.company_id", Kind: collimato.FieldKindDimension},
+		{Key: "orders.count", Kind: collimato.FieldKindMeasure},
+	}}
 
-	g.meta["ws"] = &collimato.CubeCollection{Cubes: []collimato.Cube{companies, orders}}
+	g.meta["ws"] = &collimato.FieldList{Datasets: []collimato.DatasetFields{companies, orders}}
 
 	g.graph.datasets = []model.GraphDataset{
 		{ID: "ds-companies", WorkspaceID: "ws", Name: "companies"},
@@ -209,7 +214,7 @@ func TestCreateGraphEntityTypeRefusesBadInput(t *testing.T) {
 		{"no name", graphTypeAdmin, func(input *model.GraphEntityTypeInput) { input.Name = "  " }, "graph.type_name_required"},
 		{"a dataset that does not exist", graphTypeAdmin, func(input *model.GraphEntityTypeInput) { input.SourceID = "ds-missing" }, "graph.type_dataset_not_found"},
 		{"a field of another dataset", graphTypeAdmin, func(input *model.GraphEntityTypeInput) { input.TitleProperty = "f-orders.number" }, "graph.type_field_not_found"},
-		{"the primary key Cube hides", graphTypeAdmin, func(input *model.GraphEntityTypeInput) { input.KeyProperty = "f-companies.id" }, "graph.type_field_not_visible"},
+		{"the hidden primary key", graphTypeAdmin, func(input *model.GraphEntityTypeInput) { input.KeyProperty = "f-companies.id" }, "graph.type_field_not_visible"},
 		{"a measure as the name", graphTypeAdmin, func(input *model.GraphEntityTypeInput) {
 			input.SourceID = "ds-orders"
 			input.KeyProperty = "f-orders.key"

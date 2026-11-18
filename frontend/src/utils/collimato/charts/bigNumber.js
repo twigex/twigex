@@ -5,7 +5,7 @@ import { measureTitleOf, shortNumber } from "@/utils/collimato/charts/chartLabel
 
 export function number(data) {
     const values = data.query.measures.map((measure) => {
-        const total = data.data.reduce((sum, item) => {
+        const total = data.rows.reduce((sum, item) => {
             if (item[measure] == null || item[measure] === "") {
                 return sum;
             }

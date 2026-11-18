@@ -46,7 +46,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                 <ListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                 >
-                    <template v-for="(d, index) in cubes" :key="index">
+                    <template v-for="(d, index) in dataModels" :key="index">
                         <li
                             class="cursor-default select-none bg-gray-100 py-2 pl-3 pr-9 text-left font-semibold text-gray-900"
                         >
@@ -198,7 +198,7 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    cubes: {
+    dataModels: {
         type: Array,
         required: true,
     },
@@ -232,8 +232,8 @@ const fillColor = computed(() => props.config[props.colorKey]);
 
 const colorField = computed(
     () =>
-        props.cubes
-            .flatMap((cube) => cube.dimensions)
+        props.dataModels
+            .flatMap((dataModel) => dataModel.dimensions)
             .find((d) => d.name === props.config[props.fieldKey]) ?? null,
 );
 

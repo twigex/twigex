@@ -393,13 +393,13 @@ describe("layer query fields", () => {
 });
 
 describe("withCountMeasure", () => {
-    const cubes = [
+    const dataModels = [
         { table: "taxi_trips", dimensions: [{ name: "taxi_trips.fare" }] },
         { table: "pickup_zone", dimensions: [{ name: "pickup_zone.borough" }] },
     ];
 
     it("offers the model's count alongside its dimensions", () => {
-        const result = withCountMeasure(cubes, "taxi_trips", "Records");
+        const result = withCountMeasure(dataModels, "taxi_trips", "Records");
 
         expect(result[0].dimensions[0]).toEqual({
             name: "taxi_trips.count",
@@ -410,20 +410,20 @@ describe("withCountMeasure", () => {
     });
 
     it("adds it only to the layer's own model", () => {
-        const result = withCountMeasure(cubes, "taxi_trips", "Records");
+        const result = withCountMeasure(dataModels, "taxi_trips", "Records");
 
         expect(result[1].dimensions).toHaveLength(1);
         expect(result[1].dimensions[0].name).toBe("pickup_zone.borough");
     });
 
     it("leaves the original list untouched", () => {
-        withCountMeasure(cubes, "taxi_trips", "Records");
+        withCountMeasure(dataModels, "taxi_trips", "Records");
 
-        expect(cubes[0].dimensions).toHaveLength(1);
+        expect(dataModels[0].dimensions).toHaveLength(1);
     });
 
     it("adds nothing when the model is not in the list", () => {
-        const result = withCountMeasure(cubes, "weather", "Records");
+        const result = withCountMeasure(dataModels, "weather", "Records");
 
         expect(result.flatMap((c) => c.dimensions)).toHaveLength(2);
     });

@@ -209,35 +209,30 @@ func (a *App) updateChartGraphRelations(ctx context.Context, ids *graphBuiltInID
 func (a *App) syncGraphDatasets(ctx context.Context, workspaceID string, ids *graphBuiltInIDs) (model.GraphRebuildResult, error) {
 	result := model.GraphRebuildResult{}
 
-	collection, err := a.QueryEngine.Meta(ctx, workspaceID)
+	fieldList, err := a.QueryEngine.FieldList(ctx, workspaceID)
 	if err != nil {
 		return result, err
 	}
 
-	// A data model that fails to compile comes back as an error with no
-	// datasets, and reading that as "every dataset was removed" would delete
-	// them all.
-	if collection.Error != "" {
-		return result, errors.New(collection.Error)
+	// A model with errors is missing from the list only until it is fixed;
+	// reading it as removed would delete its datasets and their relations.
+	if fieldList.HasModelsThatMayComeBack() {
+		return result, errors.New("a data model cannot be read until it is fixed")
 	}
 
-	wantedKinds := make(map[string]string, len(collection.Cubes))
+	wantedKinds := make(map[string]string, len(fieldList.Datasets))
 	wantedFields := make(map[string]string)
 
-	for _, cube := range collection.Cubes {
-		kind := model.GraphDatasetKindCube
-		if cube.Type == model.GraphDatasetKindView {
+	for _, dataset := range fieldList.Datasets {
+		kind := model.GraphDatasetKindDataset
+		if dataset.IsView {
 			kind = model.GraphDatasetKindView
 		}
 
-		wantedKinds[cube.Name] = kind
+		wantedKinds[dataset.Name] = kind
 
-		for _, dimension := range cube.Dimensions {
-			wantedFields[dimension.Name] = cube.Name
-		}
-
-		for _, measure := range cube.Measures {
-			wantedFields[measure.Name] = cube.Name
+		for _, field := range dataset.Fields {
+			wantedFields[field.Key] = dataset.Name
 		}
 	}
 

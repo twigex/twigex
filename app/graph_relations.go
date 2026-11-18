@@ -11,6 +11,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/twigex/twigex/collimato"
 	"github.com/twigex/twigex/model"
 	"github.com/twigex/twigex/tlog"
 )
@@ -444,7 +445,7 @@ func (a *App) graphVisibleMeta(ctx context.Context, user model.User, workspaceID
 		titles:     make(map[string]string),
 	}
 
-	collection, appErr := a.GetWorkspaceMeta(ctx, user, workspaceID)
+	fieldList, appErr := a.GetWorkspaceFieldList(ctx, user, workspaceID)
 	if appErr != nil {
 		if graphCheckRefused(appErr) {
 			return visible, nil
@@ -453,17 +454,16 @@ func (a *App) graphVisibleMeta(ctx context.Context, user model.User, workspaceID
 		return nil, appErr
 	}
 
-	for _, cube := range collection.Cubes {
-		visible.datasets[cube.Name] = true
+	for _, dataset := range fieldList.Datasets {
+		visible.datasets[dataset.Name] = true
 
-		for _, dimension := range cube.Dimensions {
-			visible.fields[dimension.Name] = true
-			visible.dimensions[dimension.Name] = true
-			visible.titles[dimension.Name] = dimension.Title
-		}
+		for _, field := range dataset.Fields {
+			visible.fields[field.Key] = true
 
-		for _, measure := range cube.Measures {
-			visible.fields[measure.Name] = true
+			if field.Kind == collimato.FieldKindDimension {
+				visible.dimensions[field.Key] = true
+				visible.titles[field.Key] = field.FullTitle
+			}
 		}
 	}
 
