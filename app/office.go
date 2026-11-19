@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -661,6 +662,25 @@ func (a *App) openGuestEuroOffice(guestToken string, file model.File, allowDownl
 	}, nil
 }
 
+var maxOfficeSaveSize = 100 << 20
+
+var errOfficeSaveTooLarge = errors.New("office save exceeds the size limit")
+
+func readOfficeSave(r io.Reader) ([]byte, error) {
+	limited := io.LimitReader(r, int64(maxOfficeSaveSize)+1)
+
+	content, err := io.ReadAll(limited)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(content) > maxOfficeSaveSize {
+		return nil, errOfficeSaveTooLarge
+	}
+
+	return content, nil
+}
+
 func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadCloser) *model.AppError {
 	defer body.Close()
 
@@ -692,7 +712,12 @@ func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadClos
 		f = file
 	}
 
-	bodyBytes, err := io.ReadAll(body)
+	bodyBytes, err := readOfficeSave(body)
+	if errors.Is(err, errOfficeSaveTooLarge) {
+		tlog.Warnw("Office save rejected as too large", "file_id", fileID)
+		return model.NewAppError("office.save_failed", http.StatusRequestEntityTooLarge)
+	}
+
 	if err != nil {
 		tlog.Errorw("Failed to read office save body",
 			"file_id", fileID,
@@ -1093,7 +1118,12 @@ func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken, authHeader string
 		return model.NewAppError("office.save_failed", http.StatusBadGateway)
 	}
 
-	fileBytes, err := io.ReadAll(resp.Body)
+	fileBytes, err := readOfficeSave(resp.Body)
+	if errors.Is(err, errOfficeSaveTooLarge) {
+		tlog.Warnw("EuroOffice save rejected as too large", "file_id", fileID)
+		return model.NewAppError("office.save_failed", http.StatusRequestEntityTooLarge)
+	}
+
 	if err != nil {
 		tlog.Errorw("Failed to read EuroOffice file content", "file_id", fileID, "error", err)
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
