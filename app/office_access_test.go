@@ -80,6 +80,7 @@ type officeTestStores struct {
 func newOfficeAccessApp() (*App, officeTestStores) {
 	serverConfig := model.ServerConfig{}
 	serverConfig.SetDefaults()
+	serverConfig.OfficeSettings.Enable = model.NewBool(true)
 	serverConfig.OfficeSettings.Secret = model.NewString(officeTestSecret)
 
 	stores := officeTestStores{
