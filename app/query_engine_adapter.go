@@ -30,6 +30,7 @@ type engineAdapter struct {
 	store           engineAdapterStore
 	decryptPassword func(ciphertext string) (string, error)
 	pools           *connectionPools
+	runner          *queryengine.QueryRunner
 }
 
 // engineAdapterStore is what the engine reads from Twigex's database.
@@ -50,6 +51,7 @@ func newEngineAdapter(store engineAdapterStore, decryptPassword func(string) (st
 		store:           store,
 		decryptPassword: decryptPassword,
 		pools:           newConnectionPools(connector),
+		runner:          queryengine.NewQueryRunner(),
 	}
 }
 
@@ -135,7 +137,7 @@ func (engine *engineAdapter) Query(ctx context.Context, workspaceID string, quer
 		return nil, databaseError(workspaceID, err)
 	}
 
-	result, err := queryengine.RunQuery(ctx, database, builtQuery)
+	result, err := engine.runner.Run(ctx, database, builtQuery)
 	if err != nil {
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
