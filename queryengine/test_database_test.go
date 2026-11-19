@@ -20,10 +20,10 @@ import (
 // Tests that run queries use a fresh database made for this test run on each
 // server they are given: MySQL or MariaDB from TEST_MYSQL_DSN, Postgres from
 // TEST_POSTGRES_DSN (a postgres:// address). Each such test runs on every
-// database it has, and skips itself when it has none, like the store tests.
+// database it has, and skips itself when it has none.
 
 // testDatabase is one database the tests made, opened with its session in
-// UTC, as Twigex will open connections.
+// UTC, as Connector opens connections.
 type testDatabase struct {
 	name         string
 	databaseType DatabaseType

@@ -13,9 +13,11 @@ import (
 	"testing"
 )
 
-// The engine must not use any Twigex package, so it can later be moved into a
-// project of its own.
-func TestEngineUsesNoTwigexPackages(t *testing.T) {
+// surroundingModule is the module of the repository the engine is in. The
+// engine must use none of its packages, so it can become a project of its own.
+const surroundingModule = "github.com/twigex/"
+
+func TestEngineUsesNoPackageOfTheSurroundingModule(t *testing.T) {
 	fileNames, err := filepath.Glob("*.go")
 	if err != nil {
 		t.Fatalf("list files: %v", err)
@@ -40,7 +42,7 @@ func TestEngineUsesNoTwigexPackages(t *testing.T) {
 				t.Fatalf("read import in %s: %v", fileName, err)
 			}
 
-			if strings.HasPrefix(path, "github.com/twigex/") {
+			if strings.HasPrefix(path, surroundingModule) {
 				t.Errorf("%s uses %s", fileName, path)
 			}
 		}
