@@ -23,6 +23,18 @@ func (a *API) initOffice() {
 	Office.HandleFunc("/wopi/{app}/files/{id}", a.checkFileInfo).Methods("GET")
 	Office.HandleFunc("/eurooffice/file/{app}/{id}", a.officeGetFile).Methods("GET")
 	Office.HandleFunc("/eurooffice/callback/{app}/{id}", a.euroOfficeCallback).Methods("POST")
+	Office.Use(a.RequireOfficeAvailable)
+}
+
+func (a *API) RequireOfficeAvailable(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !a.app.OfficeAvailable() {
+			respondAppError(w, r, model.NewAppError("office.not_available", http.StatusNotFound))
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (a *API) officeSupport(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +51,7 @@ func (a *API) officeSupport(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !*a.app.ConfigStore.Config.OfficeSettings.Enable {
+	if !a.app.OfficeAvailable() {
 		ok = false
 	}
 
@@ -155,7 +167,9 @@ func (a *API) euroOfficeCallback(w http.ResponseWriter, r *http.Request) {
 	id := params["id"]
 	app := params["app"]
 
-	appErr := a.app.EuroOfficeCallback(id, app, tokenString, r.Body)
+	authHeader := r.Header.Get("Authorization")
+
+	appErr := a.app.EuroOfficeCallback(id, app, tokenString, authHeader, r.Body)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return

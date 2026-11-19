@@ -152,14 +152,35 @@ outer:
 	return urlSrc + client, nil
 }
 
-func (a *App) VerifyOfficeToken(accessToken string) (*jwt.Token, *model.AppError) {
-	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
+func (a *App) OfficeSecretConfigured() bool {
+	secret := *a.ConfigStore.Config.OfficeSettings.Secret
+	trimmed := strings.TrimSpace(secret)
 
-		return []byte(*a.ConfigStore.Config.OfficeSettings.Secret), nil
-	})
+	return trimmed != ""
+}
+
+func (a *App) OfficeAvailable() bool {
+	enabled := *a.ConfigStore.Config.OfficeSettings.Enable
+
+	return enabled && a.OfficeSecretConfigured()
+}
+
+func (a *App) officeSigningKey(token *jwt.Token) (interface{}, error) {
+	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+	}
+
+	return []byte(*a.ConfigStore.Config.OfficeSettings.Secret), nil
+}
+
+func (a *App) VerifyOfficeToken(accessToken string) (*jwt.Token, *model.AppError) {
+	// HMAC accepts an empty key, so without this check anyone could sign a
+	// token that verifies.
+	if !a.OfficeSecretConfigured() {
+		return nil, model.NewAppError("office.token_invalid", http.StatusUnauthorized)
+	}
+
+	token, err := jwt.Parse(accessToken, a.officeSigningKey)
 	if err != nil {
 		return nil, model.NewAppError("office.token_invalid", http.StatusUnauthorized)
 	}
@@ -491,6 +512,10 @@ func (a *App) checkOwnerSpaceForEdit(ownerID string, delta int64) *model.AppErro
 }
 
 func (a *App) OpenPublicOfficeFile(ctx context.Context, shareToken, childID, accessToken, nickname string) (*model.OfficeOpenResult, *model.AppError) {
+	if !a.OfficeAvailable() {
+		return nil, model.NewAppError("office.not_available", http.StatusNotFound)
+	}
+
 	link, file, appErr := a.resolvePublicShare(ctx, shareToken)
 	if appErr != nil {
 		return nil, appErr
@@ -766,6 +791,10 @@ func (a *App) recordGuestOfficeEdit(f *model.File) {
 }
 
 func (a *App) OpenOfficeFile(fileID string, user model.User, wopiApp string) (*model.OfficeOpenResult, *model.AppError) {
+	if !a.OfficeAvailable() {
+		return nil, model.NewAppError("office.not_available", http.StatusNotFound)
+	}
+
 	officeType := *a.ConfigStore.Config.OfficeSettings.Type
 
 	if officeType == model.OfficeTypeEuroOffice {
@@ -962,7 +991,42 @@ func (a *App) CreateEuroOfficeConfig(user model.User, wopiApp, fileID string, mo
 	}, nil
 }
 
-func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken string, body io.ReadCloser) *model.AppError {
+type euroOfficeCallbackData struct {
+	Status int    `json:"status"`
+	URL    string `json:"url"`
+}
+
+// EuroOffice signs the callback as is in the body token, or under "payload"
+// in the Authorization header token.
+type euroOfficeCallbackClaims struct {
+	euroOfficeCallbackData
+	Payload *euroOfficeCallbackData `json:"payload"`
+	jwt.RegisteredClaims
+}
+
+func (a *App) verifyEuroOfficeCallback(bodyToken, authHeader string) (*euroOfficeCallbackData, *model.AppError) {
+	signed := bodyToken
+	if signed == "" {
+		signed = strings.TrimPrefix(authHeader, "Bearer ")
+	}
+
+	if signed == "" || !a.OfficeSecretConfigured() {
+		return nil, model.NewAppError("office.token_invalid", http.StatusUnauthorized)
+	}
+
+	claims := &euroOfficeCallbackClaims{}
+	if _, err := jwt.ParseWithClaims(signed, claims, a.officeSigningKey); err != nil {
+		return nil, model.NewAppError("office.token_invalid", http.StatusUnauthorized)
+	}
+
+	if claims.Payload != nil {
+		return claims.Payload, nil
+	}
+
+	return &claims.euroOfficeCallbackData, nil
+}
+
+func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken, authHeader string, body io.ReadCloser) *model.AppError {
 	defer body.Close()
 
 	token, appErr := a.VerifyOfficeToken(accessToken)
@@ -975,12 +1039,18 @@ func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken string, body io.Re
 		return nil
 	}
 
-	var cb struct {
-		Status int    `json:"status"`
-		URL    string `json:"url"`
+	var raw struct {
+		Token string `json:"token"`
 	}
-	if err := json.NewDecoder(body).Decode(&cb); err != nil {
+	if err := json.NewDecoder(body).Decode(&raw); err != nil {
 		return model.NewAppError("office.save_failed", http.StatusBadRequest)
+	}
+
+	// The access token reaches the browser, so the unsigned body cannot be
+	// trusted with the download URL.
+	cb, appErr := a.verifyEuroOfficeCallback(raw.Token, authHeader)
+	if appErr != nil {
+		return appErr
 	}
 
 	// Status 2 means EuroOffice is ready to save the document
