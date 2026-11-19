@@ -5,6 +5,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -179,4 +180,54 @@ func TestEuroOfficeCallback_KeepsDocumentWhenDownloadFails(t *testing.T) {
 
 	appErr := a.EuroOfficeCallback("doc-1", "files", userOfficeToken(t, "files", "doc-1"), "", body)
 	requireAppErr(t, appErr, "office.save_failed", http.StatusBadGateway)
+}
+
+func useOfficeSaveLimit(t *testing.T, limit int) {
+	t.Helper()
+
+	previous := maxOfficeSaveSize
+	maxOfficeSaveSize = limit
+	t.Cleanup(func() { maxOfficeSaveSize = previous })
+}
+
+func TestReadOfficeSave(t *testing.T) {
+	useOfficeSaveLimit(t, 10)
+
+	content, err := readOfficeSave(strings.NewReader("0123456789"))
+	if err != nil || string(content) != "0123456789" {
+		t.Fatalf("a save at the limit should be read, got %q, %v", content, err)
+	}
+
+	_, err = readOfficeSave(strings.NewReader("0123456789X"))
+	if !errors.Is(err, errOfficeSaveTooLarge) {
+		t.Fatalf("a save over the limit should be refused, got %v", err)
+	}
+}
+
+func TestOfficeSaveFile_RefusesSaveOverLimit(t *testing.T) {
+	useOfficeSaveLimit(t, 10)
+	a, stores := newOfficeAccessApp()
+	stores.files.shares["user-1/doc-1"] = []model.File{{AccessLevel: model.AccessEditor}}
+
+	body := io.NopCloser(strings.NewReader("this is more than ten bytes"))
+
+	appErr := a.OfficeSaveFile("doc-1", userOfficeToken(t, "files", "doc-1"), body)
+	requireAppErr(t, appErr, "office.save_failed", http.StatusRequestEntityTooLarge)
+}
+
+func TestEuroOfficeCallback_RefusesDownloadOverLimit(t *testing.T) {
+	useOfficeSaveLimit(t, 10)
+	a, stores := newOfficeAccessApp()
+	stores.files.shares["user-1/doc-1"] = []model.File{{AccessLevel: model.AccessEditor}}
+
+	large := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte("this is more than ten bytes"))
+	}))
+	defer large.Close()
+
+	signed := signOfficeTestToken(t, jwt.MapClaims{"status": 2, "url": large.URL + "/output.docx"})
+	body := io.NopCloser(strings.NewReader(`{"token":"` + signed + `"}`))
+
+	appErr := a.EuroOfficeCallback("doc-1", "files", userOfficeToken(t, "files", "doc-1"), "", body)
+	requireAppErr(t, appErr, "office.save_failed", http.StatusRequestEntityTooLarge)
 }
