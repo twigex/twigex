@@ -484,28 +484,34 @@ func (a *App) validateGuestOfficeEdit(shareToken, boundFile, fileID string) (*mo
 	return a.publicSubtreeFile(*root, fileID)
 }
 
-// checkOwnerSpaceForEdit guards against unauthenticated writes growing the
-// owner's storage past their limit. Returns a generic error (never reveals the
-// owner's storage state) when space is low.
-func (a *App) checkOwnerSpaceForEdit(ownerID string, delta int64) *model.AppError {
+// checkOwnerSpaceForEdit stops an office save from growing the owner's storage
+// past their limit, whoever the editor is. A guest gets a plain save failure,
+// because Collabora turns a 507 into a storage message that would reveal the
+// owner's storage state on a public link.
+func (a *App) checkOwnerSpaceForEdit(ownerID string, delta int64, guest bool) *model.AppError {
 	if delta <= 0 {
 		return nil
 	}
 
 	owner, err := a.Store.User.Get(ownerID)
 	if err != nil || owner == nil {
-		tlog.Errorw("Failed to retrieve owner for guest office save", "owner_id", ownerID, "error", err)
+		tlog.Errorw("Failed to retrieve owner for office save", "owner_id", ownerID, "error", err)
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
 	free, err := a.isFreeSpace(*owner, delta)
 	if err != nil {
-		tlog.Errorw("Failed to check owner storage limit for guest office save", "owner_id", ownerID, "error", err)
+		tlog.Errorw("Failed to check owner storage limit for office save", "owner_id", ownerID, "error", err)
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
 	if !free {
-		tlog.Warnw("Guest office save rejected: owner storage running low", "owner_id", ownerID)
+		tlog.Warnw("Office save rejected: owner storage running low", "owner_id", ownerID)
+
+		if guest {
+			return model.NewAppError("office.save_failed", http.StatusInternalServerError)
+		}
+
 		return model.NewAppError("office.save_failed", http.StatusInsufficientStorage)
 	}
 
@@ -726,10 +732,8 @@ func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadClos
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
-	if guest {
-		if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(bodyBytes))-f.Size); appErr != nil {
-			return appErr
-		}
+	if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(bodyBytes))-f.Size, guest); appErr != nil {
+		return appErr
 	}
 
 	officeFilePath, err := a.BuildFilePath(f.Storage, f.ID, model.AppFiles)
@@ -1129,10 +1133,8 @@ func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken, authHeader string
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
-	if isGuest {
-		if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(fileBytes))-f.Size); appErr != nil {
-			return appErr
-		}
+	if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(fileBytes))-f.Size, isGuest); appErr != nil {
+		return appErr
 	}
 
 	officeFilePath, err := a.BuildFilePath(f.Storage, f.ID, model.AppFiles)
