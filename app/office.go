@@ -391,7 +391,7 @@ func (a *App) validateGuestOfficeAccess(shareToken, boundFile, fileID string) (*
 		return nil, nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
 	}
 
-	link, _, appErr := a.resolvePublicShare(context.Background(), shareToken)
+	link, root, appErr := a.resolvePublicShare(context.Background(), shareToken)
 	if appErr != nil {
 		return nil, nil, appErr
 	}
@@ -400,17 +400,31 @@ func (a *App) validateGuestOfficeAccess(shareToken, boundFile, fileID string) (*
 		return nil, nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
 	}
 
-	file, err := a.Store.File.Get(fileID)
-	if err != nil {
-		tlog.Errorw("Failed to retrieve guest office file", "file_id", fileID, "error", err)
-		return nil, nil, model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
-	}
-
-	if file == nil || file.DeletedAt != 0 {
-		return nil, nil, model.NewAppError("file.not_found", http.StatusNotFound)
+	file, appErr := a.guestSharedFile(*root, fileID)
+	if appErr != nil {
+		return nil, nil, appErr
 	}
 
 	return file, link, nil
+}
+
+// guestSharedFile returns the file only while it is the shared file itself or
+// is still inside the shared folder, so moving a file out of the share ends a
+// guest's access to it.
+func (a *App) guestSharedFile(root model.File, fileID string) (*model.File, *model.AppError) {
+	if fileID == root.ID {
+		if root.IsFolder {
+			return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
+		}
+
+		return &root, nil
+	}
+
+	if !root.IsFolder {
+		return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
+	}
+
+	return a.publicSubtreeFile(root, fileID)
 }
 
 func (a *App) guestOfficeFile(shareToken, boundFile, fileID string) (*model.File, *model.AppError) {
@@ -452,9 +466,8 @@ func (a *App) guestCheckFileInfo(shareToken, boundFile, fileID, gid, name string
 }
 
 // validateGuestOfficeEdit is the strict gate for guest WRITES. Beyond the read
-// checks it re-confirms the LIVE link still permits editing and that the file is
-// still inside the shared subtree (not moved out / trashed since the token was
-// minted). Owner revocation therefore takes effect immediately.
+// checks it re-confirms the LIVE link still permits editing. Owner revocation
+// therefore takes effect immediately.
 func (a *App) validateGuestOfficeEdit(shareToken, boundFile, fileID string) (*model.File, *model.AppError) {
 	if boundFile != fileID {
 		return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
@@ -469,19 +482,7 @@ func (a *App) validateGuestOfficeEdit(shareToken, boundFile, fileID string) (*mo
 		return nil, model.NewAppError("office.readonly", http.StatusForbidden)
 	}
 
-	if fileID == root.ID {
-		if root.IsFolder {
-			return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
-		}
-
-		return root, nil
-	}
-
-	if !root.IsFolder {
-		return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
-	}
-
-	return a.publicSubtreeFile(*root, fileID)
+	return a.guestSharedFile(*root, fileID)
 }
 
 // checkOwnerSpaceForEdit stops an office save from growing the owner's storage
