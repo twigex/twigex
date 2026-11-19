@@ -83,3 +83,14 @@ func (postgresDatabase) dateForSQL(moment time.Time) string {
 func (postgresDatabase) rowLimit(rowCount int) string {
 	return fmt.Sprintf("LIMIT %d", rowCount)
 }
+
+// sortEmptyAsSmallest says where empty values go, because Postgres counts them
+// as the largest.
+func (postgresDatabase) sortEmptyAsSmallest(expression string, direction string) string {
+	emptyValues := "NULLS FIRST"
+	if direction == "DESC" {
+		emptyValues = "NULLS LAST"
+	}
+
+	return expression + " " + direction + " " + emptyValues
+}

@@ -683,7 +683,7 @@ func (builder *queryBuilder) orderParts(outputFields []requestedField) ([]string
 		}
 
 		if outputKeys[field.key] {
-			part := builder.quote(field.alias()) + " " + direction
+			part := builder.syntax.sortEmptyAsSmallest(builder.quote(field.alias()), direction)
 			parts = append(parts, part)
 			continue
 		}
@@ -700,7 +700,7 @@ func (builder *queryBuilder) orderParts(outputFields []requestedField) ([]string
 			return nil, err
 		}
 
-		part := expression + " " + direction
+		part := builder.syntax.sortEmptyAsSmallest(expression, direction)
 		parts = append(parts, part)
 	}
 

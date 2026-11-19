@@ -29,7 +29,7 @@ func TestRunQueryJoinKeepsRowsWithoutMatch(t *testing.T) {
 		{"shops.format": "Small", "shop_sales.revenue": 120.0},
 	}
 
-	checkSortedRows(t, results, "shops.format", wantRows)
+	checkRows(t, results, wantRows)
 }
 
 func TestRunQueryJoinsThroughDatasetNotAskedFor(t *testing.T) {
@@ -48,7 +48,7 @@ func TestRunQueryJoinsThroughDatasetNotAskedFor(t *testing.T) {
 		{"shop_regions.name": "South", "shop_sales.revenue": 360.0},
 	}
 
-	checkSortedRows(t, results, "shop_regions.name", wantRows)
+	checkRows(t, results, wantRows)
 }
 
 func TestRunQueryJoinWithWrittenCondition(t *testing.T) {
@@ -67,7 +67,7 @@ func TestRunQueryJoinWithWrittenCondition(t *testing.T) {
 		{"sale_channels.label": "Website", "shop_sales.count": 4.0},
 	}
 
-	checkSortedRows(t, results, "sale_channels.label", wantRows)
+	checkRows(t, results, wantRows)
 }
 
 // Starting from regions keeps East, which has no stores.
@@ -126,7 +126,7 @@ func TestRunQueryView(t *testing.T) {
 		{"shop_sales_view.shop_regions_name": "South", "shop_sales_view.revenue": 360.0, "shop_sales_view.count": 2.0},
 	}
 
-	checkSortedRows(t, results, "shop_sales_view.shop_regions_name", wantRows)
+	checkRows(t, results, wantRows)
 }
 
 func TestRunQueryViewRowsOnly(t *testing.T) {

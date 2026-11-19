@@ -89,7 +89,7 @@ func TestRunQueryMeasuresFromTwoDatasets(t *testing.T) {
 		{"shops.format": "Small", "shop_sales.revenue": 120.0, "shops.total_floor_area": 370.0},
 	}
 
-	checkSortedRows(t, results, "shops.format", wantRows)
+	checkRows(t, results, wantRows)
 }
 
 // Large 535.5 / 900 = 0.595, Small 120 / 370 = 0.324324, empty 35 / nothing.
@@ -111,12 +111,11 @@ func TestRunQueryFormulaUsingAnotherDataset(t *testing.T) {
 
 	checkRowsOn(t, results, DatabaseMySQL, wantRows)
 
-	// Postgres gives a division more decimals than MySQL's six, and puts the
-	// empty format last.
+	// Postgres gives a division more decimals than MySQL's six.
 	postgresRows := []map[string]any{
+		{"shops.format": nil, "shop_sales.revenue_per_floor_area": nil},
 		{"shops.format": "Large", "shop_sales.revenue_per_floor_area": 0.595},
 		{"shops.format": "Small", "shop_sales.revenue_per_floor_area": 0.32432432432432434},
-		{"shops.format": nil, "shop_sales.revenue_per_floor_area": nil},
 	}
 
 	checkRowsOn(t, results, DatabasePostgres, postgresRows)
@@ -162,11 +161,11 @@ func TestRunQueryFormulaUsingOwnMeasures(t *testing.T) {
 
 	checkRowsOn(t, results, DatabaseMySQL, wantRows)
 
-	// Postgres gives a division more decimals, and puts the empty format last.
+	// Postgres gives a division more decimals.
 	postgresRows := []map[string]any{
+		{"shops.format": nil, "shop_sales.revenue_per_item": 11.666666666666666},
 		{"shops.format": "Large", "shop_sales.revenue_per_item": 59.5},
 		{"shops.format": "Small", "shop_sales.revenue_per_item": 20.0},
-		{"shops.format": nil, "shop_sales.revenue_per_item": 11.666666666666666},
 	}
 
 	checkRowsOn(t, results, DatabasePostgres, postgresRows)

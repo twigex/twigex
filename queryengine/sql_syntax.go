@@ -40,6 +40,11 @@ type sqlSyntax interface {
 
 	// rowLimit is the line that ends a query, keeping only its first rows.
 	rowLimit(rowCount int) string
+
+	// sortEmptyAsSmallest sorts by an expression in a direction, ASC or DESC,
+	// with empty values counted as the smallest: first going up, last going
+	// down. Databases differ here, so without it the same chart would differ.
+	sortEmptyAsSmallest(expression string, direction string) string
 }
 
 // valuePlaceholder stands for a value while SQL is being written. BuildQuery

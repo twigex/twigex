@@ -100,3 +100,9 @@ func (mysqlDatabase) dateForSQL(moment time.Time) string {
 func (mysqlDatabase) rowLimit(rowCount int) string {
 	return fmt.Sprintf("LIMIT %d", rowCount)
 }
+
+// sortEmptyAsSmallest adds nothing: MySQL already counts empty values as the
+// smallest, and has no NULLS FIRST or NULLS LAST.
+func (mysqlDatabase) sortEmptyAsSmallest(expression string, direction string) string {
+	return expression + " " + direction
+}

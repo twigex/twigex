@@ -36,30 +36,6 @@ func checkRowsOn(t *testing.T, results []databaseResult, databaseType DatabaseTy
 	}
 }
 
-// checkSortedRows checks rows sorted by sortKey, smallest first. wantRows are
-// in MySQL's order, where empty values come first. Postgres puts them last;
-// the engine leaves this to the database.
-func checkSortedRows(t *testing.T, results []databaseResult, sortKey string, wantRows []map[string]any) {
-	t.Helper()
-
-	var emptyLast []map[string]any
-	var emptyRows []map[string]any
-
-	for _, row := range wantRows {
-		if row[sortKey] == nil {
-			emptyRows = append(emptyRows, row)
-			continue
-		}
-
-		emptyLast = append(emptyLast, row)
-	}
-
-	emptyLast = append(emptyLast, emptyRows...)
-
-	checkRowsOn(t, results, DatabaseMySQL, wantRows)
-	checkRowsOn(t, results, DatabasePostgres, emptyLast)
-}
-
 func checkRowsOf(t *testing.T, databaseResult databaseResult, wantRows []map[string]any) {
 	t.Helper()
 
@@ -87,7 +63,49 @@ func TestRunQueryMeasuresByCountry(t *testing.T) {
 		{"sales.country": "Poland", "sales.count": 1.0, "sales.revenue": 50.25, "sales.average_sale": 50.25, "sales.margin": 60.2},
 	}
 
-	checkSortedRows(t, results, "sales.country", wantRows)
+	checkRows(t, results, wantRows)
+}
+
+// Empty values count as the smallest on every database: last when sorting
+// largest first, as they are first in TestRunQueryMeasuresByCountry.
+func TestRunQuerySortsEmptyLastWhenLargestFirst(t *testing.T) {
+	request := Request{
+		Dimensions: []string{"sales.country"},
+		Measures:   []string{"sales.count"},
+		SortBy:     []SortField{{Field: "sales.country", Descending: true}},
+		RowLimit:   100,
+	}
+
+	results := runSalesQuery(t, request)
+
+	wantRows := []map[string]any{
+		{"sales.country": "Poland", "sales.count": 1.0},
+		{"sales.country": "Latvia", "sales.count": 2.0},
+		{"sales.country": "Estonia", "sales.count": 1.0},
+		{"sales.country": nil, "sales.count": 1.0},
+	}
+
+	checkRows(t, results, wantRows)
+}
+
+func TestRunQuerySortsByMeasureLargestFirst(t *testing.T) {
+	request := Request{
+		Dimensions: []string{"sales.country"},
+		Measures:   []string{"sales.revenue"},
+		SortBy:     []SortField{{Field: "sales.revenue", Descending: true}},
+		RowLimit:   100,
+	}
+
+	results := runSalesQuery(t, request)
+
+	wantRows := []map[string]any{
+		{"sales.country": "Latvia", "sales.revenue": 300.5},
+		{"sales.country": "Estonia", "sales.revenue": 300.0},
+		{"sales.country": "Poland", "sales.revenue": 50.25},
+		{"sales.country": nil, "sales.revenue": 10.0},
+	}
+
+	checkRows(t, results, wantRows)
 }
 
 func TestRunQueryValueTypes(t *testing.T) {

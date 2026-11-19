@@ -70,7 +70,7 @@ func TestRunQueryWeeksStartOnMonday(t *testing.T) {
 		{"events.happened_at": "2025-03-31T00:00:00Z", "events.count": 2.0},
 	}
 
-	checkSortedRows(t, results, "events.happened_at", wantRows)
+	checkRows(t, results, wantRows)
 }
 
 func TestRunQueryMonthsQuartersAndYears(t *testing.T) {
