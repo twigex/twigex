@@ -214,8 +214,11 @@ func (a *App) GetWorkspaces(ctx context.Context, user model.User) ([]model.Colli
 // verification, listing tables and charts cannot disagree about how to reach
 // one. Which addresses may be reached is not limited yet: that is Twigex's
 // choice, made through ConnectorOptions.Dial. Queries stop after 10 minutes.
+// Up to 8 connections per database: twice the engine's default, and a small
+// share of the 151 a database usually allows.
 var engineConnector = queryengine.NewConnector(queryengine.ConnectorOptions{
-	QueryTimeLimit: 10 * time.Minute,
+	QueryTimeLimit:     10 * time.Minute,
+	MaxOpenConnections: 8,
 })
 
 func (a *App) verifyConnection(conn model.Connection) error {
