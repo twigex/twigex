@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -390,7 +391,7 @@ func (a *App) validateGuestOfficeAccess(shareToken, boundFile, fileID string) (*
 		return nil, nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
 	}
 
-	link, _, appErr := a.resolvePublicShare(context.Background(), shareToken)
+	link, root, appErr := a.resolvePublicShare(context.Background(), shareToken)
 	if appErr != nil {
 		return nil, nil, appErr
 	}
@@ -399,17 +400,31 @@ func (a *App) validateGuestOfficeAccess(shareToken, boundFile, fileID string) (*
 		return nil, nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
 	}
 
-	file, err := a.Store.File.Get(fileID)
-	if err != nil {
-		tlog.Errorw("Failed to retrieve guest office file", "file_id", fileID, "error", err)
-		return nil, nil, model.NewAppError("file.retrieval_failed", http.StatusInternalServerError)
-	}
-
-	if file == nil || file.DeletedAt != 0 {
-		return nil, nil, model.NewAppError("file.not_found", http.StatusNotFound)
+	file, appErr := a.guestSharedFile(*root, fileID)
+	if appErr != nil {
+		return nil, nil, appErr
 	}
 
 	return file, link, nil
+}
+
+// guestSharedFile returns the file only while it is the shared file itself or
+// is still inside the shared folder, so moving a file out of the share ends a
+// guest's access to it.
+func (a *App) guestSharedFile(root model.File, fileID string) (*model.File, *model.AppError) {
+	if fileID == root.ID {
+		if root.IsFolder {
+			return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
+		}
+
+		return &root, nil
+	}
+
+	if !root.IsFolder {
+		return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
+	}
+
+	return a.publicSubtreeFile(root, fileID)
 }
 
 func (a *App) guestOfficeFile(shareToken, boundFile, fileID string) (*model.File, *model.AppError) {
@@ -451,9 +466,8 @@ func (a *App) guestCheckFileInfo(shareToken, boundFile, fileID, gid, name string
 }
 
 // validateGuestOfficeEdit is the strict gate for guest WRITES. Beyond the read
-// checks it re-confirms the LIVE link still permits editing and that the file is
-// still inside the shared subtree (not moved out / trashed since the token was
-// minted). Owner revocation therefore takes effect immediately.
+// checks it re-confirms the LIVE link still permits editing. Owner revocation
+// therefore takes effect immediately.
 func (a *App) validateGuestOfficeEdit(shareToken, boundFile, fileID string) (*model.File, *model.AppError) {
 	if boundFile != fileID {
 		return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
@@ -468,43 +482,37 @@ func (a *App) validateGuestOfficeEdit(shareToken, boundFile, fileID string) (*mo
 		return nil, model.NewAppError("office.readonly", http.StatusForbidden)
 	}
 
-	if fileID == root.ID {
-		if root.IsFolder {
-			return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
-		}
-
-		return root, nil
-	}
-
-	if !root.IsFolder {
-		return nil, model.NewAppError("office.token_invalid", http.StatusForbidden)
-	}
-
-	return a.publicSubtreeFile(*root, fileID)
+	return a.guestSharedFile(*root, fileID)
 }
 
-// checkOwnerSpaceForEdit guards against unauthenticated writes growing the
-// owner's storage past their limit. Returns a generic error (never reveals the
-// owner's storage state) when space is low.
-func (a *App) checkOwnerSpaceForEdit(ownerID string, delta int64) *model.AppError {
+// checkOwnerSpaceForEdit stops an office save from growing the owner's storage
+// past their limit, whoever the editor is. A guest gets a plain save failure,
+// because Collabora turns a 507 into a storage message that would reveal the
+// owner's storage state on a public link.
+func (a *App) checkOwnerSpaceForEdit(ownerID string, delta int64, guest bool) *model.AppError {
 	if delta <= 0 {
 		return nil
 	}
 
 	owner, err := a.Store.User.Get(ownerID)
 	if err != nil || owner == nil {
-		tlog.Errorw("Failed to retrieve owner for guest office save", "owner_id", ownerID, "error", err)
+		tlog.Errorw("Failed to retrieve owner for office save", "owner_id", ownerID, "error", err)
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
 	free, err := a.isFreeSpace(*owner, delta)
 	if err != nil {
-		tlog.Errorw("Failed to check owner storage limit for guest office save", "owner_id", ownerID, "error", err)
+		tlog.Errorw("Failed to check owner storage limit for office save", "owner_id", ownerID, "error", err)
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
 	if !free {
-		tlog.Warnw("Guest office save rejected: owner storage running low", "owner_id", ownerID)
+		tlog.Warnw("Office save rejected: owner storage running low", "owner_id", ownerID)
+
+		if guest {
+			return model.NewAppError("office.save_failed", http.StatusInternalServerError)
+		}
+
 		return model.NewAppError("office.save_failed", http.StatusInsufficientStorage)
 	}
 
@@ -661,6 +669,25 @@ func (a *App) openGuestEuroOffice(guestToken string, file model.File, allowDownl
 	}, nil
 }
 
+var maxOfficeSaveSize = 100 << 20
+
+var errOfficeSaveTooLarge = errors.New("office save exceeds the size limit")
+
+func readOfficeSave(r io.Reader) ([]byte, error) {
+	limited := io.LimitReader(r, int64(maxOfficeSaveSize)+1)
+
+	content, err := io.ReadAll(limited)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(content) > maxOfficeSaveSize {
+		return nil, errOfficeSaveTooLarge
+	}
+
+	return content, nil
+}
+
 func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadCloser) *model.AppError {
 	defer body.Close()
 
@@ -692,7 +719,12 @@ func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadClos
 		f = file
 	}
 
-	bodyBytes, err := io.ReadAll(body)
+	bodyBytes, err := readOfficeSave(body)
+	if errors.Is(err, errOfficeSaveTooLarge) {
+		tlog.Warnw("Office save rejected as too large", "file_id", fileID)
+		return model.NewAppError("office.save_failed", http.StatusRequestEntityTooLarge)
+	}
+
 	if err != nil {
 		tlog.Errorw("Failed to read office save body",
 			"file_id", fileID,
@@ -701,10 +733,8 @@ func (a *App) OfficeSaveFile(fileID string, accessToken string, body io.ReadClos
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
-	if guest {
-		if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(bodyBytes))-f.Size); appErr != nil {
-			return appErr
-		}
+	if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(bodyBytes))-f.Size, guest); appErr != nil {
+		return appErr
 	}
 
 	officeFilePath, err := a.BuildFilePath(f.Storage, f.ID, model.AppFiles)
@@ -1088,16 +1118,24 @@ func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken, authHeader string
 
 	defer resp.Body.Close()
 
-	fileBytes, err := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		tlog.Errorw("EuroOffice file download failed", "file_id", fileID, "status", resp.StatusCode)
+		return model.NewAppError("office.save_failed", http.StatusBadGateway)
+	}
+
+	fileBytes, err := readOfficeSave(resp.Body)
+	if errors.Is(err, errOfficeSaveTooLarge) {
+		tlog.Warnw("EuroOffice save rejected as too large", "file_id", fileID)
+		return model.NewAppError("office.save_failed", http.StatusRequestEntityTooLarge)
+	}
+
 	if err != nil {
 		tlog.Errorw("Failed to read EuroOffice file content", "file_id", fileID, "error", err)
 		return model.NewAppError("office.save_failed", http.StatusInternalServerError)
 	}
 
-	if isGuest {
-		if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(fileBytes))-f.Size); appErr != nil {
-			return appErr
-		}
+	if appErr := a.checkOwnerSpaceForEdit(f.Owner, int64(len(fileBytes))-f.Size, isGuest); appErr != nil {
+		return appErr
 	}
 
 	officeFilePath, err := a.BuildFilePath(f.Storage, f.ID, model.AppFiles)
