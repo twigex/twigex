@@ -128,3 +128,46 @@ func TestValidateGuestOfficeEdit_RejectsExpiredLink(t *testing.T) {
 	_, appErr := a.validateGuestOfficeEdit("tok", "child-1", "child-1")
 	requireAppErr(t, appErr, "link.expired", http.StatusNotFound)
 }
+
+func TestGuestOfficeFile_AllowsDescendant(t *testing.T) {
+	link, root, subtree := folderShareFixture()
+	a := newPublicApp(link, root, subtree, nil)
+
+	file, appErr := a.guestOfficeFile("tok", "nested-1", "nested-1")
+	if appErr != nil {
+		t.Fatalf("expected a file inside the shared folder to open, got %v", appErr)
+	}
+
+	if file.ID != "nested-1" {
+		t.Fatalf("expected nested-1, got %q", file.ID)
+	}
+}
+
+func TestGuestOfficeFile_RejectsFileMovedOutOfSharedFolder(t *testing.T) {
+	link, root, subtree := folderShareFixture()
+	a := newPublicApp(link, root, subtree, nil)
+
+	// The file still exists, but the owner moved it out of the shared folder
+	// after the guest's token was minted.
+	moved := &model.File{ID: "moved-1", Parent: "private-folder", Storage: "s1", DisplayName: "moved.docx"}
+	a.Store.File.(*fakePublicFileStore).files["moved-1"] = moved
+
+	_, appErr := a.guestOfficeFile("tok", "moved-1", "moved-1")
+	requireAppErr(t, appErr, "link.not_found", http.StatusNotFound)
+}
+
+func TestGuestOfficeFile_RejectsTrashedDescendant(t *testing.T) {
+	link, root, subtree := folderShareFixture()
+	a := newPublicApp(link, root, subtree, nil)
+
+	_, appErr := a.guestOfficeFile("tok", "trashed-1", "trashed-1")
+	requireAppErr(t, appErr, "link.not_found", http.StatusNotFound)
+}
+
+func TestGuestOfficeFile_RejectsFolderItself(t *testing.T) {
+	link, root, subtree := folderShareFixture()
+	a := newPublicApp(link, root, subtree, nil)
+
+	_, appErr := a.guestOfficeFile("tok", "folder-1", "folder-1")
+	requireAppErr(t, appErr, "office.token_invalid", http.StatusForbidden)
+}
