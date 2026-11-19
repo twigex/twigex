@@ -164,3 +164,19 @@ func TestOpenPublicOfficeFile_RefusesWhenOfficeUnavailable(t *testing.T) {
 	_, appErr := a.OpenPublicOfficeFile(context.Background(), "share-token", "", "", "Guest")
 	requireAppErr(t, appErr, "office.not_available", http.StatusNotFound)
 }
+
+func TestEuroOfficeCallback_KeepsDocumentWhenDownloadFails(t *testing.T) {
+	a, stores := newOfficeAccessApp()
+	stores.files.shares["user-1/doc-1"] = []model.File{{AccessLevel: model.AccessEditor}}
+
+	failing := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		http.Error(w, "expired", http.StatusNotFound)
+	}))
+	defer failing.Close()
+
+	signed := signOfficeTestToken(t, jwt.MapClaims{"status": 2, "url": failing.URL + "/output.docx"})
+	body := io.NopCloser(strings.NewReader(`{"token":"` + signed + `"}`))
+
+	appErr := a.EuroOfficeCallback("doc-1", "files", userOfficeToken(t, "files", "doc-1"), "", body)
+	requireAppErr(t, appErr, "office.save_failed", http.StatusBadGateway)
+}

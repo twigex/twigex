@@ -1088,6 +1088,11 @@ func (a *App) EuroOfficeCallback(fileID, wopiApp, accessToken, authHeader string
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != http.StatusOK {
+		tlog.Errorw("EuroOffice file download failed", "file_id", fileID, "status", resp.StatusCode)
+		return model.NewAppError("office.save_failed", http.StatusBadGateway)
+	}
+
 	fileBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		tlog.Errorw("Failed to read EuroOffice file content", "file_id", fileID, "error", err)
