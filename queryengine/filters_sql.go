@@ -272,8 +272,8 @@ func escapeTextMatch(text string) string {
 }
 
 // yesNoFilterValues writes yes and no as 1 and 0, which both databases read
-// as yes and no. Charts send them as true and false, as results give them,
-// and MySQL would compare a 0 or 1 column with the text "true" as 0.
+// as yes and no. Requests give them as true and false, as results do, and
+// MySQL would compare a 0 or 1 column with the text "true" as 0.
 func yesNoFilterValues(texts []string) []string {
 	values := make([]string, 0, len(texts))
 

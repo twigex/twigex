@@ -9,7 +9,7 @@ import (
 )
 
 // ResolvedDateRange is the actual start and end of a date field's range, so a
-// chart asking for "this month" knows which days that was.
+// request for "this month" knows which days that was.
 type ResolvedDateRange struct {
 	Field string
 	Start string

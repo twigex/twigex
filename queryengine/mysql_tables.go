@@ -58,7 +58,7 @@ var mysqlFieldTypes = map[string]FieldType{
 	"timestamp":  FieldTypeTime,
 }
 
-// isLongNumberType: BIGINT and DECIMAL can be longer than a browser keeps.
+// isLongNumberType: BIGINT and DECIMAL can be longer than a float64 holds.
 func (mysqlDatabase) isLongNumberType(resultColumnType string) bool {
 	return resultColumnType == "BIGINT" || resultColumnType == "DECIMAL"
 }

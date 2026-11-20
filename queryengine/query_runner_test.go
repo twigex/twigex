@@ -164,14 +164,19 @@ func TestQueryRunnerRunsDifferentQueriesApart(t *testing.T) {
 	connection := new(sql.DB)
 	otherConnection := new(sql.DB)
 
+	// The same SQL read with another type, as after a model was saved.
+	otherType := countQuery("Latvia")
+	otherType.Columns[0].Type = FieldTypeText
+
 	first := askInBackground(context.Background(), runner, connection, countQuery("Latvia"))
 	otherValue := askInBackground(context.Background(), runner, connection, countQuery("Estonia"))
 	otherPool := askInBackground(context.Background(), runner, otherConnection, countQuery("Latvia"))
+	otherTypeAnswer := askInBackground(context.Background(), runner, connection, otherType)
 
-	waitUntil(t, func() bool { return held.runCount() == 3 })
+	waitUntil(t, func() bool { return held.runCount() == 4 })
 	close(held.finish)
 
-	for _, answer := range []chan runAnswer{first, otherValue, otherPool} {
+	for _, answer := range []chan runAnswer{first, otherValue, otherPool, otherTypeAnswer} {
 		if got := <-answer; got.err != nil {
 			t.Fatalf("Run: %v", got.err)
 		}

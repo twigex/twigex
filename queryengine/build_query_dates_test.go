@@ -47,7 +47,7 @@ func TestBuildQueryDateFieldByDayInRange(t *testing.T) {
 
 	wantColumns := []Column{
 		{Key: "events.happened_at", Title: "Happened", Kind: FieldKindDimension, Type: FieldTypeTime, DateStep: DateStepDay},
-		{Key: "events.count", Title: "Events", Kind: FieldKindMeasure, Type: FieldTypeNumber},
+		{Key: "events.count", Title: "Events", Kind: FieldKindMeasure, Type: FieldTypeNumber, MeasureType: MeasureCount},
 	}
 
 	if !slices.Equal(query.Columns, wantColumns) {

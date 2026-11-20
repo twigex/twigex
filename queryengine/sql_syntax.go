@@ -43,7 +43,8 @@ type sqlSyntax interface {
 
 	// sortEmptyAsSmallest sorts by an expression in a direction, ASC or DESC,
 	// with empty values counted as the smallest: first going up, last going
-	// down. Databases differ here, so without it the same chart would differ.
+	// down. Databases differ here, so without it the same request would get
+	// different answers on different databases.
 	sortEmptyAsSmallest(expression string, direction string) string
 }
 

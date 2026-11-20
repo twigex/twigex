@@ -36,8 +36,8 @@ var postgresFieldTypes = map[string]FieldType{
 	"timestamp with time zone":    FieldTypeTime,
 }
 
-// isLongNumberType: INT8 (bigint) and NUMERIC can be longer than a browser
-// keeps.
+// isLongNumberType: INT8 (bigint) and NUMERIC can be longer than a float64
+// holds.
 func (postgresDatabase) isLongNumberType(resultColumnType string) bool {
 	return resultColumnType == "INT8" || resultColumnType == "NUMERIC"
 }

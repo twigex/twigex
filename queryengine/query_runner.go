@@ -13,9 +13,9 @@ import (
 
 // QueryRunner runs queries, and runs a query only once when the same query is
 // asked for again while it is still running: everyone asking gets that one
-// answer. Nothing is kept after it finishes, so answers are never old. A
-// dashboard opened by many people at once asks the database each query once,
-// not once per person. The host app makes one and keeps it.
+// answer. Nothing is kept after it finishes, so answers are never old. Many
+// people asking for the same queries at once cost the database each query
+// once, not once per person. The host app makes one and keeps it.
 type QueryRunner struct {
 	mutex   sync.Mutex
 	running map[string]*sharedRun
@@ -76,11 +76,18 @@ func (runner *QueryRunner) Run(ctx context.Context, connection *sql.DB, query Bu
 	}
 }
 
-// runKey names a query by its connection pool, SQL and values. The pool
-// stands for the database and the login: the host app opens a new pool when
-// either changes.
+// runKey names a query by its connection pool (the database and login), SQL,
+// values and column types. The types decide how rows are read, and a saved
+// model can change them without changing the SQL.
 func runKey(connection *sql.DB, query BuiltQuery) string {
-	return fmt.Sprintf("%p\x00%s\x00%#v", connection, query.SQL, query.Values)
+	var columnTypes []string
+
+	for _, column := range query.Columns {
+		columnType := fmt.Sprintf("%s/%s/%s", column.Kind, column.Type, column.MeasureType)
+		columnTypes = append(columnTypes, columnType)
+	}
+
+	return fmt.Sprintf("%p\x00%s\x00%#v\x00%v", connection, query.SQL, query.Values, columnTypes)
 }
 
 // start begins a run. Its query does not stop with the first asker's ctx,
@@ -153,15 +160,15 @@ func (runner *QueryRunner) forget(key string, run *sharedRun) {
 }
 
 // resultFor gives an asker the shared rows with its own query's columns and
-// date ranges. The SQL is the same, so only titles could differ, if a model
-// was saved between two identical requests. The rows are shared, so whoever
-// reads them must not change them.
+// date ranges. The SQL and column types are the same, so only titles could
+// differ, if a model was saved between two identical requests. The rows are
+// shared, so whoever reads them must not change them.
 func resultFor(query BuiltQuery, shared Result) Result {
 	columns := slices.Clone(query.Columns)
 
 	for position := range columns {
 		if position < len(shared.Columns) {
-			columns[position].SentAsText = shared.Columns[position].SentAsText
+			columns[position].KeptAsText = shared.Columns[position].KeptAsText
 		}
 	}
 

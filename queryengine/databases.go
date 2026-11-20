@@ -37,8 +37,8 @@ type database interface {
 	suggestFieldType(columnType string) FieldType
 
 	// isLongNumberType says whether a column type, as the driver names it in
-	// results, can hold numbers longer than the 15 to 16 digits a browser
-	// keeps exactly. Fields of these types are sent as text.
+	// results, can hold numbers longer than the 15 to 16 digits a float64
+	// holds exactly. Fields of these types are kept as text.
 	isLongNumberType(resultColumnType string) bool
 
 	// connectionFailure names why a connection failed, from the driver's own

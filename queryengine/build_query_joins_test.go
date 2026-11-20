@@ -260,8 +260,8 @@ func TestBuildQueryViewFollowsItsPaths(t *testing.T) {
 
 	wantColumns := []Column{
 		{Key: "shop_sales_view.shop_regions_name", Title: "Shop Regions Name", Kind: FieldKindDimension, Type: FieldTypeText},
-		{Key: "shop_sales_view.revenue", Title: "Revenue", Kind: FieldKindMeasure, Type: FieldTypeNumber},
-		{Key: "shop_sales_view.count", Title: "Count", Kind: FieldKindMeasure, Type: FieldTypeNumber},
+		{Key: "shop_sales_view.revenue", Title: "Revenue", Kind: FieldKindMeasure, Type: FieldTypeNumber, MeasureType: MeasureSum},
+		{Key: "shop_sales_view.count", Title: "Count", Kind: FieldKindMeasure, Type: FieldTypeNumber, MeasureType: MeasureCount},
 	}
 
 	if !slices.Equal(query.Columns, wantColumns) {

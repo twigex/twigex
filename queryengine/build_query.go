@@ -32,9 +32,13 @@ type Column struct {
 	// value is then the start of its period.
 	DateStep DateStep
 
-	// SentAsText is set by RunQuery for number fields whose values can be too
-	// long to be exact in a browser.
-	SentAsText bool
+	MeasureType MeasureType
+
+	// KeptAsText is set by RunQuery for number fields whose values would lose
+	// digits as a float64: a dimension whose database type can hold such
+	// numbers, or a count, sum, minimum or maximum that has such a value in
+	// this result. Their values stay the database's text.
+	KeptAsText bool
 }
 
 type requestedField struct {
@@ -717,6 +721,7 @@ func (builder *queryBuilder) columns(outputFields []requestedField) []Column {
 			column.Title = titleOrMadeFromName(field.measure.Title, field.shownName)
 			column.Kind = FieldKindMeasure
 			column.Type = FieldTypeNumber
+			column.MeasureType = field.measure.Type
 		} else {
 			column.Title = titleOrMadeFromName(field.dimension.Title, field.shownName)
 			column.Kind = FieldKindDimension

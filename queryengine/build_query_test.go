@@ -55,8 +55,8 @@ func TestBuildQueryMeasuresByField(t *testing.T) {
 
 	wantColumns := []Column{
 		{Key: "sales.country", Title: "Country", Kind: FieldKindDimension, Type: FieldTypeText},
-		{Key: "sales.count", Title: "Sales", Kind: FieldKindMeasure, Type: FieldTypeNumber},
-		{Key: "sales.revenue", Title: "Revenue", Kind: FieldKindMeasure, Type: FieldTypeNumber},
+		{Key: "sales.count", Title: "Sales", Kind: FieldKindMeasure, Type: FieldTypeNumber, MeasureType: MeasureCount},
+		{Key: "sales.revenue", Title: "Revenue", Kind: FieldKindMeasure, Type: FieldTypeNumber, MeasureType: MeasureSum},
 	}
 
 	if !slices.Equal(query.Columns, wantColumns) {
