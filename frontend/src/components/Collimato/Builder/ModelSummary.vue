@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                     {{
                         isView
                             ? t("collimato.model_summary.view")
-                            : t("collimato.model_summary.cube")
+                            : t("collimato.model_summary.dataset")
                     }}
                 </span>
                 <span class="truncate text-sm font-medium text-gray-900">
@@ -45,18 +45,48 @@ SPDX-License-Identifier: AGPL-3.0-only
 
         <!-- Body -->
         <div v-show="open" class="flex min-h-0 flex-1 flex-col">
-            <!-- Structured chips: fills the pane, or yields room when code is open -->
-            <div
-                class="space-y-4 p-3"
-                :class="
-                    showCode ? 'max-h-40 shrink-0 overflow-auto' : 'min-h-0 flex-1 overflow-auto'
-                "
-            >
+            <div class="min-h-0 flex-1 space-y-4 overflow-auto p-3">
+                <p
+                    v-if="modelError"
+                    class="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800"
+                >
+                    {{ modelError.message }}
+                </p>
+
+                <div
+                    v-if="nameProblems.length > 0"
+                    class="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800"
+                >
+                    <p class="font-medium">{{ t("collimato.model_summary.name_problems") }}</p>
+                    <ul class="mt-1 list-disc pl-5">
+                        <li v-for="problem in nameProblems" :key="problem.kind + problem.saved">
+                            {{
+                                problem.found
+                                    ? t("collimato.model_summary.name_in_other_case", {
+                                          saved: problem.saved,
+                                          found: problem.found,
+                                      })
+                                    : t("collimato.model_summary.name_missing", {
+                                          saved: problem.saved,
+                                      })
+                            }}
+                        </li>
+                    </ul>
+                    <button
+                        v-if="editable && nameProblems.some((problem) => problem.found)"
+                        type="button"
+                        class="mt-2 rounded-md bg-amber-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-amber-500"
+                        @click="$emit('fix-names')"
+                    >
+                        {{ t("collimato.model_summary.use_database_names") }}
+                    </button>
+                </div>
+
                 <p v-if="!model" class="text-sm text-gray-400">
                     {{ t("collimato.model_summary.unparsable") }}
                 </p>
 
-                <!-- Cube -->
+                <!-- Dataset -->
                 <template v-else-if="!isView">
                     <p class="text-xs text-gray-500">
                         {{ t("collimato.model_summary.table") }} ·
@@ -112,14 +142,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 
                 <!-- View -->
                 <template v-else>
-                    <section v-if="model.cubes?.length">
+                    <section v-if="model.parts?.length">
                         <h4 :class="groupClass">
-                            {{ t("collimato.model_summary.cubes") }}
-                            <span class="text-gray-400">({{ model.cubes.length }})</span>
+                            {{ t("collimato.model_summary.datasets") }}
+                            <span class="text-gray-400">({{ model.parts.length }})</span>
                         </h4>
                         <div class="space-y-2">
                             <div
-                                v-for="(c, i) in model.cubes"
+                                v-for="(c, i) in model.parts"
                                 :key="i"
                                 class="flex flex-wrap items-center gap-1.5"
                             >
@@ -141,32 +171,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                     </section>
                 </template>
             </div>
-
-            <!-- Advanced: read-only generated YAML that expands to fill -->
-            <div class="flex flex-col border-t" :class="showCode ? 'min-h-0 flex-1' : 'shrink-0'">
-                <button
-                    type="button"
-                    class="flex shrink-0 items-center gap-1 px-3 py-2 text-xs font-medium text-gray-500 hover:text-gray-700"
-                    @click="showCode = !showCode"
-                >
-                    <ChevronRightIcon
-                        class="h-4 w-4 transition-transform duration-200"
-                        :class="showCode ? 'rotate-90' : ''"
-                        aria-hidden="true"
-                    />
-                    {{ t("collimato.model_summary.advanced") }}
-                </button>
-                <pre
-                    v-show="showCode"
-                    class="mx-3 mb-3 min-h-[10rem] flex-1 overflow-auto rounded bg-gray-900 p-3 font-mono text-xs text-gray-100"
-                    >{{ file.content }}</pre>
-            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { PencilSquareIcon, ChevronRightIcon } from "@heroicons/vue/20/solid";
 import { t } from "@/i18n/index.js";
 
@@ -174,11 +184,13 @@ const props = defineProps({
     file: { type: Object, required: true },
     open: { type: Boolean, default: true },
     editable: { type: Boolean, default: true },
+    // Why the engine cannot use this model, if it cannot: { message }.
+    modelError: { type: Object, default: null },
+    // Names the database does not have as saved (see modelNames.js).
+    nameProblems: { type: Array, default: () => [] },
 });
 
-defineEmits(["edit", "update:open"]);
-
-const showCode = ref(false);
+defineEmits(["edit", "update:open", "fix-names"]);
 
 const isView = computed(() => props.file.type === "view");
 const model = computed(() => {

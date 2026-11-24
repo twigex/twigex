@@ -10,7 +10,7 @@ import ArcLayer from "@/components/Collimato/Charts/Map/LayerTypes/ArcLayer.vue"
 import { createDeckLayer } from "@/utils/collimato/mapDeckLayers.js";
 import { defaultLayerConfig } from "@/utils/collimato/mapLayerTypes.js";
 
-const cubes = [
+const dataModels = [
     {
         table: "taxi_trips",
         join: 1,
@@ -25,7 +25,7 @@ const TOOLTIP_PLACEHOLDER = "Select tooltip fields";
 
 function mountWith(component, config) {
     return mount(component, {
-        props: { cubes, selectedCube: "taxi_trips", config, layer: {} },
+        props: { dataModels, selectedDataModel: "taxi_trips", config, layer: {} },
     });
 }
 
@@ -124,8 +124,8 @@ describe("arc colours are independent", () => {
     function arc(overrides = {}) {
         return mount(ArcLayer, {
             props: {
-                cubes,
-                selectedCube: "taxi_trips",
+                dataModels,
+                selectedDataModel: "taxi_trips",
                 config: { ...defaultLayerConfig("arc"), ...overrides },
                 layer: {},
             },

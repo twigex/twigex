@@ -8,8 +8,8 @@ import {
     databaseLabel,
 } from "@/utils/collimato/databaseTypes";
 
-describe("the stored value is Cube's driver key", () => {
-    it("uses the tokens Cube resolves a driver from", () => {
+describe("the stored value is the server's database type", () => {
+    it("uses the types the server knows", () => {
         expect(DATABASE_TYPES.map((db) => db.value)).toEqual(["mysql", "postgres"]);
     });
 

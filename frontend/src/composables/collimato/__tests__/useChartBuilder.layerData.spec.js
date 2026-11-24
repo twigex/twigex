@@ -28,7 +28,7 @@ describe("loadLayer", () => {
 
             return respond
                 ? respond(calls.length, signal)
-                : Promise.resolve({ data: { data: rows } });
+                : Promise.resolve({ data: { columns: [], rows: rows, dateRanges: [] } });
         });
 
         const builder = useChartBuilder("map", { loadData });
@@ -120,18 +120,6 @@ describe("loadLayer", () => {
         ]);
     });
 
-    it("clears the status when the engine reports an error", async () => {
-        const { builder, statuses } = mapSetup({
-            respond: () => Promise.resolve({ data: { error: "Table not found" } }),
-        });
-
-        await expect(builder.loadLayer(0)).rejects.toThrow("Table not found");
-        expect(statuses).toEqual([
-            [0, "loading"],
-            [0, "loaded"],
-        ]);
-    });
-
     it("aborts an in-flight load when the same layer reloads", async () => {
         let firstSignal = null;
         const { builder } = mapSetup({
@@ -142,7 +130,7 @@ describe("loadLayer", () => {
                     return new Promise(() => {});
                 }
 
-                return Promise.resolve({ data: { data: rows } });
+                return Promise.resolve({ data: { columns: [], rows: rows, dateRanges: [] } });
             },
         });
 
@@ -157,7 +145,9 @@ describe("loadLayer", () => {
     it("a superseded load does not clear the replacement's status", async () => {
         const { builder, statuses } = mapSetup({
             respond: (call) =>
-                call === 1 ? new Promise(() => {}) : Promise.resolve({ data: { data: rows } }),
+                call === 1
+                    ? new Promise(() => {})
+                    : Promise.resolve({ data: { columns: [], rows: rows, dateRanges: [] } }),
         });
 
         const first = builder.loadLayer(0);
@@ -242,7 +232,7 @@ describe("loadLayer", () => {
             respond: (call) =>
                 call === 1
                     ? Promise.reject(new Error("boom"))
-                    : Promise.resolve({ data: { data: rows } }),
+                    : Promise.resolve({ data: { columns: [], rows: rows, dateRanges: [] } }),
         });
 
         builder.mapLayers.value.push({
@@ -278,7 +268,7 @@ describe("layer filters", () => {
         const loadData = vi.fn((query) => {
             calls.push(query);
 
-            return Promise.resolve({ data: { data: [] } });
+            return Promise.resolve({ data: { columns: [], rows: [], dateRanges: [] } });
         });
 
         const builder = useChartBuilder("map", { loadData });
@@ -414,7 +404,7 @@ describe("map layers over joined models", () => {
         const loadData = vi.fn((query) => {
             calls.push(query);
 
-            return Promise.resolve({ data: { data: [] } });
+            return Promise.resolve({ data: { columns: [], rows: [], dateRanges: [] } });
         });
 
         const builder = useChartBuilder("map", { loadData });
@@ -512,7 +502,11 @@ describe("row limits", () => {
             calls.push(query);
 
             return Promise.resolve({
-                data: { data: Array.from({ length: rowCount }, () => ({})) },
+                data: {
+                    columns: [],
+                    rows: Array.from({ length: rowCount }, () => ({})),
+                    dateRanges: [],
+                },
             });
         });
 
@@ -592,7 +586,7 @@ describe("config changes that alter the query", () => {
         const loadData = vi.fn((query) => {
             calls.push(query);
 
-            return Promise.resolve({ data: { data: [] } });
+            return Promise.resolve({ data: { columns: [], rows: [], dateRanges: [] } });
         });
 
         const builder = useChartBuilder("map", { loadData });

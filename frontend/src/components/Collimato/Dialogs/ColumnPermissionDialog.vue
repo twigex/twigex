@@ -130,7 +130,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             : 'text-gray-700 hover:bg-gray-50'
                                     "
                                 >
-                                    <span>{{ col.shortTitle }}</span>
+                                    <span>{{ col.title }}</span>
                                     <CheckIcon
                                         v-if="selectedColumn?.name === col.name"
                                         class="h-4 w-4 shrink-0 text-indigo-600"

@@ -99,7 +99,6 @@ Built for teams of any size and industry, such as marketing, HR, freelancers, an
 | MySQL 8 or MariaDB      | **required**                                  |
 | Redis                   | **required**, used for sessions               |
 | LiveKit                 | optional, needed for video calls and meetings |
-| Cube.js                 | optional, needed for Collimato                |
 | EuroOffice or Collabora | optional, needed for document editing         |
 
 The server will not start without a reachable database and Redis. The optional services are only contacted when their feature is used, so you can add them later.

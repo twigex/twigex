@@ -40,7 +40,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                 <ListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                 >
-                    <template v-for="(d, index) in cubes" :key="index">
+                    <template v-for="(d, index) in dataModels" :key="index">
                         <li
                             class="cursor-default select-none bg-gray-100 py-2 pl-3 pr-9 text-left font-semibold text-gray-900"
                         >
@@ -112,7 +112,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                 <ListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
                 >
-                    <template v-for="(d, index) in cubes" :key="index">
+                    <template v-for="(d, index) in dataModels" :key="index">
                         <li
                             class="cursor-default select-none bg-gray-100 py-2 pl-3 pr-9 text-left font-semibold text-gray-900"
                         >
@@ -164,7 +164,7 @@ import { ChevronUpDownIcon } from "@heroicons/vue/16/solid";
 import { CheckIcon } from "@heroicons/vue/20/solid";
 
 const props = defineProps({
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },
@@ -184,7 +184,7 @@ const props = defineProps({
 
 defineEmits(["update:coordinates"]);
 
-const dimensions = computed(() => props.cubes.flatMap((cube) => cube.dimensions));
+const dimensions = computed(() => props.dataModels.flatMap((dataModel) => dataModel.dimensions));
 
 const selectedLat = computed(
     () => dimensions.value.find((d) => d.name === props.coordinates.lat) ?? null,

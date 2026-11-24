@@ -150,24 +150,24 @@ type fakeColumnRules struct {
 	hidden []string
 }
 
-func (f fakeColumnRules) FilterMeta(_ []model.CollimatoRole, collection collimato.CubeCollection) *collimato.CubeCollection {
-	cubes := make([]collimato.Cube, 0, len(collection.Cubes))
+func (f fakeColumnRules) FilterFieldList(_ []model.CollimatoRole, fieldList collimato.FieldList) *collimato.FieldList {
+	datasets := make([]collimato.DatasetFields, 0, len(fieldList.Datasets))
 
-	for _, cube := range collection.Cubes {
-		dimensions := make([]collimato.Dimension, 0, len(cube.Dimensions))
-		for _, dimension := range cube.Dimensions {
-			if !slices.Contains(f.hidden, dimension.Name) {
-				dimensions = append(dimensions, dimension)
+	for _, dataset := range fieldList.Datasets {
+		fields := make([]collimato.Field, 0, len(dataset.Fields))
+		for _, field := range dataset.Fields {
+			if !slices.Contains(f.hidden, field.Key) {
+				fields = append(fields, field)
 			}
 		}
 
-		cube.Dimensions = dimensions
-		cubes = append(cubes, cube)
+		dataset.Fields = fields
+		datasets = append(datasets, dataset)
 	}
 
-	collection.Cubes = cubes
+	fieldList.Datasets = datasets
 
-	return &collection
+	return &fieldList
 }
 
 func (f fakeColumnRules) HasPermissionToFields(_ []model.CollimatoRole, query *model.DataQuery) (bool, error) {
@@ -196,7 +196,7 @@ func newGraphRelationsTestApp(permissions ...string) *graphTestApp {
 	g.app.CollimatoRoles = fakeColumnRules{hidden: []string{"orders.salary"}}
 	g.collimato.permissions = permissions
 
-	g.meta["ws"] = &collimato.CubeCollection{Cubes: []collimato.Cube{ordersCube("orders.amount", "orders.salary")}}
+	g.meta["ws"] = &collimato.FieldList{Datasets: []collimato.DatasetFields{ordersDataset("orders.amount", "orders.salary")}}
 
 	g.graph.datasets = []model.GraphDataset{{ID: "ds-orders", WorkspaceID: "ws", Name: "orders"}}
 	g.graph.fields = []model.GraphDatasetField{

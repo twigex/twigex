@@ -148,13 +148,13 @@ func (f *fakeGraphStore) UpdateStructuredRelations(_ context.Context, _, _, from
 
 type fakeGraphEngine struct {
 	QueryEngine
-	meta map[string]*collimato.CubeCollection
+	meta map[string]*collimato.FieldList
 }
 
-func (f fakeGraphEngine) Meta(_ context.Context, workspaceID string) (*collimato.CubeCollection, error) {
+func (f fakeGraphEngine) FieldList(_ context.Context, workspaceID string) (*collimato.FieldList, error) {
 	collection, ok := f.meta[workspaceID]
 	if !ok {
-		return nil, errors.New("cube is down")
+		return nil, errors.New("the field list cannot be read")
 	}
 
 	return collection, nil
@@ -232,7 +232,7 @@ type graphTestApp struct {
 	settings  *fakeGraphSettingsStore
 	roles     *fakeGraphRoleStore
 	jobs      *fakeGraphJobsStore
-	meta      map[string]*collimato.CubeCollection
+	meta      map[string]*collimato.FieldList
 }
 
 func newGraphTestApp(enabled bool) *graphTestApp {
@@ -242,7 +242,7 @@ func newGraphTestApp(enabled bool) *graphTestApp {
 		settings:  &fakeGraphSettingsStore{values: make(map[string]string)},
 		roles:     &fakeGraphRoleStore{},
 		jobs:      &fakeGraphJobsStore{},
-		meta:      make(map[string]*collimato.CubeCollection),
+		meta:      make(map[string]*collimato.FieldList),
 	}
 
 	g.app = &App{
@@ -267,13 +267,13 @@ func newGraphTestApp(enabled bool) *graphTestApp {
 	return g
 }
 
-func ordersCube(fields ...string) collimato.Cube {
-	cube := collimato.Cube{Name: "orders", Type: "cube"}
+func ordersDataset(fields ...string) collimato.DatasetFields {
+	dataset := collimato.DatasetFields{Name: "orders"}
 	for _, field := range fields {
-		cube.Dimensions = append(cube.Dimensions, collimato.Dimension{Name: field})
+		dataset.Fields = append(dataset.Fields, collimato.Field{Key: field, Kind: collimato.FieldKindDimension})
 	}
 
-	return cube
+	return dataset
 }
 
 func chartUsing(id, workspaceID string, measures ...string) model.Chart {
@@ -324,8 +324,8 @@ func TestSyncGraphDatasetsMatchesByName(t *testing.T) {
 	g := newGraphTestApp(true)
 
 	g.graph.datasets = []model.GraphDataset{
-		{ID: "ds-orders", WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindCube},
-		{ID: "ds-old", WorkspaceID: "ws", Name: "old", Kind: model.GraphDatasetKindCube},
+		{ID: "ds-orders", WorkspaceID: "ws", Name: "orders", Kind: model.GraphDatasetKindDataset},
+		{ID: "ds-old", WorkspaceID: "ws", Name: "old", Kind: model.GraphDatasetKindDataset},
 	}
 	g.graph.fields = []model.GraphDatasetField{
 		{ID: "kept", WorkspaceID: "ws", DatasetID: "ds-orders", Name: "orders.amount"},
@@ -333,14 +333,14 @@ func TestSyncGraphDatasetsMatchesByName(t *testing.T) {
 		{ID: "old-field", WorkspaceID: "ws", DatasetID: "ds-old", Name: "old.id"},
 	}
 
-	salesView := collimato.Cube{
-		Name:     "sales_view",
-		Type:     "view",
-		Measures: []collimato.Measure{{Name: "sales_view.total"}},
+	salesView := collimato.DatasetFields{
+		Name:   "sales_view",
+		IsView: true,
+		Fields: []collimato.Field{{Key: "sales_view.total", Kind: collimato.FieldKindMeasure}},
 	}
 
-	g.meta["ws"] = &collimato.CubeCollection{
-		Cubes: []collimato.Cube{ordersCube("orders.amount", "orders.status"), salesView},
+	g.meta["ws"] = &collimato.FieldList{
+		Datasets: []collimato.DatasetFields{ordersDataset("orders.amount", "orders.status"), salesView},
 	}
 
 	ids, err := g.app.loadGraphBuiltInIDs(context.Background())
@@ -387,13 +387,14 @@ func TestSyncGraphDatasetsMatchesByName(t *testing.T) {
 	}
 }
 
-func TestSyncGraphDatasetsDeletesNothingWhenCubeReportsAnError(t *testing.T) {
+func TestSyncGraphDatasetsDeletesNothingWhileAModelHasErrors(t *testing.T) {
 	g := newGraphTestApp(true)
 
 	g.graph.datasets = []model.GraphDataset{{ID: "ds-orders", WorkspaceID: "ws", Name: "orders"}}
 	g.graph.fields = []model.GraphDatasetField{{ID: "f1", WorkspaceID: "ws", DatasetID: "ds-orders", Name: "orders.amount"}}
 
-	g.meta["ws"] = &collimato.CubeCollection{Error: "Compile errors: orders.yml"}
+	orders := collimato.ModelError{Name: "orders", Reason: collimato.UnsupportedHasErrors, Detail: "unknown_join_target: stores"}
+	g.meta["ws"] = &collimato.FieldList{Datasets: []collimato.DatasetFields{}, ModelErrors: []collimato.ModelError{orders}}
 
 	ids, err := g.app.loadGraphBuiltInIDs(context.Background())
 	if err != nil {
@@ -402,7 +403,7 @@ func TestSyncGraphDatasetsDeletesNothingWhenCubeReportsAnError(t *testing.T) {
 
 	_, err = g.app.syncGraphDatasets(context.Background(), "ws", ids)
 	if err == nil {
-		t.Fatalf("want an error when Cube reports one")
+		t.Fatalf("want an error while a model has errors")
 	}
 
 	if len(g.graph.datasets) != 1 || len(g.graph.fields) != 1 {
@@ -413,7 +414,7 @@ func TestSyncGraphDatasetsDeletesNothingWhenCubeReportsAnError(t *testing.T) {
 func TestRebuildGraphWorkspaceConnectsChartsToTheirFields(t *testing.T) {
 	g := newGraphTestApp(true)
 
-	g.meta["ws"] = &collimato.CubeCollection{Cubes: []collimato.Cube{ordersCube("orders.amount", "orders.status")}}
+	g.meta["ws"] = &collimato.FieldList{Datasets: []collimato.DatasetFields{ordersDataset("orders.amount", "orders.status")}}
 	g.collimato.charts = []model.Chart{chartUsing("c1", "ws", "orders.amount", "orders.missing")}
 
 	ids, err := g.app.loadGraphBuiltInIDs(context.Background())
@@ -438,8 +439,8 @@ func TestRebuildGraphWorkspaceConnectsChartsToTheirFields(t *testing.T) {
 func TestRebuildGraphWorkspaceConnectsAMapChartToItsLayerFields(t *testing.T) {
 	g := newGraphTestApp(true)
 
-	g.meta["ws"] = &collimato.CubeCollection{Cubes: []collimato.Cube{
-		ordersCube("orders.count", "orders.lat", "orders.long", "orders.amount"),
+	g.meta["ws"] = &collimato.FieldList{Datasets: []collimato.DatasetFields{
+		ordersDataset("orders.count", "orders.lat", "orders.long", "orders.amount"),
 	}}
 
 	mapChart := model.Chart{
@@ -485,7 +486,7 @@ func TestRebuildGraphMarksTheGraphBuiltEvenWhenAWorkspaceFails(t *testing.T) {
 	g := newGraphTestApp(true)
 
 	g.collimato.workspaces = []model.CollimatoWorkspace{{ID: "ws"}, {ID: "broken"}}
-	g.meta["ws"] = &collimato.CubeCollection{Cubes: []collimato.Cube{ordersCube("orders.amount")}}
+	g.meta["ws"] = &collimato.FieldList{Datasets: []collimato.DatasetFields{ordersDataset("orders.amount")}}
 
 	result, err := g.app.RebuildGraph(context.Background())
 	if err != nil {

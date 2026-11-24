@@ -11,7 +11,7 @@ import (
 )
 
 type fakeDataModelStore struct {
-	fakeMetaCollimatoStore
+	fakeFieldListCollimatoStore
 	files map[string]bool
 }
 
@@ -42,13 +42,13 @@ func TestDataModelWriteNeedsEditToReplaceAndCreateToAdd(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		a := metaApp()
+		a := fieldListApp()
 		a.Store.Collimato = &fakeDataModelStore{
-			fakeMetaCollimatoStore: fakeMetaCollimatoStore{permissions: []string{c.permission}},
-			files:                  map[string]bool{"orders.yml": true},
+			fakeFieldListCollimatoStore: fakeFieldListCollimatoStore{permissions: []string{c.permission}},
+			files:                       map[string]bool{"orders": true},
 		}
 
-		appErr := a.checkDataModelWrite(model.User{ID: "u1"}, "ws", c.model, model.CollimatoFileTypeCube, c.overwrite)
+		appErr := a.checkDataModelWrite(model.User{ID: "u1"}, "ws", c.model, model.CollimatoFileTypeDataset, c.overwrite)
 
 		if c.allowed && appErr != nil {
 			t.Errorf("%s: %v", c.name, appErr)

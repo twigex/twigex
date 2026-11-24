@@ -4,10 +4,6 @@
 import axios from "./api";
 
 const collimatoService = {
-    status() {
-        return axios.get("/collimato/status");
-    },
-
     getWorkspaceConnections(workspaceId) {
         return axios.get(`/collimato/workspaces/${workspaceId}/connections`);
     },
@@ -156,10 +152,6 @@ const collimatoService = {
         return axios.get(`/collimato/workspaces/${workspaceId}/files`);
     },
 
-    saveFile(workspaceId, data) {
-        return axios.put(`/collimato/workspaces/${workspaceId}/files`, data);
-    },
-
     deleteFile(workspaceId, data) {
         return axios.post(`/collimato/workspaces/${workspaceId}/files/delete`, data);
     },
@@ -188,22 +180,16 @@ const collimatoService = {
         return axios.post(`/collimato/workspaces/${wokspaceId}/users/${userId}/roles`, data);
     },
 
-    newCubeFile(workspaceId, data) {
-        return axios.post(`/collimato/workspaces/${workspaceId}/files`, data);
-    },
-
     generate(workspaceId, data) {
         return axios.post(`/collimato/workspaces/${workspaceId}/files/generate`, data);
     },
 
-    // build persists a structured cube/view model as a rendered YAML file.
-    // data = { type: "cube" | "view", model: <Dataset> }
+    // build saves a dataset made in the builder: data = { model, overwrite }.
     build(workspaceId, data) {
         return axios.post(`/collimato/workspaces/${workspaceId}/files/build`, data);
     },
 
-    // buildView persists a structured view model as a rendered YAML file.
-    // data = { model: <View> }
+    // buildView saves a view made in the builder: data = { model, overwrite }.
     buildView(workspaceId, data) {
         return axios.post(`/collimato/workspaces/${workspaceId}/files/build-view`, data);
     },
@@ -222,12 +208,12 @@ const collimatoService = {
         return axios.post(`/collimato/workspaces/${workspaceId}/sql`, data);
     },
 
-    meta(workspaceId) {
-        return axios.get(`/collimato/workspaces/${workspaceId}/meta`);
+    fieldList(workspaceId) {
+        return axios.get(`/collimato/workspaces/${workspaceId}/fields`);
     },
 
-    roleMeta(workspaceId) {
-        return axios.get(`/collimato/workspaces/${workspaceId}/meta/roles`);
+    roleFieldList(workspaceId) {
+        return axios.get(`/collimato/workspaces/${workspaceId}/fields/roles`);
     },
 
     listAllWorkspaces() {

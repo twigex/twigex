@@ -3,7 +3,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { transformData, applyConfiguration } from "@/utils/collimato/charts/chartDrawing.js";
-import { cubeResult } from "@/utils/collimato/charts/__tests__/cubeResult.js";
+import { chartDataFor } from "@/utils/collimato/charts/__tests__/chartDataFor.js";
 
 describe("pie configuration", () => {
     let warn;
@@ -19,7 +19,7 @@ describe("pie configuration", () => {
     function pieOption() {
         return transformData(
             "pie",
-            cubeResult({
+            chartDataFor({
                 measures: ["orders.count"],
                 dimensions: ["orders.status"],
                 rows: [
@@ -55,7 +55,10 @@ describe("pie configuration", () => {
     });
 
     it("yields an empty option when there is nothing to plot", () => {
-        const option = transformData("pie", cubeResult({ measures: [], dimensions: [], rows: [] }));
+        const option = transformData(
+            "pie",
+            chartDataFor({ measures: [], dimensions: [], rows: [] }),
+        );
 
         expect(option).toEqual({});
     });

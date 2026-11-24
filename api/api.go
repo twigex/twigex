@@ -44,7 +44,6 @@ type Routes struct {
 	Groups            *mux.Router // 'api/groups'
 	Graph             *mux.Router // 'api/graph'
 	LinkPreview       *mux.Router // 'api/link-preview'
-	CubeInternal      *mux.Router // 'api/internal/cube'
 }
 
 func InitAPI(a *app.App) {
@@ -79,7 +78,6 @@ func InitAPI(a *app.App) {
 	api.BaseRoutes.Groups = api.BaseRoutes.APIRoot.PathPrefix("/groups").Subrouter()
 	api.BaseRoutes.Graph = api.BaseRoutes.APIRoot.PathPrefix("/graph").Subrouter()
 	api.BaseRoutes.LinkPreview = api.BaseRoutes.APIRoot.PathPrefix("/link-preview").Subrouter()
-	api.BaseRoutes.CubeInternal = api.BaseRoutes.APIRoot.PathPrefix("/internal/cube").Subrouter()
 
 	api.initActivity()
 	api.initAuth()
@@ -94,7 +92,6 @@ func InitAPI(a *app.App) {
 	api.initLicense()
 	api.initCollimato()
 	api.initCollimatoAdmin()
-	api.initCubeInternal()
 	api.initChannels()
 	api.initGuest()
 	api.initConfig()

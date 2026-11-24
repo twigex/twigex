@@ -144,21 +144,21 @@ export function layerTypeIsReady(typeId, config) {
     return type ? Boolean(type.ready(config)) : false;
 }
 
-export function withCountMeasure(cubes, modelName, title) {
-    return cubes.map((cube) =>
-        cube.table === modelName
+export function withCountMeasure(dataModels, modelName, title) {
+    return dataModels.map((dataModel) =>
+        dataModel.table === modelName
             ? {
-                  ...cube,
+                  ...dataModel,
                   dimensions: [
                       {
                           name: `${modelName}.count`,
                           title: title,
                           type: "number",
                       },
-                      ...cube.dimensions,
+                      ...dataModel.dimensions,
                   ],
               }
-            : cube,
+            : dataModel,
     );
 }
 

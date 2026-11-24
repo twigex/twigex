@@ -72,7 +72,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                                 >
                                     <!-- Group Iteration -->
-                                    <template v-for="(d, index) in cubes" :key="index">
+                                    <template v-for="(d, index) in dataModels" :key="index">
                                         <li
                                             class="text-gray-900 text-left cursor-default select-none relative py-2 pl-3 pr-9 font-semibold bg-gray-100"
                                         >
@@ -513,7 +513,7 @@ const props = defineProps({
             endTime: "",
         }),
     },
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },

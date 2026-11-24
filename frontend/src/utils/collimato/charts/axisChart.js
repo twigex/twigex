@@ -11,6 +11,7 @@ import {
     sortBarsByValue,
 } from "@/utils/collimato/charts/chartSettings.js";
 import { generateTimeArray, timeSlotLabels } from "@/utils/collimato/charts/timeSlots.js";
+import { slotTime } from "@/utils/collimato/chartData.js";
 import {
     labelOf,
     valuesOf,
@@ -90,10 +91,10 @@ export function axisSeriesChart(data, seriesType, configuration = {}, display = 
     };
 
     if (granularity) {
-        // Cube names each row after the start of its period (the Monday, the
+        // Each row is named after the start of its period (the Monday, the
         // 1st), even when the range starts later, but counts only the days
         // inside the range. A range from Sunday 20 Dec gives a row named
-        // 14 Dec with only the 20th counted. The slots use Cube's names so
+        // 14 Dec with only the 20th counted. The slots use the same names so
         // each row finds its place; the labels show the days counted.
         const slots = generateTimeArray(
             timeDimension.dateRange[0],
@@ -104,7 +105,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}, display = 
 
         xAxisData = slots;
 
-        const timeKey = `${timeDimension.dimension}.${granularity}`;
+        const timeKey = timeDimension.dimension;
         const seriesDimensions = dimensions.filter(
             (dimension) => dimension !== timeDimension.dimension,
         );
@@ -112,7 +113,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}, display = 
         measures.forEach((measure) => {
             const title = measureTitleOf(data, measure);
 
-            data.data.forEach((item) => {
+            data.rows.forEach((item) => {
                 const name = seriesNameOf(
                     title,
                     dimensionValuesOf(item, dimensions, timeDimension),
@@ -122,7 +123,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}, display = 
                 recordDrillDownValues(drillDownValues.seriesName, name, item, seriesDimensions);
 
                 const raw = item[timeKey];
-                const bucket = withTime ? raw : raw?.split("T")[0];
+                const bucket = withTime && raw != null ? slotTime(raw) : raw?.split("T")[0];
                 const index = slots.indexOf(bucket);
 
                 const value = item[measure];
@@ -146,7 +147,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}, display = 
             (dimension) => !axisDimensions.includes(dimension),
         );
 
-        data.data.forEach((item) => {
+        data.rows.forEach((item) => {
             const label = valuesOf(item, axisDimensions).join(", ");
 
             recordDrillDownValues(drillDownValues.name, label, item, axisDimensions);
@@ -159,7 +160,7 @@ export function axisSeriesChart(data, seriesType, configuration = {}, display = 
         measures.forEach((measure) => {
             const title = measureTitleOf(data, measure);
 
-            data.data.forEach((item) => {
+            data.rows.forEach((item) => {
                 const name = seriesNameOf(title, valuesOf(item, seriesDimensions), showMeasure);
                 const index = xAxisData.indexOf(valuesOf(item, axisDimensions).join(", "));
 

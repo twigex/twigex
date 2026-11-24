@@ -47,14 +47,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 
                             <div class="flex-1 space-y-6 overflow-y-auto px-6 py-5">
                                 <p
-                                    v-if="!cubeNames.length"
+                                    v-if="!datasetNames.length"
                                     class="rounded-md bg-yellow-50 px-3 py-2 text-sm text-yellow-800"
                                 >
-                                    {{ t("collimato.view_builder.no_cubes") }}
+                                    {{ t("collimato.view_builder.no_datasets") }}
                                 </p>
 
                                 <template v-else>
-                                    <!-- View name + base cube -->
+                                    <!-- View name + base dataset -->
                                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <div>
                                             <label :class="labelClass">{{
@@ -76,15 +76,15 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         </div>
                                         <div>
                                             <label :class="labelClass">{{
-                                                t("collimato.view_builder.base_cube")
+                                                t("collimato.view_builder.base_dataset")
                                             }}</label>
                                             <div class="mt-1">
                                                 <BaseSelect
-                                                    v-model="baseCube"
-                                                    :options="cubeNames"
+                                                    v-model="baseDataset"
+                                                    :options="datasetNames"
                                                     :disabled="isEdit"
                                                     :placeholder="
-                                                        t('collimato.view_builder.base_cube')
+                                                        t('collimato.view_builder.base_dataset')
                                                     "
                                                     @update:modelValue="onBaseChange"
                                                 />
@@ -92,12 +92,12 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         </div>
                                     </div>
 
-                                    <!-- Base cube members -->
-                                    <div v-if="baseCube">
+                                    <!-- Base dataset members -->
+                                    <div v-if="baseDataset">
                                         <h3 class="text-sm font-semibold text-gray-900">
                                             {{
                                                 t("collimato.view_builder.include_from", {
-                                                    cube: baseCube,
+                                                    dataset: baseDataset,
                                                 })
                                             }}
                                         </h3>
@@ -105,28 +105,28 @@ SPDX-License-Identifier: AGPL-3.0-only
                                             {{ t("collimato.view_builder.include_help") }}
                                         </p>
                                         <MemberPicker
-                                            :members="memberOptions(baseCube)"
+                                            :members="memberOptions(baseDataset)"
                                             :selected="baseIncludes"
                                             @toggle="toggleInclude(baseIncludes, $event)"
-                                            @all="baseIncludes = [...memberOptions(baseCube)]"
+                                            @all="baseIncludes = [...memberOptions(baseDataset)]"
                                             @clear="baseIncludes = []"
                                         />
                                     </div>
 
-                                    <!-- Joined cubes -->
-                                    <div v-if="baseCube">
+                                    <!-- Joined datasets -->
+                                    <div v-if="baseDataset">
                                         <div class="flex items-center justify-between">
                                             <h3 class="text-sm font-semibold text-gray-900">
-                                                {{ t("collimato.view_builder.joined_cubes") }}
+                                                {{ t("collimato.view_builder.joined_datasets") }}
                                             </h3>
                                             <button
                                                 type="button"
                                                 class="text-sm font-medium text-indigo-600 hover:text-indigo-500 disabled:text-gray-300"
-                                                :disabled="!canAddCube"
-                                                @click="addJoinedCube"
+                                                :disabled="!canAddDataset"
+                                                @click="addJoinedDataset"
                                             >
                                                 +
-                                                {{ t("collimato.view_builder.add_cube") }}
+                                                {{ t("collimato.view_builder.add_dataset") }}
                                             </button>
                                         </div>
                                         <p class="mb-2 text-xs text-gray-500">
@@ -134,32 +134,34 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         </p>
 
                                         <p
-                                            v-if="!joinableCubes.length"
+                                            v-if="!joinableDatasets.length"
                                             class="text-sm text-gray-400"
                                         >
                                             {{ t("collimato.view_builder.no_joinable") }}
                                         </p>
 
                                         <div
-                                            v-for="(jc, i) in joinedCubes"
+                                            v-for="(jc, i) in joinedDatasets"
                                             :key="i"
                                             class="mb-2 space-y-2 rounded-md p-3 ring-1 ring-inset ring-gray-200"
                                         >
                                             <div class="flex items-center gap-3">
                                                 <div class="w-52">
                                                     <BaseSelect
-                                                        v-model="jc.cube"
+                                                        v-model="jc.dataset"
                                                         :options="optionsForRow(jc)"
                                                         :placeholder="
-                                                            t('collimato.view_builder.cube')
+                                                            t('collimato.view_builder.dataset')
                                                         "
-                                                        @update:modelValue="onJoinedCubeChange(jc)"
+                                                        @update:modelValue="
+                                                            onJoinedDatasetChange(jc)
+                                                        "
                                                     />
                                                 </div>
                                                 <span
-                                                    v-if="jc.cube"
+                                                    v-if="jc.dataset"
                                                     class="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs text-gray-500"
-                                                    >{{ baseCube }}.{{ jc.cube }}</span
+                                                    >{{ baseDataset }}.{{ jc.dataset }}</span
                                                 >
                                                 <label
                                                     class="flex items-center gap-1.5 text-sm text-gray-600"
@@ -175,17 +177,17 @@ SPDX-License-Identifier: AGPL-3.0-only
                                                 <button
                                                     type="button"
                                                     class="ml-auto text-gray-400 hover:text-red-600"
-                                                    @click="joinedCubes.splice(i, 1)"
+                                                    @click="joinedDatasets.splice(i, 1)"
                                                 >
                                                     <XMarkIcon class="h-5 w-5" />
                                                 </button>
                                             </div>
                                             <MemberPicker
-                                                v-if="jc.cube"
-                                                :members="memberOptions(jc.cube)"
+                                                v-if="jc.dataset"
+                                                :members="memberOptions(jc.dataset)"
                                                 :selected="jc.includes"
                                                 @toggle="toggleInclude(jc.includes, $event)"
-                                                @all="jc.includes = [...memberOptions(jc.cube)]"
+                                                @all="jc.includes = [...memberOptions(jc.dataset)]"
                                                 @clear="jc.includes = []"
                                             />
                                         </div>
@@ -235,9 +237,9 @@ import { t } from "@/i18n/index.js";
 const props = defineProps({
     show: { type: Boolean, default: false },
     workspaceId: { type: String, required: true },
-    // Cubes available as view members, each { name, model } (model may be null
-    // for hand-written cubes, in which case all members are included via "*").
-    existingCubes: { type: Array, default: () => [] },
+    // Datasets available as view members, each { name, model } (model may be null
+    // for hand-written datasets, in which case all members are included via "*").
+    existingDatasets: { type: Array, default: () => [] },
     editFile: { type: Object, default: null },
 });
 const emit = defineEmits(["close", "saved"]);
@@ -249,37 +251,37 @@ const inputClass =
     "mt-1 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm";
 
 const viewName = ref("");
-const baseCube = ref("");
+const baseDataset = ref("");
 const baseIncludes = ref([]);
-const joinedCubes = ref([]); // [{ cube, includes: [], prefix }]
+const joinedDatasets = ref([]); // [{ dataset, includes: [], prefix }]
 const saving = ref(false);
 
 const isEdit = computed(() => !!props.editFile);
-const cubeNames = computed(() => props.existingCubes.map((c) => c.name));
+const datasetNames = computed(() => props.existingDatasets.map((c) => c.name));
 
-// memberOptions returns a cube's selectable members (dimension + measure names)
-// from its stored model, or null when the cube was hand-written (unknown members).
+// memberOptions returns a dataset's selectable members (dimension + measure names)
+// from its stored model, or null when the dataset was hand-written (unknown members).
 function memberOptions(name) {
-    const cube = props.existingCubes.find((c) => c.name === name);
+    const dataset = props.existingDatasets.find((c) => c.name === name);
 
-    if (!cube || !cube.model) return null;
-    const dims = (cube.model.dimensions || []).map((d) => d.name);
-    const meas = (cube.model.measures || []).map((m) => m.name);
+    if (!dataset || !dataset.model) return null;
+    const dims = (dataset.model.dimensions || []).map((d) => d.name);
+    const meas = (dataset.model.measures || []).map((m) => m.name);
 
     return [...dims, ...meas];
 }
 
-// joinableCubes are cubes directly joined to the base (in either direction), so a
-// one-hop join path base.<cube> resolves.
-const joinableCubes = computed(() => {
-    if (!baseCube.value) return [];
+// joinableDatasets are datasets directly joined to the base (in either direction), so a
+// one-hop join path base.<dataset> resolves.
+const joinableDatasets = computed(() => {
+    if (!baseDataset.value) return [];
     const set = new Set();
-    const base = props.existingCubes.find((c) => c.name === baseCube.value);
+    const base = props.existingDatasets.find((c) => c.name === baseDataset.value);
 
     (base?.model?.joins || []).forEach((j) => set.add(j.name));
-    props.existingCubes.forEach((c) => {
-        if (c.name === baseCube.value) return;
-        if ((c.model?.joins || []).some((j) => j.name === baseCube.value)) {
+    props.existingDatasets.forEach((c) => {
+        if (c.name === baseDataset.value) return;
+        if ((c.model?.joins || []).some((j) => j.name === baseDataset.value)) {
             set.add(c.name);
         }
     });
@@ -287,15 +289,19 @@ const joinableCubes = computed(() => {
     return [...set];
 });
 
-// A cube can only be joined into the view once; offer each row the cubes not
+// A dataset can only be joined into the view once; offer each row the datasets not
 // already taken by another row (keeping the row's own current pick).
-const usedCubes = computed(() => new Set(joinedCubes.value.map((j) => j.cube).filter(Boolean)));
+const usedDatasets = computed(
+    () => new Set(joinedDatasets.value.map((j) => j.dataset).filter(Boolean)),
+);
 
 function optionsForRow(jc) {
-    return joinableCubes.value.filter((n) => n === jc.cube || !usedCubes.value.has(n));
+    return joinableDatasets.value.filter((n) => n === jc.dataset || !usedDatasets.value.has(n));
 }
 
-const canAddCube = computed(() => joinableCubes.value.some((n) => !usedCubes.value.has(n)));
+const canAddDataset = computed(() =>
+    joinableDatasets.value.some((n) => !usedDatasets.value.has(n)),
+);
 
 const nameError = computed(
     () => viewName.value !== "" && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(viewName.value),
@@ -305,11 +311,12 @@ const canSave = computed(
     () =>
         !!viewName.value &&
         !nameError.value &&
-        !!baseCube.value &&
+        !!baseDataset.value &&
         (baseIncludes.value.length > 0 ||
-            memberOptions(baseCube.value) === null ||
-            joinedCubes.value.some(
-                (jc) => jc.cube && (jc.includes.length > 0 || memberOptions(jc.cube) === null),
+            memberOptions(baseDataset.value) === null ||
+            joinedDatasets.value.some(
+                (jc) =>
+                    jc.dataset && (jc.includes.length > 0 || memberOptions(jc.dataset) === null),
             )),
 );
 
@@ -322,28 +329,28 @@ function toggleInclude(arr, member) {
 
 function onBaseChange() {
     baseIncludes.value = [];
-    joinedCubes.value = [];
+    joinedDatasets.value = [];
 }
 
-function onJoinedCubeChange(jc) {
+function onJoinedDatasetChange(jc) {
     jc.includes = [];
 }
 
-function addJoinedCube() {
-    joinedCubes.value.push({ cube: "", includes: [], prefix: false });
+function addJoinedDataset() {
+    joinedDatasets.value.push({ dataset: "", includes: [], prefix: false });
 }
 
 function reset() {
     viewName.value = "";
-    baseCube.value = "";
+    baseDataset.value = "";
     baseIncludes.value = [];
-    joinedCubes.value = [];
+    joinedDatasets.value = [];
     saving.value = false;
 }
 
-function expandIncludes(cubeName, includes) {
+function expandIncludes(datasetName, includes) {
     if (Array.isArray(includes) && includes.length === 1 && includes[0] === "*") {
-        return memberOptions(cubeName) || ["*"];
+        return memberOptions(datasetName) || ["*"];
     }
 
     return includes || [];
@@ -351,20 +358,20 @@ function expandIncludes(cubeName, includes) {
 
 function hydrateFromModel(model) {
     viewName.value = model.name;
-    const refs = model.cubes || [];
+    const refs = model.parts || [];
     const baseRef = refs.find((r) => !r.join_path.includes("."));
 
-    baseCube.value = baseRef ? baseRef.join_path : refs[0]?.join_path.split(".")[0] || "";
-    baseIncludes.value = baseRef ? expandIncludes(baseCube.value, baseRef.includes) : [];
-    joinedCubes.value = refs
+    baseDataset.value = baseRef ? baseRef.join_path : refs[0]?.join_path.split(".")[0] || "";
+    baseIncludes.value = baseRef ? expandIncludes(baseDataset.value, baseRef.includes) : [];
+    joinedDatasets.value = refs
         .filter((r) => r.join_path.includes("."))
         .map((r) => {
             const seg = r.join_path.split(".");
-            const cube = seg[seg.length - 1];
+            const dataset = seg[seg.length - 1];
 
             return {
-                cube,
-                includes: expandIncludes(cube, r.includes),
+                dataset,
+                includes: expandIncludes(dataset, r.includes),
                 prefix: !!r.prefix,
             };
         });
@@ -374,9 +381,9 @@ async function save() {
     if (!canSave.value) return;
     saving.value = true;
 
-    // An unknown (hand-written) cube has no member list, so it is included as "*".
-    const refFor = (joinPath, cubeName, includes, prefix) => {
-        const inc = memberOptions(cubeName) === null ? ["*"] : includes;
+    // An unknown (hand-written) dataset has no member list, so it is included as "*".
+    const refFor = (joinPath, datasetName, includes, prefix) => {
+        const inc = memberOptions(datasetName) === null ? ["*"] : includes;
 
         return {
             join_path: joinPath,
@@ -385,21 +392,25 @@ async function save() {
         };
     };
 
-    const cubes = [];
+    const parts = [];
 
-    if (baseIncludes.value.length > 0 || memberOptions(baseCube.value) === null) {
-        cubes.push(refFor(baseCube.value, baseCube.value, baseIncludes.value, false));
+    if (baseIncludes.value.length > 0 || memberOptions(baseDataset.value) === null) {
+        parts.push(refFor(baseDataset.value, baseDataset.value, baseIncludes.value, false));
     }
 
-    joinedCubes.value
-        .filter((jc) => jc.cube && (jc.includes.length > 0 || memberOptions(jc.cube) === null))
+    joinedDatasets.value
+        .filter(
+            (jc) => jc.dataset && (jc.includes.length > 0 || memberOptions(jc.dataset) === null),
+        )
         .forEach((jc) => {
-            cubes.push(refFor(`${baseCube.value}.${jc.cube}`, jc.cube, jc.includes, jc.prefix));
+            parts.push(
+                refFor(`${baseDataset.value}.${jc.dataset}`, jc.dataset, jc.includes, jc.prefix),
+            );
         });
 
     try {
         const res = await collimatoService.buildView(props.workspaceId, {
-            model: { name: viewName.value, cubes },
+            model: { name: viewName.value, parts },
             overwrite: isEdit.value,
         });
 

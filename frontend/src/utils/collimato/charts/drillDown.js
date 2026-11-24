@@ -3,6 +3,7 @@
 
 import { drillDownKeyFor } from "@/utils/collimato/charts/chartTypes.js";
 import { labelOf } from "@/utils/collimato/charts/chartLabels.js";
+import { yesNoLabel } from "@/utils/collimato/yesNo.js";
 
 //Returns values for drillDownValues for options in axisSeriesChart without empty value translation
 function valuesOfRaw(item, dimensions) {
@@ -129,9 +130,22 @@ function filtersAddedSince(previous, query) {
     return (query.filters ?? []).filter((filter) => !before.includes(JSON.stringify(filter)));
 }
 
-function breadcrumbValue(filters) {
-    const values = filters.flatMap((filter) => filterValues(filter));
-    const labels = values.map((value) => labelOf(value));
+// A drill-down filter holds its values as text, so a yes/no field's "true" is
+// named as Yes by knowing the field is yes/no.
+function filterLabels(filter, yesNoFields) {
+    const isYesNo = filterMembers(filter).some((member) => yesNoFields.has(member));
+
+    return filterValues(filter).map((value) => {
+        if (isYesNo && value !== null) {
+            return yesNoLabel(value);
+        }
+
+        return labelOf(value);
+    });
+}
+
+function breadcrumbValue(filters, yesNoFields) {
+    const labels = filters.flatMap((filter) => filterLabels(filter, yesNoFields));
     const unique = [];
 
     labels.forEach((label) => {
@@ -143,7 +157,7 @@ function breadcrumbValue(filters) {
     return unique.join(", ");
 }
 
-export function drillDownBreadcrumbs(trail, chartName) {
+export function drillDownBreadcrumbs(trail, chartName, yesNoFields = new Set()) {
     return trail.map((query, index) => {
         const previous = trail[index - 1];
         const added = filtersAddedSince(previous, query);
@@ -151,7 +165,7 @@ export function drillDownBreadcrumbs(trail, chartName) {
         return {
             query: query,
             name: breadcrumbName(query.dimensions ?? [], chartName),
-            value: breadcrumbValue(added),
+            value: breadcrumbValue(added, yesNoFields),
         };
     });
 }

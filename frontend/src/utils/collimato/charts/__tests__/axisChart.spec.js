@@ -3,7 +3,7 @@
 
 import { describe, it, expect } from "vitest";
 import { transformData } from "@/utils/collimato/charts/chartDrawing.js";
-import { cubeResult } from "@/utils/collimato/charts/__tests__/cubeResult.js";
+import { chartDataFor } from "@/utils/collimato/charts/__tests__/chartDataFor.js";
 import { plainSpaces } from "@/utils/collimato/charts/__tests__/plainSpaces.js";
 
 const weather = {
@@ -12,8 +12,8 @@ const weather = {
         dimensions: ["weather.weather"],
         timeDimensions: [],
     },
-    annotation: { measures: { "weather.count": { title: "Count" } } },
-    data: [
+    titles: { "weather.count": "Count" },
+    rows: [
         { "weather.weather": "rain", "weather.count": 5 },
         { "weather.weather": "sun", "weather.count": 3 },
         { "weather.weather": "fog", "weather.count": 1 },
@@ -24,7 +24,7 @@ describe("barChart", () => {
     it("treats a time dimension without granularity as a plain dimension", () => {
         const option = transformData(
             "bar",
-            cubeResult({
+            chartDataFor({
                 measures: ["orders.count"],
                 dimensions: ["orders.status"],
                 timeDimensions: [
@@ -47,7 +47,7 @@ describe("barChart", () => {
     it("buckets rows onto the time axis when a granularity is set", () => {
         const option = transformData(
             "bar",
-            cubeResult({
+            chartDataFor({
                 measures: ["orders.count"],
                 dimensions: [],
                 timeDimensions: [
@@ -59,7 +59,7 @@ describe("barChart", () => {
                 ],
                 rows: [
                     {
-                        "orders.created.day": "2026-01-02T00:00:00.000",
+                        "orders.created": "2026-01-02T00:00:00.000",
                         "orders.count": 7,
                     },
                 ],
@@ -73,7 +73,7 @@ describe("barChart", () => {
 
 describe("axis charts with several measures", () => {
     const twoMeasures = () =>
-        cubeResult({
+        chartDataFor({
             measures: ["orders.count", "orders.revenue"],
             dimensions: ["orders.status"],
             rows: [
@@ -122,9 +122,9 @@ describe("axis charts with several measures", () => {
                     },
                 ],
             },
-            data: [
+            rows: [
                 {
-                    "orders.created.day": "2026-01-01T00:00:00.000",
+                    "orders.created": "2026-01-01T00:00:00.000",
                     "orders.status": "new",
                     "orders.count": 5,
                 },
@@ -148,9 +148,9 @@ describe("axis charts with several measures", () => {
                     },
                 ],
             },
-            data: [
+            rows: [
                 {
-                    "orders.created.day": "2026-01-01T00:00:00.000",
+                    "orders.created": "2026-01-01T00:00:00.000",
                     "orders.status": "new",
                     "orders.count": 5,
                     "orders.revenue": 90,
@@ -166,7 +166,7 @@ describe("axis charts without a time dimension", () => {
     it("makes one series per measure, not one per row", () => {
         const option = transformData(
             "line",
-            cubeResult({
+            chartDataFor({
                 measures: ["orders.count"],
                 dimensions: ["orders.status"],
                 rows: [
@@ -197,18 +197,18 @@ describe("sub-day granularity", () => {
                     },
                 ],
             },
-            annotation: { measures: { "orders.count": { title: "Count" } } },
-            data: [
+            titles: { "orders.count": "Count" },
+            rows: [
                 {
-                    "orders.created.hour": "2026-01-01T00:00:00.000",
+                    "orders.created": "2026-01-01T00:00:00.000",
                     "orders.count": 1,
                 },
                 {
-                    "orders.created.hour": "2026-01-01T01:00:00.000",
+                    "orders.created": "2026-01-01T01:00:00.000",
                     "orders.count": 2,
                 },
                 {
-                    "orders.created.hour": "2026-01-01T02:00:00.000",
+                    "orders.created": "2026-01-01T02:00:00.000",
                     "orders.count": 4,
                 },
             ],
@@ -226,7 +226,7 @@ describe("series shape", () => {
     it.each(["line", "bar", "time_bar"])("%s gives every series a label object", (type) => {
         const option = transformData(
             type,
-            cubeResult({
+            chartDataFor({
                 measures: ["orders.count"],
                 dimensions: ["orders.status"],
                 timeDimensions: [
@@ -238,7 +238,7 @@ describe("series shape", () => {
                 ],
                 rows: [
                     {
-                        "orders.created.day": "2026-01-01T00:00:00.000",
+                        "orders.created": "2026-01-01T00:00:00.000",
                         "orders.status": "new",
                         "orders.count": 5,
                     },
@@ -277,8 +277,8 @@ describe("dimension as the series breakdown", () => {
             dimensions: ["weather.location", "weather.weather"],
             timeDimensions: [],
         },
-        annotation: { measures: { "weather.count": { title: "Count" } } },
-        data: [
+        titles: { "weather.count": "Count" },
+        rows: [
             {
                 "weather.location": "Seattle",
                 "weather.weather": "rain",
@@ -340,11 +340,9 @@ describe("dimension as the series breakdown", () => {
                     ...twoDimensions.query,
                     measures: ["weather.count", "weather.total"],
                 },
-                annotation: {
-                    measures: {
-                        "weather.count": { title: "Count" },
-                        "weather.total": { title: "Total" },
-                    },
+                titles: {
+                    "weather.count": "Count",
+                    "weather.total": "Total",
                 },
             },
             { xAxisField: "weather.location" },
@@ -371,7 +369,7 @@ describe("dimension as the series breakdown", () => {
             "bar",
             {
                 ...weather,
-                data: [
+                rows: [
                     { "weather.weather": "rain", "weather.count": "5" },
                     { "weather.weather": "sun", "weather.count": "3" },
                 ],
@@ -437,13 +435,11 @@ describe("sort bars by value", () => {
                     dimensions: ["w.kind"],
                     timeDimensions: [],
                 },
-                annotation: {
-                    measures: {
-                        "w.count": { title: "Count" },
-                        "w.total": { title: "Total" },
-                    },
+                titles: {
+                    "w.count": "Count",
+                    "w.total": "Total",
                 },
-                data: [
+                rows: [
                     { "w.kind": "a", "w.count": 1, "w.total": 10 },
                     { "w.kind": "b", "w.count": 9, "w.total": 20 },
                 ],
@@ -493,18 +489,18 @@ describe("sort bars by value", () => {
                         },
                     ],
                 },
-                annotation: { measures: { "w.count": { title: "Count" } } },
-                data: [
+                titles: { "w.count": "Count" },
+                rows: [
                     {
-                        "w.created.day": "2026-01-01T00:00:00.000",
+                        "w.created": "2026-01-01T00:00:00.000",
                         "w.count": 9,
                     },
                     {
-                        "w.created.day": "2026-01-02T00:00:00.000",
+                        "w.created": "2026-01-02T00:00:00.000",
                         "w.count": 1,
                     },
                     {
-                        "w.created.day": "2026-01-03T00:00:00.000",
+                        "w.created": "2026-01-03T00:00:00.000",
                         "w.count": 5,
                     },
                 ],
@@ -521,7 +517,7 @@ describe("time axis keeps every value when the range starts mid-period", () => {
     function countBy(granularity, dateRange, rows) {
         return transformData(
             "line",
-            cubeResult({
+            chartDataFor({
                 measures: ["posts.count"],
                 dimensions: [],
                 timeDimensions: [
@@ -541,8 +537,8 @@ describe("time axis keeps every value when the range starts mid-period", () => {
             "month",
             ["2026-09-15T00:00:00.000", "2026-10-14T23:59:59.999"],
             [
-                { "posts.created.month": "2026-09-01T00:00:00.000", "posts.count": "152" },
-                { "posts.created.month": "2026-10-01T00:00:00.000", "posts.count": "67" },
+                { "posts.created": "2026-09-01T00:00:00.000", "posts.count": "152" },
+                { "posts.created": "2026-10-01T00:00:00.000", "posts.count": "67" },
             ],
         );
 
@@ -555,8 +551,8 @@ describe("time axis keeps every value when the range starts mid-period", () => {
             "week",
             ["2026-09-17T00:00:00.000", "2026-09-27T23:59:59.999"],
             [
-                { "posts.created.week": "2026-09-14T00:00:00.000", "posts.count": "40" },
-                { "posts.created.week": "2026-09-21T00:00:00.000", "posts.count": "10" },
+                { "posts.created": "2026-09-14T00:00:00.000", "posts.count": "40" },
+                { "posts.created": "2026-09-21T00:00:00.000", "posts.count": "10" },
             ],
         );
 
@@ -569,8 +565,8 @@ describe("time axis keeps every value when the range starts mid-period", () => {
             "quarter",
             ["2026-02-10T00:00:00.000", "2026-08-01T23:59:59.999"],
             [
-                { "posts.created.quarter": "2026-01-01T00:00:00.000", "posts.count": "5" },
-                { "posts.created.quarter": "2026-07-01T00:00:00.000", "posts.count": "3" },
+                { "posts.created": "2026-01-01T00:00:00.000", "posts.count": "5" },
+                { "posts.created": "2026-07-01T00:00:00.000", "posts.count": "3" },
             ],
         );
 
@@ -587,8 +583,8 @@ describe("time axis keeps every value when the range starts mid-period", () => {
             "year",
             ["2025-06-01T00:00:00.000", "2026-03-01T23:59:59.999"],
             [
-                { "posts.created.year": "2025-01-01T00:00:00.000", "posts.count": "4" },
-                { "posts.created.year": "2026-01-01T00:00:00.000", "posts.count": "6" },
+                { "posts.created": "2025-01-01T00:00:00.000", "posts.count": "4" },
+                { "posts.created": "2026-01-01T00:00:00.000", "posts.count": "6" },
             ],
         );
 
@@ -604,8 +600,8 @@ describe("time axis keeps every value when the range starts mid-period", () => {
             "hour",
             ["2026-09-15T10:30:00.000", "2026-09-15T11:59:59.999"],
             [
-                { "posts.created.hour": "2026-09-15T10:00:00.000", "posts.count": "2" },
-                { "posts.created.hour": "2026-09-15T11:00:00.000", "posts.count": "1" },
+                { "posts.created": "2026-09-15T10:00:00.000", "posts.count": "2" },
+                { "posts.created": "2026-09-15T11:00:00.000", "posts.count": "1" },
             ],
         );
 

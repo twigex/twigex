@@ -8,20 +8,18 @@ import { number } from "@/utils/collimato/charts/bigNumber.js";
 
 const result = (measures, row) => ({
     query: { measures: measures, dimensions: [] },
-    annotation: {
-        measures: {
-            "orders.count": { title: "Count" },
-            "orders.revenue": { title: "Revenue" },
-        },
+    titles: {
+        "orders.count": "Count",
+        "orders.revenue": "Revenue",
     },
-    data: [row],
+    rows: [row],
 });
 
 describe("number", () => {
     it("totals each measure on its own", () => {
         const options = number({
             ...result(["orders.count", "orders.revenue"], {}),
-            data: [
+            rows: [
                 { "orders.count": 2, "orders.revenue": 10 },
                 { "orders.count": 3, "orders.revenue": 40 },
             ],
@@ -51,7 +49,7 @@ describe("BigNumber", () => {
     it("shows one value per measure", () => {
         const options = number({
             ...result(["orders.count", "orders.revenue"], {}),
-            data: [{ "orders.count": 5, "orders.revenue": 50 }],
+            rows: [{ "orders.count": 5, "orders.revenue": 50 }],
         });
 
         const w = mount(BigNumber, { props: { options } });

@@ -19,7 +19,7 @@ const emptyTime = {
 
 function factory(time = emptyTime) {
     return mount(TimeDimensions, {
-        props: { time, cubes: [] },
+        props: { time, dataModels: [] },
         global: {
             stubs: {
                 Disclosure: { template: "<div><slot :open='true' /></div>" },

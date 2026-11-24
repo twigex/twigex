@@ -1,6 +1,12 @@
 // Copyright (c) 2022 Twigex, SIA.
 // SPDX-License-Identifier: AGPL-3.0-only
 
+import { slotTime } from "@/utils/collimato/chartData.js";
+import { yesNoLabel } from "@/utils/collimato/yesNo.js";
+
+// toTableData lays a chart's data out as a table: date fields, then totals,
+// then the other fields, each headed by its title. Dates are shown as the
+// time axis names them, in UTC, and yes/no values as Yes and No.
 export function toTableData(data) {
     let tableData = {
         headers: [],
@@ -9,51 +15,43 @@ export function toTableData(data) {
 
     const reg = /\./g;
 
-    // Add time dimensions to headers if they exist
-    if (data.query.timeDimensions?.length > 0) {
-        data.query.timeDimensions.forEach((timeDimension) => {
-            if (data.annotation.timeDimensions[timeDimension.dimension]) {
-                tableData.headers.push({
-                    label: data.annotation.timeDimensions[timeDimension.dimension].title,
-                    key: timeDimension.dimension.replace(reg, "_"),
-                });
-            }
-        });
-    }
+    const dateFields = data.query.timeDimensions
+        .map((timeDimension) => timeDimension.dimension)
+        .filter((dimension) => Object.hasOwn(data.titles, dimension));
 
-    // Add measures to headers
-    data.query.measures.forEach((measure) => {
+    const fields = [...dateFields, ...data.query.measures, ...data.query.dimensions];
+
+    fields.forEach((field) => {
         tableData.headers.push({
-            label: data.annotation.measures[measure].title,
-            key: measure.replace(reg, "_"),
+            label: data.titles[field] ?? field,
+            key: field.replace(reg, "_"),
         });
     });
 
-    // Add dimensions to headers
-    data.query.dimensions.forEach((dimension) => {
-        tableData.headers.push({
-            label: data.annotation.dimensions[dimension].title,
-            key: dimension.replace(reg, "_"),
-        });
-    });
+    const timeFields = new Set(
+        data.columns.filter((column) => column.type === "time").map((column) => column.key),
+    );
 
-    // Populate data rows
-    data.data.forEach((item) => {
+    data.rows.forEach((item) => {
         let row = {};
 
-        data.query.measures.forEach((measure) => {
-            row[measure.replace(reg, "_")] = item[measure];
-        });
+        fields.forEach((field) => {
+            const value = item[field];
+            const isTime = timeFields.has(field) && value != null;
+            const isYesNo = typeof value === "boolean";
 
-        data.query.dimensions.forEach((dimension) => {
-            row[dimension.replace(reg, "_")] = item[dimension];
-        });
+            let shown = value;
 
-        if (data.query.timeDimensions?.length > 0) {
-            data.query.timeDimensions.forEach((timeDimension) => {
-                row[timeDimension.dimension.replace(reg, "_")] = item[timeDimension.dimension];
-            });
-        }
+            if (isTime) {
+                shown = slotTime(value);
+            }
+
+            if (isYesNo) {
+                shown = yesNoLabel(value);
+            }
+
+            row[field.replace(reg, "_")] = shown;
+        });
 
         tableData.data.push(row);
     });

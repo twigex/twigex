@@ -11,7 +11,7 @@ import (
 )
 
 type fakeRoleListStore struct {
-	fakeMetaCollimatoStore
+	fakeFieldListCollimatoStore
 }
 
 func (f *fakeRoleListStore) GetWorkspaceRoles(string) ([]model.CollimatoRole, error) {
@@ -25,8 +25,8 @@ func (f *fakeRoleListStore) GetWorkspaceRoles(string) ([]model.CollimatoRole, er
 }
 
 func roleListApp(permissions ...string) *App {
-	a := metaApp()
-	a.Store.Collimato = &fakeRoleListStore{fakeMetaCollimatoStore{permissions: permissions}}
+	a := fieldListApp()
+	a.Store.Collimato = &fakeRoleListStore{fakeFieldListCollimatoStore{permissions: permissions}}
 
 	return a
 }

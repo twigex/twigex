@@ -26,7 +26,7 @@ SPDX-License-Identifier: AGPL-3.0-only
         <DisclosurePanel class="px-4 pb-2 pt-4 text-sm text-gray-500">
             <FilterList
                 :filters="filters"
-                :cubes="cubes"
+                :data-models="dataModels"
                 :title="t('collimato.charts.new_chart.filters.title')"
                 @add-filter="$emit('add-filter', $event)"
                 @update-filter="(member, filter) => $emit('update-filter', member, filter)"
@@ -47,7 +47,7 @@ defineProps({
         type: Array,
         default: () => [],
     },
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },

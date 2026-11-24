@@ -54,8 +54,8 @@ var GraphColors = []string{
 }
 
 const (
-	GraphDatasetKindCube = "cube"
-	GraphDatasetKindView = "view"
+	GraphDatasetKindDataset = "dataset"
+	GraphDatasetKindView    = "view"
 )
 
 const (

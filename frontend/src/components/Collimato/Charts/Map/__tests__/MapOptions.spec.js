@@ -6,7 +6,7 @@ import { mount } from "@vue/test-utils";
 import MapOptions from "@/components/Collimato/Charts/Map/MapOptions.vue";
 import en from "@/i18n/en.json";
 
-const cubes = [
+const dataModels = [
     {
         table: "earthquakes",
         join: 0,
@@ -42,7 +42,7 @@ function mountOptions(layers) {
                 zoom: 1,
                 layers: layers,
             },
-            cubes: cubes,
+            dataModels: dataModels,
         },
     });
 }
@@ -89,7 +89,7 @@ describe("MapOptions layer status", () => {
                     zoom: 1,
                     layers: [layer()],
                 },
-                cubes: cubes,
+                dataModels: dataModels,
                 statuses: [{ id: 0, name: "Quakes", status: "loading" }],
             },
         });
@@ -108,7 +108,7 @@ describe("MapOptions layer status", () => {
                     zoom: 1,
                     layers: [layer()],
                 },
-                cubes: cubes,
+                dataModels: dataModels,
                 statuses: [{ id: 0, name: "Quakes", status: "loaded" }],
             },
         });
@@ -127,7 +127,7 @@ describe("MapOptions layer status", () => {
                     zoom: 1,
                     layers: [layer({ id: 0 })],
                 },
-                cubes: cubes,
+                dataModels: dataModels,
                 statuses: [{ id: 9, name: "Other", status: "loading" }],
             },
         });

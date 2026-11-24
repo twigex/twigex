@@ -46,7 +46,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                             :measures="measures"
                             :dimensions="dimensions"
                             :orders="orders"
-                            :cubes="availableDataModels"
+                            :data-models="availableDataModels"
                             :filters="filters"
                             :time="time"
                             :configuration="chartOptions"
@@ -66,7 +66,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                         <MapOptions
                             v-else
                             :chartOptions="mapConfiguration"
-                            :cubes="dataModels"
+                            :data-models="dataModels"
                             :statuses="layerStates"
                             @update="updateMapData"
                             @add-layer="addMapLayer"
@@ -158,6 +158,7 @@ import { useChartEditorQuery } from "@/composables/collimato/useChartEditorQuery
 import { useChartEditorMap } from "@/composables/collimato/useChartEditorMap.js";
 import { useChartEditorSave } from "@/composables/collimato/useChartEditorSave.js";
 import collimatoService from "@/services/collimatoService.js";
+import { toDataModels } from "@/utils/collimato/dataModels.js";
 import ChartConfig from "@/components/Collimato/Charts/Configurations/ChartConfig.vue";
 import MapOptions from "@/components/Collimato/Charts/Map/MapOptions.vue";
 
@@ -312,30 +313,9 @@ onMounted(async () => {
 });
 
 async function loadDataModels() {
-    const response = await collimatoService.meta(route.params.workspaceId);
+    const response = await collimatoService.fieldList(route.params.workspaceId);
 
-    if (response.data.error) {
-        error.value = response.data.error;
-        errorDialog.value = true;
-        loaded.value = true;
-
-        return false;
-    }
-
-    dataModels.value = response.data.cubes.map((model) => ({
-        table: model.name,
-        join: model.connectedComponent,
-        dimensions: model.dimensions.map((dimension) => ({
-            name: dimension.name,
-            title: dimension.shortTitle,
-            type: dimension.type,
-        })),
-        measures: model.measures.map((measure) => ({
-            name: measure.name,
-            title: measure.shortTitle,
-            type: measure.type,
-        })),
-    }));
+    dataModels.value = toDataModels(response.data);
 
     return true;
 }

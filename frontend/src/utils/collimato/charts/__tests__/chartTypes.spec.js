@@ -102,7 +102,7 @@ describe("time axis is declared once", () => {
 
 describe("dispatch", () => {
     it("returns an empty option for an unknown type", () => {
-        expect(transformData("nope", { query: {}, data: [] })).toEqual({});
+        expect(transformData("nope", { query: {}, rows: [] })).toEqual({});
         expect(isEchartsType("nope")).toBe(false);
         expect(hasTimeAxis("nope")).toBe(false);
         expect(drillDownKeyFor("nope")).toBeNull();

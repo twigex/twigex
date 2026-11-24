@@ -75,7 +75,6 @@ func (c *ConfigStore) loadEnvVariables() {
 	c.loadOfficeSettings()
 	c.loadChannelSettings()
 	c.loadLDAPSettings()
-	c.loadCollimatoSettings()
 	c.loadFeatureFlags()
 	c.computeEnvLocked()
 }
@@ -158,12 +157,6 @@ func (c *ConfigStore) loadChannelSettings() {
 	// Klipy GIF (nested in ChannelSettings)
 	setBool(&c.Config.ChannelSettings.KlipyGIF.Enabled, "TWIGEX_CHANNEL_GIF_ENABLED")
 	setStr(&c.Config.ChannelSettings.KlipyGIF.APIKey, "TWIGEX_CHANNEL_GIF_API_KEY")
-}
-
-func (c *ConfigStore) loadCollimatoSettings() {
-	setStr(&c.Config.CollimatoSettings.CubeAPIURL, "TWIGEX_COLLIMATO_CUBE_API_URL")
-	setStr(&c.Config.CollimatoSettings.CubeAPISecret, "TWIGEX_COLLIMATO_CUBE_API_SECRET")
-	setStr(&c.Config.CollimatoSettings.CubeCallbackSecret, "TWIGEX_COLLIMATO_CUBE_CALLBACK_SECRET")
 }
 
 func (c *ConfigStore) loadFeatureFlags() {

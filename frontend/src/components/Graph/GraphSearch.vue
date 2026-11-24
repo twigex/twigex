@@ -165,7 +165,7 @@ function pick(choice) {
 }
 
 // Cancels the requests of a search still running. The server sees the
-// cancelled request too and stops asking Cube.
+// cancelled request too and stops its queries.
 function cancelRunning() {
     if (running) {
         running.abort();

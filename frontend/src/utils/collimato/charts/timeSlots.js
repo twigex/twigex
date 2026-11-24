@@ -47,9 +47,9 @@ function incrementDate(date, granularity) {
     }
 }
 
-// Cube starts each bucket at the beginning of its period (Monday, the 1st of
-// the month), so the first slot must start there too, not on the range's
-// first day.
+// The server starts each bucket at the beginning of its period (Monday, the
+// 1st of the month), so the first slot must start there too, not on the
+// range's first day.
 function startOfPeriod(date, granularity) {
     const start = new Date(date.getTime());
 
@@ -185,8 +185,8 @@ function wholePeriodLabel(start, granularity, locale) {
     return null;
 }
 
-// The first and last slot can reach outside the chosen range, but Cube only
-// counts the days inside it, so the label names only those days.
+// The first and last slot can reach outside the chosen range, but the server
+// only counts the days inside it, so the label names only those days.
 function timeSlotLabel(slot, granularity, rangeStart, rangeEnd, display) {
     const locale = dateLocale();
     const start = slotDate(slot);

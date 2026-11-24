@@ -178,7 +178,6 @@ import userService from "@/services/userService";
 import settingsService from "@/services/settingsService";
 import authService from "@/services/authService";
 import chatService from "@/services/chatService";
-import collimatoService from "@/services/collimatoService";
 import configService from "@/services/configService";
 import { close, initialize, reconnectIfDead, sendPresenceEvent } from "@/js/websocket";
 import { resetAllStores } from "@/store/reset";
@@ -240,13 +239,6 @@ onMounted(async () => {
     configService.config().then((response) => {
         settingsStore.setConfig(response.data);
     });
-
-    collimatoService
-        .status()
-        .then((response) => {
-            settingsStore.setCollimatoStatus(response.data);
-        })
-        .catch(() => {});
 
     settingsService
         .chatSettings()

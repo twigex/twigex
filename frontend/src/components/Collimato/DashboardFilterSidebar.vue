@@ -175,7 +175,9 @@ SPDX-License-Identifier: AGPL-3.0-only
                                 class="h-3.5 w-3.5 shrink-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                                 @click.stop
                             />
-                            <span class="text-xs text-gray-700 truncate">{{ val }}</span>
+                            <span class="text-xs text-gray-700 truncate">{{
+                                valueLabel(filter, val)
+                            }}</span>
                         </label>
                     </div>
 
@@ -214,12 +216,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { t } from "@/i18n/index.js";
 import CrossFilterDialog from "@/components/Collimato/Dialogs/CrossFilterDialog.vue";
 import { useCollimatoStore } from "@/store/collimato";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { EllipsisVerticalIcon, PlusIcon, MagnifyingGlassIcon } from "@heroicons/vue/20/solid";
 import { Bars3Icon, ChevronDownIcon, FunnelIcon } from "@heroicons/vue/24/outline";
+import { yesNoFieldsOf, yesNoLabel } from "@/utils/collimato/yesNo.js";
 
 const props = defineProps({
     open: {
@@ -280,12 +284,22 @@ const emit = defineEmits([
 
 const collimatoStore = useCollimatoStore();
 
+const yesNoFields = computed(() => yesNoFieldsOf(props.dataModels));
+
+function valueLabel(filter, value) {
+    if (yesNoFields.value.has(filter.column)) {
+        return yesNoLabel(value);
+    }
+
+    return value;
+}
+
 function getFilteredValues(filter) {
     const all = props.filterValues[filter.id] ?? [];
     const search = (props.filterSearch[filter.id] ?? "").toLowerCase().trim();
 
     if (!search) return all;
 
-    return all.filter((v) => String(v).toLowerCase().includes(search));
+    return all.filter((v) => String(valueLabel(filter, v)).toLowerCase().includes(search));
 }
 </script>

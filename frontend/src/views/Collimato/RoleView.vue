@@ -517,6 +517,8 @@ import { Switch, SwitchDescription, SwitchGroup, SwitchLabel } from "@headlessui
 import { PlusIcon, TrashIcon } from "@heroicons/vue/20/solid";
 import { ChevronLeftIcon, CircleStackIcon, TableCellsIcon } from "@heroicons/vue/24/outline";
 import collimatoService from "@/services/collimatoService";
+import { toDataModels } from "@/utils/collimato/dataModels.js";
+import { extractErrorMessage } from "@/utils/errors";
 import TablePermissionDialog from "@/components/Collimato/Dialogs/TablePermissionDialog.vue";
 import ColumnPermissionDialog from "@/components/Collimato/Dialogs/ColumnPermissionDialog.vue";
 import RowPermissionDialog from "@/components/Collimato/Dialogs/RowPermissionDialog.vue";
@@ -825,17 +827,18 @@ onMounted(async () => {
         return;
     }
 
-    await collimatoService.roleMeta(route.params.workspaceId).then((response) => {
-        if (response.data.error) {
-            error.value = response.data.error;
-            errorDialog.value = true;
-            loaded.value = true;
+    try {
+        const response = await collimatoService.roleFieldList(route.params.workspaceId);
 
-            return;
-        }
+        dataModels.value = toDataModels(response.data);
+    } catch (err) {
+        // The form stays hidden: shown without the field list and the role,
+        // a save would replace the role's tables and rules with nothing.
+        error.value = extractErrorMessage(err);
+        errorDialog.value = true;
 
-        dataModels.value = response.data.cubes;
-    });
+        return;
+    }
 
     if (route.params.id) {
         await collimatoService

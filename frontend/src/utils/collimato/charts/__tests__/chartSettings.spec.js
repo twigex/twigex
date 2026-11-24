@@ -3,7 +3,7 @@
 
 import { describe, it, expect } from "vitest";
 import { transformData, applyConfiguration } from "@/utils/collimato/charts/chartDrawing.js";
-import { cubeResult } from "@/utils/collimato/charts/__tests__/cubeResult.js";
+import { chartDataFor } from "@/utils/collimato/charts/__tests__/chartDataFor.js";
 import en from "@/i18n/en.json";
 import lv from "@/i18n/lv.json";
 import kk from "@/i18n/kk.json";
@@ -23,8 +23,8 @@ const result = {
         dimensions: ["orders.status"],
         timeDimensions: [],
     },
-    annotation: { measures: { "orders.count": { title: "Count" } } },
-    data: [
+    titles: { "orders.count": "Count" },
+    rows: [
         { "orders.status": "new", "orders.count": 5 },
         { "orders.status": "done", "orders.count": 3 },
     ],
@@ -77,7 +77,7 @@ describe("applyConfiguration", () => {
 
 describe("missing values setting", () => {
     function postsPerDay() {
-        return cubeResult({
+        return chartDataFor({
             measures: ["posts.count"],
             dimensions: [],
             timeDimensions: [
@@ -87,7 +87,7 @@ describe("missing values setting", () => {
                     dateRange: ["2026-01-01T00:00:00.000", "2026-01-03T00:00:00.000"],
                 },
             ],
-            rows: [{ "posts.created.day": "2026-01-02T00:00:00.000", "posts.count": "7" }],
+            rows: [{ "posts.created": "2026-01-02T00:00:00.000", "posts.count": "7" }],
         });
     }
 
@@ -114,7 +114,7 @@ describe("missing values setting", () => {
     it("keeps a real zero as zero", () => {
         const data = postsPerDay();
 
-        data.data.push({ "posts.created.day": "2026-01-03T00:00:00.000", "posts.count": "0" });
+        data.rows.push({ "posts.created": "2026-01-03T00:00:00.000", "posts.count": "0" });
 
         const option = transformData("line", data, { missingValues: "gap" });
 
@@ -222,7 +222,7 @@ describe("y-axis number labels", () => {
     function yAxisFormatter(chartType, configuration) {
         const option = transformData(
             chartType,
-            cubeResult({
+            chartDataFor({
                 measures: ["orders.count"],
                 dimensions: ["orders.status"],
                 rows: [{ "orders.status": "new", "orders.count": "5" }],
@@ -243,7 +243,7 @@ describe("y-axis number labels", () => {
     it("keeps the formatter on a horizontal bar chart, where the axes swap", () => {
         const option = transformData(
             "bar",
-            cubeResult({
+            chartDataFor({
                 measures: ["orders.count"],
                 dimensions: ["orders.status"],
                 rows: [{ "orders.status": "new", "orders.count": "5" }],
@@ -263,7 +263,7 @@ describe("bar value labels", () => {
     it("shows bar values shortened, like the axis", () => {
         const option = transformData(
             "bar",
-            cubeResult({
+            chartDataFor({
                 measures: ["finance.profit"],
                 dimensions: ["finance.region"],
                 rows: [

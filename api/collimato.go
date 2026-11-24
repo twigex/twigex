@@ -49,22 +49,19 @@ func (a *API) initCollimato() {
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces", a.createWorkspace).Methods("POST")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}", a.getWorkspace).Methods("GET")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/finish", a.finishWorkspaceCreation).Methods("POST")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files", a.newCubeFile).Methods("POST")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files", a.getCubeFiles).Methods("GET")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files", a.saveCubeFile).Methods("PUT")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/delete", a.deleteCubeFile).Methods("POST")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/generate", a.generateCubeFiles).Methods("POST")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/build", a.buildCubeFile).Methods("POST")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/build-view", a.buildViewFile).Methods("POST")
+	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files", a.getDataModels).Methods("GET")
+	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/delete", a.deleteDataModel).Methods("POST")
+	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/generate", a.generateDatasets).Methods("POST")
+	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/build", a.saveDataset).Methods("POST")
+	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/files/build-view", a.saveView).Methods("POST")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/roles", a.getWorkspaceRoles).Methods("GET")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/roles/{id}", a.getWorkspaceRole).Methods("GET")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/roles/{id}/update", a.updateWorkspaceRole).Methods("POST")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/roles/{id}", a.deleteWorkspaceRole).Methods("DELETE")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/roles", a.createWorkspaceRole).Methods("POST")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/meta", a.getMeta).Methods("GET")
-	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/meta/roles", a.getRoleMeta).Methods("GET")
+	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/fields", a.getFieldList).Methods("GET")
+	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/fields/roles", a.getRoleFieldList).Methods("GET")
 	a.BaseRoutes.Collimato.HandleFunc("/workspaces/{workspace}/sql", a.getSql).Methods("POST")
-	a.BaseRoutes.Collimato.HandleFunc("/status", a.collimatoStatus).Methods("GET")
 
 	a.BaseRoutes.Collimato.Use(a.RequireSession)
 	a.BaseRoutes.Collimato.Use(a.RequireCSRF)
@@ -694,32 +691,13 @@ func (a *API) queryData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, appErr := a.app.QueryData(r.Context(), *user, workspaceID, s)
+	answer, appErr := a.app.QueryData(r.Context(), *user, workspaceID, s)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
 
-	respondJSON(w, http.StatusOK, translateCubeError(r, body))
-}
-
-// translateCubeError replaces a driver error Cube passed through with wording a
-// workspace admin can act on. Cube reports query errors inside a 200 body, and
-// the original is already in the log via logCubeError.
-func translateCubeError(r *http.Request, body map[string]any) map[string]any {
-	raw, ok := body["error"].(string)
-	if !ok {
-		return body
-	}
-
-	id := app.CubeErrorID(raw)
-	if id == "" {
-		return body
-	}
-
-	body["error"] = model.NewAppError(id, http.StatusOK).Translate(getLocale(r))
-
-	return body
+	respondJSON(w, http.StatusOK, answer)
 }
 
 func (a *API) getWorkspaces(w http.ResponseWriter, r *http.Request) {
@@ -815,7 +793,7 @@ func (a *API) finishWorkspaceCreation(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, workspace)
 }
 
-func (a *API) getMeta(w http.ResponseWriter, r *http.Request) {
+func (a *API) getFieldList(w http.ResponseWriter, r *http.Request) {
 	workspaceID := mux.Vars(r)["workspace"]
 
 	user, appErr := a.app.GetCurrentUser(r)
@@ -824,29 +802,33 @@ func (a *API) getMeta(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	meta, appErr := a.app.GetWorkspaceMeta(r.Context(), *user, workspaceID)
+	fieldList, appErr := a.app.GetWorkspaceFieldList(r.Context(), *user, workspaceID)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
 
-	respondJSON(w, http.StatusOK, meta)
+	app.TranslateModelErrors(fieldList, getLocale(r))
+
+	respondJSON(w, http.StatusOK, fieldList)
 }
 
-func (a *API) getRoleMeta(w http.ResponseWriter, r *http.Request) {
+func (a *API) getRoleFieldList(w http.ResponseWriter, r *http.Request) {
 	user, appErr := a.app.GetCurrentUser(r)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
 
-	meta, appErr := a.app.GetWorkspaceRoleMeta(r.Context(), *user, mux.Vars(r)["workspace"])
+	fieldList, appErr := a.app.GetWorkspaceRoleFieldList(r.Context(), *user, mux.Vars(r)["workspace"])
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
 
-	respondJSON(w, http.StatusOK, meta)
+	app.TranslateModelErrors(fieldList, getLocale(r))
+
+	respondJSON(w, http.StatusOK, fieldList)
 }
 
 func (a *API) getSql(w http.ResponseWriter, r *http.Request) {
@@ -863,42 +845,16 @@ func (a *API) getSql(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, appErr := a.app.GetWorkspaceSQL(r.Context(), *user, workspaceID, s)
+	sqlText, appErr := a.app.GetWorkspaceSQL(r.Context(), *user, workspaceID, s)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
 
-	respondJSON(w, http.StatusOK, translateCubeError(r, body))
+	respondJSON(w, http.StatusOK, map[string]string{"sql": sqlText})
 }
 
-func (a *API) newCubeFile(w http.ResponseWriter, r *http.Request) {
-	workspaceID := mux.Vars(r)["workspace"]
-
-	var s struct {
-		Filetype string
-		Filename string
-	}
-	if !decodeBody(w, r, &s) {
-		return
-	}
-
-	user, appErr := a.app.GetCurrentUser(r)
-	if appErr != nil {
-		respondAppError(w, r, appErr)
-		return
-	}
-
-	newFile, appErr := a.app.NewCubeFile(*user, workspaceID, s.Filetype, s.Filename)
-	if appErr != nil {
-		respondAppError(w, r, appErr)
-		return
-	}
-
-	respondJSON(w, http.StatusOK, newFile)
-}
-
-func (a *API) getCubeFiles(w http.ResponseWriter, r *http.Request) {
+func (a *API) getDataModels(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	user, appErr := a.app.GetCurrentUser(r)
@@ -907,20 +863,19 @@ func (a *API) getCubeFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cubeFiles, appErr := a.app.GetCubeFiles(*user, params["workspace"])
+	dataModels, appErr := a.app.GetDataModels(*user, params["workspace"])
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
 
-	respondJSON(w, http.StatusOK, cubeFiles)
+	respondJSON(w, http.StatusOK, dataModels)
 }
 
-func (a *API) buildCubeFile(w http.ResponseWriter, r *http.Request) {
+func (a *API) saveDataset(w http.ResponseWriter, r *http.Request) {
 	workspaceID := mux.Vars(r)["workspace"]
 
 	var s struct {
-		Type      string
 		Model     model.Dataset
 		Overwrite bool
 	}
@@ -934,7 +889,7 @@ func (a *API) buildCubeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, appErr := a.app.BuildCubeFile(*user, workspaceID, s.Type, s.Model, s.Overwrite)
+	file, appErr := a.app.SaveDataset(*user, workspaceID, s.Model, s.Overwrite)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
@@ -943,7 +898,7 @@ func (a *API) buildCubeFile(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, file)
 }
 
-func (a *API) buildViewFile(w http.ResponseWriter, r *http.Request) {
+func (a *API) saveView(w http.ResponseWriter, r *http.Request) {
 	workspaceID := mux.Vars(r)["workspace"]
 
 	var s struct {
@@ -960,7 +915,7 @@ func (a *API) buildViewFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, appErr := a.app.BuildViewFile(*user, workspaceID, s.Model, s.Overwrite)
+	file, appErr := a.app.SaveView(*user, workspaceID, s.Model, s.Overwrite)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
@@ -969,34 +924,7 @@ func (a *API) buildViewFile(w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, file)
 }
 
-func (a *API) saveCubeFile(w http.ResponseWriter, r *http.Request) {
-	workspaceID := mux.Vars(r)["workspace"]
-
-	var s struct {
-		Name    string
-		Content string
-		Type    string
-	}
-	if !decodeBody(w, r, &s) {
-		return
-	}
-
-	user, appErr := a.app.GetCurrentUser(r)
-	if appErr != nil {
-		respondAppError(w, r, appErr)
-		return
-	}
-
-	newFile, appErr := a.app.SaveCubeFile(*user, s.Name, s.Content, s.Type, workspaceID)
-	if appErr != nil {
-		respondAppError(w, r, appErr)
-		return
-	}
-
-	respondJSON(w, http.StatusOK, newFile)
-}
-
-func (a *API) deleteCubeFile(w http.ResponseWriter, r *http.Request) {
+func (a *API) deleteDataModel(w http.ResponseWriter, r *http.Request) {
 	workspaceID := mux.Vars(r)["workspace"]
 
 	var s struct {
@@ -1013,7 +941,7 @@ func (a *API) deleteCubeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if appErr = a.app.DeleteCubeFile(*user, s.Name, s.Filetype, workspaceID); appErr != nil {
+	if appErr = a.app.DeleteDataModel(*user, s.Name, s.Filetype, workspaceID); appErr != nil {
 		respondAppError(w, r, appErr)
 		return
 	}
@@ -1021,7 +949,7 @@ func (a *API) deleteCubeFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (a *API) generateCubeFiles(w http.ResponseWriter, r *http.Request) {
+func (a *API) generateDatasets(w http.ResponseWriter, r *http.Request) {
 	workspaceID := mux.Vars(r)["workspace"]
 
 	var m map[string]any
@@ -1035,7 +963,7 @@ func (a *API) generateCubeFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, appErr := a.app.GenerateCubeFiles(*user, m, workspaceID)
+	result, appErr := a.app.GenerateDatasets(*user, m, workspaceID)
 	if appErr != nil {
 		respondAppError(w, r, appErr)
 		return
@@ -1142,10 +1070,6 @@ func (a *API) deleteWorkspaceRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-}
-
-func (a *API) collimatoStatus(w http.ResponseWriter, r *http.Request) {
-	respondJSON(w, http.StatusOK, a.app.CollimatoConfigured())
 }
 
 func (a *API) getTables(w http.ResponseWriter, r *http.Request) {

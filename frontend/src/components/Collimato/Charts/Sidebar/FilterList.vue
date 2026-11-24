@@ -73,7 +73,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
         <FilterDialog
             :filterDialog="filterDialog"
-            :options="cubes"
+            :options="dataModels"
             :edit-filter="editFilter"
             @close="((filterDialog = false), (editFilter = null))"
             @add-filter="$emit('add-filter', $event)"
@@ -94,7 +94,7 @@ defineProps({
         type: Array,
         default: () => [],
     },
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },

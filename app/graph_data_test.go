@@ -14,7 +14,7 @@ import (
 	"github.com/twigex/twigex/model"
 )
 
-// fakeTableEngine stands in for Cube over small in-memory tables. It filters,
+// fakeTableEngine stands in for the query engine over small in-memory tables. It filters,
 // sorts and limits rows the way the row reads need, so the tests check real
 // answers rather than which queries were sent.
 type fakeTableEngine struct {
@@ -23,7 +23,7 @@ type fakeTableEngine struct {
 	queries int
 }
 
-func (f *fakeTableEngine) Query(_ context.Context, _ string, query model.DataQuery) (map[string]any, error) {
+func (f *fakeTableEngine) Query(_ context.Context, _ string, query model.DataQuery) (*collimato.Answer, error) {
 	f.queries++
 
 	dataset := strings.Split(query.Dimensions[0], ".")[0]
@@ -45,25 +45,25 @@ func (f *fakeTableEngine) Query(_ context.Context, _ string, query model.DataQue
 		matching = matching[:query.Limit]
 	}
 
-	data := make([]any, 0, len(matching))
+	rows := make([]map[string]any, 0, len(matching))
 	for _, row := range matching {
 		picked := make(map[string]any, len(query.Dimensions))
 		for _, field := range query.Dimensions {
 			picked[field] = row[field]
 		}
 
-		data = append(data, picked)
+		rows = append(rows, picked)
 	}
 
-	return map[string]any{"data": data}, nil
+	return &collimato.Answer{Rows: rows}, nil
 }
 
-// Meta describes each table with every column its rows hold visible.
-func (f *fakeTableEngine) Meta(_ context.Context, _ string) (*collimato.CubeCollection, error) {
-	collection := &collimato.CubeCollection{}
+// FieldList describes each table with every column its rows hold visible.
+func (f *fakeTableEngine) FieldList(_ context.Context, _ string) (*collimato.FieldList, error) {
+	fieldList := &collimato.FieldList{}
 
 	for name, rows := range f.tables {
-		cube := collimato.Cube{Name: name, Type: "cube"}
+		dataset := collimato.DatasetFields{Name: name}
 		seen := make(map[string]bool)
 
 		for _, row := range rows {
@@ -73,14 +73,14 @@ func (f *fakeTableEngine) Meta(_ context.Context, _ string) (*collimato.CubeColl
 				}
 
 				seen[column] = true
-				cube.Dimensions = append(cube.Dimensions, collimato.Dimension{Name: column})
+				dataset.Fields = append(dataset.Fields, collimato.Field{Key: column, Kind: collimato.FieldKindDimension})
 			}
 		}
 
-		collection.Cubes = append(collection.Cubes, cube)
+		fieldList.Datasets = append(fieldList.Datasets, dataset)
 	}
 
-	return collection, nil
+	return fieldList, nil
 }
 
 func fakeRowMatches(row map[string]any, filters []model.QueryFilter) bool {

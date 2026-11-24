@@ -6,32 +6,34 @@ package app
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 	"slices"
 	"strings"
 	"testing"
-	"time"
 
+	"github.com/twigex/twigex/collimato"
 	"github.com/twigex/twigex/interfaces"
 	"github.com/twigex/twigex/model"
 	"github.com/twigex/twigex/store"
 )
 
-// fakeRowsEngine answers queries in turn and remembers what it was sent.
+// fakeRowsEngine answers every query with the same rows, or fails with err,
+// and remembers what it was sent.
 type fakeRowsEngine struct {
 	QueryEngine
-	answers []map[string]any
+	rows    []map[string]any
+	err     error
 	queries []model.DataQuery
 }
 
-func (f *fakeRowsEngine) Query(_ context.Context, _ string, query model.DataQuery) (map[string]any, error) {
+func (f *fakeRowsEngine) Query(_ context.Context, _ string, query model.DataQuery) (*collimato.Answer, error) {
 	f.queries = append(f.queries, query)
 
-	answer := f.answers[0]
-	if len(f.answers) > 1 {
-		f.answers = f.answers[1:]
+	if f.err != nil {
+		return nil, f.err
 	}
 
-	return answer, nil
+	return &collimato.Answer{Rows: f.rows}, nil
 }
 
 // fakeRowRules adds a row rule to every query, the way the enterprise data
@@ -48,26 +50,17 @@ func (fakeRowRules) HasPermissionToFields(_ []model.CollimatoRole, query *model.
 	return true, nil
 }
 
-func rowsTestApp(answers ...map[string]any) (*App, *fakeRowsEngine) {
-	engine := &fakeRowsEngine{answers: answers}
+func rowsTestApp(rows ...map[string]any) (*App, *fakeRowsEngine) {
+	engine := &fakeRowsEngine{rows: rows}
 
 	a := &App{
 		Store: store.Store{
-			Collimato: &fakeMetaCollimatoStore{permissions: []string{model.CollimatoPermissions.PermissionViewCharts.Id}},
+			Collimato: &fakeFieldListCollimatoStore{permissions: []string{model.CollimatoPermissions.PermissionViewCharts.Id}},
 		},
 		QueryEngine: engine,
 	}
 
 	return a, engine
-}
-
-func cubeRows(rows ...map[string]any) map[string]any {
-	data := make([]any, 0, len(rows))
-	for _, row := range rows {
-		data = append(data, row)
-	}
-
-	return map[string]any{"data": data}
 }
 
 func companyOrders() model.CollimatoRowsRequest {
@@ -80,8 +73,8 @@ func companyOrders() model.CollimatoRowsRequest {
 	}
 }
 
-func TestCollimatoGetRowsAsksCubeForUngroupedRowsAfterAKey(t *testing.T) {
-	a, engine := rowsTestApp(cubeRows(map[string]any{"orders.key": "o-00000060", "orders.number": "Order #100060"}))
+func TestCollimatoGetRowsAsksForUngroupedRowsAfterAKey(t *testing.T) {
+	a, engine := rowsTestApp(map[string]any{"orders.key": "o-00000060", "orders.number": "Order #100060"})
 
 	rows, appErr := a.CollimatoGetRows(context.Background(), model.User{ID: "u1"}, "ws", companyOrders())
 	if appErr != nil {
@@ -89,7 +82,7 @@ func TestCollimatoGetRowsAsksCubeForUngroupedRowsAfterAKey(t *testing.T) {
 	}
 
 	if len(rows) != 1 || rows[0]["orders.key"] != "o-00000060" {
-		t.Errorf("want the one row Cube sent, got %v", rows)
+		t.Errorf("want the one row the engine sent, got %v", rows)
 	}
 
 	sent := engine.queries[0]
@@ -123,7 +116,7 @@ func TestCollimatoGetRowsAsksCubeForUngroupedRowsAfterAKey(t *testing.T) {
 }
 
 func TestCollimatoGetRowsKeepsTheRowRules(t *testing.T) {
-	a, engine := rowsTestApp(cubeRows())
+	a, engine := rowsTestApp()
 	a.CollimatoRoles = fakeRowRules{}
 
 	_, appErr := a.CollimatoGetRows(context.Background(), model.User{ID: "u1"}, "ws", companyOrders())
@@ -136,45 +129,23 @@ func TestCollimatoGetRowsKeepsTheRowRules(t *testing.T) {
 	})
 
 	if !found {
-		t.Errorf("want the row rule in the query Cube ran, got %v", engine.queries[0].Filters)
+		t.Errorf("want the row rule in the query that ran, got %v", engine.queries[0].Filters)
 	}
 }
 
-func TestCollimatoGetRowsWaitsWhileCubeIsPreparing(t *testing.T) {
-	interval := collimatoWaitInterval
-	collimatoWaitInterval = time.Millisecond
-
-	t.Cleanup(func() {
-		collimatoWaitInterval = interval
-	})
-
-	a, engine := rowsTestApp(
-		map[string]any{"error": "Continue wait"},
-		cubeRows(map[string]any{"orders.key": "o-1"}),
-	)
+func TestCollimatoGetRowsReportsAFailureInsteadOfNoRows(t *testing.T) {
+	a, engine := rowsTestApp()
+	engine.err = newQueryError(queryErrorTimeLimit, "")
 
 	rows, appErr := a.CollimatoGetRows(context.Background(), model.User{ID: "u1"}, "ws", companyOrders())
-	if appErr != nil {
-		t.Fatalf("CollimatoGetRows: %v", appErr)
-	}
-
-	if len(rows) != 1 || len(engine.queries) != 2 {
-		t.Errorf("want the row after asking twice, got %d rows after %d queries", len(rows), len(engine.queries))
-	}
-}
-
-func TestCollimatoGetRowsReportsACubeErrorInsteadOfNoRows(t *testing.T) {
-	a, _ := rowsTestApp(map[string]any{"error": "Invalid query format: \"measures\" must be an array"})
-
-	rows, appErr := a.CollimatoGetRows(context.Background(), model.User{ID: "u1"}, "ws", companyOrders())
-	if appErr == nil || appErr.ID != "collimato.query_failed" {
-		t.Errorf("want collimato.query_failed, got rows %v and %v", rows, appErr)
+	if appErr == nil || appErr.ID != queryErrorTimeLimit {
+		t.Errorf("want %s, got rows %v and %v", queryErrorTimeLimit, rows, appErr)
 	}
 }
 
 func TestCollimatoGetRowsRefusesAUserOutsideTheWorkspace(t *testing.T) {
-	a, engine := rowsTestApp(cubeRows())
-	a.Store.Collimato = &fakeMetaCollimatoStore{}
+	a, engine := rowsTestApp()
+	a.Store.Collimato = &fakeFieldListCollimatoStore{}
 
 	_, appErr := a.CollimatoGetRows(context.Background(), model.User{ID: "u1"}, "ws", companyOrders())
 	if appErr == nil || appErr.ID != "collimato.forbidden" {
@@ -182,7 +153,7 @@ func TestCollimatoGetRowsRefusesAUserOutsideTheWorkspace(t *testing.T) {
 	}
 
 	if len(engine.queries) != 0 {
-		t.Errorf("want Cube never asked, got %d queries", len(engine.queries))
+		t.Errorf("want no query run, got %d queries", len(engine.queries))
 	}
 }
 
@@ -198,7 +169,7 @@ func TestCollimatoGetRowsNeedsALimitAndASortFieldItReads(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			a, engine := rowsTestApp(cubeRows())
+			a, engine := rowsTestApp()
 
 			request := companyOrders()
 			tc.change(&request)
@@ -209,14 +180,14 @@ func TestCollimatoGetRowsNeedsALimitAndASortFieldItReads(t *testing.T) {
 			}
 
 			if len(engine.queries) != 0 {
-				t.Errorf("want Cube never asked, got %d queries", len(engine.queries))
+				t.Errorf("want no query run, got %d queries", len(engine.queries))
 			}
 		})
 	}
 }
 
 func TestQueryDataNeverSendsAnUngroupedQuery(t *testing.T) {
-	a, engine := rowsTestApp(cubeRows())
+	a, engine := rowsTestApp()
 
 	query := emptyDataQuery()
 	query.Measures = []string{"salaries.average"}
@@ -229,5 +200,33 @@ func TestQueryDataNeverSendsAnUngroupedQuery(t *testing.T) {
 
 	if engine.queries[0].Ungrouped {
 		t.Errorf("want ungrouped switched off for a query from the browser")
+	}
+}
+
+// The graph reads an error below 500 as "you may not see this", so an engine
+// refusal must not reach it as a 400.
+func TestRowReadErrorsAreFailuresNotRefusals(t *testing.T) {
+	cases := []struct {
+		name   string
+		appErr *model.AppError
+		wantID string
+	}{
+		{"a model error", newQueryError(queryErrorModelError, "orders").appError(), "collimato.query_failed"},
+		{"the database's message", model.NewAppErrorRaw("Error 1054", http.StatusBadGateway), "collimato.query_failed"},
+		{"a refusal", model.NewAppError("collimato.permission_denied", http.StatusForbidden), "collimato.permission_denied"},
+		{"the time limit", newQueryError(queryErrorTimeLimit, "").appError(), queryErrorTimeLimit},
+		{"a connection failure", newQueryError("connection.verification.unreachable", "").appError(), "connection.verification.unreachable"},
+	}
+
+	for _, testCase := range cases {
+		got := rowReadError("ws", testCase.appErr)
+
+		if got.ID != testCase.wantID {
+			t.Errorf("%s: want %s, got %s", testCase.name, testCase.wantID, got.ID)
+		}
+
+		if got.Status < http.StatusInternalServerError && got.Status != http.StatusForbidden {
+			t.Errorf("%s: a failure must be 500 or above, got %d", testCase.name, got.Status)
+		}
 	}
 }

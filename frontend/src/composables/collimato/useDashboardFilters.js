@@ -9,6 +9,7 @@ import { useAlertStore } from "@/store/alerts";
 import collimatoService from "@/services/collimatoService.js";
 import { extractErrorMessage } from "@/utils/errors";
 import { MAX_QUERY_LIMIT } from "@/utils/collimato/chartQuery.js";
+import { filterValueOf } from "@/utils/collimato/chartData.js";
 import {
     filterApplies,
     filtersForChart,
@@ -16,7 +17,7 @@ import {
     withFilterRemoved,
 } from "@/utils/collimato/dashboardFilters.js";
 
-export function useDashboardFilters({ charts, pollLoad, loadData }) {
+export function useDashboardFilters({ charts, loadQuery, loadData }) {
     const route = useRoute();
     const collimatoStore = useCollimatoStore();
     const alertStore = useAlertStore();
@@ -220,10 +221,10 @@ export function useDashboardFilters({ charts, pollLoad, loadData }) {
             limit: MAX_QUERY_LIMIT,
         };
 
-        pollLoad(filterQuery, {
-            onSuccess: (result) => {
-                filterValues.value[filter.id] = result.data.data.map(
-                    (value) => value[filter.column],
+        loadQuery(filterQuery, {
+            onSuccess: (data) => {
+                filterValues.value[filter.id] = data.rows.map((row) =>
+                    filterValueOf(row[filter.column]),
                 );
             },
             onError: (message) => {

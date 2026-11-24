@@ -11,7 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
             :measures="measures"
             :dimensions="dimensions"
             :orders="orders"
-            :cubes="cubes"
+            :data-models="dataModels"
             @add-measure="$emit('add-measure', $event)"
             @remove-measure="$emit('remove-measure', $event)"
             @add-dimension="$emit('add-dimension', $event)"
@@ -22,7 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
         <ChartFilters
             :filters="filters"
-            :cubes="cubes"
+            :data-models="dataModels"
             @add-filter="$emit('add-filter', $event)"
             @update-filter="(member, filter) => $emit('update-filter', member, filter)"
             @remove-filter="$emit('remove-filter', $event)"
@@ -31,7 +31,7 @@ SPDX-License-Identifier: AGPL-3.0-only
         <TimeDimensions
             v-if="showTimeDimensions"
             :time="time"
-            :cubes="cubes"
+            :data-models="dataModels"
             @update:time="$emit('update:time', $event)"
         />
     </div>
@@ -73,7 +73,7 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },

@@ -12,8 +12,8 @@ const result = {
         dimensions: ["orders.status"],
         timeDimensions: [],
     },
-    annotation: { measures: { "orders.count": { title: "Count" } } },
-    data: [
+    titles: { "orders.count": "Count" },
+    rows: [
         { "orders.status": "new", "orders.count": 5 },
         { "orders.status": "done", "orders.count": 3 },
     ],

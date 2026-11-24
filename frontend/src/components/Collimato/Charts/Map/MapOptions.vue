@@ -261,7 +261,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                                         >
                                             <ListboxOption
                                                 as="template"
-                                                v-for="c in cubes"
+                                                v-for="c in dataModels"
                                                 :key="c.table"
                                                 :value="c.table"
                                                 v-slot="{ active, selected }"
@@ -316,7 +316,7 @@ SPDX-License-Identifier: AGPL-3.0-only
                             </p>
                             <FilterList
                                 :filters="layer.filters ?? []"
-                                :cubes="modelsFor(layer)"
+                                :data-models="modelsFor(layer)"
                                 @add-filter="$emit('add-layer-filter', layer.id, $event)"
                                 @update-filter="
                                     (member, filter) =>
@@ -445,10 +445,10 @@ SPDX-License-Identifier: AGPL-3.0-only
                         <div class="mt-3">
                             <component
                                 :is="editorFor(layer.type)"
-                                :cubes="cubes"
+                                :data-models="dataModels"
                                 :config="layer.config"
                                 :layer="layer"
-                                :selectedCube="layer.model"
+                                :selectedDataModel="layer.model"
                                 @update:config="$emit('update-layer-config', layer.id, $event)"
                                 @update:coordinates="
                                     $emit('update-layer-coordinates', layer.id, $event)
@@ -497,7 +497,7 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },
@@ -534,8 +534,8 @@ function statusOf(layer) {
 
 function modelsFor(layer) {
     return joinableDataModels(
-        props.cubes,
-        props.cubes.find((cube) => cube.table == layer.model) ?? null,
+        props.dataModels,
+        props.dataModels.find((dataModel) => dataModel.table == layer.model) ?? null,
     );
 }
 

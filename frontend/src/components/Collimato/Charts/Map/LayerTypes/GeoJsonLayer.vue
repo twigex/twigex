@@ -103,7 +103,12 @@ SPDX-License-Identifier: AGPL-3.0-only
         />
     </div>
 
-    <FillColor v-if="config.filled" :config="config" :cubes="valueCubes" @update="patch" />
+    <FillColor
+        v-if="config.filled"
+        :config="config"
+        :data-models="valueDataModels"
+        @update="patch"
+    />
 
     <div v-if="config.stroked" class="mt-4">
         <label :for="lineColorId" class="block text-sm font-medium leading-6 text-gray-900">
@@ -166,11 +171,11 @@ import { ChevronUpDownIcon } from "@heroicons/vue/16/solid";
 import { CheckIcon } from "@heroicons/vue/20/solid";
 
 const props = defineProps({
-    cubes: {
+    dataModels: {
         type: Array,
         default: () => [],
     },
-    selectedCube: {
+    selectedDataModel: {
         type: String,
         default: null,
     },
@@ -184,22 +189,24 @@ const emit = defineEmits(["update:config", "update:fields"]);
 
 const lineColorId = useId();
 
-const filteredCubes = computed(() =>
+const filteredDataModels = computed(() =>
     joinableDataModels(
-        props.cubes,
-        props.cubes.find((cube) => cube.table === props.selectedCube) ?? null,
+        props.dataModels,
+        props.dataModels.find((dataModel) => dataModel.table === props.selectedDataModel) ?? null,
     ),
 );
 
-const valueCubes = computed(() =>
+const valueDataModels = computed(() =>
     withCountMeasure(
-        filteredCubes.value,
-        props.selectedCube,
+        filteredDataModels.value,
+        props.selectedDataModel,
         t.value("collimato.charts.new_chart.map.count"),
     ),
 );
 
-const dimensions = computed(() => filteredCubes.value.flatMap((cube) => cube.dimensions));
+const dimensions = computed(() =>
+    filteredDataModels.value.flatMap((dataModel) => dataModel.dimensions),
+);
 
 const geometryField = computed(
     () => dimensions.value.find((d) => d.name === props.config.geojson_field) ?? null,

@@ -7,7 +7,7 @@ import CrossFilterDialog from "@/components/Collimato/Dialogs/CrossFilterDialog.
 
 vi.mock("@/services/collimatoService", () => ({
     default: {
-        loadData: vi.fn().mockResolvedValue({ data: { data: [] } }),
+        loadData: vi.fn().mockResolvedValue({ data: { columns: [], rows: [], dateRanges: [] } }),
     },
 }));
 

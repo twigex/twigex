@@ -91,11 +91,7 @@ func NewApp() *App {
 		Store:       *st,
 	}
 
-	a.QueryEngine = &cubeEngine{
-		client:    cubeHTTPClient,
-		apiURL:    func() string { return *a.ConfigStore.Config.CollimatoSettings.CubeAPIURL },
-		mintToken: a.GenerateToken,
-	}
+	a.QueryEngine = newEngineAdapter(a.Store.Collimato, a.decryptConnectionPassword, engineConnector)
 
 	if err := a.LoadSystemSettings(); err != nil {
 		tlog.Errorw("Failed to load system settings", "error", err)
