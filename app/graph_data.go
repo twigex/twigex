@@ -19,6 +19,11 @@ import (
 // Above this many neighbours a group shows "1000+" instead of a number.
 const graphCountCap = 1000
 
+// graphNameReadLimit caps the read of names for a page of keys. The read goes
+// in key order, so when keys have many different names, the ones the read
+// does not reach are named by their key.
+const graphNameReadLimit = 5000
+
 var errGraphTypeBroken = errors.New("the type's dataset or field no longer exists")
 
 // graphDataType is a user-defined entity type with its dataset's workspace
@@ -226,6 +231,12 @@ func (a *App) loadGraphPropertyRelation(ctx context.Context, relationType model.
 	return relation, nil
 }
 
+// graphRows reads entities, which are the distinct keys of their dataset, not
+// its rows: a type made from a column that repeats, such as each trip's
+// pickup location, would otherwise list a location once for every trip. The
+// fast ungrouped read comes first, sorted by the key so that a repeated key
+// sits side by side; only a page with a repeated or blank key is read again
+// by key.
 func (a *App) graphRows(ctx context.Context, user model.User, dataType *graphDataType, fields []string, filters []model.QueryFilter, after string, limit int) ([]map[string]any, *model.AppError) {
 	request := model.CollimatoRowsRequest{
 		Fields:  fields,
@@ -235,7 +246,133 @@ func (a *App) graphRows(ctx context.Context, user model.User, dataType *graphDat
 		Limit:   limit,
 	}
 
-	return a.CollimatoGetRows(ctx, user, dataType.workspaceID, request)
+	rows, appErr := a.CollimatoGetRows(ctx, user, dataType.workspaceID, request)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	if !graphKeysRepeatOrAreBlank(rows, dataType.keyField) {
+		return rows, nil
+	}
+
+	return a.graphRowsByKey(ctx, user, dataType, request)
+}
+
+// graphRowsByKey pages by the keys alone, so a page is full while more keys
+// follow, however many different names a key's rows give it. The names are
+// read after, for the page's keys only. A blank key names no entity and is
+// left out.
+func (a *App) graphRowsByKey(ctx context.Context, user model.User, dataType *graphDataType, request model.CollimatoRowsRequest) ([]map[string]any, *model.AppError) {
+	keyIsSet := model.QueryFilter{Member: dataType.keyField, Operator: "set"}
+
+	keyRequest := request
+	keyRequest.Fields = []string{dataType.keyField}
+	keyRequest.Filters = append(slices.Clone(request.Filters), keyIsSet)
+	keyRequest.Grouped = true
+
+	// One more than the page, for an empty key, which a filter cannot leave
+	// out for every kind of column.
+	keyRequest.Limit = request.Limit + 1
+
+	keyRows, appErr := a.CollimatoGetRows(ctx, user, dataType.workspaceID, keyRequest)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	keys := make([]string, 0, len(keyRows))
+
+	for _, row := range keyRows {
+		key := graphText(row[dataType.keyField])
+
+		if key != "" {
+			keys = append(keys, key)
+		}
+	}
+
+	if len(keys) > request.Limit {
+		keys = keys[:request.Limit]
+	}
+
+	needsNames := dataType.titleField != dataType.keyField && slices.Contains(request.Fields, dataType.titleField)
+
+	names := map[string]string{}
+
+	if needsNames {
+		names, appErr = a.graphNames(ctx, user, dataType, request.Filters, keys)
+		if appErr != nil {
+			return nil, appErr
+		}
+	}
+
+	rows := make([]map[string]any, 0, len(keys))
+
+	for _, key := range keys {
+		row := map[string]any{dataType.keyField: key}
+
+		if needsNames {
+			name, named := names[key]
+			if !named {
+				name = key
+			}
+
+			row[dataType.titleField] = name
+		}
+
+		rows = append(rows, row)
+	}
+
+	return rows, nil
+}
+
+// graphNames reads one name for each key, the first one found.
+func (a *App) graphNames(ctx context.Context, user model.User, dataType *graphDataType, filters []model.QueryFilter, keys []string) (map[string]string, *model.AppError) {
+	names := make(map[string]string, len(keys))
+
+	if len(keys) == 0 {
+		return names, nil
+	}
+
+	pageKeys := model.QueryFilter{Member: dataType.keyField, Operator: "equals", Values: keys}
+
+	request := model.CollimatoRowsRequest{
+		Fields:  []string{dataType.keyField, dataType.titleField},
+		Filters: append(slices.Clone(filters), pageKeys),
+		OrderBy: dataType.keyField,
+		Limit:   graphNameReadLimit,
+		Grouped: true,
+	}
+
+	rows, appErr := a.CollimatoGetRows(ctx, user, dataType.workspaceID, request)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	for _, row := range rows {
+		key := graphText(row[dataType.keyField])
+
+		_, named := names[key]
+		if !named {
+			names[key] = graphText(row[dataType.titleField])
+		}
+	}
+
+	return names, nil
+}
+
+func graphKeysRepeatOrAreBlank(rows []map[string]any, keyField string) bool {
+	seen := make(map[string]bool, len(rows))
+
+	for _, row := range rows {
+		key := graphText(row[keyField])
+
+		if key == "" || seen[key] {
+			return true
+		}
+
+		seen[key] = true
+	}
+
+	return false
 }
 
 // graphOwnRow reads the entity itself, its key and name only. No row means
