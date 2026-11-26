@@ -41,18 +41,31 @@ func (f *fakeTableEngine) Query(_ context.Context, _ string, query model.DataQue
 		return strings.Compare(fmt.Sprint(first[orderBy]), fmt.Sprint(second[orderBy]))
 	})
 
-	if len(matching) > query.Limit {
+	if query.Ungrouped && len(matching) > query.Limit {
 		matching = matching[:query.Limit]
 	}
 
 	rows := make([]map[string]any, 0, len(matching))
+	seen := make(map[string]bool)
+
 	for _, row := range matching {
 		picked := make(map[string]any, len(query.Dimensions))
 		for _, field := range query.Dimensions {
 			picked[field] = row[field]
 		}
 
+		// A grouped read gives each set of values once, as GROUP BY does.
+		values := fmt.Sprint(picked)
+		if !query.Ungrouped && seen[values] {
+			continue
+		}
+
+		seen[values] = true
 		rows = append(rows, picked)
+	}
+
+	if len(rows) > query.Limit {
+		rows = rows[:query.Limit]
 	}
 
 	return &collimato.Answer{Rows: rows}, nil
@@ -94,6 +107,10 @@ func fakeRowMatches(row map[string]any, filters []model.QueryFilter) bool {
 			}
 		case "gt":
 			if value <= filter.Values[0] {
+				return false
+			}
+		case "set":
+			if row[filter.Member] == nil {
 				return false
 			}
 		case "contains":
@@ -521,5 +538,224 @@ func TestDataEntityRelationsCanMatchOnAFromProperty(t *testing.T) {
 	back := dataGroup(fromRegistry, "company_same_as_registration", model.GraphDirectionIn)
 	if !slices.Equal(graphItemIDs(back), []string{"c-05"}) {
 		t.Errorf("want Tallinn Tech back from the registry entry, got %+v", back)
+	}
+}
+
+// newGraphTripsTestApp adds trips whose zone repeats, and a zone type made
+// straight from that column, the way a type is made from a column of a table
+// of events rather than from a table of zones.
+func newGraphTripsTestApp() (*graphTestApp, *fakeTableEngine) {
+	g, engine := newGraphDataTestApp()
+
+	trip := func(key, zone string) map[string]any {
+		return map[string]any{"trips.key": key, "trips.zone": zone}
+	}
+
+	engine.tables["trips"] = []map[string]any{
+		trip("t-1", "z-1"), trip("t-2", "z-1"), trip("t-3", "z-1"),
+		trip("t-4", "z-2"), trip("t-5", "z-2"),
+	}
+
+	g.graph.datasets = append(g.graph.datasets, model.GraphDataset{ID: "ds-trips", WorkspaceID: "ws", Name: "trips"})
+
+	for _, name := range []string{"trips.key", "trips.zone"} {
+		g.graph.fields = append(g.graph.fields, model.GraphDatasetField{ID: "f-" + name, WorkspaceID: "ws", DatasetID: "ds-trips", Name: name})
+	}
+
+	g.graph.entityTypes = append(g.graph.entityTypes,
+		model.GraphEntityType{ID: "t-zone", Key: "zone", Source: model.GraphSourceDataset, SourceID: "ds-trips", KeyProperty: "f-trips.zone", TitleProperty: "f-trips.zone"},
+		model.GraphEntityType{ID: "t-trip", Key: "trip", Source: model.GraphSourceDataset, SourceID: "ds-trips", KeyProperty: "f-trips.key", TitleProperty: "f-trips.key"},
+	)
+
+	g.graph.relationTypes = append(g.graph.relationTypes, model.GraphRelationType{
+		ID:         "l-zone_has_trip",
+		Key:        "zone_has_trip",
+		FromTypeID: "t-zone",
+		ToTypeID:   "t-trip",
+		Kind:       model.GraphRelationKindProperty,
+		KindConfig: &model.GraphRelationKindConfig{Property: "f-trips.zone"},
+	})
+
+	return g, engine
+}
+
+func TestATypeFromARepeatingColumnListsEachEntityOnce(t *testing.T) {
+	g, _ := newGraphTripsTestApp()
+
+	found, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "u1"}, "zone", "", "")
+	if appErr != nil {
+		t.Fatalf("SearchGraphEntities: %v", appErr)
+	}
+
+	ids := []string{}
+	for _, item := range found.Items {
+		ids = append(ids, item.ID)
+	}
+
+	if !slices.Equal(ids, []string{"z-1", "z-2"}) {
+		t.Errorf("want each zone once, got %v", ids)
+	}
+}
+
+func TestARelationToARepeatingColumnShowsTheEntityOnce(t *testing.T) {
+	g, _ := newGraphTripsTestApp()
+
+	relations, appErr := g.app.GetGraphEntityRelations(context.Background(), model.User{ID: "u1"}, "trip", "t-1")
+	if appErr != nil {
+		t.Fatalf("GetGraphEntityRelations: %v", appErr)
+	}
+
+	zones := dataGroup(relations, "zone_has_trip", model.GraphDirectionIn)
+	if zones == nil || zones.Count != 1 || len(zones.Items) != 1 || zones.Items[0].Entity.ID != "z-1" {
+		t.Errorf("want trip t-1 in zone z-1 once, got %+v", zones)
+	}
+
+	relations, appErr = g.app.GetGraphEntityRelations(context.Background(), model.User{ID: "u1"}, "zone", "z-1")
+	if appErr != nil {
+		t.Fatalf("GetGraphEntityRelations: %v", appErr)
+	}
+
+	trips := dataGroup(relations, "zone_has_trip", model.GraphDirectionOut)
+	if trips == nil || trips.Count != 3 {
+		t.Errorf("want zone z-1 to have 3 trips, got %+v", trips)
+	}
+}
+
+func TestATypeWithAUniqueKeyIsReadOnce(t *testing.T) {
+	g, engine := newGraphDataTestApp()
+
+	_, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "u1"}, "company", "", "")
+	if appErr != nil {
+		t.Fatalf("SearchGraphEntities: %v", appErr)
+	}
+
+	if engine.queries != 1 {
+		t.Errorf("want one fast read for unique keys, got %d queries", engine.queries)
+	}
+}
+
+// zoneTrips gives each zone one trip for each of its names, the way a zone
+// type named by a field that varies from trip to trip sees its data.
+func zoneTrips(zones []string, namesPerZone int) []map[string]any {
+	trips := make([]map[string]any, 0, len(zones)*namesPerZone)
+
+	for _, zone := range zones {
+		for name := 1; name <= namesPerZone; name++ {
+			trip := map[string]any{
+				"trips.key":    fmt.Sprintf("t-%s-%04d", zone, name),
+				"trips.zone":   zone,
+				"trips.vendor": fmt.Sprintf("Vendor %04d", name),
+			}
+
+			trips = append(trips, trip)
+		}
+	}
+
+	return trips
+}
+
+func numberedZones(count int) []string {
+	zones := make([]string, 0, count)
+
+	for zone := 1; zone <= count; zone++ {
+		zones = append(zones, fmt.Sprintf("z-%03d", zone))
+	}
+
+	return zones
+}
+
+func newZonesByVendorTestApp(trips []map[string]any) (*graphTestApp, *fakeTableEngine) {
+	g, engine := newGraphTripsTestApp()
+
+	engine.tables["trips"] = trips
+
+	g.graph.fields = append(g.graph.fields, model.GraphDatasetField{ID: "f-trips.vendor", WorkspaceID: "ws", DatasetID: "ds-trips", Name: "trips.vendor"})
+	g.graph.entityTypes = append(g.graph.entityTypes, model.GraphEntityType{ID: "t-zone-by-vendor", Key: "zone_by_vendor", Source: model.GraphSourceDataset, SourceID: "ds-trips", KeyProperty: "f-trips.zone", TitleProperty: "f-trips.vendor"})
+
+	return g, engine
+}
+
+// listAll pages through a type's entities the way the Entities table does.
+func listAll(t *testing.T, g *graphTestApp, typeKey string) []model.GraphEntityRef {
+	t.Helper()
+
+	all := []model.GraphEntityRef{}
+	after := ""
+
+	for range 20 {
+		page, appErr := g.app.SearchGraphEntities(context.Background(), model.User{ID: "u1"}, typeKey, "", after)
+		if appErr != nil {
+			t.Fatalf("SearchGraphEntities: %v", appErr)
+		}
+
+		all = append(all, page.Items...)
+
+		after = page.Next
+		if after == "" {
+			return all
+		}
+	}
+
+	t.Fatal("want the list to end")
+
+	return nil
+}
+
+func TestABlankKeyIsLeftOut(t *testing.T) {
+	trips := zoneTrips([]string{"", "z-1", "z-2"}, 60)
+	trips = append(trips, map[string]any{"trips.key": "t-none", "trips.zone": nil, "trips.vendor": "Vendor X"})
+
+	g, _ := newZonesByVendorTestApp(trips)
+
+	ids := []string{}
+	for _, entity := range listAll(t, g, "zone_by_vendor") {
+		ids = append(ids, entity.ID)
+	}
+
+	if !slices.Equal(ids, []string{"z-1", "z-2"}) {
+		t.Errorf("want only the zones with a key, got %v", ids)
+	}
+}
+
+func TestAKeyWithTwoTitlesDoesNotEndTheListEarly(t *testing.T) {
+	zones := numberedZones(60)
+
+	g, _ := newZonesByVendorTestApp(zoneTrips(zones, 2))
+
+	ids := []string{}
+	for _, entity := range listAll(t, g, "zone_by_vendor") {
+		ids = append(ids, entity.ID)
+	}
+
+	if !slices.Equal(ids, zones) {
+		t.Errorf("want all 60 zones once and in order, got %d: %v", len(ids), ids)
+	}
+}
+
+func TestAKeyWithManyNamesStillFillsThePage(t *testing.T) {
+	zones := numberedZones(60)
+
+	g, engine := newZonesByVendorTestApp(zoneTrips(zones, 100))
+
+	entities := listAll(t, g, "zone_by_vendor")
+
+	// At most three reads a page, two pages here: a quick read, the keys,
+	// then their names.
+	if engine.queries > 6 {
+		t.Errorf("want at most three reads a page, got %d for two pages", engine.queries)
+	}
+
+	ids := []string{}
+	for _, entity := range entities {
+		ids = append(ids, entity.ID)
+
+		named := strings.HasPrefix(entity.Title, "Vendor ") || entity.Title == entity.ID
+		if !named {
+			t.Errorf("want %s named by one of its vendors or by its key, got %q", entity.ID, entity.Title)
+		}
+	}
+
+	if !slices.Equal(ids, zones) {
+		t.Errorf("want all 60 zones once and in order, got %d: %v", len(ids), ids)
 	}
 }

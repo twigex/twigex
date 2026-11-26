@@ -270,6 +270,10 @@ type CollimatoRowsRequest struct {
 	OrderBy string
 	After   string
 	Limit   int
+
+	// Grouped reads one row for each distinct set of field values, for a
+	// field that repeats across rows. It is slower on a large table.
+	Grouped bool
 }
 
 func (q *DataQuery) SetLimit() {

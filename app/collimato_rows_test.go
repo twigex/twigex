@@ -115,6 +115,25 @@ func TestCollimatoGetRowsAsksForUngroupedRowsAfterAKey(t *testing.T) {
 	}
 }
 
+func TestCollimatoGetRowsAsksForAFieldOnlyOnce(t *testing.T) {
+	a, engine := rowsTestApp()
+
+	request := model.CollimatoRowsRequest{
+		Fields:  []string{"stores.name", "stores.name"},
+		OrderBy: "stores.name",
+		Limit:   50,
+	}
+
+	_, appErr := a.CollimatoGetRows(context.Background(), model.User{ID: "u1"}, "ws", request)
+	if appErr != nil {
+		t.Fatalf("CollimatoGetRows: %v", appErr)
+	}
+
+	if !slices.Equal(engine.queries[0].Dimensions, []string{"stores.name"}) {
+		t.Errorf("want stores.name asked for once, got %v", engine.queries[0].Dimensions)
+	}
+}
+
 func TestCollimatoGetRowsKeepsTheRowRules(t *testing.T) {
 	a, engine := rowsTestApp()
 	a.CollimatoRoles = fakeRowRules{}

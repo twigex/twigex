@@ -2276,7 +2276,7 @@
     "settings.authorization.ldap_sync_failed": "The last run failed: {reason}",
     "settings.authorization.ldap_sync_stale": "No synchronisation has succeeded recently. Check the server log.",
     "settings.knowledge_graph.title": "Knowledge graph",
-    "settings.knowledge_graph.description": "The graph records which charts use which dataset fields. It is kept up to date when charts and datasets are saved. Rebuild it to fill it for the first time or to repair it.",
+    "settings.knowledge_graph.description": "Charts, dashboards and datasets are added to the graph when they are saved, and your own entity types are read straight from the data. Rebuild only to fill the graph for the first time, or to repair it after fixing a data model that had errors.",
     "settings.knowledge_graph.rebuild": "Rebuild graph",
     "settings.knowledge_graph.rebuilding": "Rebuilding…",
     "settings.knowledge_graph.rebuild_started": "Rebuild started. The result appears here when it finishes.",

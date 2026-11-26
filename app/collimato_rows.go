@@ -28,8 +28,9 @@ func emptyDataQuery() model.DataQuery {
 // checks as a chart: the user's workspace role, then the data rules, which
 // also add the row filters, and only then the query.
 //
-// The rows are read ungrouped: grouping makes the database sort the whole
-// group before returning a page, 3.5 s instead of 0.05 s for a million rows.
+// The rows are read ungrouped unless the request asks for groups: grouping
+// makes the database sort the whole group before returning a page, 3.5 s
+// instead of 0.05 s for a million rows.
 func (a *App) CollimatoGetRows(ctx context.Context, user model.User, workspaceID string, request model.CollimatoRowsRequest) ([]map[string]any, *model.AppError) {
 	// Without a limit Collimato's maximum of 50,000 rows would apply, and a
 	// sort field that isn't read is refused with a vaguer error.
@@ -40,11 +41,19 @@ func (a *App) CollimatoGetRows(ctx context.Context, user model.User, workspaceID
 	}
 
 	query := emptyDataQuery()
-	query.Dimensions = append(query.Dimensions, request.Fields...)
+
+	// The engine refuses a field asked for twice, and a graph type may name
+	// its entities by its key field.
+	for _, field := range request.Fields {
+		if !slices.Contains(query.Dimensions, field) {
+			query.Dimensions = append(query.Dimensions, field)
+		}
+	}
+
 	query.Filters = append(query.Filters, request.Filters...)
 	query.Order = append(query.Order, []string{request.OrderBy, "asc"})
 	query.Limit = request.Limit
-	query.Ungrouped = true
+	query.Ungrouped = !request.Grouped
 
 	// Paging by "after this key" stays fast however far in the page is; an
 	// offset makes the database skip every row before it.
@@ -78,6 +87,7 @@ func rowReadError(workspaceID string, appErr *model.AppError) *model.AppError {
 	tlog.Errorw("A row read failed",
 		"workspace_id", workspaceID,
 		"error", appErr.Message,
+		"detail", appErr.Values["Detail"],
 	)
 
 	return model.NewAppError("collimato.query_failed", http.StatusInternalServerError)

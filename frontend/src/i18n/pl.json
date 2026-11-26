@@ -2276,7 +2276,7 @@
     "settings.authorization.ldap_sync_failed": "Ostatnie uruchomienie nie powiodło się: {reason}",
     "settings.authorization.ldap_sync_stale": "Żadna synchronizacja nie zakończyła się ostatnio powodzeniem. Sprawdź dziennik serwera.",
     "settings.knowledge_graph.title": "Graf wiedzy",
-    "settings.knowledge_graph.description": "Graf zapisuje, które wykresy używają których pól zbiorów danych. Jest aktualizowany przy zapisywaniu wykresów i zbiorów danych. Przebuduj go, aby wypełnić go po raz pierwszy lub naprawić.",
+    "settings.knowledge_graph.description": "Wykresy, pulpity i zbiory danych są dodawane do grafu przy zapisywaniu, a Twoje własne typy encji są odczytywane bezpośrednio z danych. Przebuduj graf tylko po to, aby wypełnić go po raz pierwszy lub naprawić go po poprawieniu modelu danych, który zawierał błędy.",
     "settings.knowledge_graph.rebuild": "Przebuduj graf",
     "settings.knowledge_graph.rebuilding": "Przebudowywanie…",
     "settings.knowledge_graph.rebuild_started": "Rozpoczęto przebudowę. Wynik pojawi się tutaj po jej zakończeniu.",
